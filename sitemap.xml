@@ -2,9 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lyyao09.github.io/2019/07/24/What's-the-difference-between-docker-compose-and-kubernetes/</loc>
+    
+    <lastmod>2019-07-25T05:35:13.797Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/24/What's-the-difference-between-Apache's-Mesos-and-Google's-Kubernetes/</loc>
+    
+    <lastmod>2019-07-25T05:35:02.606Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/25/Pods-stuck-in-Terminating-status/</loc>
+    
+    <lastmod>2019-07-25T05:34:09.347Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://lyyao09.github.io/2019/07/23/Convert-word-to-pdf-or-txt-tools/</loc>
     
-    <lastmod>2019-07-24T13:23:39.471Z</lastmod>
+    <lastmod>2019-07-24T13:27:10.100Z</lastmod>
     
   </url>
   

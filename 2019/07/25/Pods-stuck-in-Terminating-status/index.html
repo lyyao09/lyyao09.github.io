@@ -4,25 +4,25 @@
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
-    <title>更新Kubernetes集群证书 | lyyao09&#39;s blog</title>
+    <title>POD卡在Terminating状态 | lyyao09&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="lyyao09">
     
 
     
-    <meta name="description" content="Kubernetes集群证书的使用寿命为一年。如果Kubernetes集群证书在Kubernetes master节点上过期，则kubelet服务将失败。使用kubectl命令，例如kubectel get pod或kubectl exec -it container_name bash，将导致类似的消息： 1Unable to connect to the server: x509: certi">
+    <meta name="description" content="问题描述我试图删除一个有12个pod的ReplicationController，但是发现一些pod卡在了Terminating状态。 我的Kubernetes集群安装在Ubuntu虚拟机上，包括一个master节点和三个worker节点。 这个问题可能是什么原因？ 123456NAME        READY     STATUS        RESTARTS   AGEpod-186o2">
 <meta name="keywords" content="kubernetes">
 <meta property="og:type" content="article">
-<meta property="og:title" content="更新Kubernetes集群证书">
-<meta property="og:url" content="https://lyyao09.github.io/2019/07/22/Renewing-Kubernetes-cluster-certificates/index.html">
+<meta property="og:title" content="POD卡在Terminating状态">
+<meta property="og:url" content="https://lyyao09.github.io/2019/07/25/Pods-stuck-in-Terminating-status/index.html">
 <meta property="og:site_name" content="lyyao09&#39;s blog">
-<meta property="og:description" content="Kubernetes集群证书的使用寿命为一年。如果Kubernetes集群证书在Kubernetes master节点上过期，则kubelet服务将失败。使用kubectl命令，例如kubectel get pod或kubectl exec -it container_name bash，将导致类似的消息： 1Unable to connect to the server: x509: certi">
+<meta property="og:description" content="问题描述我试图删除一个有12个pod的ReplicationController，但是发现一些pod卡在了Terminating状态。 我的Kubernetes集群安装在Ubuntu虚拟机上，包括一个master节点和三个worker节点。 这个问题可能是什么原因？ 123456NAME        READY     STATUS        RESTARTS   AGEpod-186o2">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-23T04:53:26.782Z">
+<meta property="og:updated_time" content="2019-07-25T05:34:09.347Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="更新Kubernetes集群证书">
-<meta name="twitter:description" content="Kubernetes集群证书的使用寿命为一年。如果Kubernetes集群证书在Kubernetes master节点上过期，则kubelet服务将失败。使用kubectl命令，例如kubectel get pod或kubectl exec -it container_name bash，将导致类似的消息： 1Unable to connect to the server: x509: certi">
+<meta name="twitter:title" content="POD卡在Terminating状态">
+<meta name="twitter:description" content="问题描述我试图删除一个有12个pod的ReplicationController，但是发现一些pod卡在了Terminating状态。 我的Kubernetes集群安装在Ubuntu虚拟机上，包括一个master节点和三个worker节点。 这个问题可能是什么原因？ 123456NAME        READY     STATUS        RESTARTS   AGEpod-186o2">
 
     
     <link rel="alternative" href="/atom.xml" title="lyyao09&#39;s blog" type="application/atom+xml">
@@ -82,14 +82,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2019/07/22/Renewing-Kubernetes-cluster-certificates/" title="更新Kubernetes集群证书" itemprop="url">更新Kubernetes集群证书</a>
+      <a href="/2019/07/25/Pods-stuck-in-Terminating-status/" title="POD卡在Terminating状态" itemprop="url">POD卡在Terminating状态</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="lyyao09" target="_blank" itemprop="author">lyyao09</a>
 		
   <p class="article-time">
-    <time datetime="2019-07-22T12:32:29.000Z" itemprop="datePublished"> 发表于 2019-07-22</time>
+    <time datetime="2019-07-25T13:38:39.000Z" itemprop="datePublished"> 发表于 2019-07-25</time>
     
   </p>
 </header>
@@ -98,68 +98,19 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题描述"><span class="toc-number">1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#高票回答"><span class="toc-number">2.</span> <span class="toc-text">高票回答</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原文链接"><span class="toc-number">3.</span> <span class="toc-text">原文链接</span></a></li></ol>
 		
 		</div>
 		
-		<p>Kubernetes集群证书的使用寿命为一年。如果Kubernetes集群证书在Kubernetes master节点上过期，则<strong>kubelet</strong>服务将失败。使用<strong>kubectl</strong>命令，例如kubectel get pod或kubectl exec -it container_name bash，将导致类似的消息：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Unable to connect to the server: x509: certificate has expired or is not yet valid</span><br></pre></td></tr></table></figure>
+		<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我试图删除一个有12个pod的ReplicationController，但是发现一些pod卡在了Terminating状态。</p>
+<p>我的Kubernetes集群安装在Ubuntu虚拟机上，包括一个master节点和三个worker节点。</p>
+<p>这个问题可能是什么原因？</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">NAME        READY     STATUS        RESTARTS   AGE</span><br><span class="line">pod-186o2   1/1       Terminating   0          2h</span><br><span class="line">pod-4b6qc   1/1       Terminating   0          2h</span><br><span class="line">pod-8xl86   1/1       Terminating   0          1h</span><br><span class="line">pod-d6htc   1/1       Terminating   0          1h</span><br><span class="line">pod-vlzov   1/1       Terminating   0          1h</span><br></pre></td></tr></table></figure>
 
-<p>处理方法：重新生成新证书并更新worker节点。</p>
-<blockquote>
-<p>注意：</p>
-<ol>
-<li>执行以下操作前，请先备份相关文件</li>
-<li><del>请勿替换CA证书，原因可参考<a href="https://github.com/kubernetes/kubernetes/issues/67122" target="_blank" rel="noopener">issue</a></del>（个人验证发现，是因为kubelet证书未删除导致，删除后重启kubelet问题解决）</li>
-</ol>
-</blockquote>
-<ol>
-<li><p>在/root目录下创建一个配置文件kubeadm.yaml，其中advertiseAddress设置为Kubernetes主节点的IP地址（或集群虚IP）。例如：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeadm.k8s.io/v1alpha1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">MasterConfiguration</span></span><br><span class="line"><span class="attr">api:</span></span><br><span class="line"><span class="attr">  advertiseAddress:</span> <span class="number">10.165</span><span class="number">.80</span><span class="number">.110</span></span><br><span class="line"><span class="attr">kubernetesVersion:</span> <span class="string">v1.10.11</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>删除现有证书和密钥文件：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">rm -rf /etc/kubernetes/pki/apiserver.key</span><br><span class="line">rm -rf /etc/kubernetes/pki/apiserver.crt</span><br><span class="line">rm -rf /etc/kubernetes/pki/apiserver-kubelet-client.crt</span><br><span class="line">rm -rf /etc/kubernetes/pki/apiserver-kubelet-client.key</span><br><span class="line">rm -rf /etc/kubernetes/pki/front-proxy-client.crt</span><br><span class="line">rm -rf /etc/kubernetes/pki/front-proxy-client.key</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>创建新证书：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubeadm --config /root/kubeadm.yaml alpha phase certs apiserver</span><br><span class="line">kubeadm --config /root/kubeadm.yaml alpha phase certs apiserver-kubelet-client</span><br><span class="line">kubeadm --config /root/kubeadm.yaml alpha phase certs front-proxy-client</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>删除旧的配置文件：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rm -rf /etc/kubernetes/admin.conf</span><br><span class="line">rm -rf /etc/kubernetes/kubelet.conf</span><br><span class="line">rm -rf /etc/kubernetes/controller-manager.conf</span><br><span class="line">rm -rf /etc/kubernetes/scheduler.conf </span><br><span class="line">rm -rf /var/lib/kubelet/pki/kubelet*</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>生成新配置文件：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm --config /root/kubeadm.yaml alpha phase kubeconfig all</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>确保你的 kubectl 服务正在使用正确的配置文件（根据实际环境配置该环境变量）：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</span><br><span class="line">export KUBECONFIG=.kube/config</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>重启Kubernetes主节点。</p>
-</li>
-<li><p>服务器重新启动后，检查以确保<strong>kubelet</strong>服务正在运行：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status kubelet</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>要重新加入工作节点，您需要一个集群令牌。</p>
-<p>对于Kubernetes 1.7，预设了集群令牌。对于Kubernetes1.7之后的版本，您必须创建新令牌，因为在安装时生成的令牌具有有限的生命周期：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm token create</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>SSH进入每个worker节点并将它们重新连接到Kubernetes主节点。</p>
-</li>
-<li><p>将工作节点加入Kubernetes集群：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join --token=cluster_token master_ip:6443</span><br></pre></td></tr></table></figure>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>您可以使用以下命令强制删除POD。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete pod &lt;PODNAME&gt; --grace-period=0 --force --namespace &lt;NAMESPACE&gt;</span><br></pre></td></tr></table></figure>
 
-<p>其中：</p>
-<ul>
-<li>cluster_token：在步骤9中创建的令牌</li>
-<li>master_ip：Kubernetes主节点的IP地址（或集群虚IP地址）</li>
-</ul>
-<blockquote>
-<p><strong>注意</strong>：<br>某些版本的<strong>kubeadm</strong>使用–print-join-command命令行参数。在这些情况下， <strong>kubeadm</strong>输出重新连接Kubernetes master所需的<strong>kubeadm join</strong>命令。如果发生这种情况，请在每个工作节点上输入此命令（复制和粘贴）。</p>
-</blockquote>
-</li>
-<li><p>确认<strong>kubelet</strong>服务正在运行，并且worker节点和Kubernetes master之间正常通信。</p>
-</li>
-<li><p>等几分钟。然后从Kubernetes主节点运行以下命令以确认worker节点是否可用：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure></li>
-</ol>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a href="https://stackoverflow.com/questions/35453792/pods-stuck-in-terminating-status" target="_blank" rel="noopener">Pods stuck in Terminating status</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -177,7 +128,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://lyyao09.github.io/2019/07/22/Renewing-Kubernetes-cluster-certificates/" data-title="更新Kubernetes集群证书 | lyyao09&#39;s blog" data-tsina="" class="share clearfix">
+	  <div data-url="https://lyyao09.github.io/2019/07/25/Pods-stuck-in-Terminating-status/" data-title="POD卡在Terminating状态 | lyyao09&#39;s blog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -190,19 +141,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2019/07/23/Convert-word-to-pdf-or-txt-tools/" title="免费word格式转换小工具：docto">
-  <strong>上一篇：</strong><br/>
-  <span>
-  免费word格式转换小工具：docto</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2019/07/22/Certificate-Management-with-kubeadm/"  title="使用kubeadm进行证书管理">
+<a href="/2019/07/24/What's-the-difference-between-docker-compose-and-kubernetes/"  title="docker compose和kubernetes之间有什么区别">
  <strong>下一篇：</strong><br/> 
- <span>使用kubeadm进行证书管理
+ <span>docker compose和kubernetes之间有什么区别
 </span>
 </a>
 </div>
@@ -219,7 +162,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题描述"><span class="toc-number">1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#高票回答"><span class="toc-number">2.</span> <span class="toc-text">高票回答</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原文链接"><span class="toc-number">3.</span> <span class="toc-text">原文链接</span></a></li></ol>
  
   </div>
 

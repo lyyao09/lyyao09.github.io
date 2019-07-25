@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="lyyao09&#39;s blog">
 <meta property="og:description" content="用于将Microsoft Word .doc文档转换为任何其他支持格式（如.txt .rtf .pdf）的简单实用程序。 也可用于将.txt，.rtf转换为.doc或.pdf格式。  注：主机上必须安装Microsoft Word。  特点 将Doc / RTF / Text文件转换为任何Word SaveAs类型Doc / Text / RTF / PDF 单个文件转换 多个/目录文件转换 转换">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-24T13:23:39.471Z">
+<meta property="og:updated_time" content="2019-07-24T13:27:10.100Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="免费word格式转换小工具：docto">
 <meta name="twitter:description" content="用于将Microsoft Word .doc文档转换为任何其他支持格式（如.txt .rtf .pdf）的简单实用程序。 也可用于将.txt，.rtf转换为.doc或.pdf格式。  注：主机上必须安装Microsoft Word。  特点 将Doc / RTF / Text文件转换为任何Word SaveAs类型Doc / Text / RTF / PDF 单个文件转换 多个/目录文件转换 转换">
@@ -98,7 +98,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#特点"><span class="toc-number">1.</span> <span class="toc-text">特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#举例"><span class="toc-number">2.</span> <span class="toc-text">举例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单个文件转换"><span class="toc-number">2.1.</span> <span class="toc-text">单个文件转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多文件和文件夹转换"><span class="toc-number">2.2.</span> <span class="toc-text">多文件和文件夹转换</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Webhooks"><span class="toc-number"></span> <span class="toc-text">Webhooks</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#命令行支持参数列表"><span class="toc-number">1.</span> <span class="toc-text">命令行支持参数列表</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#特点"><span class="toc-number">1.</span> <span class="toc-text">特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#举例"><span class="toc-number">2.</span> <span class="toc-text">举例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单个文件转换"><span class="toc-number">2.1.</span> <span class="toc-text">单个文件转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多文件和文件夹转换"><span class="toc-number">2.2.</span> <span class="toc-text">多文件和文件夹转换</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Webhooks"><span class="toc-number">3.</span> <span class="toc-text">Webhooks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#命令行支持参数列表"><span class="toc-number">4.</span> <span class="toc-text">命令行支持参数列表</span></a></li></ol>
 		
 		</div>
 		
@@ -126,7 +126,7 @@
 <p>转换后删除原始文件（-R）</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docto -f "C:\Dir with Spaces\FilesToConvert\" -O "C:\DirToOutput" -T wdFormatPDF  -OX .pdf -R</span><br></pre></td></tr></table></figure>
 
-<h1 id="Webhooks"><a href="#Webhooks" class="headerlink" title="Webhooks"></a>Webhooks</h1><p>添加Webhook以在每次转换时触发（-W）</p>
+<h2 id="Webhooks"><a href="#Webhooks" class="headerlink" title="Webhooks"></a>Webhooks</h2><p>添加Webhook以在每次转换时触发（-W）</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docto -f "C:\Dir with Spaces\FilesToConvert\" -O "C:\DirToOutput" -T wdFormatPDF  -OX .pdf  -W http://toflidium.com/webhooks/docto/webhook_test.php</span><br></pre></td></tr></table></figure>
 
 <p>Webhook是一个可以在每次转换时调用的URL，使您能够在转换文件时从外部响应。</p>
@@ -160,6 +160,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/2019/07/24/What's-the-difference-between-Apache's-Mesos-and-Google's-Kubernetes/" title="Apache的Mesos和Google的Kubernetes有什么区别">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Apache的Mesos和Google的Kubernetes有什么区别</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/2019/07/22/Renewing-Kubernetes-cluster-certificates/"  title="更新Kubernetes集群证书">
@@ -181,7 +189,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#特点"><span class="toc-number">1.</span> <span class="toc-text">特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#举例"><span class="toc-number">2.</span> <span class="toc-text">举例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单个文件转换"><span class="toc-number">2.1.</span> <span class="toc-text">单个文件转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多文件和文件夹转换"><span class="toc-number">2.2.</span> <span class="toc-text">多文件和文件夹转换</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Webhooks"><span class="toc-number"></span> <span class="toc-text">Webhooks</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#命令行支持参数列表"><span class="toc-number">1.</span> <span class="toc-text">命令行支持参数列表</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#特点"><span class="toc-number">1.</span> <span class="toc-text">特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#举例"><span class="toc-number">2.</span> <span class="toc-text">举例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单个文件转换"><span class="toc-number">2.1.</span> <span class="toc-text">单个文件转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多文件和文件夹转换"><span class="toc-number">2.2.</span> <span class="toc-text">多文件和文件夹转换</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Webhooks"><span class="toc-number">3.</span> <span class="toc-text">Webhooks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#命令行支持参数列表"><span class="toc-number">4.</span> <span class="toc-text">命令行支持参数列表</span></a></li></ol>
  
   </div>
 
@@ -200,7 +208,15 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/kubernetes/" title="kubernetes">kubernetes<sup>2</sup></a></li>
+				<li><a href="/tags/kubernetes/" title="kubernetes">kubernetes<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker-compose/" title="docker-compose">docker-compose<sup>1</sup></a></li>
 			
 		
 			
