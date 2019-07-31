@@ -2,51 +2,100 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/24/What's-the-difference-between-docker-compose-and-kubernetes/</loc>
+    <loc>https://lyyao09.github.io/2019/07/30/stackoverflow/Marathon-vs-Kubernetes-vs-Docker-Swarm-on-DC-OS-with-Docker-containers/</loc>
     
-    <lastmod>2019-07-25T05:35:13.797Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/07/24/What's-the-difference-between-Apache's-Mesos-and-Google's-Kubernetes/</loc>
-    
-    <lastmod>2019-07-25T05:35:02.606Z</lastmod>
+    <lastmod>2019-07-31T00:47:12.217Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/25/Pods-stuck-in-Terminating-status/</loc>
+    <loc>https://lyyao09.github.io/2019/07/29/stackoverflow/Kubernetes-vs-CloudFoundry/</loc>
     
-    <lastmod>2019-07-25T05:34:09.347Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/07/23/Convert-word-to-pdf-or-txt-tools/</loc>
-    
-    <lastmod>2019-07-24T13:27:10.100Z</lastmod>
+    <lastmod>2019-07-31T00:47:05.939Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/22/Renewing-Kubernetes-cluster-certificates/</loc>
+    <loc>https://lyyao09.github.io/about/index.html</loc>
     
-    <lastmod>2019-07-23T04:53:26.782Z</lastmod>
+    <lastmod>2019-07-29T06:35:39.843Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/22/Certificate-Management-with-kubeadm/</loc>
+    <loc>https://lyyao09.github.io/2019/07/23/stackoverflow/How-to-use-local-docker-images-with-Minikube/</loc>
     
-    <lastmod>2019-07-22T12:35:59.031Z</lastmod>
+    <lastmod>2019-07-28T05:49:54.044Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/24/stackoverflow/What's-the-difference-between-docker-compose-and-kubernetes/</loc>
+    
+    <lastmod>2019-07-28T05:47:11.645Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/26/stackoverflow/What-is-the-difference-between-a-pod-and-a-deployment/</loc>
+    
+    <lastmod>2019-07-28T05:47:03.723Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/25/stackoverflow/Pods-stuck-in-Terminating-status/</loc>
+    
+    <lastmod>2019-07-28T05:46:53.775Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/23/stackoverflow/kubectl-apply-vs-kubectl-create/</loc>
+    
+    <lastmod>2019-07-28T05:45:30.835Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/27/stackoverflow/Docker-Swarm-Kubernetes-Mesos-Core-OS-Fleet/</loc>
+    
+    <lastmod>2019-07-28T05:45:24.440Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/24/stackoverflow/What's-the-difference-between-Apache's-Mesos-and-Google's-Kubernetes/</loc>
+    
+    <lastmod>2019-07-28T05:45:16.276Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/22/kubernetes/Renewing-Kubernetes-cluster-certificates/</loc>
+    
+    <lastmod>2019-07-28T05:41:27.368Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/22/kubernetes/Certificate-Management-with-kubeadm/</loc>
+    
+    <lastmod>2019-07-28T05:41:20.340Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/23/tools/Convert-word-to-pdf-or-txt-tools/</loc>
+    
+    <lastmod>2019-07-28T04:45:27.432Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://lyyao09.github.io/google704cf0254066df0d.html</loc>
     
-    <lastmod>2019-07-16T13:33:42.611Z</lastmod>
+    <lastmod>2019-07-16T13:33:42.000Z</lastmod>
     
   </url>
   

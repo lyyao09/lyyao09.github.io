@@ -4,25 +4,25 @@
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
-    <title>docker compose和kubernetes之间有什么区别 | lyyao09&#39;s blog</title>
+    <title>POD卡在Terminating状态 | lyyao09&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="lyyao09">
     
 
     
-    <meta name="description" content="问题描述虽然分析了Docker，Google Cloud和Kubernetes，但还没有清楚地理解它们，    在我看来这些产品是重叠但不兼容的。 例如，需要重新编写docker-compose文件，以便可以将应用程序部署到Kubernetes。 有人可以从较高层次描述Docker，Docker-Compose，Docker Cloud和Kubernetes重叠的位置以及哪一个依赖于另一个吗？ 高">
-<meta name="keywords" content="kubernetes,docker,docker-compose">
+    <meta name="description" content="问题描述我试图删除一个有12个pod的ReplicationController，但是发现一些pod卡在了Terminating状态。 我的Kubernetes集群安装在Ubuntu虚拟机上，包括一个master节点和三个worker节点。 这个问题可能是什么原因？ 123456NAME        READY     STATUS        RESTARTS   AGEpod-186o2">
+<meta name="keywords" content="kubernetes">
 <meta property="og:type" content="article">
-<meta property="og:title" content="docker compose和kubernetes之间有什么区别">
-<meta property="og:url" content="https://lyyao09.github.io/2019/07/24/What's-the-difference-between-docker-compose-and-kubernetes/index.html">
+<meta property="og:title" content="POD卡在Terminating状态">
+<meta property="og:url" content="https://lyyao09.github.io/2019/07/25/stackoverflow/Pods-stuck-in-Terminating-status/index.html">
 <meta property="og:site_name" content="lyyao09&#39;s blog">
-<meta property="og:description" content="问题描述虽然分析了Docker，Google Cloud和Kubernetes，但还没有清楚地理解它们，    在我看来这些产品是重叠但不兼容的。 例如，需要重新编写docker-compose文件，以便可以将应用程序部署到Kubernetes。 有人可以从较高层次描述Docker，Docker-Compose，Docker Cloud和Kubernetes重叠的位置以及哪一个依赖于另一个吗？ 高">
+<meta property="og:description" content="问题描述我试图删除一个有12个pod的ReplicationController，但是发现一些pod卡在了Terminating状态。 我的Kubernetes集群安装在Ubuntu虚拟机上，包括一个master节点和三个worker节点。 这个问题可能是什么原因？ 123456NAME        READY     STATUS        RESTARTS   AGEpod-186o2">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-25T05:35:13.797Z">
+<meta property="og:updated_time" content="2019-07-28T05:46:53.775Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="docker compose和kubernetes之间有什么区别">
-<meta name="twitter:description" content="问题描述虽然分析了Docker，Google Cloud和Kubernetes，但还没有清楚地理解它们，    在我看来这些产品是重叠但不兼容的。 例如，需要重新编写docker-compose文件，以便可以将应用程序部署到Kubernetes。 有人可以从较高层次描述Docker，Docker-Compose，Docker Cloud和Kubernetes重叠的位置以及哪一个依赖于另一个吗？ 高">
+<meta name="twitter:title" content="POD卡在Terminating状态">
+<meta name="twitter:description" content="问题描述我试图删除一个有12个pod的ReplicationController，但是发现一些pod卡在了Terminating状态。 我的Kubernetes集群安装在Ubuntu虚拟机上，包括一个master节点和三个worker节点。 这个问题可能是什么原因？ 123456NAME        READY     STATUS        RESTARTS   AGEpod-186o2">
 
     
     <link rel="alternative" href="/atom.xml" title="lyyao09&#39;s blog" type="application/atom+xml">
@@ -82,14 +82,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2019/07/24/What's-the-difference-between-docker-compose-and-kubernetes/" title="docker compose和kubernetes之间有什么区别" itemprop="url">docker compose和kubernetes之间有什么区别</a>
+      <a href="/2019/07/25/stackoverflow/Pods-stuck-in-Terminating-status/" title="POD卡在Terminating状态" itemprop="url">POD卡在Terminating状态</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="lyyao09" target="_blank" itemprop="author">lyyao09</a>
 		
   <p class="article-time">
-    <time datetime="2019-07-24T15:46:08.000Z" itemprop="datePublished"> 发表于 2019-07-24</time>
+    <time datetime="2019-07-25T13:38:39.000Z" itemprop="datePublished"> 发表于 2019-07-25</time>
     
   </p>
 </header>
@@ -102,34 +102,29 @@
 		
 		</div>
 		
-		<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>虽然分析了Docker，Google Cloud和Kubernetes，但还没有清楚地理解它们，    在我看来这些产品是重叠但不兼容的。</p>
-<p>例如，需要重新编写docker-compose文件，以便可以将应用程序部署到Kubernetes。</p>
-<p>有人可以从较高层次描述Docker，Docker-Compose，Docker Cloud和Kubernetes重叠的位置以及哪一个依赖于另一个吗？</p>
-<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p><strong>Docker :</strong></p>
-<p>Docker是一种容器技术，可以让您对应用程序进行容器化。Docker是使用其他技术的核心。</p>
-<p><strong>Docker Compose:</strong></p>
-<p>允许配置和启动多个docker容器。当你想要启动多个docker容器并且不想使用docker run分别启动每个Docker容器时，可以使用Docker compose启动。</p>
-<p><strong>Docker Swarm:</strong></p>
-<p>Docker swarm用于在多个主机上运行和连接容器。Docker swarm是一个容器集群管理和编排工具。它管理在多个主机上运行的容器，并执行缩放，在崩溃时启动新容器，网络容器……</p>
-<p>Docker swarm是生产环境中的docker。它是嵌入在Docker引擎中的本机docker编排工具。名为stack file的docker swarm文件与docker compose文件非常相似。</p>
-<p><strong>Kubernetes:</strong></p>
-<p>由Google开发的容器编排工具。Kubernetes的目标与Docker swarm的目标非常相似。</p>
-<p><strong>Docker Cloud:</strong></p>
-<p>一种<a href="https://cloud.docker.com/pricing/" target="_blank" rel="noopener">付费</a>的企业级docker服务，允许您在云服务器或本地服务器上构建和运行容器。它提供了一个Web UI和一个中央控制面板来运行和管理容器，同时在用户友好的Web界面中提供所有docker功能。</p>
-<p><strong>Update:</strong></p>
-<p><a href="https://success.docker.com/article/cloud-migration" target="_blank" rel="noopener">Docker Clou“部分”功能停止使用</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Docker Cloud上提供应用程序，节点和群集集群管理的服务将于5月21日关闭......自动构建和注册表存储服务将不会受到影响并将继续可用</span><br></pre></td></tr></table></figure>
+		<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我试图删除一个有12个pod的ReplicationController，但是发现一些pod卡在了Terminating状态。</p>
+<p>我的Kubernetes集群安装在Ubuntu虚拟机上，包括一个master节点和三个worker节点。</p>
+<p>这个问题可能是什么原因？</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">NAME        READY     STATUS        RESTARTS   AGE</span><br><span class="line">pod-186o2   1/1       Terminating   0          2h</span><br><span class="line">pod-4b6qc   1/1       Terminating   0          2h</span><br><span class="line">pod-8xl86   1/1       Terminating   0          1h</span><br><span class="line">pod-d6htc   1/1       Terminating   0          1h</span><br><span class="line">pod-vlzov   1/1       Terminating   0          1h</span><br></pre></td></tr></table></figure>
 
-<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a href="https://stackoverflow.com/questions/47536536/whats-the-difference-between-docker-compose-and-kubernetes" target="_blank" rel="noopener">What’s the difference between docker compose and kubernetes?</a></p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>您可以使用以下命令强制删除POD。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete pod &lt;PODNAME&gt; --grace-period=0 --force --namespace &lt;NAMESPACE&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a href="https://stackoverflow.com/questions/35453792/pods-stuck-in-terminating-status" target="_blank" rel="noopener">Pods stuck in Terminating status</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/stackoverflow/">stackoverflow</a>
+</div>
+
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/kubernetes/">kubernetes</a><a href="/tags/docker/">docker</a><a href="/tags/docker-compose/">docker-compose</a>
+  <span></span> <a href="/tags/kubernetes/">kubernetes</a>
   </div>
 
 </div>
@@ -138,7 +133,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://lyyao09.github.io/2019/07/24/What's-the-difference-between-docker-compose-and-kubernetes/" data-title="docker compose和kubernetes之间有什么区别 | lyyao09&#39;s blog" data-tsina="" class="share clearfix">
+	  <div data-url="https://lyyao09.github.io/2019/07/25/stackoverflow/Pods-stuck-in-Terminating-status/" data-title="POD卡在Terminating状态 | lyyao09&#39;s blog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -152,18 +147,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2019/07/25/Pods-stuck-in-Terminating-status/" title="POD卡在Terminating状态">
+ <a href="/2019/07/26/stackoverflow/What-is-the-difference-between-a-pod-and-a-deployment/" title="Pod和Deployment有什么区别">
   <strong>上一篇：</strong><br/>
   <span>
-  POD卡在Terminating状态</span>
+  Pod和Deployment有什么区别</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2019/07/24/What's-the-difference-between-Apache's-Mesos-and-Google's-Kubernetes/"  title="Apache的Mesos和Google的Kubernetes有什么区别">
+<a href="/2019/07/24/stackoverflow/What's-the-difference-between-docker-compose-and-kubernetes/"  title="docker compose和kubernetes之间有什么区别">
  <strong>下一篇：</strong><br/> 
- <span>Apache的Mesos和Google的Kubernetes有什么区别
+ <span>docker compose和kubernetes之间有什么区别
 </span>
 </a>
 </div>
@@ -192,6 +187,11 @@
 
 
   
+<div class="category-block">
+  <h3 class="asidetitle">分类</h3>
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/stackoverflow/">stackoverflow</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li></ul>
+</div>
+
 
   
 <div class="tagslist">
@@ -199,15 +199,11 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/kubernetes/" title="kubernetes">kubernetes<sup>5</sup></a></li>
+				<li><a href="/tags/kubernetes/" title="kubernetes">kubernetes<sup>11</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/docker-compose/" title="docker-compose">docker-compose<sup>1</sup></a></li>
+				<li><a href="/tags/docker/" title="docker">docker<sup>2</sup></a></li>
 			
 		
 			
@@ -216,6 +212,14 @@
 		
 			
 				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker-compose/" title="docker-compose">docker-compose<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kubectl/" title="kubectl">kubectl<sup>1</sup></a></li>
 			
 		
 		</ul>
@@ -228,7 +232,7 @@
         
           <li>
             
-            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            	<a href="https://stackoverflow.com" target="_blank" title="StackOverFlow">StackOverFlow</a>
             
           </li>
         
@@ -250,7 +254,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=&verifier=b3593ceb&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=&verifier=&dpc=1"></iframe>
 </div>
 
 
@@ -266,13 +270,12 @@
 	
 	
 	<section class="info">
-		<p> Hello ,I&#39;m Larry Page in Google. <br/>
+		<p> Hello ,I&#39;m lyyao09 in HangZhou. <br/>
 			This is my blog,believe it or not.</p>
 	</section>
 	 
 	<div class="social-font" class="clearfix">
 		
-		<a href="http://weibo.com/2176287895" target="_blank" class="icon-weibo" title="微博"></a>
 		
 		
 		
@@ -282,6 +285,7 @@
 		
 		
 		
+		<a href="mailto:lyyao09@163.com" target="_blank" class="icon-email" title="Email Me"></a>
 		
 	</div>
 			

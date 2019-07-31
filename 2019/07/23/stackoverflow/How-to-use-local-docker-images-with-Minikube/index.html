@@ -1,0 +1,518 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>How to use local docker images with Minikube | lyyao09&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="lyyao09">
+    
+
+    
+    <meta name="description" content="问题描述我有几个Docker镜像，我想用minikube。我不想使用先上传然后下载镜像的方式，而是想直接使用本地镜像。我该怎么做呢？ 我试过的方法：  我尝试运行这些命令（分别删除minikube的实例并重新开始） 12kubectl run hdfs --image=fluxcapacitor/hdfs:latest --port=8989kubectl run hdfs --image=flu">
+<meta name="keywords" content="kubernetes">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to use local docker images with Minikube">
+<meta property="og:url" content="https://lyyao09.github.io/2019/07/23/stackoverflow/How-to-use-local-docker-images-with-Minikube/index.html">
+<meta property="og:site_name" content="lyyao09&#39;s blog">
+<meta property="og:description" content="问题描述我有几个Docker镜像，我想用minikube。我不想使用先上传然后下载镜像的方式，而是想直接使用本地镜像。我该怎么做呢？ 我试过的方法：  我尝试运行这些命令（分别删除minikube的实例并重新开始） 12kubectl run hdfs --image=fluxcapacitor/hdfs:latest --port=8989kubectl run hdfs --image=flu">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-07-28T05:49:54.044Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to use local docker images with Minikube">
+<meta name="twitter:description" content="问题描述我有几个Docker镜像，我想用minikube。我不想使用先上传然后下载镜像的方式，而是想直接使用本地镜像。我该怎么做呢？ 我试过的方法：  我尝试运行这些命令（分别删除minikube的实例并重新开始） 12kubectl run hdfs --image=fluxcapacitor/hdfs:latest --port=8989kubectl run hdfs --image=flu">
+
+    
+    <link rel="alternative" href="/atom.xml" title="lyyao09&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="lyyao09&#39;s blog" title="lyyao09&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="lyyao09&#39;s blog">lyyao09&#39;s blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:lyyao09.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/07/23/stackoverflow/How-to-use-local-docker-images-with-Minikube/" title="How to use local docker images with Minikube" itemprop="url">How to use local docker images with Minikube</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="lyyao09" target="_blank" itemprop="author">lyyao09</a>
+		
+  <p class="article-time">
+    <time datetime="2019-07-22T23:08:17.000Z" itemprop="datePublished"> 发表于 2019-07-23</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题描述"><span class="toc-number">1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#高票回答"><span class="toc-number">2.</span> <span class="toc-text">高票回答</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原文链接"><span class="toc-number">3.</span> <span class="toc-text">原文链接</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我有几个Docker镜像，我想用minikube。我不想使用先上传然后下载镜像的方式，而是想直接使用本地镜像。我该怎么做呢？</p>
+<p>我试过的方法：</p>
+<ol>
+<li><p>我尝试运行这些命令（分别删除minikube的实例并重新开始）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl run hdfs --image=fluxcapacitor/hdfs:latest --port=8989</span><br><span class="line">kubectl run hdfs --image=fluxcapacitor/hdfs:latest --port=8989 imagePullPolicy=Never</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME                    READY     STATUS              RESTARTS   AGE</span><br><span class="line">hdfs-2425930030-q0sdl   0/1       ContainerCreating   0          10m</span><br></pre></td></tr></table></figure>
+
+<p>它只是陷入某种状态但从未达到就绪状态。</p>
+</li>
+<li><p>我尝试创建一个registry，然后将镜像放入其中，但这也无效。我可能做错了但我找不到正确的指令来完成这项任务。</p>
+</li>
+</ol>
+<p>请提供在本地kubernetes实例中使用本地docker镜像的说明。</p>
+<p>   操作系统：ubuntu 16.04</p>
+<p>   Docker：Docker版本1.13.1，build 092cba3</p>
+<p>   Kubernetes：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client Version: version.Info&#123;Major:"1", Minor:"5", GitVersion:"v1.5.3", GitCommit:"029c3a408176b55c30846f0faedf56aae5992e9b", GitTreeState:"clean", BuildDate:"2017-02-15T06:40:50Z", GoVersion:"go1.7.4", Compiler:"gc", Platform:"linux/amd64"&#125;</span><br><span class="line">Server Version: version.Info&#123;Major:"1", Minor:"5", GitVersion:"v1.5.2", GitCommit:"08e099554f3c31f6e6f07b448ab3ed78d0520507", GitTreeState:"clean", BuildDate:"1970-01-01T00:00:00Z", GoVersion:"go1.7.1", Compiler:"gc", Platform:"linux/amd64"&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果有人可以帮助我找到一个使用docker-compose来做这个的解决方案，那就太棒了。谢谢。</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>正如<a href="https://github.com/kubernetes/minikube/blob/0c616a6b42b28a1aab8397f5a9061f8ebbd9f3d9/README.md#reusing-the-docker-daemon" target="_blank" rel="noopener">README</a>描述的那样，您可以使用eval $（minikube docker-env）重用Minikube中的Docker守护进程。</p>
+<p>因此，要使用本地镜像而不先上传镜像，您可以按照以下步骤操作：</p>
+<ol>
+<li>用eval $（minikube docker-env）设置环境变量</li>
+<li>使用Minikube的Docker守护程序构建镜像（例如docker build -t my-image）</li>
+<li>在pod规范中设置镜像，如构建tag（例如my-image）</li>
+<li>将imagePullPolicy设置为Never，否则Kubernetes将尝试下载镜像</li>
+</ol>
+<blockquote>
+<p>重要说明：您必须在要使用的每个终端上运行eval $（minikube docker-env），因为它只为当前shell会话设置环境变量。</p>
+</blockquote>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a href="https://stackoverflow.com/questions/42564058/how-to-use-local-docker-images-with-minikube" target="_blank" rel="noopener">How to use local docker images with Minikube?</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/stackoverflow/">stackoverflow</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/kubernetes/">kubernetes</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://lyyao09.github.io/2019/07/23/stackoverflow/How-to-use-local-docker-images-with-Minikube/" data-title="How to use local docker images with Minikube | lyyao09&#39;s blog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2019/07/23/stackoverflow/kubectl-apply-vs-kubectl-create/" title="kubectl apply vs kubectl create">
+  <strong>上一篇：</strong><br/>
+  <span>
+  kubectl apply vs kubectl create</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2019/07/22/kubernetes/Renewing-Kubernetes-cluster-certificates/"  title="更新Kubernetes集群证书">
+ <strong>下一篇：</strong><br/> 
+ <span>更新Kubernetes集群证书
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题描述"><span class="toc-number">1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#高票回答"><span class="toc-number">2.</span> <span class="toc-text">高票回答</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原文链接"><span class="toc-number">3.</span> <span class="toc-text">原文链接</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="category-block">
+  <h3 class="asidetitle">分类</h3>
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/stackoverflow/">stackoverflow</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li></ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/kubernetes/" title="kubernetes">kubernetes<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kubeadm/" title="kubeadm">kubeadm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker-compose/" title="docker-compose">docker-compose<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kubectl/" title="kubectl">kubectl<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://stackoverflow.com" target="_blank" title="StackOverFlow">StackOverFlow</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m lyyao09 in HangZhou. <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:lyyao09@163.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019 
+		
+		<a href="/about" target="_blank" title="lyyao09">lyyao09</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1277827664'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1277827664%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

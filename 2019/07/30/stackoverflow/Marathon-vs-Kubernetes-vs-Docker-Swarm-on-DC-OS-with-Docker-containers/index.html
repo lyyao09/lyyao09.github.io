@@ -4,25 +4,25 @@
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
-    <title>POD卡在Terminating状态 | lyyao09&#39;s blog</title>
+    <title>Marathon vs Kubernetes vs Docker Swarm on DC/OS with Docker containers | lyyao09&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="lyyao09">
     
 
     
-    <meta name="description" content="问题描述我试图删除一个有12个pod的ReplicationController，但是发现一些pod卡在了Terminating状态。 我的Kubernetes集群安装在Ubuntu虚拟机上，包括一个master节点和三个worker节点。 这个问题可能是什么原因？ 123456NAME        READY     STATUS        RESTARTS   AGEpod-186o2">
+    <meta name="description" content="问题描述我正在寻找在DC / OS上运行Docker容器时是否使用Marathon和Chronos，Docker Swarm或Kubernetes的一些优缺点。 例如，何时使用Marathon / Chronos比使用Kubernetes更好，反之亦然？ 现在我主要是进行实验，但希望我们在夏天之后开始在生产中使用这些服务之一。这可能会使Docker Swarm失去资格，因为我不确定它是否会在那时处">
 <meta name="keywords" content="kubernetes">
 <meta property="og:type" content="article">
-<meta property="og:title" content="POD卡在Terminating状态">
-<meta property="og:url" content="https://lyyao09.github.io/2019/07/25/Pods-stuck-in-Terminating-status/index.html">
+<meta property="og:title" content="Marathon vs Kubernetes vs Docker Swarm on DC&#x2F;OS with Docker containers">
+<meta property="og:url" content="https://lyyao09.github.io/2019/07/30/stackoverflow/Marathon-vs-Kubernetes-vs-Docker-Swarm-on-DC-OS-with-Docker-containers/index.html">
 <meta property="og:site_name" content="lyyao09&#39;s blog">
-<meta property="og:description" content="问题描述我试图删除一个有12个pod的ReplicationController，但是发现一些pod卡在了Terminating状态。 我的Kubernetes集群安装在Ubuntu虚拟机上，包括一个master节点和三个worker节点。 这个问题可能是什么原因？ 123456NAME        READY     STATUS        RESTARTS   AGEpod-186o2">
+<meta property="og:description" content="问题描述我正在寻找在DC / OS上运行Docker容器时是否使用Marathon和Chronos，Docker Swarm或Kubernetes的一些优缺点。 例如，何时使用Marathon / Chronos比使用Kubernetes更好，反之亦然？ 现在我主要是进行实验，但希望我们在夏天之后开始在生产中使用这些服务之一。这可能会使Docker Swarm失去资格，因为我不确定它是否会在那时处">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-25T05:34:09.347Z">
+<meta property="og:updated_time" content="2019-07-31T00:47:12.217Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="POD卡在Terminating状态">
-<meta name="twitter:description" content="问题描述我试图删除一个有12个pod的ReplicationController，但是发现一些pod卡在了Terminating状态。 我的Kubernetes集群安装在Ubuntu虚拟机上，包括一个master节点和三个worker节点。 这个问题可能是什么原因？ 123456NAME        READY     STATUS        RESTARTS   AGEpod-186o2">
+<meta name="twitter:title" content="Marathon vs Kubernetes vs Docker Swarm on DC&#x2F;OS with Docker containers">
+<meta name="twitter:description" content="问题描述我正在寻找在DC / OS上运行Docker容器时是否使用Marathon和Chronos，Docker Swarm或Kubernetes的一些优缺点。 例如，何时使用Marathon / Chronos比使用Kubernetes更好，反之亦然？ 现在我主要是进行实验，但希望我们在夏天之后开始在生产中使用这些服务之一。这可能会使Docker Swarm失去资格，因为我不确定它是否会在那时处">
 
     
     <link rel="alternative" href="/atom.xml" title="lyyao09&#39;s blog" type="application/atom+xml">
@@ -82,14 +82,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2019/07/25/Pods-stuck-in-Terminating-status/" title="POD卡在Terminating状态" itemprop="url">POD卡在Terminating状态</a>
+      <a href="/2019/07/30/stackoverflow/Marathon-vs-Kubernetes-vs-Docker-Swarm-on-DC-OS-with-Docker-containers/" title="Marathon vs Kubernetes vs Docker Swarm on DC/OS with Docker containers" itemprop="url">Marathon vs Kubernetes vs Docker Swarm on DC/OS with Docker containers</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="lyyao09" target="_blank" itemprop="author">lyyao09</a>
 		
   <p class="article-time">
-    <time datetime="2019-07-25T13:38:39.000Z" itemprop="datePublished"> 发表于 2019-07-25</time>
+    <time datetime="2019-07-30T12:52:04.000Z" itemprop="datePublished"> 发表于 2019-07-30</time>
     
   </p>
 </header>
@@ -102,19 +102,52 @@
 		
 		</div>
 		
-		<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我试图删除一个有12个pod的ReplicationController，但是发现一些pod卡在了Terminating状态。</p>
-<p>我的Kubernetes集群安装在Ubuntu虚拟机上，包括一个master节点和三个worker节点。</p>
-<p>这个问题可能是什么原因？</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">NAME        READY     STATUS        RESTARTS   AGE</span><br><span class="line">pod-186o2   1/1       Terminating   0          2h</span><br><span class="line">pod-4b6qc   1/1       Terminating   0          2h</span><br><span class="line">pod-8xl86   1/1       Terminating   0          1h</span><br><span class="line">pod-d6htc   1/1       Terminating   0          1h</span><br><span class="line">pod-vlzov   1/1       Terminating   0          1h</span><br></pre></td></tr></table></figure>
-
-<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>您可以使用以下命令强制删除POD。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete pod &lt;PODNAME&gt; --grace-period=0 --force --namespace &lt;NAMESPACE&gt;</span><br></pre></td></tr></table></figure>
-
-<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a href="https://stackoverflow.com/questions/35453792/pods-stuck-in-terminating-status" target="_blank" rel="noopener">Pods stuck in Terminating status</a></p>
+		<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我正在寻找在DC / OS上运行Docker容器时是否使用Marathon和Chronos，Docker Swarm或Kubernetes的一些优缺点。</p>
+<p>例如，何时使用Marathon / Chronos比使用Kubernetes更好，反之亦然？</p>
+<p>现在我主要是进行实验，但希望我们在夏天之后开始在生产中使用这些服务之一。这可能会使Docker Swarm失去资格，因为我不确定它是否会在那时处于生产可用。</p>
+<p>我喜欢Docker Swarm的原因是它本质上只是“Docker命令”，你不需要学习全新的东西。我们已经在使用docker-compose，它将与Docker Swarm一起开箱即用（至少在理论上），这将是一个很大的优势。我对Docker Swarm的主要关注是它是否涵盖了在生产中运行系统所需的所有用例。</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>我将尝试分解Mesos上每个容器编排框架的独特方面。</p>
+<p>使用<a href="https://github.com/docker/swarm/" target="_blank" rel="noopener">Docker Swarm</a>，如果：</p>
+<ul>
+<li>您想使用熟悉的Docker API在Mesos上启动Docker容器</li>
+<li>Swarm最终可能会提供一个API来与Kubernetes（甚至是K8s-Mesos）交互</li>
+<li>请参阅：<a href="http://www.techrepublic.com/article/docker-and-mesos-like-peanut-butter-and-jelly/" target="_blank" rel="noopener">http://www.techrepublic.com/article/docker-and-mesos-like-peanut-butter-and-jelly/</a></li>
+</ul>
+<p>使用<a href="https://github.com/mesosphere/kubernetes-mesos" target="_blank" rel="noopener">Kubernetes-Mesos</a>，如果：</p>
+<ul>
+<li>您想要启动K8s Pods，它们是共同调度的容器组，共享资源</li>
+<li>您希望与父容器旁边的一个或多个sidekick容器（例如，日志归档程序，度量标准监视器）一起启动服务</li>
+<li>您希望使用基于K8s标签的服务发现，负载平衡和副本控制</li>
+<li>请参阅：<a href="http://kubernetesio.blogspot.com/2015/04/kubernetes-and-mesosphere-dcos.html" target="_blank" rel="noopener">http://kubernetesio.blogspot.com/2015/04/kubernetes-and-mesosphere-dcos.html</a></li>
+</ul>
+<p>使用<a href="https://mesosphere.github.io/marathon/" target="_blank" rel="noopener">Marathon</a>，如果：</p>
+<ul>
+<li>您想要启动Docker或非Docker长期运行的应用程序/服务</li>
+<li>您希望将Mesos属性用于基于约束的计划</li>
+<li>您希望使用应用程序组和依赖关系来启动，扩展或升级相关服务</li>
+<li>您希望使用运行状况检查来自动重新启动不健康的服务或回滚不健康的部署/升级</li>
+<li>您希望集成HAProxy或Consul以进行服务发现</li>
+<li>您希望通过Web UI或REST API启动和监控应用程序</li>
+<li>您想要使用从一开始就构建的框架</li>
+</ul>
+<p>使用<a href="https://github.com/mesos/chronos" target="_blank" rel="noopener">Chronos</a>，如果：</p>
+<ul>
+<li>您希望启动预期退出的Docker或非Docker任务</li>
+<li>您希望将任务计划为在特定时间/计划（cron）运行</li>
+<li>您希望安排依赖任务的DAG工作流程</li>
+<li>您希望通过Web UI或REST API启动和监视作业</li>
+<li>您想要使用从一开始就构建的框架</li>
+</ul>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a href="https://stackoverflow.com/questions/29198840/marathon-vs-kubernetes-vs-docker-swarm-on-dc-os-with-docker-containers" target="_blank" rel="noopener">Marathon vs Kubernetes vs Docker Swarm on DC/OS with Docker containers</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/stackoverflow/">stackoverflow</a>
+</div>
 
 
   <div class="article-tags">
@@ -128,7 +161,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://lyyao09.github.io/2019/07/25/Pods-stuck-in-Terminating-status/" data-title="POD卡在Terminating状态 | lyyao09&#39;s blog" data-tsina="" class="share clearfix">
+	  <div data-url="https://lyyao09.github.io/2019/07/30/stackoverflow/Marathon-vs-Kubernetes-vs-Docker-Swarm-on-DC-OS-with-Docker-containers/" data-title="Marathon vs Kubernetes vs Docker Swarm on DC/OS with Docker containers | lyyao09&#39;s blog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -143,9 +176,9 @@
  
 
 <div class="next">
-<a href="/2019/07/24/What's-the-difference-between-docker-compose-and-kubernetes/"  title="docker compose和kubernetes之间有什么区别">
+<a href="/2019/07/29/stackoverflow/Kubernetes-vs-CloudFoundry/"  title="Kubernetes vs. CloudFoundry">
  <strong>下一篇：</strong><br/> 
- <span>docker compose和kubernetes之间有什么区别
+ <span>Kubernetes vs. CloudFoundry
 </span>
 </a>
 </div>
@@ -174,6 +207,11 @@
 
 
   
+<div class="category-block">
+  <h3 class="asidetitle">分类</h3>
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/stackoverflow/">stackoverflow</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li></ul>
+</div>
+
 
   
 <div class="tagslist">
@@ -181,15 +219,11 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/kubernetes/" title="kubernetes">kubernetes<sup>5</sup></a></li>
+				<li><a href="/tags/kubernetes/" title="kubernetes">kubernetes<sup>11</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/docker/" title="docker">docker<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/docker-compose/" title="docker-compose">docker-compose<sup>1</sup></a></li>
+				<li><a href="/tags/docker/" title="docker">docker<sup>2</sup></a></li>
 			
 		
 			
@@ -198,6 +232,14 @@
 		
 			
 				<li><a href="/tags/tools/" title="tools">tools<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker-compose/" title="docker-compose">docker-compose<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kubectl/" title="kubectl">kubectl<sup>1</sup></a></li>
 			
 		
 		</ul>
@@ -210,7 +252,7 @@
         
           <li>
             
-            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            	<a href="https://stackoverflow.com" target="_blank" title="StackOverFlow">StackOverFlow</a>
             
           </li>
         
@@ -232,7 +274,7 @@
 
   <div class="weiboshow">
   <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=&verifier=b3593ceb&dpc=1"></iframe>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=&verifier=&dpc=1"></iframe>
 </div>
 
 
@@ -248,13 +290,12 @@
 	
 	
 	<section class="info">
-		<p> Hello ,I&#39;m Larry Page in Google. <br/>
+		<p> Hello ,I&#39;m lyyao09 in HangZhou. <br/>
 			This is my blog,believe it or not.</p>
 	</section>
 	 
 	<div class="social-font" class="clearfix">
 		
-		<a href="http://weibo.com/2176287895" target="_blank" class="icon-weibo" title="微博"></a>
 		
 		
 		
@@ -264,6 +305,7 @@
 		
 		
 		
+		<a href="mailto:lyyao09@163.com" target="_blank" class="icon-email" title="Email Me"></a>
 		
 	</div>
 			
