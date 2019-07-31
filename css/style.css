@@ -1894,6 +1894,57 @@ section.comment {
 .github-card div {
   padding: 0.5em 0;
 }
+.category-block>ul>li {
+  border-bottom: 1px solid #ccc;
+}
+.category-block li {
+  margin-bottom: 8px;
+}
+@media only screen and (min-width: 768px) {
+  .category-list {
+    width: 45%;
+    float: left;
+    margin: 0 5% 0 0;
+  }
+}
+@media only screen and (min-width: 1024px) {
+  .category-list {
+    width: 100%;
+    float: none;
+    margin: 0.5em 0 0;
+  }
+}
+.category-list .categoriy-list-item {
+  padding: 0.5em 5%;
+}
+.category-list .category-list-count {
+  top: -0.5em;
+  padding-left: 0.3em;
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+.category-list ul,
+.category-list ol,
+.category-list dl {
+  list-style: none;
+}
+.category-list ul,
+.category-list ol,
+.category-list dl {
+  background-color: #f9f9fa;
+  margin-left: 20px;
+}
+.category-list ul li,
+.category-list ol li,
+.category-list dl li {
+  border-bottom: 1px dashed #ccc;
+}
+.category-list .category-list-child {
+  border-top: 1px dashed #ccc;
+  margin-bottom: 8px;
+}
 footer {
   margin-top: 1em;
   background: #1f1f1f;
@@ -1935,7 +1986,7 @@ footer {
   width: 6.875em;
   height: 6.875em;
   margin: 0 auto;
-  background: no-repeat url("../img/author.jpg") left top;
+  background: no-repeat url("../img/author.png") left top;
   -webkit-background-size: 6.875em 6.875em;
   -moz-background-size: 6.875em 6.875em;
   background-size: 6.875em 6.875em;
