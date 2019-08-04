@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-prefix-convert-and-merge/</loc>
+    <lastmod>2019-08-04</lastmod>
+  </url>  <url>
+    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-read-write/</loc>
+    <lastmod>2019-08-04</lastmod>
+  </url>  <url>
+    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-install/</loc>
+    <lastmod>2019-08-04</lastmod>
+  </url>  <url>
+    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-create-delete/</loc>
+    <lastmod>2019-08-04</lastmod>
+  </url>  <url>
+    <loc>https://lyyao09.github.io/2019/07/31/stack/How-do-I-access-the-Kubernetes-api-from-within-a-pod-container/</loc>
+    <lastmod>2019-08-04</lastmod>
+  </url>  <url>
     <loc>https://lyyao09.github.io/2019/07/27/stack/Whats-the-difference-between-ClusterIP-NodePort-and-LoadBalancer-service-types-in-Kubernetes/</loc>
     <lastmod>2019-08-04</lastmod>
   </url>  <url>
@@ -18,12 +33,6 @@
   </url>  <url>
     <loc>https://lyyao09.github.io/2019/07/27/stack/Ingress-vs-Load-Balancer/</loc>
     <lastmod>2019-08-04</lastmod>
-  </url>  <url>
-    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-read-write/</loc>
-    <lastmod>2019-08-03</lastmod>
-  </url>  <url>
-    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-install/</loc>
-    <lastmod>2019-08-03</lastmod>
   </url>  <url>
     <loc>https://lyyao09.github.io/2019/07/29/stack/Kubernetes-vs-CloudFoundry/</loc>
     <lastmod>2019-07-31</lastmod>

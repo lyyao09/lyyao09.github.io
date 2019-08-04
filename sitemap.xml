@@ -2,6 +2,41 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-prefix-convert-and-merge/</loc>
+    
+    <lastmod>2019-08-04T03:15:36.536Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-read-write/</loc>
+    
+    <lastmod>2019-08-04T03:15:21.124Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-install/</loc>
+    
+    <lastmod>2019-08-04T03:15:10.310Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-create-delete/</loc>
+    
+    <lastmod>2019-08-04T03:12:55.382Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/31/stack/How-do-I-access-the-Kubernetes-api-from-within-a-pod-container/</loc>
+    
+    <lastmod>2019-08-04T03:12:55.072Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://lyyao09.github.io/2019/07/27/stack/Whats-the-difference-between-ClusterIP-NodePort-and-LoadBalancer-service-types-in-Kubernetes/</loc>
     
     <lastmod>2019-08-04T01:39:27.759Z</lastmod>
@@ -40,20 +75,6 @@
     <loc>https://lyyao09.github.io/2019/07/27/stack/Ingress-vs-Load-Balancer/</loc>
     
     <lastmod>2019-08-04T01:25:58.140Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-read-write/</loc>
-    
-    <lastmod>2019-08-03T03:07:07.551Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-install/</loc>
-    
-    <lastmod>2019-08-03T03:06:08.160Z</lastmod>
     
   </url>
   
