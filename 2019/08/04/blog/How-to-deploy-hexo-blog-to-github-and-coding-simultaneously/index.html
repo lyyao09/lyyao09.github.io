@@ -4,25 +4,30 @@
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
-    <title>Kubernetes的各种Service类型（ClusterIP，NodePort和LoadBalancer）有什么区别 | lyyao09&#39;s blog</title>
+    <title>Hexo博客同时托管到github和coding问题汇总 | lyyao09&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="lyyao09">
     
 
     
-    <meta name="description" content="问题描述1  - 我正在阅读文档，我对措辞有点困惑。它说：  ClusterIP：在集群内部IP上公开服务。选择此值使服务只能从群集中访问。这是默认的ServiceType NodePort：在每个Node的IP上公开静态端口（NodePort）服务。将自动创建NodePort服务到ClusterIP服务的路由。您可以通过请求：来从群集外部请求NodePort服务。 LoadBalancer：使用">
-<meta name="keywords" content="kubernetes">
+    <meta name="description" content="在搭建个人博客时遇到了一个大家都遇到过的坑，那就是在github上托管的博客在百度上是搜索不到的，所以就有了把个人博客同时托管到github和coding之说。 搭建教程网上一搜一大把，不再详述（可参考这里），这里只记录下搭建过程中需要注意的几个地方。  coding账号注册时请选择个人版（如果注册了团队版，你会发现跟网上给的教程不太一样，而且，部署出来的网页地址无法修改成xxx.coding.m">
+<meta name="keywords" content="blog">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kubernetes的各种Service类型（ClusterIP，NodePort和LoadBalancer）有什么区别">
-<meta property="og:url" content="https://lyyao09.github.io/2019/07/27/stack/Whats-the-difference-between-ClusterIP-NodePort-and-LoadBalancer-service-types-in-Kubernetes/index.html">
+<meta property="og:title" content="Hexo博客同时托管到github和coding问题汇总">
+<meta property="og:url" content="https://lyyao09.github.io/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/index.html">
 <meta property="og:site_name" content="lyyao09&#39;s blog">
-<meta property="og:description" content="问题描述1  - 我正在阅读文档，我对措辞有点困惑。它说：  ClusterIP：在集群内部IP上公开服务。选择此值使服务只能从群集中访问。这是默认的ServiceType NodePort：在每个Node的IP上公开静态端口（NodePort）服务。将自动创建NodePort服务到ClusterIP服务的路由。您可以通过请求：来从群集外部请求NodePort服务。 LoadBalancer：使用">
+<meta property="og:description" content="在搭建个人博客时遇到了一个大家都遇到过的坑，那就是在github上托管的博客在百度上是搜索不到的，所以就有了把个人博客同时托管到github和coding之说。 搭建教程网上一搜一大把，不再详述（可参考这里），这里只记录下搭建过程中需要注意的几个地方。  coding账号注册时请选择个人版（如果注册了团队版，你会发现跟网上给的教程不太一样，而且，部署出来的网页地址无法修改成xxx.coding.m">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-04T01:39:27.759Z">
+<meta property="og:image" content="https://lyyao09.github.io/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/1564908572712.png">
+<meta property="og:image" content="https://lyyao09.github.io/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/1564908744041.png">
+<meta property="og:image" content="https://lyyao09.github.io/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/1564909224309.png">
+<meta property="og:image" content="https://lyyao09.github.io/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/1564910021188.png">
+<meta property="og:updated_time" content="2019-08-04T09:49:13.360Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Kubernetes的各种Service类型（ClusterIP，NodePort和LoadBalancer）有什么区别">
-<meta name="twitter:description" content="问题描述1  - 我正在阅读文档，我对措辞有点困惑。它说：  ClusterIP：在集群内部IP上公开服务。选择此值使服务只能从群集中访问。这是默认的ServiceType NodePort：在每个Node的IP上公开静态端口（NodePort）服务。将自动创建NodePort服务到ClusterIP服务的路由。您可以通过请求：来从群集外部请求NodePort服务。 LoadBalancer：使用">
+<meta name="twitter:title" content="Hexo博客同时托管到github和coding问题汇总">
+<meta name="twitter:description" content="在搭建个人博客时遇到了一个大家都遇到过的坑，那就是在github上托管的博客在百度上是搜索不到的，所以就有了把个人博客同时托管到github和coding之说。 搭建教程网上一搜一大把，不再详述（可参考这里），这里只记录下搭建过程中需要注意的几个地方。  coding账号注册时请选择个人版（如果注册了团队版，你会发现跟网上给的教程不太一样，而且，部署出来的网页地址无法修改成xxx.coding.m">
+<meta name="twitter:image" content="https://lyyao09.github.io/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/1564908572712.png">
 
     
     <link rel="alternative" href="/atom.xml" title="lyyao09&#39;s blog" type="application/atom+xml">
@@ -82,14 +87,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2019/07/27/stack/Whats-the-difference-between-ClusterIP-NodePort-and-LoadBalancer-service-types-in-Kubernetes/" title="Kubernetes的各种Service类型（ClusterIP，NodePort和LoadBalancer）有什么区别" itemprop="url">Kubernetes的各种Service类型（ClusterIP，NodePort和LoadBalancer）有什么区别</a>
+      <a href="/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/" title="Hexo博客同时托管到github和coding问题汇总" itemprop="url">Hexo博客同时托管到github和coding问题汇总</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="lyyao09" target="_blank" itemprop="author">lyyao09</a>
 		
   <p class="article-time">
-    <time datetime="2019-07-27T02:03:45.000Z" itemprop="datePublished"> 发表于 2019-07-27</time>
+    <time datetime="2019-08-04T08:35:43.000Z" itemprop="datePublished"> 发表于 2019-08-04</time>
     
   </p>
 </header>
@@ -98,41 +103,25 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题描述"><span class="toc-number">1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#高票回答"><span class="toc-number">2.</span> <span class="toc-text">高票回答</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原文链接"><span class="toc-number">3.</span> <span class="toc-text">原文链接</span></a></li></ol>
+			
 		
 		</div>
 		
-		<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>1  - 我正在阅读文档，我对措辞有点困惑。它说：</p>
-<blockquote>
-<p><strong>ClusterIP</strong>：在集群内部IP上公开服务。选择此值使服务只能从群集中访问。这是默认的ServiceType</p>
-<p><strong>NodePort</strong>：在每个Node的IP上公开静态端口（NodePort）服务。将自动创建NodePort服务到ClusterIP服务的路由。您可以通过请求<nodeip>：<nodeport>来从群集外部请求NodePort服务。</nodeport></nodeip></p>
-<p><strong>LoadBalancer</strong>：使用云提供商的负载均衡器在外部公开服务。将自动创建外部负载均衡器到NodePort和ClusterIP服务的路由。</p>
-</blockquote>
-<p>NodePort服务类型是否仍然使用ClusterIP，而只是在不同的端口，该端口对外部客户端开放？那么在这种情况下，<nodeip>：<nodeport>与<clusterip>：<nodeport>相同？</nodeport></clusterip></nodeport></nodeip></p>
-<p>或者，NodeIP是否是运行kubectl get nodes得到的IP，而不是用于ClusterIP的虚拟IP？</p>
-<p>2  - 同样在以下链接的图表中：</p>
-<p><a href="http://kubernetes.io/images/docs/services-iptables-overview.svg" target="_blank" rel="noopener">http://kubernetes.io/images/docs/services-iptables-overview.svg</a></p>
-<p>客户端在节点内是否有任何特殊原因？我认为在ClusterIP服务类型的情况下，它需要在Cluster内。如果为NodePort绘制一个类似的图表，那么把客户端画在Node和Cluster之外是否有效，或者我是否忽略了什么？</p>
-<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>ClusterIP公开以下内容：</p>
-<ul>
-<li><code>spec.clusterIp:spec.ports[*].port</code></li>
-</ul>
-<p>您只能在群集内访问此服务。可以从spec.clusterIp端口访问它。如果设置了spec.ports [*].targetPort，它将从端口路由到targetPort。调用kubectl get services时获得的CLUSTER-IP是内部在集群内分配给此服务的IP。</p>
-<p>NodePort公开以下内容：</p>
-<ul>
-<li><code>&lt;NodeIP&gt;:spec.ports[*].nodePort</code></li>
-<li><code>spec.clusterIp:spec.ports[*].port</code></li>
-</ul>
-<p>如果通过nodePort的方式从节点的外部IP访问此服务，它会将请求路由到spec.clusterIp:spec.ports[*].port，然后将其路由到spec.ports [*].targetPort，如果设置。也可以使用与ClusterIP相同的方式访问此服务。</p>
-<p>您的NodeIP是节点的外部IP地址。您无法从<clusterip>:spec.ports [*].nodePort访问您的服务。</clusterip></p>
-<p>LoadBalancer公开以下内容：</p>
-<ul>
-<li><code>spec.loadBalancerIp:spec.ports[*].port</code></li>
-<li><code>&lt;NodeIP&gt;:spec.ports[*].nodePort</code></li>
-<li><code>spec.clusterIp:spec.ports[*].port</code></li>
-</ul>
-<p>您可以从负载均衡器的IP地址访问此服务，该IP地址将您的请求路由到nodePort，而nodePort又将请求路由到clusterIP端口。您可以像访问NodePort或ClusterIP服务一样访问此服务。</p>
-<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a href="https://stackoverflow.com/questions/41509439/whats-the-difference-between-clusterip-nodeport-and-loadbalancer-service-types" target="_blank" rel="noopener">What’s the difference between ClusterIP, NodePort and LoadBalancer service types in Kubernetes</a></p>
+		<p>在搭建个人博客时遇到了一个大家都遇到过的坑，那就是在github上托管的博客在百度上是搜索不到的，所以就有了把个人博客同时托管到github和coding之说。</p>
+<p>搭建教程网上一搜一大把，不再详述（可参考<a href="https://hoxis.github.io/hexo%E5%8D%9A%E5%AE%A2%E5%90%8C%E6%97%B6%E6%89%98%E7%AE%A1%E5%88%B0github%E5%92%8Ccoding.html" target="_blank" rel="noopener">这里</a>），这里只记录下搭建过程中需要注意的几个地方。</p>
+<ol>
+<li>coding账号注册时请选择<strong>个人版</strong>（如果注册了团队版，你会发现跟网上给的教程不太一样，而且，部署出来的网页地址无法修改成xxx.coding.me）。</li>
+</ol>
+<p><img src="//lyyao09.github.io/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/1564908572712.png" alt="1564908572712"></p>
+<p><img src="//lyyao09.github.io/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/1564908744041.png" alt="1564908744041"></p>
+<ol start="2">
+<li>访问地址如果是如下图所示，不要慌，到个人账户—&gt;个人设置—&gt;用户名，修改一下就可以了。</li>
+</ol>
+<p><img src="//lyyao09.github.io/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/1564909224309.png" alt="1564909224309"></p>
+<ol start="3">
+<li>如果未设置SSH（报错信息如下图），请拷贝本地主机的id_rsa.pub内容到个人账户—&gt;SSH公钥</li>
+</ol>
+<p><img src="//lyyao09.github.io/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/1564910021188.png" alt="1564910021188"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -140,13 +129,13 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/stackoverflow/">stackoverflow</a>
+  <a class="article-category-link" href="/categories/blog/">blog</a>
 </div>
 
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/kubernetes/">kubernetes</a>
+  <span></span> <a href="/tags/blog/">blog</a>
   </div>
 
 </div>
@@ -155,7 +144,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://lyyao09.github.io/2019/07/27/stack/Whats-the-difference-between-ClusterIP-NodePort-and-LoadBalancer-service-types-in-Kubernetes/" data-title="Kubernetes的各种Service类型（ClusterIP，NodePort和LoadBalancer）有什么区别 | lyyao09&#39;s blog" data-tsina="" class="share clearfix">
+	  <div data-url="https://lyyao09.github.io/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/" data-title="Hexo博客同时托管到github和coding问题汇总 | lyyao09&#39;s blog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -168,19 +157,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2019/07/27/stack/Ingress-vs-Load-Balancer/" title="Ingress vs LoadBalancer">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Ingress vs LoadBalancer</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2019/07/27/stack/Docker-Swarm-Kubernetes-Mesos-Core-OS-Fleet/"  title="Docker-Swarm，Kubernetes，Mesos和Core-OS Fleet">
+<a href="/2019/08/02/tools/The-usage-of-yq-prefix-convert-and-merge/"  title="YAML处理工具yq之匹配合并和转换">
  <strong>下一篇：</strong><br/> 
- <span>Docker-Swarm，Kubernetes，Mesos和Core-OS Fleet
+ <span>YAML处理工具yq之匹配合并和转换
 </span>
 </a>
 </div>
@@ -197,7 +178,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题描述"><span class="toc-number">1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#高票回答"><span class="toc-number">2.</span> <span class="toc-text">高票回答</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原文链接"><span class="toc-number">3.</span> <span class="toc-text">原文链接</span></a></li></ol>
+ 
  
   </div>
 

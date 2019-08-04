@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lyyao09.github.io/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/</loc>
+    
+    <lastmod>2019-08-04T09:49:13.360Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://lyyao09.github.io/2019/07/31/stack/How-do-I-access-the-Kubernetes-api-from-within-a-pod-container/</loc>
     
     <lastmod>2019-08-04T03:21:57.498Z</lastmod>
