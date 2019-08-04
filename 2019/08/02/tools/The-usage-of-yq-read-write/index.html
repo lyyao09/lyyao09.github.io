@@ -1,0 +1,703 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>YAML处理工具yq之读写篇 | lyyao09&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="lyyao09">
+    
+
+    
+    <meta name="description" content="yq是一个轻量级的便携式命令行YAML处理器。该工具的目标是成为yaml文件处理方面的jq或sed。 读取1yq r &amp;lt;yaml_file|json_file&amp;gt; &amp;lt;path&amp;gt;  此命令也可以将json文件作为输入，并将输出yaml，除非指定导出为json（-j） 基本操作给出sample.yaml文件： 12b:  c: 2  然后 1yq r sample.yaml b.">
+<meta name="keywords" content="tools">
+<meta property="og:type" content="article">
+<meta property="og:title" content="YAML处理工具yq之读写篇">
+<meta property="og:url" content="https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-read-write/index.html">
+<meta property="og:site_name" content="lyyao09&#39;s blog">
+<meta property="og:description" content="yq是一个轻量级的便携式命令行YAML处理器。该工具的目标是成为yaml文件处理方面的jq或sed。 读取1yq r &amp;lt;yaml_file|json_file&amp;gt; &amp;lt;path&amp;gt;  此命令也可以将json文件作为输入，并将输出yaml，除非指定导出为json（-j） 基本操作给出sample.yaml文件： 12b:  c: 2  然后 1yq r sample.yaml b.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-08-03T03:07:07.551Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="YAML处理工具yq之读写篇">
+<meta name="twitter:description" content="yq是一个轻量级的便携式命令行YAML处理器。该工具的目标是成为yaml文件处理方面的jq或sed。 读取1yq r &amp;lt;yaml_file|json_file&amp;gt; &amp;lt;path&amp;gt;  此命令也可以将json文件作为输入，并将输出yaml，除非指定导出为json（-j） 基本操作给出sample.yaml文件： 12b:  c: 2  然后 1yq r sample.yaml b.">
+
+    
+    <link rel="alternative" href="/atom.xml" title="lyyao09&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="lyyao09&#39;s blog" title="lyyao09&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="lyyao09&#39;s blog">lyyao09&#39;s blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:lyyao09.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/08/02/tools/The-usage-of-yq-read-write/" title="YAML处理工具yq之读写篇" itemprop="url">YAML处理工具yq之读写篇</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="lyyao09" target="_blank" itemprop="author">lyyao09</a>
+		
+  <p class="article-time">
+    <time datetime="2019-08-02T13:52:09.000Z" itemprop="datePublished"> 发表于 2019-08-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#读取"><span class="toc-number">1.</span> <span class="toc-text">读取</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本操作"><span class="toc-number">1.1.</span> <span class="toc-text">基本操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#从标准输入读取"><span class="toc-number">1.2.</span> <span class="toc-text">从标准输入读取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通配符"><span class="toc-number">1.3.</span> <span class="toc-text">通配符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前缀匹配"><span class="toc-number">1.4.</span> <span class="toc-text">前缀匹配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多文档-指定单个文档"><span class="toc-number">1.5.</span> <span class="toc-text">多文档 - 指定单个文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多文档-指定所有文档"><span class="toc-number">1.6.</span> <span class="toc-text">多文档 - 指定所有文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数组"><span class="toc-number">1.7.</span> <span class="toc-text">数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数组匹配"><span class="toc-number">1.8.</span> <span class="toc-text">数组匹配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#带点号的Key"><span class="toc-number">1.9.</span> <span class="toc-text">带点号的Key</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#带有破折号的键（和值）"><span class="toc-number">1.10.</span> <span class="toc-text">带有破折号的键（和值）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#写-更新"><span class="toc-number">2.</span> <span class="toc-text">写/更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#写到标准输出"><span class="toc-number">2.1.</span> <span class="toc-text">写到标准输出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#从标准输入读取-1"><span class="toc-number">2.2.</span> <span class="toc-text">从标准输入读取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加新字段"><span class="toc-number">2.3.</span> <span class="toc-text">添加新字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通配符-1"><span class="toc-number">2.4.</span> <span class="toc-text">通配符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前缀匹配-1"><span class="toc-number">2.5.</span> <span class="toc-text">前缀匹配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数组匹配-1"><span class="toc-number">2.6.</span> <span class="toc-text">数组匹配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数组字段添加值"><span class="toc-number">2.7.</span> <span class="toc-text">数组字段添加值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多文档-更新单个文档"><span class="toc-number">2.8.</span> <span class="toc-text">多文档 - 更新单个文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多文档-更新所有文档"><span class="toc-number">2.9.</span> <span class="toc-text">多文档 - 更新所有文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更新文件"><span class="toc-number">2.10.</span> <span class="toc-text">更新文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用脚本更新多个值"><span class="toc-number">2.11.</span> <span class="toc-text">使用脚本更新多个值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#以连字符（或短划线）开头的值"><span class="toc-number">2.12.</span> <span class="toc-text">以连字符（或短划线）开头的值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#带点号的Key-1"><span class="toc-number">2.13.</span> <span class="toc-text">带点号的Key</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#带有破折号的键（和值）-1"><span class="toc-number">2.14.</span> <span class="toc-text">带有破折号的键（和值）</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p>yq是一个轻量级的便携式命令行YAML处理器。该工具的目标是成为yaml文件处理方面的jq或sed。</p>
+<h2 id="读取"><a href="#读取" class="headerlink" title="读取"></a>读取</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq r &lt;yaml_file|json_file&gt; &lt;path&gt;</span><br></pre></td></tr></table></figure>
+
+<p>此命令也可以将json文件作为输入，并将输出yaml，除非指定导出为json（-j）</p>
+<h3 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b:</span><br><span class="line">  c: 2</span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq r sample.yaml b.c</span><br></pre></td></tr></table></figure>
+
+<p>将输出值’2’。</p>
+<h3 id="从标准输入读取"><a href="#从标准输入读取" class="headerlink" title="从标准输入读取"></a>从标准输入读取</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat sample.yaml | yq r - b.c</span><br></pre></td></tr></table></figure>
+
+<p>将输出值’2’。</p>
+<h3 id="通配符"><a href="#通配符" class="headerlink" title="通配符"></a>通配符</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span><span class="meta">---</span></span><br><span class="line"><span class="attr">bob:</span></span><br><span class="line"><span class="attr">  item1:</span></span><br><span class="line"><span class="attr">    cats:</span> <span class="string">bananas</span></span><br><span class="line"><span class="attr">  item2:</span></span><br><span class="line"><span class="attr">    cats:</span> <span class="string">apples</span></span><br><span class="line"><span class="attr">  thing:</span></span><br><span class="line"><span class="attr">    cats:</span> <span class="string">oranges</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq r sample.yaml bob.*.cats</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- bananas</span><br><span class="line">- apples</span><br><span class="line">- oranges</span><br></pre></td></tr></table></figure>
+
+<h3 id="前缀匹配"><a href="#前缀匹配" class="headerlink" title="前缀匹配"></a>前缀匹配</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span><span class="meta">---</span></span><br><span class="line"><span class="attr">bob:</span></span><br><span class="line"><span class="attr">  item1:</span></span><br><span class="line"><span class="attr">    cats:</span> <span class="string">bananas</span></span><br><span class="line"><span class="attr">  item2:</span></span><br><span class="line"><span class="attr">    cats:</span> <span class="string">apples</span></span><br><span class="line"><span class="attr">  thing:</span></span><br><span class="line"><span class="attr">    cats:</span> <span class="string">oranges</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq r sample.yaml bob.item*.cats</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- bananas</span><br><span class="line">- apples</span><br></pre></td></tr></table></figure>
+
+<h3 id="多文档-指定单个文档"><a href="#多文档-指定单个文档" class="headerlink" title="多文档 - 指定单个文档"></a>多文档 - 指定单个文档</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">b:</span></span><br><span class="line"><span class="attr">  c:</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq r -d1 sample.yaml b.c</span><br></pre></td></tr></table></figure>
+
+<p>将输出值’2’。</p>
+<h3 id="多文档-指定所有文档"><a href="#多文档-指定所有文档" class="headerlink" title="多文档 - 指定所有文档"></a>多文档 - 指定所有文档</h3><p>读取所有文档将以数组形式返回结果。如果需要，可以使用’-j’标志将其转换为json。</p>
+<p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">Fred</span></span><br><span class="line"><span class="attr">age:</span> <span class="number">22</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">name:</span> <span class="string">Stella</span></span><br><span class="line"><span class="attr">age:</span> <span class="number">23</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">name:</span> <span class="string">Android</span></span><br><span class="line"><span class="attr">age:</span> <span class="number">232</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq r -d'*' sample.yaml name</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- Fred</span><br><span class="line">- Stella</span><br><span class="line">- Android</span><br></pre></td></tr></table></figure>
+
+<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><p>您可以提供一个索引来访问特定元素：例如：给定一个示例文件</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line"><span class="attr">  e:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">fred</span></span><br><span class="line"><span class="attr">      value:</span> <span class="number">3</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">sam</span></span><br><span class="line"><span class="attr">      value:</span> <span class="number">4</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq r sample.yaml 'b.e[1].name'</span><br></pre></td></tr></table></figure>
+
+<p>将输出’sam’。</p>
+<blockquote>
+<p>请注意，路径是引号，以避免shell解释方括号。</p>
+</blockquote>
+<h3 id="数组匹配"><a href="#数组匹配" class="headerlink" title="数组匹配"></a>数组匹配</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line"><span class="attr">  e:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">fred</span></span><br><span class="line"><span class="attr">      value:</span> <span class="number">3</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">sam</span></span><br><span class="line"><span class="attr">      value:</span> <span class="number">4</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq r sample.yaml 'b.e[*].name'</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="string">fred</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">sam</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>请注意，路径是引号，以避免shell解释方括号。</p>
+</blockquote>
+<h3 id="带点号的Key"><a href="#带点号的Key" class="headerlink" title="带点号的Key"></a>带点号的Key</h3><p>指定具有点号使用键查找指示符的键时。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="string">foo.bar:</span> <span class="number">7</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yaml r sample.yaml 'b[foo.bar]'</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yaml w sample.yaml 'b[foo.bar]' 9</span><br></pre></td></tr></table></figure>
+
+<p>可以将任何有效的yaml key指定为key查找的一部分。</p>
+<blockquote>
+<p>请注意，路径是引号，以避免shell解释方括号。</p>
+</blockquote>
+<h3 id="带有破折号的键（和值）"><a href="#带有破折号的键（和值）" class="headerlink" title="带有破折号的键（和值）"></a>带有破折号的键（和值）</h3><p>如果键或值具有前导破折号，则yq将不知道您传递的是值而不是标志（并且您将收到“错误标志语法”错误）。</p>
+<p>要解决这个问题，你需要告诉它通过在最后一个标志之后添加’ - ‘来停止处理标志，如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq n -t -- --key --value</span><br></pre></td></tr></table></figure>
+
+<p>返回</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">` --key: --value</span><br></pre></td></tr></table></figure>
+
+<h2 id="写-更新"><a href="#写-更新" class="headerlink" title="写/更新"></a>写/更新</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq w &lt;yaml_file&gt; &lt;path&gt; &lt;new value&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="写到标准输出"><a href="#写到标准输出" class="headerlink" title="写到标准输出"></a>写到标准输出</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line"><span class="attr">  c:</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq w sample.yaml b.c cat</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line"><span class="attr">  c:</span> <span class="string">cat</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="从标准输入读取-1"><a href="#从标准输入读取-1" class="headerlink" title="从标准输入读取"></a>从标准输入读取</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat sample.yaml | yq w - b.c blah</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加新字段"><a href="#添加新字段" class="headerlink" title="添加新字段"></a>添加新字段</h3><p>路径中的任何缺少的字段都将动态创建。</p>
+<p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line"><span class="attr">  c:</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq w sample.yaml b.d[+] "new thing"</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line"><span class="attr">  c:</span> <span class="string">cat</span></span><br><span class="line"><span class="attr">  d:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">new</span> <span class="string">thing</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="通配符-1"><a href="#通配符-1" class="headerlink" title="通配符"></a>通配符</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">bob:</span></span><br><span class="line"><span class="attr">  item1:</span></span><br><span class="line"><span class="attr">    cats:</span> <span class="string">bananas</span></span><br><span class="line"><span class="attr">  item2:</span></span><br><span class="line"><span class="attr">    cats:</span> <span class="string">apples</span></span><br><span class="line"><span class="attr">  thing:</span></span><br><span class="line"><span class="attr">    cats:</span> <span class="string">oranges</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq w sample.yaml bob.*.cats meow</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">bob:</span><br><span class="line">  item1:</span><br><span class="line">    cats: meow</span><br><span class="line">  item2:</span><br><span class="line">    cats: meow</span><br><span class="line">  thing:</span><br><span class="line">    cats: meow</span><br></pre></td></tr></table></figure>
+
+<h3 id="前缀匹配-1"><a href="#前缀匹配-1" class="headerlink" title="前缀匹配"></a>前缀匹配</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">bob:</span></span><br><span class="line"><span class="attr">  item1:</span></span><br><span class="line"><span class="attr">    cats:</span> <span class="string">bananas</span></span><br><span class="line"><span class="attr">  item2:</span></span><br><span class="line"><span class="attr">    cats:</span> <span class="string">apples</span></span><br><span class="line"><span class="attr">  thing:</span></span><br><span class="line"><span class="attr">    cats:</span> <span class="string">oranges</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq w sample.yaml bob.item*.cats meow</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">bob:</span></span><br><span class="line"><span class="attr">  item1:</span></span><br><span class="line"><span class="attr">    cats:</span> <span class="string">meow</span></span><br><span class="line"><span class="attr">  item2:</span></span><br><span class="line"><span class="attr">    cats:</span> <span class="string">meow</span></span><br><span class="line"><span class="attr">  thing:</span></span><br><span class="line"><span class="attr">    cats:</span> <span class="string">oranges</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="数组匹配-1"><a href="#数组匹配-1" class="headerlink" title="数组匹配"></a>数组匹配</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">bob:</span></span><br><span class="line"><span class="attr">- cats:</span> <span class="string">bananas</span></span><br><span class="line"><span class="attr">- cats:</span> <span class="string">apples</span></span><br><span class="line"><span class="attr">- cats:</span> <span class="string">oranges</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq w sample.yaml bob[*].cats meow</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">bob:</span></span><br><span class="line"><span class="attr">- cats:</span> <span class="string">meow</span></span><br><span class="line"><span class="attr">- cats:</span> <span class="string">meow</span></span><br><span class="line"><span class="attr">- cats:</span> <span class="string">meow</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="数组字段添加值"><a href="#数组字段添加值" class="headerlink" title="数组字段添加值"></a>数组字段添加值</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line"><span class="attr">  c:</span> <span class="number">2</span></span><br><span class="line"><span class="attr">  d:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">new</span> <span class="string">thing</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">foo</span> <span class="string">thing</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq w sample.yaml "b.d[+]" "bar thing"</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line"><span class="attr">  c:</span> <span class="number">2</span></span><br><span class="line"><span class="attr">  d:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">new</span> <span class="string">thing</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">foo</span> <span class="string">thing</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">bar</span> <span class="string">thing</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>请注意，路径是引号，以避免shell解释方括号。</p>
+</blockquote>
+<h3 id="多文档-更新单个文档"><a href="#多文档-更新单个文档" class="headerlink" title="多文档 - 更新单个文档"></a>多文档 - 更新单个文档</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">b:</span></span><br><span class="line"><span class="attr">  c:</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq w -d1 sample.yaml b.c 5</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">b:</span></span><br><span class="line"><span class="attr">  c:</span> <span class="number">5</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="多文档-更新所有文档"><a href="#多文档-更新所有文档" class="headerlink" title="多文档 - 更新所有文档"></a>多文档 - 更新所有文档</h3><p>读取所有文档将以数组形式返回结果。如果需要，可以使用’-j’标志将其转换为json。</p>
+<p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">b:</span></span><br><span class="line"><span class="attr">  c:</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq w -d'*' sample.yaml b.c 5</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">something: else</span><br><span class="line">b:</span><br><span class="line">  c: 5</span><br><span class="line">---</span><br><span class="line">b:</span><br><span class="line">  c: 5</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>请注意，’*’在引号中以避免被shell解释。</p>
+</blockquote>
+<h3 id="更新文件"><a href="#更新文件" class="headerlink" title="更新文件"></a>更新文件</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line"><span class="attr">  c:</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq w -i sample.yaml b.c cat</span><br></pre></td></tr></table></figure>
+
+<p>将更新sample.yaml文件，将’c’的值改为cat。</p>
+<h3 id="使用脚本更新多个值"><a href="#使用脚本更新多个值" class="headerlink" title="使用脚本更新多个值"></a>使用脚本更新多个值</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line"><span class="attr">  c:</span> <span class="number">2</span></span><br><span class="line"><span class="attr">  e:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">Billy</span> <span class="string">Bob</span></span><br></pre></td></tr></table></figure>
+
+<p>和脚本update_instructions.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">b.c:</span> <span class="number">3</span></span><br><span class="line"><span class="string">b.e[+].name:</span> <span class="string">Howdy</span> <span class="string">Partner</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq w -s update_instructions.yaml sample.yaml</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line"><span class="attr">  c:</span> <span class="number">3</span></span><br><span class="line"><span class="attr">  e:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">Howdy</span> <span class="string">Partner</span></span><br></pre></td></tr></table></figure>
+
+<p>当然，也可以使用管道命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat update_instructions.yaml | yq w -s - sample.yaml</span><br></pre></td></tr></table></figure>
+
+<h3 id="以连字符（或短划线）开头的值"><a href="#以连字符（或短划线）开头的值" class="headerlink" title="以连字符（或短划线）开头的值"></a>以连字符（或短划线）开头的值</h3><p>需要使用标志终止符来阻止应用程序尝试将后续参数解析为标志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq w -- my.path -3</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">my:</span></span><br><span class="line"><span class="attr">  path:</span> <span class="bullet">-3</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="带点号的Key-1"><a href="#带点号的Key-1" class="headerlink" title="带点号的Key"></a>带点号的Key</h3><p>指定具有点号使用键查找指示符的键时。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="string">foo.bar:</span> <span class="number">7</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yaml r sample.yaml 'b[foo.bar]'</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yaml w sample.yaml 'b[foo.bar]' 9</span><br></pre></td></tr></table></figure>
+
+<p>可以将任何有效的yaml key指定为key查找的一部分。</p>
+<blockquote>
+<p>请注意，路径是引号，以避免shell解释方括号。</p>
+</blockquote>
+<h3 id="带有破折号的键（和值）-1"><a href="#带有破折号的键（和值）-1" class="headerlink" title="带有破折号的键（和值）"></a>带有破折号的键（和值）</h3><p>如果键或值具有前导破折号，则yq将不知道您传递的是值而不是标志（并且您将收到“错误标志语法”错误）。</p>
+<p>要解决这个问题，你需要告诉它通过在最后一个标志之后添加’ - ‘来停止处理标志，如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq n -t -- --key --value</span><br></pre></td></tr></table></figure>
+
+<p>返回</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">` --key: --value</span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/tools/">tools</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/tools/">tools</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-read-write/" data-title="YAML处理工具yq之读写篇 | lyyao09&#39;s blog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2019/08/02/tools/The-usage-of-yq-install/" title="YAML处理工具yq之安装篇">
+  <strong>上一篇：</strong><br/>
+  <span>
+  YAML处理工具yq之安装篇</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2019/07/31/stack/How-do-I-force-Kubernetes-to-re-pull-an-image/"  title="如何强制Kubernetes预拉取镜像">
+ <strong>下一篇：</strong><br/> 
+ <span>如何强制Kubernetes预拉取镜像
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#读取"><span class="toc-number">1.</span> <span class="toc-text">读取</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本操作"><span class="toc-number">1.1.</span> <span class="toc-text">基本操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#从标准输入读取"><span class="toc-number">1.2.</span> <span class="toc-text">从标准输入读取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通配符"><span class="toc-number">1.3.</span> <span class="toc-text">通配符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前缀匹配"><span class="toc-number">1.4.</span> <span class="toc-text">前缀匹配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多文档-指定单个文档"><span class="toc-number">1.5.</span> <span class="toc-text">多文档 - 指定单个文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多文档-指定所有文档"><span class="toc-number">1.6.</span> <span class="toc-text">多文档 - 指定所有文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数组"><span class="toc-number">1.7.</span> <span class="toc-text">数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数组匹配"><span class="toc-number">1.8.</span> <span class="toc-text">数组匹配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#带点号的Key"><span class="toc-number">1.9.</span> <span class="toc-text">带点号的Key</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#带有破折号的键（和值）"><span class="toc-number">1.10.</span> <span class="toc-text">带有破折号的键（和值）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#写-更新"><span class="toc-number">2.</span> <span class="toc-text">写/更新</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#写到标准输出"><span class="toc-number">2.1.</span> <span class="toc-text">写到标准输出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#从标准输入读取-1"><span class="toc-number">2.2.</span> <span class="toc-text">从标准输入读取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加新字段"><span class="toc-number">2.3.</span> <span class="toc-text">添加新字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通配符-1"><span class="toc-number">2.4.</span> <span class="toc-text">通配符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前缀匹配-1"><span class="toc-number">2.5.</span> <span class="toc-text">前缀匹配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数组匹配-1"><span class="toc-number">2.6.</span> <span class="toc-text">数组匹配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数组字段添加值"><span class="toc-number">2.7.</span> <span class="toc-text">数组字段添加值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多文档-更新单个文档"><span class="toc-number">2.8.</span> <span class="toc-text">多文档 - 更新单个文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多文档-更新所有文档"><span class="toc-number">2.9.</span> <span class="toc-text">多文档 - 更新所有文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更新文件"><span class="toc-number">2.10.</span> <span class="toc-text">更新文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用脚本更新多个值"><span class="toc-number">2.11.</span> <span class="toc-text">使用脚本更新多个值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#以连字符（或短划线）开头的值"><span class="toc-number">2.12.</span> <span class="toc-text">以连字符（或短划线）开头的值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#带点号的Key-1"><span class="toc-number">2.13.</span> <span class="toc-text">带点号的Key</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#带有破折号的键（和值）-1"><span class="toc-number">2.14.</span> <span class="toc-text">带有破折号的键（和值）</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="category-block">
+  <h3 class="asidetitle">分类</h3>
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/stackoverflow/">stackoverflow</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">3</span></li></ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/kubernetes/" title="kubernetes">kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kubeadm/" title="kubeadm">kubeadm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker-compose/" title="docker-compose">docker-compose<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kubectl/" title="kubectl">kubectl<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://stackoverflow.com" target="_blank" title="StackOverFlow">StackOverFlow</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m lyyao09 in HangZhou. <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:lyyao09@163.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2019 
+		
+		<a href="/about" target="_blank" title="lyyao09">lyyao09</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1277827664'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1277827664%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

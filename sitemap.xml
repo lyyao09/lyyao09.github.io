@@ -2,14 +2,63 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/30/stackoverflow/Marathon-vs-Kubernetes-vs-Docker-Swarm-on-DC-OS-with-Docker-containers/</loc>
+    <loc>https://lyyao09.github.io/2019/07/27/stack/Whats-the-difference-between-ClusterIP-NodePort-and-LoadBalancer-service-types-in-Kubernetes/</loc>
     
-    <lastmod>2019-07-31T00:47:12.217Z</lastmod>
+    <lastmod>2019-08-04T01:39:27.759Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/29/stackoverflow/Kubernetes-vs-CloudFoundry/</loc>
+    <loc>https://lyyao09.github.io/2019/07/30/stack/Marathon-vs-Kubernetes-vs-Docker-Swarm-on-DC-OS-with-Docker-containers/</loc>
+    
+    <lastmod>2019-08-04T01:39:19.657Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/23/stack/How-to-use-local-docker-images-with-Minikube/</loc>
+    
+    <lastmod>2019-08-04T01:38:42.142Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/31/stack/How-do-I-force-Kubernetes-to-re-pull-an-image/</loc>
+    
+    <lastmod>2019-08-04T01:37:56.476Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/27/stack/How-to-create-a-local-development-environment-for-Kubernetes/</loc>
+    
+    <lastmod>2019-08-04T01:26:59.960Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/27/stack/Ingress-vs-Load-Balancer/</loc>
+    
+    <lastmod>2019-08-04T01:25:58.140Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-read-write/</loc>
+    
+    <lastmod>2019-08-03T03:07:07.551Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-install/</loc>
+    
+    <lastmod>2019-08-03T03:06:08.160Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/29/stack/Kubernetes-vs-CloudFoundry/</loc>
     
     <lastmod>2019-07-31T00:47:05.939Z</lastmod>
     
@@ -23,63 +72,56 @@
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/23/stackoverflow/How-to-use-local-docker-images-with-Minikube/</loc>
-    
-    <lastmod>2019-07-28T05:49:54.044Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/07/24/stackoverflow/What's-the-difference-between-docker-compose-and-kubernetes/</loc>
+    <loc>https://lyyao09.github.io/2019/07/24/stack/What's-the-difference-between-docker-compose-and-kubernetes/</loc>
     
     <lastmod>2019-07-28T05:47:11.645Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/26/stackoverflow/What-is-the-difference-between-a-pod-and-a-deployment/</loc>
+    <loc>https://lyyao09.github.io/2019/07/26/stack/What-is-the-difference-between-a-pod-and-a-deployment/</loc>
     
     <lastmod>2019-07-28T05:47:03.723Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/25/stackoverflow/Pods-stuck-in-Terminating-status/</loc>
+    <loc>https://lyyao09.github.io/2019/07/25/stack/Pods-stuck-in-Terminating-status/</loc>
     
     <lastmod>2019-07-28T05:46:53.775Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/23/stackoverflow/kubectl-apply-vs-kubectl-create/</loc>
+    <loc>https://lyyao09.github.io/2019/07/23/stack/kubectl-apply-vs-kubectl-create/</loc>
     
     <lastmod>2019-07-28T05:45:30.835Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/27/stackoverflow/Docker-Swarm-Kubernetes-Mesos-Core-OS-Fleet/</loc>
+    <loc>https://lyyao09.github.io/2019/07/27/stack/Docker-Swarm-Kubernetes-Mesos-Core-OS-Fleet/</loc>
     
     <lastmod>2019-07-28T05:45:24.440Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/24/stackoverflow/What's-the-difference-between-Apache's-Mesos-and-Google's-Kubernetes/</loc>
+    <loc>https://lyyao09.github.io/2019/07/24/stack/What's-the-difference-between-Apache's-Mesos-and-Google's-Kubernetes/</loc>
     
     <lastmod>2019-07-28T05:45:16.276Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/22/kubernetes/Renewing-Kubernetes-cluster-certificates/</loc>
+    <loc>https://lyyao09.github.io/2019/07/22/k8s/Renewing-Kubernetes-cluster-certificates/</loc>
     
     <lastmod>2019-07-28T05:41:27.368Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/22/kubernetes/Certificate-Management-with-kubeadm/</loc>
+    <loc>https://lyyao09.github.io/2019/07/22/k8s/Certificate-Management-with-kubeadm/</loc>
     
     <lastmod>2019-07-28T05:41:20.340Z</lastmod>
     
