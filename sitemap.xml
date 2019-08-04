@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lyyao09.github.io/2019/07/31/stack/How-do-I-access-the-Kubernetes-api-from-within-a-pod-container/</loc>
+    
+    <lastmod>2019-08-04T03:21:57.498Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-prefix-convert-and-merge/</loc>
     
     <lastmod>2019-08-04T03:15:36.536Z</lastmod>
@@ -26,13 +33,6 @@
     <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-create-delete/</loc>
     
     <lastmod>2019-08-04T03:12:55.382Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/07/31/stack/How-do-I-access-the-Kubernetes-api-from-within-a-pod-container/</loc>
-    
-    <lastmod>2019-08-04T03:12:55.072Z</lastmod>
     
   </url>
   
