@@ -76,6 +76,120 @@
   
 <section class="post" itemscope itemprop="blogitem">
   
+    <a href="/2019/08/17/stack/helm-list-cannot-list-configmaps-in-the-namespace-kube-system/" title="Helm list命令查看不到kube-system命名空间下的configmaps资源" itemprop="url">
+  
+    <h1 itemprop="name">Helm list命令查看不到kube-system命名空间下的configmaps资源</h1>
+    
+     
+           <p itemprop="description" >问题描述我在kubernetes 8集群上安装了helm 2.6.2。helm init运行正常。但是当我运行helm list时它会给出这个错误。
+12helm listError: configmaps is forbidden: User &#34;system:serviceac</p>
+        
+    
+    <time datetime="2019-08-17T02:11:23.000Z" itemprop="datePublished">2019-08-17</time>
+  </a>
+</section>
+
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
+    <a href="/2019/08/13/stack/How-can-I-keep-a-container-running-on-Kubernetes/" title="在Kubernetes集群上如何保持容器一直运行" itemprop="url">
+  
+    <h1 itemprop="name">在Kubernetes集群上如何保持容器一直运行</h1>
+    
+     
+           <p itemprop="description" >问题描述我现在正在尝试在Kubernetes集群上运行一个带shell（/bin/bash）的简单容器。
+我认为有一种方法可以通过使用伪tty和detach选项（docker run命令上的-td选项）来保持容器在Docker容器上运行。
+例如，
+1$ sudo docker r</p>
+        
+    
+    <time datetime="2019-08-13T12:52:42.000Z" itemprop="datePublished">2019-08-13</time>
+  </a>
+</section>
+
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
+    <a href="/2019/08/10/stack/Where-does-the-convention-of-using-healthz-for-application-health-checks-come-from/" title="使用healthz进行应用健康检查的惯例来自何处" itemprop="url">
+  
+    <h1 itemprop="name">使用healthz进行应用健康检查的惯例来自何处</h1>
+    
+     
+           <p itemprop="description" >问题描述在Kubernetes / Docker生态系统中，存在使用/ healthz作为应用程序的健康检查的约定。
+‘healthz’这个名字来自哪里，是否有与该名称相关的特定语义？
+高票回答它历来源于谷歌的内部实践。他们被称为“z-pages”。
+它以z结尾的原因是减少与具有</p>
+        
+    
+    <time datetime="2019-08-10T08:11:01.000Z" itemprop="datePublished">2019-08-10</time>
+  </a>
+</section>
+
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
+    <a href="/2019/08/08/k8s/Harbor-upgrade-and-migration-guide/" title="Harbor升级和迁移指南" itemprop="url">
+  
+    <h1 itemprop="name">Harbor升级和迁移指南</h1>
+    
+     
+           <p itemprop="description" >本指南仅涵盖升级和迁移的版本&amp;gt; = v1.8.0
+将现有Harbor实例升级到较新版本时，可能需要迁移数据库中的数据和harbor.cfg中的设置。由于迁移可能会更改数据库架构和harbor.cfg的设置，因此务必在迁移之前备份数据。
+注意：
+
+必须在任何数据迁移之前备份数</p>
+        
+    
+    <time datetime="2019-08-08T13:17:07.000Z" itemprop="datePublished">2019-08-08</time>
+  </a>
+</section>
+
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
+    <a href="/2019/08/05/stack/Command-to-delete-all-pods-in-all-kubernetes-namespaces/" title="删除所有kubernetes名称空间中的Pod" itemprop="url">
+  
+    <h1 itemprop="name">删除所有kubernetes名称空间中的Pod</h1>
+    
+     
+           <p itemprop="description" >问题描述在查看文档时看到，有一个api调用可以删除pod，有没有办法杀死所有命名空间中的所有pod？
+高票回答没有命令可以完全按照你的要求去做。
+可以使用以下命令删除单个命名空间中的所有pod：
+1kubectl delete --all pods --namespace=foo</p>
+        
+    
+    <time datetime="2019-08-05T13:37:34.000Z" itemprop="datePublished">2019-08-05</time>
+  </a>
+</section>
+
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
     <a href="/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/" title="Hexo博客同时托管到github和coding问题汇总" itemprop="url">
   
     <h1 itemprop="name">Hexo博客同时托管到github和coding问题汇总</h1>
@@ -192,117 +306,6 @@ coding账号注册时请</p>
 
 
 
-  
-<section class="post" itemscope itemprop="blogitem">
-  
-    <a href="/2019/07/31/stack/How-do-I-access-the-Kubernetes-api-from-within-a-pod-container/" title="如何从Pod容器中访问Kubernetes API服务" itemprop="url">
-  
-    <h1 itemprop="name">如何从Pod容器中访问Kubernetes API服务</h1>
-    
-     
-           <p itemprop="description" >问题描述我之前可以使用curl执行如下命令：
-1https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1beta3/namespaces/default/
-
-但在kubernetes 0.18.0中</p>
-        
-    
-    <time datetime="2019-07-31T13:19:22.000Z" itemprop="datePublished">2019-07-31</time>
-  </a>
-</section>
-
-
-
-
-
-
-  
-<section class="post" itemscope itemprop="blogitem">
-  
-    <a href="/2019/07/31/stack/How-do-I-force-Kubernetes-to-re-pull-an-image/" title="如何强制Kubernetes预拉取镜像" itemprop="url">
-  
-    <h1 itemprop="name">如何强制Kubernetes预拉取镜像</h1>
-    
-     
-           <p itemprop="description" >问题描述我在GKE上的Kubernetes中有以下rc控制器：
-12345678910111213141516171819202122232425apiVersion: v1kind: ReplicationControllermetadata:  name: myapp  la</p>
-        
-    
-    <time datetime="2019-07-31T13:10:39.000Z" itemprop="datePublished">2019-07-31</time>
-  </a>
-</section>
-
-
-
-
-
-
-  
-<section class="post" itemscope itemprop="blogitem">
-  
-    <a href="/2019/07/30/stack/Marathon-vs-Kubernetes-vs-Docker-Swarm-on-DC-OS-with-Docker-containers/" title="Marathon vs Kubernetes vs Docker Swarm" itemprop="url">
-  
-    <h1 itemprop="name">Marathon vs Kubernetes vs Docker Swarm</h1>
-    
-     
-           <p itemprop="description" >问题描述我正在寻找在DC / OS上运行Docker容器时是否使用Marathon和Chronos，Docker Swarm或Kubernetes的一些优缺点。
-例如，何时使用Marathon / Chronos比使用Kubernetes更好，反之亦然？
-现在我主要是进行实验，但</p>
-        
-    
-    <time datetime="2019-07-30T12:52:04.000Z" itemprop="datePublished">2019-07-30</time>
-  </a>
-</section>
-
-
-
-
-
-
-  
-<section class="post" itemscope itemprop="blogitem">
-  
-    <a href="/2019/07/29/stack/Kubernetes-vs-CloudFoundry/" title="Kubernetes vs. CloudFoundry" itemprop="url">
-  
-    <h1 itemprop="name">Kubernetes vs. CloudFoundry</h1>
-    
-     
-           <p itemprop="description" >问题描述CloudFoundry / Diego的下一个版本将为Docker容器提供原生支持，这些容器将在多个主机[链接]之间进行编排。这听起来与Kubernetes非常相似。
-当然，Kubernetes试图解决的问题更为通用，其中CloudFoundry更专注于应用程序开发。然</p>
-        
-    
-    <time datetime="2019-07-29T13:19:55.000Z" itemprop="datePublished">2019-07-29</time>
-  </a>
-</section>
-
-
-
-
-
-
-  
-<section class="post" itemscope itemprop="blogitem">
-  
-    <a href="/2019/07/27/stack/How-to-create-a-local-development-environment-for-Kubernetes/" title="如何创建一个本地的Kubernetes开发环境" itemprop="url">
-  
-    <h1 itemprop="name">如何创建一个本地的Kubernetes开发环境</h1>
-    
-     
-           <p itemprop="description" >问题描述Kubernetes似乎都是将容器部署到集群云中。它似乎没有提及开发和临时环境（或类似环境）。
-在开发期间，您希望尽可能接近生产环境并进行一些重要更改：
-
-在本地部署（或至少在您和您可以访问的地方部署）
-在页面刷新时使用最新的源代码（假设它是一个网站；理想情况下，本地文件</p>
-        
-    
-    <time datetime="2019-07-27T03:18:09.000Z" itemprop="datePublished">2019-07-27</time>
-  </a>
-</section>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix unexpand">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -321,7 +324,7 @@ coding账号注册时请</p>
   
 <div class="category-block">
   <h3 class="asidetitle">分类</h3>
-     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/blog/">blog</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/stackoverflow/">stackoverflow</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">5</span></li></ul>
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/blog/">blog</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/stackoverflow/">stackoverflow</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">5</span></li></ul>
 </div>
 
 
@@ -331,7 +334,7 @@ coding账号注册时请</p>
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/kubernetes/" title="kubernetes">kubernetes<sup>16</sup></a></li>
+				<li><a href="/tags/kubernetes/" title="kubernetes">kubernetes<sup>20</sup></a></li>
 			
 		
 			
@@ -343,7 +346,15 @@ coding账号注册时请</p>
 			
 		
 			
+				<li><a href="/tags/database/" title="database">database<sup>1</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/blog/" title="blog">blog<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/harbor/" title="harbor">harbor<sup>1</sup></a></li>
 			
 		
 			
@@ -433,6 +444,8 @@ coding账号注册时请</p>
 		<a href="/about" target="_blank" title="lyyao09">lyyao09</a>
 		
 		
+			<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1277827664'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1277827664%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
+		
 		</p>
 </div>
 </footer>
@@ -521,13 +534,11 @@ $(document).ready(function(){
 
 
 <!-- Analytics Begin -->
+<div id="footer" >
+	<p class="copyright">
 
-
-
-
-
-<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1277827664'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1277827664%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
-
+	</p>
+</div>
 <!-- Analytics End -->
 
 <!-- Totop Begin -->

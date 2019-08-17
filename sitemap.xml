@@ -2,6 +2,48 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lyyao09.github.io/2019/08/17/stack/helm-list-cannot-list-configmaps-in-the-namespace-kube-system/</loc>
+    
+    <lastmod>2019-08-17T02:42:51.891Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/13/stack/How-can-I-keep-a-container-running-on-Kubernetes/</loc>
+    
+    <lastmod>2019-08-17T02:01:55.929Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/10/stack/Where-does-the-convention-of-using-healthz-for-application-health-checks-come-from/</loc>
+    
+    <lastmod>2019-08-13T12:50:55.187Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/08/k8s/Harbor-upgrade-and-migration-guide/</loc>
+    
+    <lastmod>2019-08-08T08:46:05.824Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/31/db/Set-environment-variable-values-in-persistence-xml-from-Eclipse/</loc>
+    
+    <lastmod>2019-08-06T01:32:16.221Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/05/stack/Command-to-delete-all-pods-in-all-kubernetes-namespaces/</loc>
+    
+    <lastmod>2019-08-05T12:08:43.738Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://lyyao09.github.io/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/</loc>
     
     <lastmod>2019-08-04T09:49:13.360Z</lastmod>
