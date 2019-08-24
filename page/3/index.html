@@ -76,6 +76,94 @@
   
 <section class="post" itemscope itemprop="blogitem">
   
+    <a href="/2019/07/27/stack/Ingress-vs-Load-Balancer/" title="Ingress vs LoadBalancer" itemprop="url">
+  
+    <h1 itemprop="name">Ingress vs LoadBalancer</h1>
+    
+     
+           <p itemprop="description" >问题描述我很困惑Ingress和Load Balancer在Kubernetes中的角色。
+据我所知，Ingress用于将来自互联网的传入流量映射到群集中运行的服务。
+Load Balancer的作用是将流量转发到主机。在这方面，Ingress与Load Balancer有何不同</p>
+        
+    
+    <time datetime="2019-07-27T02:48:45.000Z" itemprop="datePublished">2019-07-27</time>
+  </a>
+</section>
+
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
+    <a href="/2019/07/27/stack/Whats-the-difference-between-ClusterIP-NodePort-and-LoadBalancer-service-types-in-Kubernetes/" title="Kubernetes的各种Service类型（ClusterIP，NodePort和LoadBalancer）有什么区别" itemprop="url">
+  
+    <h1 itemprop="name">Kubernetes的各种Service类型（ClusterIP，NodePort和LoadBalancer）有什么区别</h1>
+    
+     
+           <p itemprop="description" >问题描述1  - 我正在阅读文档，我对措辞有点困惑。它说：
+
+ClusterIP：在集群内部IP上公开服务。选择此值使服务只能从群集中访问。这是默认的ServiceType
+NodePort：在每个Node的IP上公开静态端口（NodePort）服务。将自动创建NodePort服</p>
+        
+    
+    <time datetime="2019-07-27T02:03:45.000Z" itemprop="datePublished">2019-07-27</time>
+  </a>
+</section>
+
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
+    <a href="/2019/07/27/stack/Docker-Swarm-Kubernetes-Mesos-Core-OS-Fleet/" title="Docker-Swarm，Kubernetes，Mesos和Core-OS Fleet" itemprop="url">
+  
+    <h1 itemprop="name">Docker-Swarm，Kubernetes，Mesos和Core-OS Fleet</h1>
+    
+     
+           <p itemprop="description" >问题描述我对所有这些都比较陌生，并且在尝试理解列出的这些技术时遇到了麻烦。
+虽然，所有这些技术都试图解决不同的问题，但也有共同点。我想了解哪些是相同的，哪些是不同的。少数技术的组合很可能非常适合，如果是这样的话，他们是什么？
+我列出了其中的一些以及问题，但如果有人详细列出所有问题</p>
+        
+    
+    <time datetime="2019-07-26T23:18:10.000Z" itemprop="datePublished">2019-07-27</time>
+  </a>
+</section>
+
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
+    <a href="/2019/07/26/stack/What-is-the-difference-between-a-pod-and-a-deployment/" title="Pod和Deployment有什么区别" itemprop="url">
+  
+    <h1 itemprop="name">Pod和Deployment有什么区别</h1>
+    
+     
+           <p itemprop="description" >问题描述我一直在创建类型为deploy的pod，但我看到一些文档使用的type是pod，更具体地说是多容器pod的文档：
+123456789101112apiVersion: v1kind: Podmetadata:  name: &#34;&#34;  labels:    name: &#34;&#34; </p>
+        
+    
+    <time datetime="2019-07-26T14:37:45.000Z" itemprop="datePublished">2019-07-26</time>
+  </a>
+</section>
+
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
     <a href="/2019/07/25/stack/Pods-stuck-in-Terminating-status/" title="POD卡在Terminating状态" itemprop="url">
   
     <h1 itemprop="name">POD卡在Terminating状态</h1>
@@ -210,52 +298,9 @@
 
 
 
-  
-<section class="post" itemscope itemprop="blogitem">
-  
-    <a href="/2019/07/22/k8s/Renewing-Kubernetes-cluster-certificates/" title="更新Kubernetes集群证书" itemprop="url">
-  
-    <h1 itemprop="name">更新Kubernetes集群证书</h1>
-    
-     
-           <p itemprop="description" >Kubernetes集群证书的使用寿命为一年。如果Kubernetes集群证书在Kubernetes master节点上过期，则kubelet服务将失败。使用kubectl命令，例如kubectel get pod或kubectl exec -it container_name </p>
-        
-    
-    <time datetime="2019-07-22T12:32:29.000Z" itemprop="datePublished">2019-07-22</time>
-  </a>
-</section>
-
-
-
-
-
-
-  
-<section class="post" itemscope itemprop="blogitem">
-  
-    <a href="/2019/07/22/k8s/Certificate-Management-with-kubeadm/" title="使用kubeadm进行证书管理" itemprop="url">
-  
-    <h1 itemprop="name">使用kubeadm进行证书管理</h1>
-    
-     
-           <p itemprop="description" >FEATURE STATE: Kubernetes v1.15 stable
-kubeadm生成的客户端证书将在1年后过期。本页介绍如何使用kubeadm管理证书续订。
-开始之前熟悉Kubernetes中的PKI证书和要求以及证书最佳实践。
-检查证书过期时间check-expir</p>
-        
-    
-    <time datetime="2019-07-22T12:30:46.000Z" itemprop="datePublished">2019-07-22</time>
-  </a>
-</section>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix unexpand">
-    <a class="extend prev" rel="prev" href="/page/2/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+    <a class="extend prev" rel="prev" href="/page/2/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">Next<span></span></a>
   </nav>
 
 </div>
@@ -271,7 +316,7 @@ kubeadm生成的客户端证书将在1年后过期。本页介绍如何使用kub
   
 <div class="category-block">
   <h3 class="asidetitle">分类</h3>
-     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/blog/">blog</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/stackoverflow/">stackoverflow</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">5</span></li></ul>
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/blog/">blog</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/stackoverflow/">stackoverflow</a><span class="category-list-count">22</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">5</span></li></ul>
 </div>
 
 
@@ -281,7 +326,7 @@ kubeadm生成的客户端证书将在1年后过期。本页介绍如何使用kub
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/kubernetes/" title="kubernetes">kubernetes<sup>20</sup></a></li>
+				<li><a href="/tags/kubernetes/" title="kubernetes">kubernetes<sup>24</sup></a></li>
 			
 		
 			

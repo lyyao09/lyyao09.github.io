@@ -2,9 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lyyao09.github.io/2019/08/24/stack/Kubernetes-how-to-make-Deployment-to-update-image/</loc>
+    
+    <lastmod>2019-08-24T02:51:38.742Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/20/stack/How-to-sign-in-kubernetes-dashboard/</loc>
+    
+    <lastmod>2019-08-24T02:51:20.870Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/19/stack/Kubernetes-pod-gets-recreated-when-deleted/</loc>
+    
+    <lastmod>2019-08-24T02:51:07.218Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/24/stack/How-to-retry-image-pull-in-a-kubernetes-Pods/</loc>
+    
+    <lastmod>2019-08-24T02:29:35.537Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://lyyao09.github.io/2019/08/17/stack/helm-list-cannot-list-configmaps-in-the-namespace-kube-system/</loc>
     
-    <lastmod>2019-08-17T02:42:51.891Z</lastmod>
+    <lastmod>2019-08-24T01:08:17.610Z</lastmod>
     
   </url>
   

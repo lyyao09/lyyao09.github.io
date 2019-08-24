@@ -76,6 +76,94 @@
   
 <section class="post" itemscope itemprop="blogitem">
   
+    <a href="/2019/08/24/stack/Kubernetes-how-to-make-Deployment-to-update-image/" title="Kubernetes中如何让Deployment更新镜像" itemprop="url">
+  
+    <h1 itemprop="name">Kubernetes中如何让Deployment更新镜像</h1>
+    
+     
+           <p itemprop="description" >问题描述我的deployment有单个pod，我的自定义docker镜像如下：
+123containers:  - name: mycontainer    image: myimage:latest
+
+在开发过程中，我想推送新的最新版本并更新Deployment。无法明确定义t</p>
+        
+    
+    <time datetime="2019-08-24T02:37:00.000Z" itemprop="datePublished">2019-08-24</time>
+  </a>
+</section>
+
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
+    <a href="/2019/08/24/stack/How-to-retry-image-pull-in-a-kubernetes-Pods/" title="如何重新拉取kubernetes Pods镜像" itemprop="url">
+  
+    <h1 itemprop="name">如何重新拉取kubernetes Pods镜像</h1>
+    
+     
+           <p itemprop="description" >问题描述我是kubernetes新手。我在创建pod时有一个问题。当我运行命令
+123456kubectl get podsNAME                   READY     STATUS             RESTARTS   AGEmysql-apim-d</p>
+        
+    
+    <time datetime="2019-08-24T02:25:23.000Z" itemprop="datePublished">2019-08-24</time>
+  </a>
+</section>
+
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
+    <a href="/2019/08/20/stack/How-to-sign-in-kubernetes-dashboard/" title="如何登录kubernetes dashboard" itemprop="url">
+  
+    <h1 itemprop="name">如何登录kubernetes dashboard</h1>
+    
+     
+           <p itemprop="description" >问题描述我刚刚将kubeadm和kubelet升级到v1.8.0。并按照官方文档安装Dashboard。
+1$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/d</p>
+        
+    
+    <time datetime="2019-08-20T14:43:31.000Z" itemprop="datePublished">2019-08-20</time>
+  </a>
+</section>
+
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
+    <a href="/2019/08/19/stack/Kubernetes-pod-gets-recreated-when-deleted/" title="Kubernetes删除pod时会自动重新创建" itemprop="url">
+  
+    <h1 itemprop="name">Kubernetes删除pod时会自动重新创建</h1>
+    
+     
+           <p itemprop="description" >问题描述我已经用命令启动了pods：
+1# kubectl run busybox --image=busybox --restart=Never --tty -i --generator=run-pod/v1
+
+出了点问题，现在我无法删除这个pod，我尝试使用下面的方法，但它不</p>
+        
+    
+    <time datetime="2019-08-19T14:13:07.000Z" itemprop="datePublished">2019-08-19</time>
+  </a>
+</section>
+
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
     <a href="/2019/08/17/stack/helm-list-cannot-list-configmaps-in-the-namespace-kube-system/" title="Helm list命令查看不到kube-system命名空间下的configmaps资源" itemprop="url">
   
     <h1 itemprop="name">Helm list命令查看不到kube-system命名空间下的configmaps资源</h1>
@@ -210,105 +298,9 @@ coding账号注册时请</p>
 
 
 
-  
-<section class="post" itemscope itemprop="blogitem">
-  
-    <a href="/2019/08/02/tools/The-usage-of-yq-prefix-convert-and-merge/" title="YAML处理工具yq之匹配合并和转换" itemprop="url">
-  
-    <h1 itemprop="name">YAML处理工具yq之匹配合并和转换</h1>
-    
-     
-           <p itemprop="description" >yq是一个轻量级的便携式命令行YAML处理器。该工具的目标是成为yaml文件处理方面的jq或sed。
-通配符路径可以使用’prefix’命令作为前缀。完整的yaml内容将嵌套在新的前缀路径中。
-1yq p &amp;lt;yaml_file&amp;gt; &amp;lt;path&amp;gt;
-
-写到标准输</p>
-        
-    
-    <time datetime="2019-08-02T14:02:09.000Z" itemprop="datePublished">2019-08-02</time>
-  </a>
-</section>
-
-
-
-
-
-
-  
-<section class="post" itemscope itemprop="blogitem">
-  
-    <a href="/2019/08/02/tools/The-usage-of-yq-create-delete/" title="YAML处理工具yq之创建删除篇" itemprop="url">
-  
-    <h1 itemprop="name">YAML处理工具yq之创建删除篇</h1>
-    
-     
-           <p itemprop="description" >yq是一个轻量级的便携式命令行YAML处理器。该工具的目标是成为yaml文件处理方面的jq或sed。
-创建可以使用“new”命令创建Yaml文件。这与write命令的工作方式相同，但不需要传入已存在的Yaml文件。目前，不支持在单个yaml文件中创建多个文档。
-1yq n &amp;lt</p>
-        
-    
-    <time datetime="2019-08-02T13:52:09.000Z" itemprop="datePublished">2019-08-02</time>
-  </a>
-</section>
-
-
-
-
-
-
-  
-<section class="post" itemscope itemprop="blogitem">
-  
-    <a href="/2019/08/02/tools/The-usage-of-yq-read-write/" title="YAML处理工具yq之读写篇" itemprop="url">
-  
-    <h1 itemprop="name">YAML处理工具yq之读写篇</h1>
-    
-     
-           <p itemprop="description" >yq是一个轻量级的便携式命令行YAML处理器。该工具的目标是成为yaml文件处理方面的jq或sed。
-读取1yq r &amp;lt;yaml_file|json_file&amp;gt; &amp;lt;path&amp;gt;
-
-此命令也可以将json文件作为输入，并将输出yaml，除非指定导出为json（</p>
-        
-    
-    <time datetime="2019-08-02T13:22:09.000Z" itemprop="datePublished">2019-08-02</time>
-  </a>
-</section>
-
-
-
-
-
-
-  
-<section class="post" itemscope itemprop="blogitem">
-  
-    <a href="/2019/08/02/tools/The-usage-of-yq-install/" title="YAML处理工具yq之安装篇" itemprop="url">
-  
-    <h1 itemprop="name">YAML处理工具yq之安装篇</h1>
-    
-     
-           <p itemprop="description" >yq是一个轻量级的便携式命令行YAML处理器。该工具的目标是成为yaml文件处理方面的jq或sed。
-安装在MacOS上：
-1brew install yq
-
-在Ubuntu和支持snap包的其他Linux发行版上：
-1snap install yq
-
-在Ubuntu 16.04</p>
-        
-    
-    <time datetime="2019-08-02T13:02:09.000Z" itemprop="datePublished">2019-08-02</time>
-  </a>
-</section>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix unexpand">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
   </nav>
 
 </div>
@@ -324,7 +316,7 @@ coding账号注册时请</p>
   
 <div class="category-block">
   <h3 class="asidetitle">分类</h3>
-     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/blog/">blog</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/stackoverflow/">stackoverflow</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">5</span></li></ul>
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/blog/">blog</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/stackoverflow/">stackoverflow</a><span class="category-list-count">22</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">5</span></li></ul>
 </div>
 
 
@@ -334,7 +326,7 @@ coding账号注册时请</p>
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/kubernetes/" title="kubernetes">kubernetes<sup>20</sup></a></li>
+				<li><a href="/tags/kubernetes/" title="kubernetes">kubernetes<sup>24</sup></a></li>
 			
 		
 			
