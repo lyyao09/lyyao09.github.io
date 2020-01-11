@@ -1,0 +1,564 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>编译Kubernetes源码(官方指导) | lyyao09&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="lyyao09">
+    
+
+    
+    <meta name="description" content="如果利用容器化的构建环境，则构建Kubernetes很容易。本文档将帮助了解构建过程。 依赖 Docker，使用以下配置之一： macOS：可以使用Mac的Docker或docker-machine。请参阅此处的安装说明。注意：需要将Docker VM设置为具有至少4.5GB的初始内存，否则构建可能会失败。（请参阅：＃11852）。 带有本地Docker的Linux：根据OS的说明安装Docker">
+<meta name="keywords" content="kubernetes">
+<meta property="og:type" content="article">
+<meta property="og:title" content="编译Kubernetes源码(官方指导)">
+<meta property="og:url" content="https://lyyao09.github.io/2019/09/12/k8s/Building-Kubernetes-Official-Guidance/index.html">
+<meta property="og:site_name" content="lyyao09&#39;s blog">
+<meta property="og:description" content="如果利用容器化的构建环境，则构建Kubernetes很容易。本文档将帮助了解构建过程。 依赖 Docker，使用以下配置之一： macOS：可以使用Mac的Docker或docker-machine。请参阅此处的安装说明。注意：需要将Docker VM设置为具有至少4.5GB的初始内存，否则构建可能会失败。（请参阅：＃11852）。 带有本地Docker的Linux：根据OS的说明安装Docker">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-11T08:07:13.064Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="编译Kubernetes源码(官方指导)">
+<meta name="twitter:description" content="如果利用容器化的构建环境，则构建Kubernetes很容易。本文档将帮助了解构建过程。 依赖 Docker，使用以下配置之一： macOS：可以使用Mac的Docker或docker-machine。请参阅此处的安装说明。注意：需要将Docker VM设置为具有至少4.5GB的初始内存，否则构建可能会失败。（请参阅：＃11852）。 带有本地Docker的Linux：根据OS的说明安装Docker">
+
+    
+    <link rel="alternative" href="/atom.xml" title="lyyao09&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="lyyao09&#39;s blog" title="lyyao09&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="lyyao09&#39;s blog">lyyao09&#39;s blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:lyyao09.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/09/12/k8s/Building-Kubernetes-Official-Guidance/" title="编译Kubernetes源码(官方指导)" itemprop="url">编译Kubernetes源码(官方指导)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="lyyao09" target="_blank" itemprop="author">lyyao09</a>
+		
+  <p class="article-time">
+    <time datetime="2019-09-12T13:33:46.000Z" itemprop="datePublished"> 发表于 2019-09-12</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#依赖"><span class="toc-number">1.</span> <span class="toc-text">依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">2.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关键脚本"><span class="toc-number">3.</span> <span class="toc-text">关键脚本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本流程"><span class="toc-number">4.</span> <span class="toc-text">基本流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代理设置"><span class="toc-number">5.</span> <span class="toc-text">代理设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#远程Docker引擎"><span class="toc-number">6.</span> <span class="toc-text">远程Docker引擎</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发布版本"><span class="toc-number">7.</span> <span class="toc-text">发布版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重现性"><span class="toc-number">8.</span> <span class="toc-text">重现性</span></a></li></ol>
+		
+		</div>
+		
+		<p>如果利用容器化的构建环境，则构建Kubernetes很容易。本文档将帮助了解构建过程。</p>
+<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><ol>
+<li>Docker，使用以下配置之一：<ul>
+<li><strong>macOS</strong>：可以使用Mac的Docker或docker-machine。请参阅<a href="https://docs.docker.com/docker-for-mac/" target="_blank" rel="noopener">此处</a>的安装说明。注意：需要将Docker VM设置为具有至少4.5GB的初始内存，否则构建可能会失败。（请参阅：<a href="http://issue.k8s.io/11852" target="_blank" rel="noopener">＃11852</a>）。</li>
+<li><strong>带有本地Docker的Linux</strong>：根据OS的<a href="https://docs.docker.com/installation/#installation" target="_blank" rel="noopener">说明</a>安装Docker。</li>
+<li><strong>远程Docker引擎</strong>：在云中使用大型计算机来加快构建速度。这有点棘手，所以请稍后再看。</li>
+</ul>
+</li>
+<li>可选的<a href="https://developers.google.com/cloud/sdk/" target="_blank" rel="noopener">Google Cloud SDK</a></li>
+</ol>
+<p>如果要将发布版本上传到Google Cloud Storage，则必须安装和配置Google Cloud SDK，否则可以放心地省略此设置。</p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>虽然可以使用本地golang来构建Kubernetes，但我们有一个在Docker容器中运行的构建过程。这简化了初始设置，并提供了非常一致的构建和测试环境。</p>
+<h2 id="关键脚本"><a href="#关键脚本" class="headerlink" title="关键脚本"></a>关键脚本</h2><p>在<code>build/</code>目录中找到以下脚本。请注意，所有脚本必须从Kubernetes根目录运行。</p>
+<ul>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/master/build/run.sh" target="_blank" rel="noopener"><code>build/run.sh</code></a>: 在构建docker容器中运行命令。常用调用：<ul>
+<li><code>build/run.sh make</code>: 在容器中仅构建linux二进制文件。根据需要传递选项和软件包。</li>
+<li><code>build/run.sh make cross</code>: 构建所有平台的所有二进制文件。</li>
+<li><code>build/run.sh make kubectl KUBE_BUILD_PLATFORMS=darwin/amd64</code>: 为特定平台构建特定二进制文件。</li>
+<li><code>build/run.sh make test</code>: 运行所有单元测试。</li>
+<li><code>build/run.sh make test-integration</code>: 运行集成测试。</li>
+<li><code>build/run.sh make test-cmd</code>: 运行CLI测试。</li>
+</ul>
+</li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/master/build/copy-output.sh" target="_blank" rel="noopener"><code>build/copy-output.sh</code></a>: 这会将 <code>_output/dockerized/bin</code> 的内容从Docker容器拷贝到本地 <code>_output/dockerized/bin</code>目录. 它还将复制在构建过程中生成的特定文件模式。这是作为 <code>build/run.sh</code>的一部分自动运行的。</li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/master/build/make-clean.sh" target="_blank" rel="noopener"><code>build/make-clean.sh</code></a>: 清除 <code>_output</code>的内容，删除所有本地构建的容器镜像，然后删除数据容器。</li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/master/build/shell.sh" target="_blank" rel="noopener"><code>build/shell.sh</code></a>: 将带有当前存储库代码快照的构建容器内加入bash shell。</li>
+</ul>
+<h2 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h2><p>位于<code>build/</code>目录下的脚本直接用于构建和测试。它们将确保构建<code>kube-build</code> Docker镜像（基于build/build-image/Dockerfile），然后在该容器中执行适当的命令。这些脚本将确保每次运行都缓存正确的数据以进行增量构建，并将结果复制回容器。</p>
+<p>首先，通过在<code>_output/images/build-image</code>中创建一个“context”目录来构建<code>kube-build</code>容器镜像。它是在此处完成的，而不是在Kubernetes存储库的根目录进行，以最大程度地减少构建镜像时需要打包的数据量。</p>
+<p>从此，该镜像运行3个不同的容器实例。每次运行后，数据容器在运行期间都将保留，而rsync和构建容器将被删除。</p>
+<ol>
+<li><strong>数据容器</strong>：用于存储需要持久存储以支持增量构建的所有数据。</li>
+<li><strong>rsync容器</strong>：用于将数据传入和传出到数据容器。</li>
+<li><strong>构建容器</strong>：用于实际执行构建操作。</li>
+</ol>
+<p><code>rsync</code>容器在后台透明地使用，以有效地将数据移入和移出容器。这将使用Docker选择的临时端口。可以通过设置KUBE_RSYNC_PORT env变量来修改它。</p>
+<p>所有Docker名称都以从文件路径派生的哈希作为后缀（以允许在CI机器上同时使用）和版本号。当版本号更改时，所有状态都将清除，并开始全新构建。这允许更改构建基础结构，并向CI系统发出需要删除旧设施的信号。</p>
+<h2 id="代理设置"><a href="#代理设置" class="headerlink" title="代理设置"></a>代理设置</h2><p>如果使用了代理，并且让这些脚本使用<code>docker-machine</code>在macOS上设置本地VM，则需要设置Kubernetes构建的代理，应定义以下环境变量。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export KUBERNETES_HTTP_PROXY=http://username:password@proxyaddr:proxyport</span><br><span class="line">export KUBERNETES_HTTPS_PROXY=https://username:password@proxyaddr:proxyport</span><br></pre></td></tr></table></figure>
+
+<p>可以选择为Kubernetes构建指定没有代理的地址，例如</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export KUBERNETES_NO_PROXY=127.0.0.1</span><br></pre></td></tr></table></figure>
+
+<p>如果使用sudo进行Kubernetes的构建（例如make quick-release），则需要运行<code>sudo -E make quick-release</code>来传递环境变量。</p>
+<h2 id="远程Docker引擎"><a href="#远程Docker引擎" class="headerlink" title="远程Docker引擎"></a>远程Docker引擎</h2><p>可以使用远程运行的Docker引擎。必须将Docker配置为连接到该计算机，并且本地rsync端口必须从localhost转发（通过SSH或nc）到远程计算机。</p>
+<p>要使用GCP和<code>docker-machine</code>轻松做到这一点，请执行以下操作：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> Create the remote docker machine on GCE.  This is a pretty beefy machine with SSD disk.</span><br><span class="line">KUBE_BUILD_VM=k8s-build</span><br><span class="line">KUBE_BUILD_GCE_PROJECT=&lt;project&gt;</span><br><span class="line">docker-machine create \</span><br><span class="line">  --driver=google \</span><br><span class="line">  --google-project=$&#123;KUBE_BUILD_GCE_PROJECT&#125; \</span><br><span class="line">  --google-zone=us-west1-a \</span><br><span class="line">  --google-machine-type=n1-standard-8 \</span><br><span class="line">  --google-disk-size=50 \</span><br><span class="line">  --google-disk-type=pd-ssd \</span><br><span class="line"><span class="meta">  $</span>&#123;KUBE_BUILD_VM&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> Set up local docker to talk to that machine</span><br><span class="line">eval $(docker-machine env $&#123;KUBE_BUILD_VM&#125;)</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> Pin down the port that rsync will be exposed on the remote machine</span><br><span class="line">export KUBE_RSYNC_PORT=8730</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> forward local 8730 to that machine so that rsync works</span><br><span class="line">docker-machine ssh $&#123;KUBE_BUILD_VM&#125; -L $&#123;KUBE_RSYNC_PORT&#125;:localhost:$&#123;KUBE_RSYNC_PORT&#125; -N &amp;</span><br></pre></td></tr></table></figure>
+
+<p>通过<code>docker-machine stop</code>, <code>docker-machine start</code> 和 <code>docker-machine rm</code> 管理创建的VM。</p>
+<h2 id="发布版本"><a href="#发布版本" class="headerlink" title="发布版本"></a>发布版本</h2><p><code>build/release.sh</code>脚本将构建发行版。它将构建二进制文件，运行测试，（可选）构建运行时Docker镜像。</p>
+<p>主要输出是tar文件：<code>kubernetes.tar.gz</code>。这包括：</p>
+<ul>
+<li>交叉编译的客户端实用程序</li>
+<li>脚本（kubectl），用于基于平台选择和运行正确的客户端二进制文件</li>
+<li>例子</li>
+<li>各种云的集群部署脚本</li>
+<li>包含所有服务器二进制文件的Tar文件</li>
+</ul>
+<p>此外，还创建了其他一些tar文件：</p>
+<ul>
+<li><code>kubernetes-client-*.tar.gz</code> 特定平台的客户端二进制文件</li>
+<li><code>kubernetes-server-*.tar.gz</code> 特定平台的服务器二进制文件</li>
+</ul>
+<p>构建最终发行版tar时，首先将它们暂存为<code>_output/release-stage</code>，然后再将其放入<code>_output/release-tars</code>。</p>
+<h2 id="重现性"><a href="#重现性" class="headerlink" title="重现性"></a>重现性</h2><p><code>make release</code>，其变体<code>make quick-release</code>和Bazel都提供了一个封闭的构建环境，应该为构建提供一定程度的可重复性。<code>make</code>自身不是密封的。</p>
+<p>Kubernetes构建环境支持Reproducible Builds项目指定的<a href="https://reproducible-builds.org/specs/source-date-epoch/" target="_blank" rel="noopener">SOURCE_DATE_EPOCH</a>环境变量，可以将其设置为UNIX纪元时间戳。这将用于嵌入已编译的Go二进制文件中的构建时间戳，也许还有一天还会用于Docker镜像。</p>
+<p>这个变量的一个合理设置是使用从正在构建的树的顶端开始的提交时间戳。这就是Kubernetes CI系统使用的。例如，可以使用以下命令获取：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SOURCE_DATE_EPOCH=$(git show -s --format=format:%ct HEAD)</span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/kubernetes/">kubernetes</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://lyyao09.github.io/2019/09/12/k8s/Building-Kubernetes-Official-Guidance/" data-title="编译Kubernetes源码(官方指导) | lyyao09&#39;s blog" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2019/09/21/stack/Service-located-in-another-namespace/" title="Service located in another namespace">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Service located in another namespace</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2019/08/31/stack/How-to-know-a-Pod-s-own-IP-address-from-inside-a-container-in-the-Pod/"  title="如何在容器内获取Pod自己的IP地址">
+ <strong>下一篇：</strong><br/> 
+ <span>如何在容器内获取Pod自己的IP地址
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#依赖"><span class="toc-number">1.</span> <span class="toc-text">依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">2.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关键脚本"><span class="toc-number">3.</span> <span class="toc-text">关键脚本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本流程"><span class="toc-number">4.</span> <span class="toc-text">基本流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代理设置"><span class="toc-number">5.</span> <span class="toc-text">代理设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#远程Docker引擎"><span class="toc-number">6.</span> <span class="toc-text">远程Docker引擎</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发布版本"><span class="toc-number">7.</span> <span class="toc-text">发布版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重现性"><span class="toc-number">8.</span> <span class="toc-text">重现性</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="category-block">
+  <h3 class="asidetitle">分类</h3>
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/blog/">blog</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/db/">db</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/stackoverflow/">stackoverflow</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">5</span></li></ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/kubernetes/" title="kubernetes">kubernetes<sup>27</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tools/" title="tools">tools<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/blog/" title="blog">blog<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/database/" title="database">database<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kubeadm/" title="kubeadm">kubeadm<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/harbor/" title="harbor">harbor<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker-compose/" title="docker-compose">docker-compose<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/kubectl/" title="kubectl">kubectl<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://stackoverflow.com" target="_blank" title="StackOverFlow">StackOverFlow</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m lyyao09 in HangZhou. <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:lyyao09@163.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="lyyao09">lyyao09</a>
+		
+		
+			<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1277827664'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1277827664%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+<div id="footer" >
+	<p class="copyright">
+
+	</p>
+</div>
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -2,6 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lyyao09.github.io/2019/09/12/k8s/Building-Kubernetes-Official-Guidance/</loc>
+    
+    <lastmod>2020-01-11T08:07:13.064Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/09/21/stack/Service-located-in-another-namespace/</loc>
+    
+    <lastmod>2019-09-21T08:30:52.105Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/31/stack/How-to-know-a-Pod-s-own-IP-address-from-inside-a-container-in-the-Pod/</loc>
+    
+    <lastmod>2019-08-31T07:48:11.623Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://lyyao09.github.io/2019/08/24/stack/Kubernetes-how-to-make-Deployment-to-update-image/</loc>
     
     <lastmod>2019-08-24T02:51:38.742Z</lastmod>
