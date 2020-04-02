@@ -4,25 +4,25 @@
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
-    <title>如何创建一个本地的Kubernetes开发环境 | lyyao09&#39;s blog</title>
+    <title>Okteto Push：几秒把你的代码推送到Kubernetes | lyyao09&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="lyyao09">
     
 
     
-    <meta name="description" content="问题描述Kubernetes似乎都是将容器部署到集群云中。它似乎没有提及开发和临时环境（或类似环境）。 在开发期间，您希望尽可能接近生产环境并进行一些重要更改：  在本地部署（或至少在您和您可以访问的地方部署） 在页面刷新时使用最新的源代码（假设它是一个网站；理想情况下，本地文件保存页面自动刷新，如果您安装源代码并使用像Yeoman这样的东西可以完成）  同样，人们可能希望在非公共环境进行持续集成">
+    <meta name="description" content="自开始构建Okteto以来，我们一直在与许多开发人员进行交流。每个团队都有非常独特的挑战，但是经常出现的一个挑战是将一行代码从开发人员的IDE移植到Kubernetes需要多长时间。团队要么必须手动进行所有操作（构建，标记，推送，重新部署），要么将其更改推送到CI/CD服务，并等待直到更改被处理为止。 无论哪种方式，部署变更的时间都会打断您的流程，您的生产力因此而下降。这让我们思考：为什么开发人员">
 <meta name="keywords" content="kubernetes">
 <meta property="og:type" content="article">
-<meta property="og:title" content="如何创建一个本地的Kubernetes开发环境">
-<meta property="og:url" content="https://lyyao09.github.io/2019/07/27/stack/How-to-create-a-local-development-environment-for-Kubernetes/index.html">
+<meta property="og:title" content="Okteto Push：几秒把你的代码推送到Kubernetes">
+<meta property="og:url" content="https://lyyao09.github.io/2020/04/01/k8s/Okteto-Push-Your-Code-to-Kubernetes-in-Seconds/index.html">
 <meta property="og:site_name" content="lyyao09&#39;s blog">
-<meta property="og:description" content="问题描述Kubernetes似乎都是将容器部署到集群云中。它似乎没有提及开发和临时环境（或类似环境）。 在开发期间，您希望尽可能接近生产环境并进行一些重要更改：  在本地部署（或至少在您和您可以访问的地方部署） 在页面刷新时使用最新的源代码（假设它是一个网站；理想情况下，本地文件保存页面自动刷新，如果您安装源代码并使用像Yeoman这样的东西可以完成）  同样，人们可能希望在非公共环境进行持续集成">
+<meta property="og:description" content="自开始构建Okteto以来，我们一直在与许多开发人员进行交流。每个团队都有非常独特的挑战，但是经常出现的一个挑战是将一行代码从开发人员的IDE移植到Kubernetes需要多长时间。团队要么必须手动进行所有操作（构建，标记，推送，重新部署），要么将其更改推送到CI/CD服务，并等待直到更改被处理为止。 无论哪种方式，部署变更的时间都会打断您的流程，您的生产力因此而下降。这让我们思考：为什么开发人员">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-04T01:26:59.960Z">
+<meta property="og:updated_time" content="2020-04-01T14:34:39.469Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="如何创建一个本地的Kubernetes开发环境">
-<meta name="twitter:description" content="问题描述Kubernetes似乎都是将容器部署到集群云中。它似乎没有提及开发和临时环境（或类似环境）。 在开发期间，您希望尽可能接近生产环境并进行一些重要更改：  在本地部署（或至少在您和您可以访问的地方部署） 在页面刷新时使用最新的源代码（假设它是一个网站；理想情况下，本地文件保存页面自动刷新，如果您安装源代码并使用像Yeoman这样的东西可以完成）  同样，人们可能希望在非公共环境进行持续集成">
+<meta name="twitter:title" content="Okteto Push：几秒把你的代码推送到Kubernetes">
+<meta name="twitter:description" content="自开始构建Okteto以来，我们一直在与许多开发人员进行交流。每个团队都有非常独特的挑战，但是经常出现的一个挑战是将一行代码从开发人员的IDE移植到Kubernetes需要多长时间。团队要么必须手动进行所有操作（构建，标记，推送，重新部署），要么将其更改推送到CI/CD服务，并等待直到更改被处理为止。 无论哪种方式，部署变更的时间都会打断您的流程，您的生产力因此而下降。这让我们思考：为什么开发人员">
 
     
     <link rel="alternative" href="/atom.xml" title="lyyao09&#39;s blog" type="application/atom+xml">
@@ -82,14 +82,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2019/07/27/stack/How-to-create-a-local-development-environment-for-Kubernetes/" title="如何创建一个本地的Kubernetes开发环境" itemprop="url">如何创建一个本地的Kubernetes开发环境</a>
+      <a href="/2020/04/01/k8s/Okteto-Push-Your-Code-to-Kubernetes-in-Seconds/" title="Okteto Push：几秒把你的代码推送到Kubernetes" itemprop="url">Okteto Push：几秒把你的代码推送到Kubernetes</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="lyyao09" target="_blank" itemprop="author">lyyao09</a>
 		
   <p class="article-time">
-    <time datetime="2019-07-27T03:18:09.000Z" itemprop="datePublished"> 发表于 2019-07-27</time>
+    <time datetime="2020-04-01T14:30:29.000Z" itemprop="datePublished"> 发表于 2020-04-01</time>
     
   </p>
 </header>
@@ -98,21 +98,28 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题描述"><span class="toc-number">1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#高票回答"><span class="toc-number">2.</span> <span class="toc-text">高票回答</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原文链接"><span class="toc-number">3.</span> <span class="toc-text">原文链接</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#推送代码"><span class="toc-number">1.</span> <span class="toc-text">推送代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#学习更多"><span class="toc-number">2.</span> <span class="toc-text">学习更多</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下一步"><span class="toc-number">3.</span> <span class="toc-text">下一步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">4.</span> <span class="toc-text">结论</span></a></li></ol>
 		
 		</div>
 		
-		<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>Kubernetes似乎都是将容器部署到集群云中。它似乎没有提及开发和临时环境（或类似环境）。</p>
-<p>在开发期间，您希望尽可能接近生产环境并进行一些重要更改：</p>
-<ul>
-<li>在本地部署（或至少在您和您可以访问的地方部署）</li>
-<li>在页面刷新时使用最新的源代码（假设它是一个网站；理想情况下，本地文件保存页面自动刷新，如果您安装源代码并使用像Yeoman这样的东西可以完成）</li>
-</ul>
-<p>同样，人们可能希望在非公共环境进行持续集成。</p>
-<p>Kubernetes是否支持这种开发环境，或者是必须构建的东西，希望在生产过程中它仍然可以工作？</p>
-<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>更新（2016-07-15）</p>
-<p>随着Kubernetes 1.3的发布，<a href="https://github.com/kubernetes/minikube" target="_blank" rel="noopener">Minikube</a>现在是在本地机器上运行Kubernetes进行开发的推荐方式。</p>
-<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a href="https://stackoverflow.com/questions/29746926/how-to-create-a-local-development-environment-for-kubernetes" target="_blank" rel="noopener">How to create a local development environment for Kubernetes?</a></p>
+		<p>自开始构建Okteto以来，我们一直在与许多开发人员进行交流。每个团队都有非常独特的挑战，但是经常出现的一个挑战是将一行代码从开发人员的IDE移植到Kubernetes需要多长时间。团队要么必须手动进行所有操作（构建，标记，推送，重新部署），要么将其更改推送到CI/CD服务，并等待直到更改被处理为止。</p>
+<p>无论哪种方式，部署变更的时间都会打断您的流程，您的生产力因此而下降。这让我们思考：为什么开发人员需要了解整个构建部署基础结构才能验证特定于应用程序的更改？</p>
+<p>我们很高兴宣布推出<a href="https://okteto.com/docs/reference/cli/index.html#push" target="_blank" rel="noopener">Okteto Push</a>工具，这是将代码更改推送到Kubernetes的最快方法。一个直接在Kubernetes中自动构建，推送和更新应用程序的命令。</p>
+<h2 id="推送代码"><a href="#推送代码" class="headerlink" title="推送代码"></a>推送代码</h2><p><code>okteto push</code>的目标是消除开发人员在开发应用程序时需要执行的所有操作。编码，推送并实时查看更改。这样，我们所有人都可以专注于我们的应用程序，而不必担心底层的传递途径。</p>
+<p>为了使用<code>okteto push</code>，我们需要的是包含代码，Dockerfile和最新版本<a href="https://github.com/okteto/okteto" target="_blank" rel="noopener">Okteto CLI</a>的本地文件夹。</p>
+<p>首先，运行<code>okteto login</code>在Okteto Cloud中创建一个免费帐户。这将允许您使用<a href="https://okteto.com/docs/cloud/build.html" target="_blank" rel="noopener">Okteto构建服务</a>直接在云中构建镜像。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ okteto login</span><br></pre></td></tr></table></figure>
+
+<p>运行<code>okteto push</code>命令将代码推送到Kubernetes，将$IMAGE替换为自己的镜像仓库（例如pchico83/hello-world）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ okteto push --name hello-world -t $IMAGE</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> i  Running your build in Okteto Cloud...</span><br><span class="line">[+] Building 2.8s (16/16) FINISHED</span><br><span class="line"> =&gt; importing cache manifest from pchico83/hello-world:okteto           1.1s</span><br><span class="line"> ...</span><br><span class="line"> ...</span><br><span class="line"> ...</span><br><span class="line"> ✓  Source code pushed to the development environment 'hello-world'</span><br></pre></td></tr></table></figure>
+
+<p><code>okteto push</code>将使用<a href="https://okteto.com/docs/cloud/build.html" target="_blank" rel="noopener">Okteto Build Service</a>自动构建开发镜像，生成一个开发标签，将其推送到容器仓库中并将其部署到Kubernetes。如果已经在运行一个应用程序，它将自动找到该deployment 并将镜像替换为新的。如果没有，它甚至可以创建deployment和service。</p>
+<p>一个简单的命令即可在几秒钟内将代码导入任何Kubernetes环境。无需在本地运行docker，选择容器标签或修改yaml文件即可更新应用。</p>
+<h2 id="学习更多"><a href="#学习更多" class="headerlink" title="学习更多"></a>学习更多</h2><p><code>Okteto Push</code>可与任何编程语言，框架或平台一起使用。在我们的<a href="https://okteto.com/docs/samples/aspnetcore/index.html" target="_blank" rel="noopener">ASP.NET</a>，<a href="https://okteto.com/docs/samples/golang/index.html" target="_blank" rel="noopener">Go</a>，<a href="https://okteto.com/docs/samples/java/index.html" target="_blank" rel="noopener">Java</a>，<a href="https://okteto.com/docs/samples/node/index.html" target="_blank" rel="noopener">Node.js</a>，<a href="https://okteto.com/docs/samples/python/index.html" target="_blank" rel="noopener">Python</a>，<a href="https://okteto.com/docs/samples/php/index.html" target="_blank" rel="noopener">PHP</a>或<a href="https://okteto.com/docs/samples/ruby/index.html" target="_blank" rel="noopener">Ruby</a>入门指南中了解更多信息。</p>
+<h2 id="下一步"><a href="#下一步" class="headerlink" title="下一步"></a>下一步</h2><p>在Okteto，我们致力于使每个开发人员都可以访问Kubernetes，并将内部循环开发周期减少到最小。Okteto Push仍然要求开发人员拥有Dockerfile，但是我们正在尝试使用<a href="https://docs.cloudfoundry.org/buildpacks/" target="_blank" rel="noopener">Cloud Buildpacks</a>和类似技术来完全消除这一要求。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>Okteto社区中的一些人在过去几周内一直在内部使用<code>okteto push</code>，到目前为止，反馈非常好。我们已经看到人们将其用作内部流程的一部分，作为提交前的验证机制，以创建预览环境，甚至用于产品部署。真的很令人兴奋！</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -120,7 +127,7 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/stackoverflow/">stackoverflow</a>
+  <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
 </div>
 
 
@@ -135,7 +142,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://lyyao09.github.io/2019/07/27/stack/How-to-create-a-local-development-environment-for-Kubernetes/" data-title="如何创建一个本地的Kubernetes开发环境 | lyyao09&#39;s blog" data-tsina="" class="share clearfix">
+	  <div data-url="https://lyyao09.github.io/2020/04/01/k8s/Okteto-Push-Your-Code-to-Kubernetes-in-Seconds/" data-title="Okteto Push：几秒把你的代码推送到Kubernetes | lyyao09&#39;s blog" data-tsina="" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -148,19 +155,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2019/07/29/stack/Kubernetes-vs-CloudFoundry/" title="Kubernetes vs. CloudFoundry">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Kubernetes vs. CloudFoundry</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2019/07/27/stack/Ingress-vs-Load-Balancer/"  title="Ingress vs LoadBalancer">
+<a href="/2019/09/21/stack/Service-located-in-another-namespace/"  title="Service located in another namespace">
  <strong>下一篇：</strong><br/> 
- <span>Ingress vs LoadBalancer
+ <span>Service located in another namespace
 </span>
 </a>
 </div>
@@ -177,7 +176,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题描述"><span class="toc-number">1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#高票回答"><span class="toc-number">2.</span> <span class="toc-text">高票回答</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原文链接"><span class="toc-number">3.</span> <span class="toc-text">原文链接</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#推送代码"><span class="toc-number">1.</span> <span class="toc-text">推送代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#学习更多"><span class="toc-number">2.</span> <span class="toc-text">学习更多</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下一步"><span class="toc-number">3.</span> <span class="toc-text">下一步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">4.</span> <span class="toc-text">结论</span></a></li></ol>
  
   </div>
 

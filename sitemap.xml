@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lyyao09.github.io/2020/04/01/k8s/Okteto-Push-Your-Code-to-Kubernetes-in-Seconds/</loc>
+    
+    <lastmod>2020-04-01T14:34:39.469Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://lyyao09.github.io/2019/09/12/k8s/Building-Kubernetes-Official-Guidance/</loc>
     
     <lastmod>2020-01-11T08:07:13.064Z</lastmod>
