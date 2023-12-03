@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyyao09.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="问题背景 查看kube-system下的系统组件，发现harbor、influxdb、coredns等组件反复重启； 使用kubectl get pod -n kube-system命令查看pod列表，发现命令会稳定的卡15s；  原因分析先看第一点，这几个pod反复重启已经遇到过几次，看过前面的问题排查文章[1,2]的应该知道，在业务高并发场景下可能出现。先使用top命令看一下负载情况： 123">
+<meta property="og:type" content="article">
+<meta property="og:title" content="K8S问题排查-安全策略导致Pod反复重启">
+<meta property="og:url" content="https://lyyao09.github.io/2022/06/18/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF/index.html">
+<meta property="og:site_name" content="云原生知识星球">
+<meta property="og:description" content="问题背景 查看kube-system下的系统组件，发现harbor、influxdb、coredns等组件反复重启； 使用kubectl get pod -n kube-system命令查看pod列表，发现命令会稳定的卡15s；  原因分析先看第一点，这几个pod反复重启已经遇到过几次，看过前面的问题排查文章[1,2]的应该知道，在业务高并发场景下可能出现。先使用top命令看一下负载情况： 123">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-18T18:47:44.000Z">
+<meta property="article:modified_time" content="2023-12-03T14:33:55.231Z">
+<meta property="article:author" content="LeaoYao">
+<meta property="article:tag" content="kubernetes">
+<meta property="article:tag" content="kubernetes问题排查">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://lyyao09.github.io/2022/06/18/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>K8S问题排查-安全策略导致Pod反复重启 | 云原生知识星球</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">云原生知识星球</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2022/06/18/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          K8S问题排查-安全策略导致Pod反复重启
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-06-18 18:47:44" itemprop="dateCreated datePublished" datetime="2022-06-18T18:47:44+00:00">2022-06-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><ol>
+<li>查看<code>kube-system</code>下的系统组件，发现<code>harbor、influxdb、coredns</code>等组件反复重启；</li>
+<li>使用<code>kubectl get pod -n kube-system</code>命令查看<code>pod</code>列表，发现命令会稳定的卡<code>15s</code>；</li>
+</ol>
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>先看第一点，这几个<code>pod</code>反复重启已经遇到过几次，看过前面的问题排查文章[1,2]的应该知道，在业务高并发场景下可能出现。先使用<code>top</code>命令看一下负载情况：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">load average: 14.76  18.45  17.85</span><br><span class="line">Tasks: 1998 total,  7 running,  1937 sleeping, 0 stopped,  54 zombie</span><br><span class="line"><span class="meta prompt_">%</span><span class="language-bash">CPU: 15.2 us, 8.3 sys, 0.7 ni, 75.3 <span class="built_in">id</span></span></span><br><span class="line"></span><br><span class="line">cat /proc/cpuinfo|grep MHz| wc -l</span><br><span class="line">40</span><br></pre></td></tr></table></figure>
+
+<p>实际负载不高，排除这个可能（实际定位过程中，也依据前面的经验，做了相关内核参数的优化，问题确实没什么改善）。那就继续看，先<code>describe</code>看几个异常<code>pod</code>的错误信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubelet     Liveness probe failed: Get &quot;http://177.177.138.139:8885/api/health&quot;: context deadline exceeded (Client.Timeout exceeded while awaiting headers)</span><br><span class="line">kubelet     Readiness probe failed: Get &quot;http://177.177.138.139:8083/&quot;&quot;: context deadline exceeded (Client.Timeout exceeded while awaiting headers)</span><br><span class="line">kubelet     Back-off restarting failed container</span><br></pre></td></tr></table></figure>
+
+<p>错误基本一致，就是<code>kubelet</code>调用<code>pod</code>提供的健康检查接口超时了，所以被不断地<code>kill</code>再重启。为什么调不通？模拟<code>kubelet</code>的调用操作，在<code>pod</code>所在节点上使用<code>curl</code>命令调用，结果显示<code>timeout</code>，再<code>ping</code>一下看看<code>pod</code>通信有没有问题：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ping 177.177.212.186</span><br><span class="line">^C</span><br></pre></td></tr></table></figure>
+
+<p><code>ping</code>不通！这也就讲通了为啥健康检查不过，因为<code>kubelet</code>与所在节点上的<code>Pod</code>根本就无法通信。为啥会这样？通过一顿验证，发现一个规律：**集群各节点无法访问自己节点上的<code>pod</code>，但可以访问其他节点上的<code>pod</code>**；</p>
+<p>这个现象是比较奇怪的，一般来说影响节点与自己节点上<code>pod</code>通信的原因不多，对于使用<code>calic</code>的<code>cni</code>网络插件来说，可能的原因有：</p>
+<ol>
+<li><code>pod</code>内的<code>ip</code>&#x2F;<code>arp</code>&#x2F;路由异常；</li>
+<li><code>calico</code>网卡的<code>arp</code>配置异常；</li>
+<li>请求被<code>iptables</code>拦截；</li>
+</ol>
+<p>分别查看1,2相关配置，显示正常：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">[root@influxdb-847b74cbc5-ddxcd]# </span><span class="language-bash">ip addr</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">3: eth0@if79: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default</span><br><span class="line">    link/ether 32:81:0e:f4:dd:3a brd ff:ff:ff:ff:ff:ff link-netnsid 0</span><br><span class="line">    inet 177.177.212.186/32 scope global eth0</span><br><span class="line">       valid_lft f</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">[root@influxdb-847b74cbc5-ddxcd]# </span><span class="language-bash">arp</span></span><br><span class="line">Address                  HWtype  HWaddress           Flags Mask            Iface</span><br><span class="line">gateway                  ether   ee:ee:ee:ee:ee:ee   C                     eth0</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">[root@influxdb-847b74cbc5-ddxcd]# </span><span class="language-bash">ip rou</span></span><br><span class="line">default via 169.254.1.1 dev eth0</span><br><span class="line">169.254.1.1 dev eth0 scope link</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">[root@node]# </span><span class="language-bash"><span class="built_in">cat</span> /proc/sys/net/ipv4/conf/cali7acfda72e71/proxy_arp</span></span><br><span class="line">1</span><br><span class="line"><span class="meta prompt_">[root@node]# </span><span class="language-bash"><span class="built_in">cat</span> /proc/sys/net/ipv4/conf/cali7acfda72e71/arp_ignore</span></span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+
+<p>对于第三点，通过<code>iptables</code>命令检查过，也没什么异常规则；</p>
+<p>抓包看看啥情况：</p>
+<ol>
+<li>在节点上<code>ping</code>本节点上的pod，同时在<code>cali7acfda72e71</code>上抓包，发现请求到了<code>cali</code>网卡，但没有响应；</li>
+<li>在<code>pod</code>内<code>ping</code>本节点<code>ip</code>，同时在<code>cali7acfda72e71</code>上抓包，发现<code>cali</code>网卡上有请求和响应，但依然无法<code>ping</code>通；</li>
+</ol>
+<p>看起来像是请求被主动丢弃了，跟问题提出人确认问题环境的基本情况，发现该集群有额外安装<code>EDR</code>防病毒软件。为了确认该软件有没有影响，先停掉防病毒软件，观察一段时候后，发现环境恢复正常。重新启动防病毒软件，一段时间后问题复现；</p>
+<p>与负责防病毒软件的技术沟通确认，该集群被设置到了防病毒软件的默认策略里，触发条件是默认策略组里面有防止端口扫描和流量阈值配置，结果触发了网络防护，导致节点<code>ip</code>被封了。经过软件提供方的调整，将该集群调整到单独的策略编组，问题解决；</p>
+<p>问题解决后，现象1和现象2都消失了，但回过头想想，为什么会出现现象2？当时环境好了没有细究，后来自己的测试环境也出现过这个现象，通过<code>debug</code>日志发现，卡在了调用<code>metric</code>服务的接口上，根本原因就是访问<code>metric</code>的<code>pod</code>不通，日志现象比较明显，这里就不贴了：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod -n kube-system -owide --v 10</span><br></pre></td></tr></table></figure>
+
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
+<li>针对该集群环境，单独配置策略编组；</li>
+<li>节点与<code>Pod</code>通信正常后，现象2消失；</li>
+</ol>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://lyyao09.github.io/2021/06/19/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E4%B8%9A%E5%8A%A1%E9%AB%98%E5%B9%B6%E5%8F%91%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF/">https://lyyao09.github.io/2021/06/19/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E4%B8%9A%E5%8A%A1%E9%AB%98%E5%B9%B6%E5%8F%91%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF/</a></li>
+<li><a href="https://lyyao09.github.io/2021/07/16/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E4%B8%9A%E5%8A%A1%E9%AB%98%E5%B9%B6%E5%8F%91%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF(%E7%BB%AD)/">https://lyyao09.github.io/2021/07/16/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E4%B8%9A%E5%8A%A1%E9%AB%98%E5%B9%B6%E5%8F%91%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF(%E7%BB%AD)/</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/409634">https://developer.aliyun.com/article/409634</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.css3.io/31linuxxi-tong-diao-you.htmls">https://www.css3.io/31linuxxi-tong-diao-you.htmls</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+              <a href="/tags/kubernetes%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" rel="tag"># kubernetes问题排查</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8/" rel="prev" title="K8S问题排查-VMWare虚拟化环境下Pod跨VXLAN通信异常">
+      <i class="fa fa-chevron-left"></i> K8S问题排查-VMWare虚拟化环境下Pod跨VXLAN通信异常
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/07/16/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%A4%96%E7%BD%AE%E5%AD%98%E5%82%A8%E6%8F%92%E4%BB%B6nfs-provisioner%E6%8A%A5%E9%94%99selfLink%20was%20empty/" rel="next" title="K8S问题排查-外置存储插件nfs-provisioner报错selfLink was empty">
+      K8S问题排查-外置存储插件nfs-provisioner报错selfLink was empty <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">原因分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">3.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LeaoYao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">83</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LeaoYao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

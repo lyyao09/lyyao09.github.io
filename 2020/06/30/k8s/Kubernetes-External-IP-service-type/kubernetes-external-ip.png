@@ -1,0 +1,2059 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<title>k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip.png · lyyao09/cdn - Gitee.com</title>
+<meta content='on' http-equiv='x-dns-prefetch-control'>
+<link href='//e.gitee.com' rel='dns-prefetch'>
+<link href='//files.gitee.com' rel='dns-prefetch'>
+<link href='//toscode.gitee.com' rel='dns-prefetch'>
+<link href='https://assets.gitee.com' rel='dns-prefetch'>
+<link href='https://portrait.gitee.com' rel='dns-prefetch'>
+<link href="https://assets.gitee.com/assets/favicon-9007bd527d8a7851c8330e783151df58.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />
+<link href="https://gitee.com/lyyao09/cdn" rel="canonical" />
+<meta content='gitee.com/lyyao09/cdn git https://gitee.com/lyyao09/cdn.git' name='go-import'>
+<meta charset='utf-8'>
+<meta content='always' name='referrer'>
+<meta content='Gitee' property='og:site_name'>
+<meta content='Object' property='og:type'>
+<meta content='http://gitee.com/lyyao09/cdn/blob/master/k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip.png' property='og:url'>
+<meta content='https://gitee.com/static/images/logo_themecolor.png' itemprop='image' property='og:image'>
+<meta content='k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip.png · lyyao09/cdn - Gitee.com' itemprop='name' property='og:title'>
+<meta content='Gitee.com（码云） 是 OSCHINA.NET 推出的代码托管平台，支持 Git 和 SVN，提供免费的私有仓库托管。目前已有超过 600 万的开发者选择 Gitee。' property='og:description'>
+<meta content='码云,Gitee,代码托管,Git,Git@OSC,Gitee.com,开源,内源,项目管理,版本控制,开源代码,代码分享,项目协作,开源项目托管,免费代码托管,Git代码托管,Git托管服务' name='Keywords'>
+<meta content='Gitee.com（码云） 是 OSCHINA.NET 推出的代码托管平台，支持 Git 和 SVN，提供免费的私有仓库托管。目前已有超过 600 万的开发者选择 Gitee。' itemprop='description' name='Description'>
+
+<meta content="IE=edge" http-equiv="X-UA-Compatible" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="tChxIYi4GYt/VdyE2RuEZ1qCX4ivy+6PxrnnnUed2lo=" name="csrf-token" />
+
+<link href="https://assets.gitee.com/assets/application-0b82d7f386e13ede9e9b47ed9d27b652.css" media="all" rel="stylesheet" />
+<script>
+//<![CDATA[
+window.gon = {};gon.locale="zh-CN";gon.sentry_dsn=null;gon.baidu_register_hm_push=null;gon.sensor={"server_url":"https://haveaniceday.gitee.com:3443/sa?project=production","page_type":"其他"};gon.info={"controller_path":"blob","action_name":"show","current_user":false};gon.tour_env={"current_user":null,"action_name":"show","original_url":"http://gitee.com/lyyao09/cdn/blob/master/k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip.png","controller_path":"blob"};gon.http_clone="https://gitee.com/lyyao09/cdn.git";gon.user_project="lyyao09/cdn";gon.manage_branch="管理分支";gon.manage_tag="管理标签";gon.enterprise_id=0;gon.create_reaction_path="/lyyao09/cdn/reactions";gon.ref="master";
+//]]>
+</script>
+<script src="https://assets.gitee.com/assets/static/sensor-5984a2e9c24e9047ba28a1ddc8442b67.js"></script>
+<script src="https://assets.gitee.com/assets/static/sentry-5.1.0-a823fb0be1b61c5d7ca4a89f0536cb0a.js"></script>
+<script src="https://assets.gitee.com/assets/application-fb4563169034627b7f5b90430f40a8fb.js"></script>
+<script src="https://assets.gitee.com/assets/lib/jquery.timeago.zh-CN-4a4818e98c1978d2419ab19fabcba740.js"></script>
+
+<link href="https://assets.gitee.com/assets/projects/application-705b8d764a3d4201795216aad0ed4b70.css" media="all" rel="stylesheet" />
+<script src="https://assets.gitee.com/assets/projects/app-a4f8261f9f8ed85d2098a902d487bd44.js"></script>
+
+<script src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script>
+  var title = document.title.replace(/( - Gitee| - 码云)$/, '')
+      imgUrl = '';
+  
+  document.addEventListener('DOMContentLoaded', function(event) {
+    var imgUrlEl = document.querySelector('.readme-box .markdown-body > img, .readme-box .markdown-body :not(a) > img');
+    imgUrl = imgUrlEl && imgUrlEl.getAttribute('src');
+  
+    if (!imgUrl) {
+      imgUrlEl = document.querySelector('meta[itemprop=image]');
+      imgUrl = imgUrlEl && imgUrlEl.getAttribute('content'); 
+      imgUrl = imgUrl || "https://gitee.com/static/images/logo_themecolor.png";
+    }
+  
+    wx.config({
+      debug: false,
+      appId: "wxff219d611a159737",
+      timestamp: "1619167968",
+      nonceStr: "23e15df73428e4d19867b3e4e59d662e",
+      signature: "3f0981b36fa5000330ecb2feb26bb09bfd13da1b",
+      jsApiList: [
+        'onMenuShareTimeline',
+        'onMenuShareAppMessage'
+      ]
+    });
+  
+    wx.ready(function () {
+      wx.onMenuShareTimeline({
+        title: title, // 分享标题
+        link: "https://gitee.com/lyyao09/cdn/blob/master/k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip.png", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+        imgUrl: imgUrl // 分享图标
+      });
+      wx.onMenuShareAppMessage({
+        title: title, // 分享标题
+        link: "https://gitee.com/lyyao09/cdn/blob/master/k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip.png", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+        desc: document.querySelector('meta[name=Description]').getAttribute('content'),
+        imgUrl: imgUrl // 分享图标
+      });
+    });
+    wx.error(function(res){
+      console.error('err', res)
+    });
+  })
+</script>
+
+<script type='text/x-mathjax-config'>
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [["$$","$$"],["\\[","\\]"]],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+    ignoreClass: "container|files",
+    processClass: "markdown-body"
+  }
+});
+</script>
+<script src="https://assets.gitee.com/uploads/resources/MathJax-2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<script>
+  (function () {
+    var messages = {
+      'zh-CN': {
+        addResult: '增加 <b>{term}</b>',
+        count: '已选择 {count}',
+        maxSelections: '最多 {maxCount} 个选择',
+        noResults: '未找到结果',
+        serverError: '连接服务器时发生错误'
+      },
+      'zh-TW': {
+        addResult: '增加 <b>{term}</b>',
+        count: '已選擇 {count}',
+        maxSelections: '最多 {maxCount} 個選擇',
+        noResults: '未找到結果',
+        serverError: '連接服務器時發生錯誤'
+      }
+    }
+  
+    if (messages[gon.locale]) {
+      $.fn.dropdown.settings.message = messages[gon.locale]
+    }
+  }());
+</script>
+
+<script>
+  var userAgent = navigator.userAgent;
+  var isLessIE11 = userAgent.indexOf('compatible') > -1 && userAgent.indexOf('MSIE') > -1;
+  if(isLessIE11){
+    var can_access = ""
+    if (can_access != "true"){
+      window.location.href = "/incompatible.html";
+    }
+  }
+  document.addEventListener("error", function (ev) {
+    var elem = ev.target;
+    if (elem.tagName.toLowerCase() === 'img') {
+      elem.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAAAAACIM/FCAAACh0lEQVR4Ae3ch5W0OgyG4dt/mQJ2xgQPzJoM1m3AbALrxzrf28FzsoP0HykJEEAAAUQTBBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEkKK0789+GK/I2ezfQB522PnS1qc8pGgXvr4tE4aY0XOUWlGImThWgyCk6DleixzE7qwBkg/MGiDPlVVAyp1VQGrPKiACDhFI6VkF5LmzCki+sg7IwDoglnVAil0IMkeG9CyUiwsxLFUVFzJJOQaKCjFCDN9RXMjIX7W6ztZXZDKKCyn8sWJvH+nca7WHDN9lROlAliPH9iRKCPI4cswFJQWxB46toLQgQ9jhn5QYZA9DOkoMUoQde5YapAxDWkoNYsOQR3KQd9CxUnIQF4S49CB9ENKlBxmDEKsFUgMCCCCAAHIrSF61f6153Ajy8nyiPr8L5MXnmm4CyT2fzN4DUvHZ+ntA2tOQBRBAAAEEEEAAAQQQ7ZBaC6TwSiDUaYHQ2yuB0MN+ft+43whyrs4rgVCjBUKTFshLC6TUAjGA3AxSaYFYLZBOC2RUAsk8h5qTg9QcbEoOsoQhQ2qQhsO5xCD5dgB5JQaZ+KBKGtKecvR81Ic0ZDjByKdDx0rSEDZ/djQbH+bkIdvfJFm98BfV8hD2zprfVdlu9PxVeyYAkciREohRAplJCaRSAplJCcQogTjSAdlyHRBvSAekJR0QRzogA+mADJkOiCPSAPEtqYBshlRAXC43hxix2QiOuEZkVERykGyNo9idIZKE0HO7XrG6OiMShlDWjstVzdPgXtUH9v0CEidAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQP4HgjZxTpdEii0AAAAASUVORK5CYII=";
+    }
+  }, true);
+</script>
+</head>
+
+<body class='git-project lang-zh-CN large'>
+<header class='common-header fixed noborder' id='git-header-nav'>
+<div class='ui container'>
+<div class='ui menu header-menu'>
+<div class='git-nav-expand-bar'>
+<i class='iconfont icon-mode-table'></i>
+</div>
+<div class='gitee-nav__sidebar'>
+<div class='gitee-nav__sidebar-container'>
+<div class='gitee-nav__sidebar-top'>
+<div class='gitee-nav__avatar-box'></div>
+<div class='gitee-nav__buttons-box'>
+<a class="ui button small fluid orange" href="/login">登录</a>
+<a class="ui button small fluid basic is-register" href="/signup">注册</a>
+</div>
+</div>
+<div class='gitee-nav__sidebar-middle'>
+<div class='gitee-nav__sidebar-list'>
+<ul>
+<li class='gitee-nav__sidebar-item'>
+<a href="/explore"><i class='iconfont icon-ic-discover'></i>
+<span class='gitee-nav__sidebar-name'>开源软件</span>
+</a></li>
+<li class='gitee-nav__sidebar-item'>
+<a href="/enterprises"><i class='iconfont icon-ic-enterprise'></i>
+<span class='gitee-nav__sidebar-name'>企业版</span>
+</a></li>
+<li class='gitee-nav__sidebar-item'>
+<a href="/education"><i class='iconfont icon-ic-education'></i>
+<span class='gitee-nav__sidebar-name'>高校版</span>
+</a></li>
+<li class='gitee-nav__sidebar-item split-line'></li>
+<li class='gitee-nav__sidebar-item'>
+<a href="/search"><i class='iconfont icon-ic-search'></i>
+<span class='gitee-nav__sidebar-name'>搜索</span>
+</a></li>
+<li class='gitee-nav__sidebar-item'>
+<a href="/help"><i class='iconfont icon-help-circle'></i>
+<span class='gitee-nav__sidebar-name'>帮助中心</span>
+</a></li>
+<li class='gitee-nav__sidebar-item'>
+<a href="/terms"><i class='iconfont icon-file'></i>
+<span class='gitee-nav__sidebar-name'>使用条款</span>
+</a></li>
+<li class='gitee-nav__sidebar-item'>
+<a href="/about_us"><i class='iconfont icon-issuepx'></i>
+<span class='gitee-nav__sidebar-name'>关于我们</span>
+</a></li>
+</ul>
+</div>
+</div>
+<div class='gitee-nav__sidebar-bottom'>
+<div class='gitee-nav__sidebar-close-button'>
+<i class='fa fa-angle-double-left'></i>
+</div>
+</div>
+</div>
+</div>
+
+<div class='item gitosc-logo'>
+<a href="/"><img alt='Gitee — 基于 Git 的代码托管和研发协作平台' class='ui inline image' height='28' src='/static/images/logo.svg?t=158106664' title='Gitee — 基于 Git 的代码托管和研发协作平台' width='95'>
+<img alt='Gitee — 基于 Git 的代码托管和研发协作平台' class='ui inline black image' height='28' src='/static/images/logo-black.svg?t=158106664' title='Gitee — 基于 Git 的代码托管和研发协作平台' width='95'>
+</a></div>
+<a class="item " href="/explore" title="开源软件">开源软件
+</a><a class="item " href="/enterprises" title="企业版">企业版
+<sup class='ui red label'>
+特惠
+</sup>
+</a><a class="item " href="/education" title="高校版">高校版
+</a><a class="item" href="https://blog.gitee.com/" id="gitee-blog" target="_blank" title="博客">博客
+</a><div class='center responsive-logo'>
+<a href="/"><img alt='Gitee — 基于 Git 的代码托管和研发协作平台' class='ui inline image' height='24' src='/static/images/logo.svg?t=158106664' title='Gitee — 基于 Git 的代码托管和研发协作平台' width='85'>
+<img alt='Gitee — 基于 Git 的代码托管和研发协作平台' class='ui inline black image' height='24' src='/static/images/logo-black.svg?t=158106664' title='Gitee — 基于 Git 的代码托管和研发协作平台' width='85'>
+</a></div>
+<div class='right menu userbar' id='git-nav-user-bar'>
+<form accept-charset="UTF-8" action="/search" class="ui item" data-text-filter="搜索格式不正确" data-text-require="搜索关键字不能少于1个" id="navbar-search-form" method="get"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /></div>
+<input id="navbar-search-type" name="type" type="hidden" />
+<input id="fork_filter" name="fork_filter" type="hidden" value="on" />
+<div class='ui search'>
+<input class="prompt" id="navbar-search-input" name="q" placeholder="搜开源" type="text" value="" />
+</div>
+</form>
+
+<script>
+  var can_search_in_repo = 1,
+      repo = "VFZSVk1FNXFaM3BPYW14b1RucFplbHBuUFQxaE56WXpaZz09YTc2M2Y=",
+      reponame = "lyyao09/cdn";
+  
+  $(function() {
+    var $search = $('#navbar-search-form .ui.search');
+    $search.search({
+      apiSettings: {
+        url: '/search/relative_project?q={query}',
+        onResponse: function (res) {
+          if (res && res.status === 200 && res.data) {
+            var query = htmlSafe($search.search('get value'));
+  
+            res.data.map(function (item) {
+              item.path_ns = '/' + item.path_ns;
+              item.icon = 'iconfont icon-project-public';
+            });
+            res.data.unshift({
+              name_ns: "在全站搜索 <b class='hl'>" + query +"</b> 相关项目",
+              path_ns: '/search?fork_filter=on&q=' + query,
+              icon: 'iconfont icon-search'
+            });
+            return res;
+          } else {
+            return { data: [] };
+          }
+        }
+      },
+      fields: {
+        results: 'data',
+        description: 'name_ns',
+        url: 'path_ns',
+        icon: 'icon'
+      },
+      minCharacters: 1,
+      maxResults: 10,
+      searchDelay: 250,
+      showNoResults: false,
+      transition: 'fade'
+    });
+  });
+</script>
+
+<a class="item git-nav-user__login-item" href="/login" sa_evt="login_show" sa_referrer_action="站导航右上角-登录按钮" sa_referrer_type="其他" sa_referrer_url="">登录
+</a><a class="item git-nav-user__register-item" href="/signup" sa_evt="register_show" sa_referrer_action="站导航右上角-注册按钮" sa_referrer_type="其他" sa_referrer_url="">注册
+</a><script>
+  $('.destroy-user-session').on('click', function() {
+    $.cookie('access_token', null, { path: '/' });
+  })
+</script>
+
+</div>
+</div>
+</div>
+</header>
+<script>
+  Gitee.initNavbar()
+  Gitee.initRepoRemoteWay()
+  $.cookie('user_locale',null)
+</script>
+
+<script>
+  var userAgent = navigator.userAgent;
+  var isLessIE11 = userAgent.indexOf('compatible') > -1 && userAgent.indexOf('MSIE') > -1;
+  if(isLessIE11){
+    var can_access = ""
+    if (can_access != "true"){
+      window.location.href = "/incompatible.html";
+    }
+  }
+</script>
+
+<div class='fixed-notice-infos'>
+<div class='all-messages'>
+</div>
+<div class='ui container'>
+<div class='flash-messages' id='messages-container'></div>
+</div>
+<script>
+  (function() {
+    $(function() {
+      var $error_box, alertTip, notify_content, notify_options, template;
+      template = '<div data-notify="container" class="ui {0} message" role="alert">' + '<i data-notify="dismiss" class="close icon"></i>' + '<span data-notify="message">{2}</span>' + '</div>';
+      notify_content = null;
+      notify_options = {};
+      alertTip = '';
+      $error_box = $(".flash_error.flash_error_box");
+      if (notify_options.type === 'error' && $error_box.length > 0 && !$.isEmptyObject(notify_content.message)) {
+        if (notify_content.message === 'captcha_fail') {
+          alertTip = "验证码不正确";
+        } else if (notify_content.message === 'captcha_expired') {
+          alertTip = "验证码已过期，请点击刷新";
+        } else if (notify_content.message === 'not_found_in_database') {
+          alertTip = "帐号或者密码错误";
+        } else if (notify_content.message === 'not_found_and_show_captcha') {
+          alertTip = "帐号或者密码错误";
+        } else if (notify_content.message === 'phone_captcha_fail') {
+          alertTip = "手机验证码不通过";
+        } else {
+          alertTip = notify_content.message;
+        }
+        return $error_box.html(alertTip).show();
+      } else if (notify_content) {
+        if ("show" === 'third_party_binding') {
+          return $('#third_party_binding-message').html(notify_content.message).addClass('ui message red');
+        }
+        notify_options.delay = 3000;
+        notify_options.template = template;
+        notify_options.offset = {
+          x: 10,
+          y: 30
+        };
+        notify_options.element = '#messages-container';
+        return $.notify(notify_content, notify_options);
+      }
+    });
+  
+  }).call(this);
+</script>
+
+</div>
+<script>
+  (function() {
+    $(function() {
+      var setCookie;
+      setCookie = function(name, value) {
+        $.cookie(name, value, {
+          path: '/',
+          expires: 365
+        });
+      };
+      $('#remove-bulletin, #remove-bulletin-dashboard').on('click', function() {
+        setCookie('remove_bulletin', "gitee-maintain-1617622451");
+        $('#git-bulletin').hide();
+      });
+      $('#remove-member-bulletin').on('click', function() {
+        setCookie('remove_member_bulletin', "gitee_member_bulletin");
+        $(this).parent().hide();
+      });
+      return $('#remove-gift-bulletin').on('click', function() {
+        setCookie('remove_gift_bulletin', "gitee-gift-bulletin");
+        $(this).parent().hide();
+      });
+    });
+  
+  }).call(this);
+</script>
+<script>
+  function closeMessageBanner(pthis, type, val) {
+    var json = {}
+  
+    val = typeof val === 'undefined' ? null : val
+    $(pthis).parent().remove()
+    if (type === 'out_of_enterprise_member') {
+      json = {type: type, data: val}
+    } else if (type === 'enterprise_overdue') {
+      json = {type: type, data: val}
+    }
+    $.post('/profile/close_flash_tip', json)
+  }
+</script>
+
+<div class='site-content'>
+<div class='git-project-header'>
+<div class='fixed-notice-infos'>
+<div class='ui info icon floating message green' id='fetch-ok' style='display: none'>
+<div class='content'>
+<div class='header status-title'>
+<i class='info icon status-icon'></i>
+代码拉取完成，页面将自动刷新
+</div>
+</div>
+</div>
+<div class='ui info icon floating message error' id='fetch-error' style='display: none'>
+<div class='content'>
+<div class='header status-title'>
+<i class='info icon status-icon'></i>
+<span class='error_msg'></span>
+</div>
+</div>
+</div>
+</div>
+<div class='ui container'>
+
+<div class='git-project-header-details'>
+<div class='git-project-header-container'>
+<div class='git-project-header-actions'>
+<div class='ui tiny modal project-donate-modal' id='project-donate-modal'>
+<i class='iconfont icon-close close'></i>
+<div class='header'>捐赠</div>
+<div class='content'>
+捐赠前请先登录
+</div>
+<div class='actions'>
+<a class='ui blank button cancel'>取消</a>
+<a class='ui orange ok button' href='/login'>前往登录</a>
+</div>
+</div>
+<div class='ui small modal wepay-qrcode'>
+<i class='iconfont icon-close close'></i>
+<div class='header'>
+扫描微信二维码支付
+<span class='wepay-cash'></span>
+</div>
+<div class='content weqcode-center'>
+<img id='wepay-qrcode' src=''>
+</div>
+<div class='actions'>
+<div class='ui cancel blank button'>取消</div>
+<div class='ui ok orange button'>
+支付完成
+</div>
+</div>
+</div>
+<div class='ui mini modal' id='confirm-alipay-modal'>
+<div class='header'>支付提示</div>
+<div class='content'>
+将跳转至支付宝完成支付
+</div>
+<div class='actions'>
+<div class='ui approve orange button'>
+确定
+</div>
+<div class='ui blank cancel button'>
+取消
+</div>
+</div>
+</div>
+
+<span class='ui buttons basic watch-container'>
+<div class='ui dropdown button js-project-watch' data-watch-type='unwatch'>
+<input type='hidden' value=''>
+<i class='iconfont icon-watch'></i>
+<div class='text'>
+Watch
+</div>
+<i class='dropdown icon'></i>
+<div class='menu'>
+<a class="item" data-method="post" data-value="unwatch" href="/lyyao09/cdn/unwatch" rel="nofollow" sa_evt="loginInform_show" sa_referrer_action="Watch" sa_referrer_type="其他" sa_referrer_url=""><i class='iconfont icon-msg-read'></i>
+不关注
+</a><a class="item" data-method="post" data-value="watching" href="/lyyao09/cdn/watch" rel="nofollow" sa_evt="loginInform_show" sa_referrer_action="Watch" sa_referrer_type="其他" sa_referrer_url=""><i class='iconfont icon-msg-read'></i>
+关注所有动态
+</a><a class="disabled item" data-method="post" data-value="releases_only" href="/lyyao09/cdn/release_only_watch" rel="nofollow" sa_evt="loginInform_show" sa_referrer_action="Watch" sa_referrer_type="其他" sa_referrer_url=""><i class='iconfont icon-msg-read'></i>
+仅关注版本发行动态
+</a><a class="item" data-method="post" data-value="ignoring" href="/lyyao09/cdn/ignoring_watch" rel="nofollow" sa_evt="loginInform_show" sa_referrer_action="Watch" sa_referrer_type="其他" sa_referrer_url=""><i class='iconfont icon-msg-read'></i>
+关注但不提醒动态
+</a></div>
+</div>
+<style>
+  .js-project-watch .text .iconfont {
+    display: none; }
+  .js-project-watch a, .js-project-watch a:hover {
+    color: #000; }
+  .js-project-watch .item > .iconfont {
+    visibility: hidden;
+    margin-left: -10px; }
+  .js-project-watch .selected .iconfont {
+    visibility: visible; }
+  .js-project-watch .menu {
+    margin-top: 4px !important; }
+</style>
+<script>
+  $('.js-project-watch').dropdown({
+    action: 'select',
+    onChange: function(value, text, $selectedItem) {
+      var type = value === 'unwatch' ? 'Watch' : 'Watching';
+      $(this).children('.text').text(type);
+      $(this).dropdown('set selected', value)
+    }
+  });
+</script>
+
+<a class="ui button action-social-count" href="/lyyao09/cdn/watchers" title="1">1
+</a></span>
+<span class='basic buttons star-container ui'>
+<a class="ui button star" href="/login" sa_evt="loginInform_show" sa_referrer_action="Star" sa_referrer_type="其他" sa_referrer_url=""><i class='iconfont icon-star'></i>
+Star
+</a><a class="ui button action-social-count " href="/lyyao09/cdn/stargazers" title="0">0
+</a></span>
+<span class='ui basic buttons fork-container' title='无权 Fork 此仓库'>
+<a class="ui button fork" href="/login" sa_evt="loginInform_show" sa_referrer_action="Fork" sa_referrer_type="其他" sa_referrer_url="" title="你必须登录后才可以fork一个仓库"><i class='iconfont icon-fork'></i>
+Fork
+</a><a class="ui button action-social-count disabled-style" href="/lyyao09/cdn/members" title="0">0
+</a></span>
+</div>
+<h2 class='git-project-title'>
+<span class="project-title"><i class="project-icon iconfont icon-project-public" title="这是一个公开仓库"></i> <a class="author" href="/lyyao09" title="lyyao09">lyyao09</a> / <a class="repository" href="/lyyao09/cdn" sa_evt="repoClick" sa_location="其他" sa_repo_id="15468369" sa_url="" style="padding-bottom: 0px" target="" title="cdn">cdn</a></span><span class="project-badges"><style>
+  .gitee-modal {
+    width: 500px !important; }
+</style>
+</span>
+<input id="project_title" name="project_title" type="hidden" value="lyyao09/cdn" />
+</h2>
+</div>
+</div>
+</div>
+<script>
+  var title_import_url = "false";
+  var title_post_url = "/lyyao09/cdn/update_import";
+  var title_fork_url = "/lyyao09/cdn/sync_fork";
+  var title_project_path = "cdn";
+  var title_p_name = "cdn";
+  var title_p_id= "15468369";
+  var title_description = "";
+  var title_form_authenticity_token = "tChxIYi4GYt/VdyE2RuEZ1qCX4ivy+6PxrnnnUed2lo=";
+  var watch_type = "unwatch";
+  
+  $('.js-project-watch').dropdown('set selected', watch_type);
+  $('.checkbox.sync-wiki').checkbox();
+</script>
+<style>
+  i.loading {
+    -webkit-animation: icon-loading 1.2s linear infinite;
+    animation: icon-loading 1.2s linear infinite;
+  }
+  .qrcode_cs {
+    float: left;
+  }
+  .check-sync-wiki {
+    float: left;
+    height: 28px;
+    line-height: 28px;
+  }
+  .sync-wiki-warn {
+    color: #e28560;
+  }
+</style>
+
+<div class='git-project-nav'>
+<div class='ui container'>
+<div class='ui secondary pointing menu'>
+<a class="item active" href="/lyyao09/cdn"><i class='iconfont icon-code'></i>
+代码
+</a><a class="item " href="/lyyao09/cdn/issues"><i class='iconfont icon-task'></i>
+Issues
+<span class='ui mini circular label'>
+0
+</span>
+</a><a class="item big-wide " href="/lyyao09/cdn/pulls"><i class='iconfont icon-pull-request'></i>
+Pull Requests
+<span class='ui mini circular label'>
+0
+</span>
+</a><a class="item " href="/lyyao09/cdn/wikis"><i class='iconfont icon-wiki'></i>
+Wiki
+</a><a class="item  " href="/lyyao09/cdn/graph/master"><i class='iconfont icon-statistics'></i>
+统计
+</a><div class='item project-devops-item'>
+<div class='ui pointing top right dropdown project-devops-dropdown'>
+<div class='text'>
+<i class='iconfont icon-devops'></i>
+DevOps
+</div>
+<i class='dropdown icon'></i>
+<div class='menu' style='display:none'>
+<a class="item" href="/lyyao09/cdn/gitee_go"><img alt="Giteego" src="https://assets.gitee.com/assets/giteego-7ec42270742374f05850d0d3ad09e303.png" />
+<div class='item-title'>
+Gitee Go
+</div>
+</a><a class="item" href="https://gitee.com/help/articles/4285" target="_blank"><img alt="Baidu efficiency cloud" src="https://assets.gitee.com/assets/baidu_efficiency_cloud-81a98c2eb67fac83b1453ca3d2feb326.svg" />
+<div class='item-title'>
+百度效率云
+</div>
+</a><a class="item" href="https://gitee.com/help/articles/4318" target="_blank"><img alt="Cloudbase" src="https://assets.gitee.com/assets/cloudbase-1197b95ea3398aff1df7fe17c65a6d42.png?20200925" />
+<div class='item-title'>
+腾讯云托管
+</div>
+</a><a class="item" href="https://gitee.com/help/articles/4330" target="_blank"><img alt="Cloud serverless" src="https://assets.gitee.com/assets/cloud_serverless-686cf926ced5d6d2f1d6e606d270b81e.png" />
+<div class='item-title'>
+腾讯云 Serverless
+</div>
+</a><a class="item" href="https://gitee.com/help/articles/4193" target="_blank"><img alt="Jenkins for gitee" src="https://assets.gitee.com/assets/jenkins_for_gitee-554ec65c490d0f1f18de632c48acc4e7.png" />
+<div class='item-title'>
+Jenkins for Gitee
+</div>
+</a></div>
+</div>
+</div>
+<div class='item'>
+<div class='ui pointing top right dropdown git-project-service'>
+<div class='text'>
+<i class='iconfont icon-service'></i>
+服务
+</div>
+<i class='dropdown icon'></i>
+<div class='menu' style='display:none'>
+<a class="item" href="/lyyao09/cdn/pages"><img alt="Logo en" src="/static/images/logo-en.svg" />
+<div class='item-title'>
+Gitee Pages
+</div>
+</a><a class="item" href="/lyyao09/cdn/javadoc"><img alt="Maven" src="https://assets.gitee.com/assets/maven-bd58aee84f266d64d4b8ce5b006a9fcf.png" />
+<div class='item-title'>
+JavaDoc
+</div>
+</a><a class="item" href="/lyyao09/cdn/phpdoc"><img alt="Phpdoc" src="https://assets.gitee.com/assets/phpdoc-a99f87c2feaa2fd99e5065377a39487e.png" />
+<div class='item-title'>
+PHPDoc
+</div>
+</a><a class="item" href="/lyyao09/cdn/quality_analyses?platform=sonar_qube"><img alt="Sonar mini" src="https://assets.gitee.com/assets/sonar_mini-5e1b54bb9f6c951d97fb778ef623afea.png" />
+<div class='item-title'>
+质量分析
+</div>
+</a><a class="item" href="/lyyao09/cdn/quality_analyses?platform=codesafe"><img alt="Codesafe mini" src="https://assets.gitee.com/assets/codesafe_mini-accbe1e555e9864c552620240d10e4de.png" width="100%" />
+<div class='item-title'>
+奇安信代码卫士
+</div>
+</a><a class="item" href="/lyyao09/cdn/gitee_scans"><img alt="Giteescan" src="https://assets.gitee.com/assets/giteescan-cd9ab4076bd751faf7e30888eb10f782.png" />
+<div class='item-title'>Gitee Scan</div>
+</a><button class='ui orange basic button quit-button' id='quiting-button'>
+我知道了，不再自动展开
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  $('.git-project-nav .ui.dropdown').dropdown({ action: 'nothing' });
+</script>
+<style>
+  .git-project-nav i.checkmark.icon {
+    color: green;
+  }
+  #quiting-button {
+    display: none;
+  }
+  
+  .git-project-nav .dropdown .menu.hidden:after {
+    visibility: hidden !important;
+  }
+</style>
+<script>
+  isSignIn = false
+  isClickGuide = false
+  $('#git-versions.dropdown').dropdown();
+  $.ajax({
+    url:"/lyyao09/cdn/access/add_access_log",
+    type:"GET"
+  });
+  $('#quiting-button').on('click',function() {
+    $('.git-project-service').click();
+    if (isSignIn) {
+      $.post("/projects/set_service_guide")
+    }
+    $.cookie("Serve_State", true, { expires: 3650, path: '/'})
+    $('#quiting-button').hide();
+  });
+  if (!(isClickGuide || $.cookie("Serve_State") == 'true')) {
+    $('.git-project-service').click()
+    $('#quiting-button').show()
+  }
+</script>
+
+</div>
+<div class='ui container'>
+<div class='register-guide'>
+<div class='register-container'>
+<div class='regist'>
+加入 Gitee
+</div>
+<div class='description'>
+与超过 600 万 开发者一起发现、参与优秀开源项目，私有仓库也完全免费 ：）
+</div>
+<a class="ui orange button free-registion" href="/signup?from=project-guide" sa_evt="register_show" sa_referrer_action="免费加入" sa_referrer_type="其他" sa_referrer_url="">免费加入</a>
+<div class='login'>
+已有帐号？
+<a href="/login?from=project-guide">立即登录</a>
+</div>
+</div>
+</div>
+
+<div class='git-project-content-wrapper'>
+<div class='ui grid' id='project-wrapper'>
+<div class='sixteen wide column'>
+<div class='git-project-content' id='git-project-content'>
+<div class='row'>
+<div class='git-project-desc-wrapper'>
+<div class='ui yellow message no-license' id='user-no-license-message'>
+该仓库未指定开源许可证，未经作者的许可，此代码仅用于学习，不能用于其他用途。
+<i class='help circle icon'></i>
+<div class='ui popup dark'>
+项目仓库所选许可证以仓库主分支所使用许可证为准
+</div>
+<i class='remove icon' id='remove-no-license-message'></i>
+</div>
+<script>
+  if (false) {
+    gon.project_new_blob_path = "/lyyao09/cdn/new/master/k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip.png"
+    bindShowModal({
+      el: $('.no-license .project-license__create'),
+      complete: function(data, modal) {
+        if (!data.haveNoChoice && !data.data) {
+          Flash.show('请选择一项开源许可证')
+        } else {
+          location.href = gon.project_new_blob_path + '?license=' + data.data
+        }
+      },
+      skip: function () {
+        location.href = gon.project_new_blob_path + '?license'
+      }
+    });
+  }
+  
+  $('i.help.circle.icon').popup({
+    popup: '.no-license .ui.popup',
+    position: 'right center'
+  });
+  
+  $('#remove-no-license-message').on('click', function() {
+    $.cookie("skip_repo_no_license_message_15468369", 'hide', { expires: 365 });
+    $('#user-no-license-message').hide();
+    return;
+  });
+</script>
+</div>
+
+</div>
+<div class='git-project-bread' id='git-project-bread'>
+<div class='ui horizontal list mr-1'>
+<div class='item git-project-branch-item'>
+<input id="path" name="path" type="hidden" value="k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip.png" />
+<div class='ui top left pointing dropdown gradient button dropdown-has-tabs' id='git-project-branch'>
+<input id="ref" name="ref" type="hidden" value="master" />
+<div class='default text'>
+master
+</div>
+<i class='dropdown icon'></i>
+<div class='menu'>
+<div class='ui left icon search input'>
+<i class='iconfont icon-search'></i>
+<input class='search-branch' placeholder='搜索分支' type='text'>
+</div>
+<div class='tab-menu'>
+<div class='tab-menu-action' data-tab='branches'>
+<a class="ui link button" href="/lyyao09/cdn/branches">管理</a>
+</div>
+<div class='tab-menu-action' data-tab='tags'>
+<a class="ui link button" href="/lyyao09/cdn/tags">管理</a>
+</div>
+<div class='tab-menu-item' data-placeholder='搜索分支' data-tab='branches'>
+分支 (1)
+</div>
+</div>
+<div class='tab scrolling menu' data-tab='branches'>
+<div class="item" data-value="master"><span>master</span></div>
+</div>
+</div>
+</div>
+<style>
+  .iconfont.icon-shieldlock {
+    color: #8c92a4;
+  }
+</style>
+
+<script>
+  $(function () {
+    Gitee.initTabsInDropdown($('#git-project-branch').dropdown({
+      fullTextSearch: true,
+      selectOnKeydown: true,
+      action: function (text,value,el) {
+        var oItemOrInitObject = el[0] || el
+        var isNotSelect = oItemOrInitObject.dataset.tab && oItemOrInitObject.dataset.tab === 'branches'
+        if(isNotSelect){
+          console.warn("You didn't choose a branch")
+          return
+        } 
+        var path = $('#path').val();
+        var href = ['/lyyao09/cdn/tree', encodeURIComponent(value), path].join('/');
+        window.location.href = href;
+        return true
+      },
+      onNoResults: function (searchTerm) {
+        //未找到结果
+        return true
+      },
+    }));
+    $('.protected-branch-popup').popup()
+  })
+</script>
+
+</div>
+</div>
+<div class='git-project-right-actions pull-right'>
+<div class='ui orange button' id='btn-dl-or-clone'>
+克隆/下载
+<i class='dropdown icon'></i>
+</div>
+<div class='git-project-download-panel for-project ui bottom right popup'>
+<div class='ui small secondary pointing menu'>
+<a class='item active' data-text='' data-type='http' data-url='https://gitee.com/lyyao09/cdn.git'>HTTPS</a>
+<a class='item' data-text='' data-type='ssh' data-url='git@gitee.com:lyyao09/cdn.git'>SSH</a>
+<a class='item' data-text="该仓库未启用SVN访问，请仓库管理员前往【&lt;a target='_blank' href=/lyyao09/cdn/settings&gt;仓库设置&lt;/a&gt;】开启。" data-type='svn' data-url=''>SVN</a>
+<a class='item' data-text="该仓库未启用SVN访问，请仓库管理员前往【&lt;a target='_blank' href=/lyyao09/cdn/settings&gt;仓库设置&lt;/a&gt;】开启。" data-type='svn_ssh' data-url=''>SVN+SSH</a>
+</div>
+<div class='ui fluid right labeled small input download-url-panel'>
+<input id="project_clone_url" name="project_clone_url" onclick="focus();select()" readonly="readonly" type="text" value="https://gitee.com/lyyao09/cdn.git" />
+<div class='ui basic label'>
+<div class='ui small basic orange button' data-clipboard-target='#project_clone_url' id='btn-copy-clone-url'>
+复制
+</div>
+</div>
+</div>
+<div class='ui fluid right labeled warning-text forbid-warning-text'>
+
+</div>
+<hr>
+<a class="ui fluid download link button" href="javascript:void(0);" sa_evt="loginInform_show" sa_referrer_action="克隆/下载" sa_referrer_type="其他" sa_referrer_url=""><i class='icon download'></i>
+下载ZIP
+</a><div class='download_repository_zip form modal tiny ui' id='unlanding-complaint-modal'>
+<i class='iconfont icon-close close'></i>
+<div class='header'>
+登录提示
+</div>
+<div class='container actions'>
+<div class='content'>
+该操作需登录 Gitee 帐号，请先登录后再操作。
+</div>
+<div class='ui orange icon large button ok'>
+立即登录
+</div>
+<div class='ui button blank cancel'>
+没有帐号，去注册
+</div>
+</div>
+</div>
+<script>
+  var $elm = $('.download');
+  
+  $elm.on('click', function() {
+    var modals = $("#unlanding-complaint-modal.download_repository_zip");
+    if (modals.length > 1) {
+      modals.eq(0).modal('show');
+    } else {
+      modals.modal('show');
+    }
+  })
+  $("#unlanding-complaint-modal.download_repository_zip").modal({
+    onDeny: function() {
+      window.location.href = "/signup?from=download_repository_zip";
+    },
+    onApprove: function() {
+      window.location.href = "/login?from=download_repository_zip";
+    }
+  })
+</script>
+
+</div>
+<script>
+  (function() {
+    var $btnClone, $btnCopy, $input, $panel;
+  
+    $btnClone = $('#btn-dl-or-clone');
+  
+    $panel = $('.git-project-download-panel');
+  
+    $input = $('#project_clone_url');
+  
+    $btnCopy = $('#btn-copy-clone-url');
+  
+    $btnClone.popup({
+      on: 'click',
+      hoverable: true,
+      position: 'bottom center'
+    });
+  
+    $panel.find('.menu > .item').on('click', function(e) {
+      var $item, dataUrl;
+      $item = $(this).addClass('active');
+      $item.siblings().removeClass('active');
+      dataUrl = $item.attr('data-url');
+      if (dataUrl) {
+        $panel.find('.download-url-panel').show();
+        $input.val(dataUrl);
+        $panel.find('.forbid-warning-text').html('');
+      } else {
+        $panel.find('.download-url-panel').hide();
+        $panel.find('.forbid-warning-text').html($item.attr('data-text') || '');
+      }
+      return $.cookie('remote_way', $item.attr('data-type'), {
+        expires: 365,
+        path: '/'
+      });
+    }).filter('[data-type="http"]').trigger('click');
+  
+    new Clipboard($btnCopy[0]).on('success', function() {
+      $btnCopy.popup({
+        content: '已复制',
+        position: 'right center',
+        onHidden: function() {
+          return $btnCopy.popup('destroy');
+        }
+      });
+      return $btnCopy.popup('show');
+    });
+  
+  }).call(this);
+</script>
+
+</div>
+<div class='d-inline pull-right' id='git-project-root-actions'>
+<script>
+  $('.disabled-upload-readonly').popup({
+    content: "只读目录不允许上传文件",
+    className: {
+      popup: 'ui popup',
+    },
+    position: 'bottom center',
+  })
+  $('.disabled-create-folder').popup({
+    content: "只读目录不允许创建目录",
+    className: {
+      popup: 'ui popup',
+    },
+    position: 'bottom center',
+  })
+  $('.disabled-create-file').popup({
+    content: "只读目录不允许创建文件",
+    className: {
+      popup: 'ui popup',
+    },
+    position: 'bottom center',
+  })
+  $('.disabled-upload-readonly').click(function() {
+    return false
+  })
+  $('.disabled-create-folder').click(function() {
+    return false
+  })
+  $('.disabled-create-file').click(function() {
+    return false
+  })
+</script>
+<style>
+  .disabled-upload-readonly, .disabled-create-file, .disabled-create-folder {
+    background-color: #dcddde !important;
+    color: rgba(0, 0, 0, 0.4) !important;
+    opacity: 0.3 !important;
+    background-image: none !important;
+    -webkit-box-shadow: none !important;
+            box-shadow: none !important; }
+</style>
+
+
+</div>
+<div class='breadcrumb_path path-breadcrumb-contrainer' id='git-project-breadcrumb'>
+<div class='ui breadcrumb path project-path-breadcrumb' id='path-breadcrumb'>
+<a class="section repo-name" data-direction="back" href="/lyyao09/cdn/tree/master" style="font-weight: bold">cdn
+</a><div class='divider'>
+/
+</div>
+<strong>
+<a class="section" data-direction="back" href="/lyyao09/cdn/tree/master/k8s"><span class='cblue'>
+k8s
+</span>
+</a></strong>
+<div class='divider'>
+/
+</div>
+<strong>
+<a class="section" data-direction="back" href="/lyyao09/cdn/tree/master/k8s/Kubernetes-External-IP-service-type"><span class='cblue'>
+Kubernetes-External-IP-service-type
+</span>
+</a></strong>
+<div class='divider'>
+/
+</div>
+<strong>
+kubernetes-external-ip.png
+</strong>
+<i class='iconfont icon-clone' data-clipboard-text='k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip.png' id='btn-copy-file-path'></i>
+</div>
+<style>
+  #btn-copy-file-path {
+    vertical-align: middle;
+    cursor: pointer;
+  }
+</style>
+<script>
+  $btnCopy = $('#btn-copy-file-path')
+  $btnCopy.popup({
+    content: '复制路径'
+  })
+  
+  if ($btnCopy[0]) {
+    new Clipboard($btnCopy[0]).on('success', function() {
+      $btnCopy.popup('destroy').popup({
+        content: '已复制',
+        on: 'manual'
+      }).popup('show');
+      setTimeout(function () {
+        $btnCopy.popup('destroy').popup({
+          content: '复制路径'
+        });
+      }, 2000)
+    });
+  }
+</script>
+
+
+</div>
+<div class='ui horizontal list repo-action-list branches-tags' style='display: none;'>
+<div class='item'>
+<a class="ui blank button" href="/lyyao09/cdn/branches"><i class='iconfont icon-branches'></i>
+分支 1
+</a></div>
+<div class='item mr-3'>
+<a class="ui blank button" href="/lyyao09/cdn/tags"><i class='iconfont icon-tag'></i>
+标签 0
+</a></div>
+</div>
+</div>
+<script>
+  if(window.gon.locale == 'en')
+    $('.branches-tags').css('margin-top', '12px')
+</script>
+
+<style>
+  .ui.dropdown .menu > .header {
+    text-transform: none; }
+</style>
+<script>
+  $(function () {
+    var $tip = $('#apk-download-tip');
+    if (!$tip.length) {
+      return;
+    }
+    $tip.find('.btn-close').on('click', function () {
+      $tip.hide();
+    });
+  });
+  (function(){
+    function pathAutoRender() {
+      var $parent = $('#git-project-bread'),
+          $child = $('#git-project-bread').children('.ui.horizontal.list'),
+          mainWidth = 0;
+      $child.each(function (i,item) {
+        mainWidth += $(item).width()
+      });
+      $('.breadcrumb.path.fork-path').remove();
+      if (mainWidth > 995) {
+        $('#path-breadcrumb').hide();
+        $parent.append('<div class="ui breadcrumb path fork-path">' + $('#path-breadcrumb').html() + '<div/>')
+      } else {
+        $('#path-breadcrumb').show();
+      }
+    }
+    window.pathAutoRender = pathAutoRender;
+    pathAutoRender();
+  })();
+</script>
+
+<div class='row column tree-holder' id='tree-holder'>
+<div class='tree-content-holder' id='tree-content-holder'>
+<div class='file_holder'>
+<div class='file_title'>
+<div class='blob-header-title'>
+<div class='blob-description'>
+<i class="iconfont icon-file"></i>
+<span class='file_name' title='kubernetes-external-ip.png'>
+kubernetes-external-ip.png
+</span>
+<small>12.72 KB</small>
+</div>
+<div class='options'><div class='ui mini buttons basic'>
+<a class="ui button edit-raw" href="/lyyao09/cdn/raw/master/k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip.png" target="_blank">原始数据</a>
+<a class="ui button edit-history" href="/lyyao09/cdn/commits/master/k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip.png">历史</a>
+</div>
+<script>
+  "use strict";
+  try {
+    if((gon.wait_fork!=undefined && gon.wait_fork==true) || (gon.wait_fetch!=undefined && gon.wait_fetch==true)){
+      $('.edit-blob').popup({content:"当前仓库正在后台处理中,暂时无法编辑", on: 'hover', delay: { show: 200, hide: 200 }});
+      $('.edit-blob').click(function(e){
+        e.preventDefault();
+      })
+    }
+  
+    var setUrl = function() {
+      var params = window.location.search
+      if (params==undefined || $.trim(params).length==0) return;
+      $('span.options').children('.basic').find('a').each(function(index,ele){
+        var origin_href = $(ele).attr('href');
+        if (origin_href!="#" && origin_href.indexOf('?') == -1){
+          $(ele).attr('href',origin_href+params);
+        }
+      });
+    }
+  
+    setUrl();
+  
+    var clipboard = null,
+        $btncopy  = $("#copy-text");
+  
+    clipboard = new Clipboard("#copy-text", {
+      text: function(trigger) {
+        return $("#blob_raw").val();
+      }
+    })
+  
+    clipboard.on('success', function(e) {
+      $btncopy.popup('hide');
+      $btncopy.popup('destroy');
+      $btncopy.popup({content: '已复制', position: 'bottom center'});
+      $btncopy.popup('show');
+    })
+  
+    clipboard.on('error', function(e) {
+      var giteeModal = new GiteeModalHelper({okText: '确定'});
+      giteeModal.alert("一键复制", '复制失败，请手动复制');
+    })
+  
+    $(function() {
+      $btncopy.popup({
+        content: '点击复制',
+        position: 'bottom center'
+      })
+    })
+  
+  } catch (error) {
+    console.log('blob/action error:' + error);
+  }
+  
+  $('.disabled-edit-readonly').popup({
+    content: "只读文件不可编辑",
+    className: {
+      popup: 'ui popup',
+    },
+    position: 'bottom center',
+  })
+  $('.disabled-edit-readonly').click(function() {
+    return false
+  })
+</script>
+<style>
+  .disabled-edit-readonly {
+    background-color: #dcddde !important;
+    color: rgba(0, 0, 0, 0.4) !important;
+    opacity: 0.3 !important;
+    background-image: none !important;
+    -webkit-box-shadow: none !important;
+            box-shadow: none !important; }
+</style>
+</div>
+</div>
+<div class='contributor-description'><span class='recent-commit' style='margin-top: 0.7rem'>
+<a class="commit-author-link  js-popover-card " data-username="lyyao09" href="/lyyao09">lyyao09</a>
+<span>提交于</span>
+<span class='timeago commit-date' title='2021-04-22 16:13:19 +0800'>
+2021-04-22 16:13
+</span>
+.
+<a href="/lyyao09/cdn/commit/11c9fd012d209806c76b5a81cfd16ea281aa2a49">Upload kubernetes-external-ip.png by picGo - 2021-04-22 04:13:16</a>
+</span>
+</div>
+</div>
+<div class='clearfix'></div>
+<div class='file_content image_file'>
+<img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA8AAAALQCAMAAABoqemGAAAACXBIWXMAAAsS&#x000A;AAALEgHS3X78AAADAFBMVEVHcEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/&#x000A;//8BAQEAAAAAAAAEBQUAAAAAAAAAAAAAAAAGBwgAAABVVVUBAQIBAQECAgMA&#x000A;AAAFBgcAAAAAAAACAgMAAAACAgMAAAACAwMAAAAAAAATFRcDAwQICQoBAQEB&#x000A;AgIBAQEGBwgJCgsBAgIAAAARExQBAQEBAQIAAAABAQEICQkaHB83PEACAwML&#x000A;DA0AAQEAAAALCwwJCgoaHR95foIBAQENDg8oLDAAAAALDA0hJCYqLjISFBYP&#x000A;EBEpLC8RExUFBQYFBQUAAAAAAAAoLC8ZGx0tMjUZGx1GTVJRWV8bHR8eISMO&#x000A;EBE3PEErLzRbY2oVGBhaYmoPEBElKCtLUlguMjZVXWMdICIQERNOVVsAAAAp&#x000A;LTAvNDkkJyocHyInKi0wNTgZHB4iJCUNDg+Toa0+REkCAgIjJilFTFGBjJdp&#x000A;c3t4gow/REpNVVxeZW1bY2o1Oz4UFhc5P0OIlJ6Yp7NgaXJLU1o4PUJteIB2&#x000A;gYpKUVhDSU9KUFeruseZprJha3JjbHN4gozP4vP///8AAACAgIBocXqbqba/&#x000A;v78aHB6Cjpjn8Pm1xtU0OT1OVVsDAwTM3u+8zdzC1OTJ2+sJCgrF1+gTFBZ0&#x000A;eH1AQEAGBweot8UWGBq4ydiywtGMmKQdICKvv80MDQ6Vo6+IlaAPERJ1gIm/&#x000A;0OCisL5BR0xhanJ7h5FueYKerbogIyZgYGDf399UXGN4g41yfIVrdX5HTlRb&#x000A;Y2sxNTmSoKwqLjJLUlhlbnYtMjVESlAnKy5/ipWltMGru8leZ28+Q0gjJimP&#x000A;nKg6QEWFkZyZp7M3PEFYYGdRWV8uLi6goKDz8/OIiIheXl4gICD39/dmZmbG&#x000A;xsZ1dXXn5+f7+/tSUlIkJCRISEg8PDywsLB7fH3j4+OXl5fPz8/z+PzW1tao&#x000A;qKgoKCgPEBCQkJDr6+tYWFhwcHDb29vv7++cnJy2t7hERETLy8scHBykpKQ0&#x000A;NDRsbGy7vLxMTEysrKyMjIw4ODglcMxFAAAAinRSTlMAX/Ig3wwEf0B/2RgI&#x000A;Vb8QNZ/3FL/FsaT8dG8w7Gf5PBx6T/CRLKpD0/L7hOj2uc3jW+bj9CT3jEvb&#x000A;7Pf8l/Dah+Tt+Y/FodacbChjluzRufLpx3Ga4/DxYvqw5u/s+Nv73EfGYoTW&#x000A;tMKkStL29/73h/D38PQrOmhRhLDj+PL3puPZp+ZI+ODS4/0dpvq8AAAgAElE&#x000A;QVR42uzd+VOURx7H8VEELYFAhlKDZhFFo4OrJkAmBVZkvU3imegar0Q3iUnW&#x000A;ZHNudnNuJdmzq2umZopjDqCKgRmGS0BMFSIjKHhGJPgX7fMACshcwkA9Tz3v&#x000A;1w8K9FBQz7c+dPcz/XSbTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&#x000A;AAAAAAAAAAAAJF7aooVLi81SSkvBrpfSU6e+IDkzfd/Bd9458ME3+95N5XoB&#x000A;GpL5tHn7sYDPI4RwB+91F5n3LM+a1L7wfM4nPdediou24fKW/AOf5nLVgLmU&#x000A;mpSUErZhxa68TreYyGU/lLP3YT+bNm/z1mND3ontbmdPfum7XFJgLuTOW7Nk&#x000A;vvx9wfPP5KxfunBd8qTGlJ3W/7nEFJ5j5lUjeV+9oPSjqc3C6+zLS+fSArMs&#x000A;I3vJ/AP/+bdnNHb/+vZsoXnTC+MZTt1TdEGEVX96c6opa9O2j0QETb+eS+L6&#x000A;ArMo6eX5R797rIOt/qx0/pqx6KXmdYiIPi9YveCsK3K767KVThiYvd73Jcv3&#x000A;7nDRcx+2jMxxk/NaRRSf5/woorrl2MlVBmbHupJT7kjR8xy2LDeZToaixbO6&#x000A;oVnE4N5yhOsMzIKUNRvt0bLnL9y0+6or2itCD4SIneBsLjWQcMm7ijzRs+c6&#x000A;XFsWNZuN7tgBFmXWTC42MIOZ7ovr/rxo0drJd4ST9zxwxcpee2fU5lCHiMe9&#x000A;gjRqAExD1rv/KM2T+Q3liht1f8k79356xsP8hmImz97gjdre4YkrwKJoOZUA&#x000A;ntSr+/bn/3Yn4H/U0XqDvZ2D+YW7X1UaDw7EDt7gZZEQvmfpgoEnkvbe/rrQ&#x000A;UJhBstfecebtN7M/8cYO3p3qxARYnF5NQYAnmPXus7ZfinxzKjBYO+wWc+fi&#x000A;MkoCxCvlPWtFMHqk/KHGHt+cBbg+5/VXcqkLEI8VheX+2KHytNb0XJirBMv7&#x000A;FdbzLzATBmLaecYZX6q8Hd1zFmDlp90rsmQTYSD6zasTO+Zydhun0besfB8X&#x000A;/IkKAZGl7rnmFdo1tPFlOmEgkuTiDqFpni/PZ1EmIKyUXW8JrTu+jS3vgLBO&#x000A;fOzSfIDF5+eTqRQwVfqWaqEDh05QKmCKjJI2PeRXeLewzw4wxbK3hD60bc2g&#x000A;WsBkuVaPTgIsKtgoC3jMmuN6ya/wW3k3GJgkzVKmmwCLu29SMGCi9CL95FcE&#x000A;zlEwYKK9rToKcHU+Y2hgom0+HQVY7FhExYBxWWY95VcMs1k0MMGLeboKcPeH&#x000A;lAwYt+iPugqw8yAlA8alf6mvALMeGtBvgG+yTyWg3yH09wspGaDbm1hHeSAJ&#x000A;GJOyctVz6/N1FWBLLmUDVOuWzS88+9mtOr+O8ntpMXUDlM533vr9X4zsI9ve&#x000A;rKcRNOcVAiZT5ubt341l4vI1/eQ3+Mxaage63z9YPnsUivor+glw/2AxG9vB&#x000A;6JKXnvQIPbrS7zrE+8Awen7X/+zSZX5bf3EL7/Z5VBCGHj8/dVaX8RWdNerW&#x000A;IbdK2NgORra3VJf9r+vBjdHD106toYYwrpUl1XrMr79vYOz39pg5YgXGHUAv&#x000A;/laX4+fQxUcfnmI5NAxr9Z5pZ+iq4+pjX3Hbn+T7my4kJsu3S1KoIwxq6Y/T&#x000A;Do5DOibPSq9U2eL/7rK7MlHb125fRx1hTBnzqxMW4DIpnyDANpmwAB9jDA2D&#x000A;yiwWMwtw0O4Tfuf9eiE8zVJW2D1KTzzkbK5XX+CzBz33A1633S4uNDtHN7t0&#x000A;2UcbgxVSNifoDLWmJRQSxpR+YIYBrpDlHVLKSqewS5VdBH9RP7+uvKBcDigf&#x000A;O51SBqqUr3Wpub2hNt5Rv0/hSEyAq3MoJIxp+QczDnBlbUVFpWx0tdVJ2eho&#x000A;8zpk43C7lK1qgCtlXW21EuDKwTuNUt4S3gZZNTwgZadQP6+7mqiHgrOoJAxp&#x000A;3sx7YHlPiC51Qjs6B74opTIyHpZ1aoClU9QLJcBKl9usfnJTyiEhQrLFlcg5&#x000A;sNiaRCVhzCF06cwDrG4tNx7gAVllt9s7pQwqAa5VF3k51YG18KsBVl6tNHZL&#x000A;6UtogE9yPAOMKenZGQe4bjSjDwNcLsfYlQ9HJrkjjWqrc2JjIgO8PZNKwpie&#x000A;D840wI7JAR6ULc4R7jABbpeNDxsZQgMz9/J/Exzg61K6hejt7vWGCbCSWr8Q&#x000A;TWpjIgOcw1P9MKi1Fm+iAuyRss8W9FfK/qZAi7whwgS4rFb29d6rkQ0uoUyE&#x000A;uxK094fbTB1hVEu/SFSAhfoGcEDcrFQnuTW+cAEWgZHGxjYh2pT/qxIT4MBS&#x000A;ygijWmGpn+6GGLZWIe6p/wifzeZRMhoaGFam1MGOgZ5O9UEF50jbWKPHZlPX&#x000A;Yvmv9/RcGXmQt/daT4yVl1ds8e30c5gjRmFc2ac1+8zvg8ZQPE8s5WVSRRhW&#x000A;ylOHNfvUrzvUcjPmi4aKKSIMLHnzMe0+uH+7vz/Wzeqjv6OGMLLU9T97tRvh&#x000A;1pqh6ANtC28iweB98LJCDR+IZK+7GK359CoKCKN75dmz2t3bvawhykT4o8Vs&#x000A;qANk7XJcr9dqgoN1gUhNF7aynw5g+ltN83DLVduQW5sJbomwZNt1cgO1A75q&#x000A;uaTuhdPxW42sczicmkvwxb7wu8+f2sQAGkjZ3vooE/VlZRqcDt8Nu2768GLu&#x000A;QAOmnwY1fxJDy9S/Kq5TS8gvYEo749P8UQzXWqfcvzq9ifwCJtOn7ZrPr/DV&#x000A;PfaFXssG5r+AorRZ+wEWDZNuRNcfKlhJ4QD1FlaVRwcB7powhvYcN2/gWGBg&#x000A;RJJDB/kVgUfj/Ftd5r0cKQqM+Xu/HgJsLx9Nb+cnJV8TX2A8wOV6CHCZo6y3&#x000A;u+dM3oesnQQmWtugiwBXWc+9/0Yu5QImS6vVQ4D9C6gUEM7+S3qYAz9FoYBw&#x000A;vunQQYC/eJpCAeH8s8ar/QAffY1CAWGVtmo/wBYOQALCW1vj1vwUeDFlAiLY&#x000A;/ZtL4wEuYvNYIJKUt0MafxPJkkaVgEhS87Sd4NOcfwRES3DhAw3fir5fzLO/&#x000A;QDTJB3+9rdlllJZMCgRE95q1S5s3o6u3cAcLiCljp/mHuV9V6Yl1AKG36Ai1&#x000A;AeKZCWdvyzvlDI7Ohj1trQM3Zz/AgRhbYlbvOMEEGIjT2uXPLcgxl5QUWBv7&#x000A;upovzH6A26OeXSbqt9D/Ak84mE5KStq5Y04Wd9yOvhD7vvUVygFMw+tdcxHg&#x000A;iivRut+Pi1dQCGA6krfNwWOG7sY7EW99u4+bN7AAC5im1G2z/5RS6MD71mtN&#x000A;4UbR9h+sR9i9DphJgt+Kcx58eZrLuDwtfzVlvFeYf+2mb+JPcjcf31icTXyB&#x000A;mY2idxXFt+l7Rff0Amw7OvJzst54Z39t390Km6KjZ8dG8+vZzH2BGUs5srEp&#x000A;rqeFWqZ1ukOw5avxPxaZ6W/s3r1759cvrMzlwgOJsagkrgWWoQfTyK+r/ycu&#x000A;8P/Zu9eftu47juNRL0lFmmRVlbVqQrte1q1Noqr3TZUqtdOmTepUqZ2qSpPa&#x000A;Stu0rXuyJ9se7skeHf1kCwuwAWMJTBxIuCYgJYSSACXkQq5/0Y65moakgeIL&#x000A;+PV+gDkH16q/38/7nN/5nZ8doKwc+MM757//Crc9f3LjAo9/prxAuXn7469G&#x000A;er5vDD2R793wIsr8vxUXqIDCf39n+EbnvZcrz1995zeNr/RszN/R3H9UFqgI&#x000A;j37+yatXB7rXm4hKDWe//PTxXbueeXFDn0bs7uMvUDme/PyvL746efvcybnF&#x000A;U21b8+ilkeGvjn3y6ZOLT3jmxQ18JcB87p9KClRY4q//8rcvf38sFPnq2Jt/&#x000A;+ujz0q9rfv2VwoP6ez7/P9UEaotDb3zR+UDfkXP1w3+pFlBzZ+iXj536/tu/&#x000A;4/3/9Rl9oBZ57pefDd1f38LsH51+gRpl9+/e+LBwz89AdJw+8eafFQmoYYVf&#x000A;OHjsi5sd690vnsp++LUCATXO28//49m3zsw3lyzVKkxfz375cdijOMA24Ml9&#x000A;L/36/WePvdf0q7c+e+/Yq+9/8tELB3btITCwfTjw8G/DU7947KcPH1jcJjCw&#x000A;rVirLIEBAgMgMAACAwQGQGAABAZAYIDAAAgMgMAAgQEQGACBARAYIDAAAgMg&#x000A;MEBgAgMEBkBgAAQGCAyAwAAIDIDAAIEBEBgAgQECExggMAACAyAwQGAABAZA&#x000A;YAAEBggMgMAACAwQmMAAgQEQGACBAQIDIDAAAgMgMEBgAAQGQGCAwAAIDIDA&#x000A;AAgMEBgAgQEQGCAwgYEdIvD+PbXAPo0BNi5wY6gRGAxsXOBdjTVxAt5vJA9s&#x000A;RmD/UwCBCQwQGACBAQITGOAKgQECA/dm3576YT+BsdP8DXVFI4Gxw0aV++vo&#x000A;FNy4i8BwWQgdgPhAByA+OgDxgQ5AfKADEB8dAMRHByA+0AGID3QA4qMDgPjo&#x000A;AMQHOgDx0QFFgPjoAMQHOgDxgQ5AfHQAEB8dgPhAByA+0AGIjw4A4qMDEB/o&#x000A;AMRHBwDx0QGID3QA4gMdgPjoACA+OgDxgQ5AfKADEB8dgPgogg5AfKADEB8d&#x000A;AMRHByA+0AGID3QA4qMDgPjoAMQHOgDxgQ5AfHQA4gMdgPhAByA+OgCIjw5A&#x000A;fKADEB/oAMRHBwDx0QGID3QAG2j1Knu2aOf+MrymnXZuYieBCWwngetI4N0E&#x000A;tpPA25cDz7kCqzK7lzqwWymwcZ56dEngvT9RjKrQuNiBva8rRR2MoPds9cny&#x000A;+ZcWBd77supWhxcOPhp3YG/DIaXY+cTXC1v8ij8Kjy0c/xsaVbc6PP7QwSPh&#x000A;3YYGlSDwZjj6yJHi8f+hx1W3Wlcx4ZFwOBxRCAJvhifCa/HxP7yruFUbQy/M&#x000A;xBpBE3hT7Itf83B4+mHFrd4YOm7BI/Vcga2f2qkjgQ88XTz+/5hH1RxDh/oe&#x000A;QZch1nX0Tg8WBf4Zjao7hj5EYO90czwfv+jPWVTdMXR9z0ET+Ifwo/hF3UOq&#x000A;8hj6CIG9081yNLiHVO0x9CECe6eb5Qn3kKo9hn5tF4G9082yzz2kLeWDUAk+&#x000A;EOttyIPdMGsod3gs+7tvHKNKEAgsQUv01HN4CEzgukuQchOYwARWfj0gMIEJ&#x000A;XB9TOxIkPASGBAkPgUFg5dcDEJjA2GlX+wQmMGozGw80305gAoPAwkNgEJjA&#x000A;egACE9hCDgILD4G3bawJLDwEJjCBCUxgAhOYwHpAYAITmMAEJjCBCUxgEJjA&#x000A;98NaaAITWIKEh8AEJjAITGAC7/DyD7aXbrU1d5ZudjQP6gGBCVy75R/MJ1Y3&#x000A;5sdCSA+3LW92nu0K4Vbvyp8HmhYYshZagkq40VayMZRKleZjsJC6mVn79MIo&#x000A;gbeu/G2TYVXgm+FiIXkmfa1jaXsqjCRP5XIrp+hvs61Feh1EJWiVMyG5GqeZ&#x000A;4r+MMrNidCEb+sLYmsAUQqvwbFn5T+bTJQJP9hVdHQ+nFjePh7PFp4Rzy38/&#x000A;ccsoCN8R+EwoEfhWOpXJXEov5+R4V+zyXP9YydN7+gi8deU/FWYvlAh8far4&#x000A;M7m8p3m8e0Hj5Sd0hisExpoEdbeEsVWBmxcO+dGdsPSvIY2EYoISYW71P2i5&#x000A;SOCtK//NVKa5ROBFTodU6eZIOLn022i4dPrOyByBdy4bXsjRkkulSgSeXri+&#x000A;nV42tn1h83xYvSoe7+ol8JZewdwlcFu+f3Veun16Jj29vHEudPU1pcMIgXdu&#x000A;Nja6lPJke1Qi8BKzXaW3MuZy11amsbrT5yICl1Xgzsn0hZI5xZlrq7PSd8KZ&#x000A;TNQzGS4QmMCr3CXw+dJj/I3ZcGJlTqvj2vWIwGUVuGcsXVhbzFPpyZV7AotT&#x000A;W1cJTOB7CzwQJktuHBUSE+mZ5cUE3/T3ELisAg/lsnedX4dD85rtfBOBCXxP&#x000A;gUdCS2f0nSfcWRpvh+LJgcDlE/hCNte9utV7bnCxI0tzEDcXZ7P6Zy3kIPA9&#x000A;BO4cDq2Z72Yhd2Lx8Vq6JSbkWk4SuCwCz2XHShfVXAqniw8zy1MSY9niCo+h&#x000A;8I2llAReX+DOyXC+9Gp4Ys2YbaKFwOUSeLR1PjY0JFJF4rPwlXic057LzUUd&#x000A;t8Pt+GTceqk4C93aEfWOZZsJTOD1BR4OA6V/OhtGFw75U2uSYQhdBoFT8cNQ&#x000A;WCLe01R81mg+5LPhTqa4uCOueuZs6MqH/tGIwAS+S+ArTUNxTPpal1bb9jTF&#x000A;Z9/mbK7QnMr1HS+uoy8QuBwCdyQXTqht8UNbcol4z9BCUzoKiYHLC/eDkwvr&#x000A;WS8PJAqdPo1E4HUEbo0fbi+fApLxiaGleFE2W1wafXlhOVaKwOUQ2CfCCPzD&#x000A;BL4/zck2HyckMIG3q8A+D0xgAlcMX2pHYAJLkPAQmMAEBoEJTGDlJ7BEEZjA&#x000A;O3xqR4KEh8CQIOEhMAis/HoAAhMYO+1qn8AERm1mw1JKAusBgYWHwCAwCAwC&#x000A;E9hCDgITmMA7O9YEFh4CE5jABCYwgQlMYD0gMIEJTGACE5jABCYwCEzg+2Et&#x000A;9DbgcKgEhwnsFEBgELj2OFruo/9RNb4P/WWrez7UGh8QuAw0lK1fDYpbzQFQ&#x000A;Za6uKz8WI3DFElRzNBB4+wvsS+0kSPmVn8ASpPwEliACKz8kiMDKv9Oo9kIO&#x000A;CVJ+Apd9vl2CCExgAksQgQlMYAIrPwhMYAs5CCxBBK7B8vs8sAQRmMAEJnDF&#x000A;Be5NKj+BCbxtBW4Nyk/gB05QouR4nyn+6FjnSQMpAldM4EutBCbwAycoJJZ/&#x000A;uzzTHEWDE+u52tRCYNfABK5tgRMhFjgZCFw5gbsTg6evtoy0FX8fbW2Z6p4f&#x000A;iKL5uCPJRMeZ67em26MolTge//FCopvAO5MfuhaawFUUOBUm+76dCfn4suV0&#x000A;aGqdTJ9oWrwGToSW3MTFMJuJhtIzmag3ezFD4HrmPgJPj/SH/HgUXekL+cmB&#x000A;XOhvigpNyVuha7h46M8kciF/g8DlEvhafJIdCaeitq6Zzig6E1YEvhVvToXR&#x000A;KJoO45nZ7HFDaAKvX+9s0/i5a+FGNN8SvhlItobhRJyrvm9Pns7lBqPoTphI&#x000A;TXelCVwmgS/FP+fiUdC5cLN4uMyvCHwh3pwvDocyM9mp2HACE3j9eufiQ/3/&#x000A;2buztjSWLQzAlzs3549XLxF4wEaGfmhAEUEkGgWHOCQ4b2fNjhpFTdRjYjSa&#x000A;fcycnFrVQKJJcMSAfnWhPaIs6u0aurqIUPbHKrSTJuWeVhoTDdQrl+IEwGUC&#x000A;zPcAXBLwHHl5Q6oImItcqz3T4Kc5dGIB8O/iPcs/w+6TgJt540SH6FY5TBgA&#x000A;XGbAdaRu3w0WAbuKgL2G9RndqfBjUruLdWI5TgHm7COyJDLWkhuAywz4Po3y&#x000A;hoFfAM7qk6pCjfAD8MUAp0jW7AD4RgBze0WIUf1nwFM0FnAkkgg/AF8AsKo4&#x000A;d0wUqtAdAFxmwPJqOVY7ZfwM2BXr8MmFcYQfgM8A3MO1uDzgQbltmu4Ll96r&#x000A;urMAuNyAA3MmmTb3acCePr1VLs1SG8J/O9P1DORgwHFy20SIJsZ8TtLnmlti&#x000A;DnWPsre5K+EH4LIADri468rj8vIwdJ9ciQ4IkZR2vS4euOFzBTyuiFBL9Qj/&#x000A;LS1brziU0tHCP/tkQRsY1xNCZPz+Jid1D5GeUlmnPUGx7t5eAC5PBaiQ+v2N&#x000A;fMdIz1z0zSL8dxzw72p23uLYvSRyUPkBB4xEd7zb4W8CYAC+FsDIQTcKWDSk&#x000A;ZBt4MiQAGIABuAoBX/bNYiAHAP+UQjYXAAPwnww/ngdGDgJgAAZgAAZgAAZg&#x000A;AD6VIvGe4dYz3khrCIABGIArEHBgkDhNjJR8IyWmUQDguw64vj3rnhv2lfwo&#x000A;vLZaAC4L4AzVtbqauv2JkvfYx9oBGIB/nYMaTQo7YhQuOW7A9X2+LAC+TsAe&#x000A;s0/9bqP2K79ZAK7ydKmx0El/lB8/depRT4mPIuAMAXA5ACcpZf2u46lyAu3j&#x000A;7syounsXmZvssqnpc3y2fms2bl9Lfq9oHnSnpgD4bqZTn3M8/3DLLM+ahiLg&#x000A;xqvQQ7otUmzMdOjjdQ79bx4/81j3Z/oSfFGdokbVBlZ7Db1ZiIc0UTdDWQ8A&#x000A;A7BozFeOG+L8kMvUBOl9LHmsd9j0ZxzqMh93PIioBx2mBvJ7G7J+cvR4APjq&#x000A;gJvCREOZxgAvZ3UZ3EBfzCsBd9R7kk6SlsWkZMyA63h2o3qjQ/RTRlW6uwAY&#x000A;gEXA0AebA/kVG8042wb0aZlbHOb4QGtCdX7OGB7VBu4h93BbVB8VDX6j25lR&#x000A;TwoD8FVvI/m6Zkwif48QXl1FdFrWiZxKZ8CflWT1h6oX2uOf4b39w9K5V/VM&#x000A;PwZgAJbNrQki/fEj7sNy6TwFZSAa5ct9l6pXR3ieyjHViZU0+zx8zKCYNJuU&#x000A;9gcAfA33gaXh2kcJ6hG1NFQnU5ZmC0PQ68yAaKGQAuyiR/nDo34+rM4w70b4&#x000A;MandWTloemxIGr4vZF7pt8rhUQmYr/Ih7httl6sMuNGakjiUDOhZNQCBHgLw&#x000A;VcPvqrXu39UbCQm4w61SewHwAxoWA0MiD7hwI8ARsw5zI/wAXLjPO+WQPGfJ&#x000A;cMiUkI2t/BdbDk0IMTFg3UbqKTyYNEp+PsxxenYm5KCLh99WCGoviZFiGVt8&#x000A;CCw6M6qqQhJwvTWjbFO/d8JAHyIAF1JLi/W7QXLMULdTpYYC4C4KhbibmgEX&#x000A;81qIUtZhzchBVw3/A3L7rK6IDuGLdXC/YNyIFwG36xkzmR+JFXXw3jrdO6t2&#x000A;BqIphB+ARZ9pDQHy0KTotmZxdzV4CoCT5qOHptcCHLeq0O3tXvUdDcIT8iIH&#x000A;XbkCNEjR7tra7ig1cmMlFRHTRiJZBBzRSTVXGPAwzdX72vQ54fIb055I6vTk&#x000A;dgh/tadLDeRoo3HlsIdaZN2YO7E8fXp98bvhs9Fwb34kVtIcVwM/UhJ9068G&#x000A;DyEHXQKw576fx0Ib6oadzZSL0dYf5lEYt7ol1FjoHt6bCshiOyoXzB5UoW9b&#x000A;2XqZoZSeLMUGbWND1OfjgbmTf/fPcFOsALiZVKmcv42U7Y8P+UNixG901T4y&#x000A;OwLIQdfQBeFrnXKO5O+pe/utRWuOSlGYk1JE1EyUyf649dWEnhFnfxJtYABW&#x000A;maFrQJ7osCmNXQ5SXzAqxhz5vQPq62itgRxtcu8AP/k2MqOT2VuPHHRNfYjX&#x000A;82YR/jsJWLV6v7dmA95SH4m3+NBSBDkIgAG4QgAjBwEwBnIAMAAj/NcffjwP&#x000A;jBwEwAAMwAAMwAAMwACM8AMwAAMwAAMwchAAAzAAAzAAA/BN3TBDDgJgAK7m&#x000A;cho5COEHYAAGYIQfgJGD7hpgncqVDAC+E2kPOaharp+283wfRgUnjIVGDgJg&#x000A;hB8JOQjhR/gBGDkI4Qdg5CAARviRLt/aRw4CYACuzLL12odSIgcBMAADMHIQ&#x000A;wo8EwACM8AMwchAAV1f4MakdchAAV3H48TwwchAAAzAAAzAAAzAAAzDCD8AA&#x000A;DMAADMDIQQAMwAAMwAAMwDd1www5CIABuJrLaeQghB+AARiAEX4A/hM5qNZm&#x000A;pVoV5JJrbnKf88jKXJOf/L2/rHRPvfk/v0YXeA9uqqvWyKs1AC4LYFt+Djpb&#x000A;/ip/i9fkJ/9Xfs3qHqiMtfO/B3d1fw7/ubmunTsE+FONlewaJ3uptSAFz3kk&#x000A;1sqwFqTOan4PQYK8cgB+YcX3PKmGajSkP5aqPPw1AFyeu8U1AAzAAAzASAAM&#x000A;wDc/kAOAARiAK7NsJQAG4IpJ9vl7QAnAAFy16R+YBGAALpGWvn6LUTj3/MxX&#x000A;CgYXSu0+CH5e4t9vgm9O7lg7Ps//+dNpAAzASGeHf/VVfuTEwdoZr3TGh/6U&#x000A;6JlyTsET2z+96jzP/3n6tOsFjEntcB/4dgJemiea3375RPJbvjJgffcXEokq&#x000A;ADCeBz511H81AL4VgF8Tfeaid3+daGcpnV7kjVvpVfnzyG7nX9piOq3t2hcL&#x000A;gHfs9h0uueVWa+dSEbAymJe4tGJnzmtpolz6SL3wmvq5ZJ2xarerF9Dkxn37&#x000A;oXWa3LcFwBUHOFiD9MdS8GT4X576dD6QrpRqX2QNeNVUxfCWzpXhGpPr1VLc&#x000A;AtE20YYFeHedq9vru9oTohV57DKZ+98B0/sC4JeGXNs81NKqev7W4Fd8TvRE&#x000A;094SbWmrOd68saVK6Gd7RPt82toG0UJZeqEB+PKAtwmpgtIpwTrN5+vS0pt2&#x000A;QDFZOkqbaXndpW+fdfqsAOvSoAK8tk57Bxu6PFQq516nMOWKVeicQeEjC/C/&#x000A;RE8P9ujpogV4YZn/zBu+DGg5+qYtyob3uqy8v9tnwPLV/6dOWyZ6XZ77wAB8&#x000A;ecDaNorBiimBg6cr1FRseobpqWZXwF9JZ0cmHahieYcBbx7tHinAWx+/rahi&#x000A;V9M26J2mrRA9LwLuXOCGtAL8geYXtV2TPao28HMudqXa2NpSTL7ME1UWvyf6&#x000A;yPvN48VdPk1eM15oAFxxgJEqpw1c83vAsry07EqUX1jcQjqdNukrA375QyfW&#x000A;2s62LDsV7hVZqBpr3wFLhfoxA96XNOXZH7h4VoAl27erpIdp5RPRoTZP63zK&#x000A;JoV5f87qxIpRoTYAwJXUC41UyYBNi5KmrXI9Vvsqm8TLFF5jtVZa5kV7EfBx&#x000A;zlSbpUlD1qHfcRn6HfCuTh82JeCdwtnzhV7oHOXe02YnPXnG28L8tzStk1+H&#x000A;VFVcAua0AsAVNxYaqZIBb3IlOd8dLeuv+7LIVR1OUm2nqnQ/58V0AfBhjOZf&#x000A;H79geNpHCssq9/GPgLUX3KINaofyaqDOLlShZXU59g/VvKeNdf4zT2Ujmsd+&#x000A;kF4s2CXg3Dp9AOAbKqcB+HYAljpfcTf0zh7ph8rUnvK6wt1W2v72ytEJwLLx&#x000A;esRtYAZ8LAtYeqWdALy0rm4mLVnd2dv/rhYAL+pkkn1V/uALRo7MLU07Mthx&#x000A;EfD64pefOqEBGIABuBTg/7N3v79NXXccx0sphLFqW6R2nbZqqNU2bVq1bg+q&#x000A;7uEebvQ/O/liz67t699NbCeOE0MSOzH5QX6TH5AAoS1UAtRCUZna0UlV22lb&#x000A;92DnnN6n6WUAAA7iSURBVOukQNKJ4qS+1/f9eRBdJxhyvzkvzrnnnnvyvu75&#x000A;7t849YHTnEDScN3h7W0pfvXZe2ZQ+wjgez13KxawvpK1c1EPAjbTz+aquiHO&#x000A;vbPX7aRyUd55V5v90sxgmbfcdv/U7X998m+RLx4A3Gsviq8BGMDksQH3XPuv&#x000A;e7XqNCeA32lOWd2s2E+7o+kdwGftZ/9uJqLsqFs+egSw7sKNxH+4CzQ/fN/M&#x000A;Vm/f/r3T03Orud7ylPuPftrzMOCbzS9zHxjA5PEA6+7wxoe3v7z1cfPV3cYN&#x000A;d2nV2Vu9vfYRh5uNhl2r0WjoVx+/13vn3WuNxldmwUezs3Zzq/G5nQxrNEyv&#x000A;fO36nd4798wM9Vn9Dt3RfmTf/s9Gw73k/tuN3t7GzZ2/tqfnun3b9e1/fZ9X&#x000A;YrGpHYA7FvAT5/Pdl6z7H55GArDOJwFeyHFAgG/9pyL3rwHYn4B9dh/4kyAv&#x000A;nrx3MID11bBztwfA/gTss5VYQX6g4l7PwQB+99Snn/UA2KcLOXwHmGt2fxaC&#x000A;PbFYCw1gHxeCXSkBDGAAAxjAAAZw5wD22Sw0gAMOmE3t/H0fGMABB8zzwAAG&#x000A;MIABTLulEAAGMICDUgieRgIwgP1cCPaFBjCAAQzgvQD/tbnc1r2n5OFXzb1V&#x000A;Pf99HvirRnNRuH++awAfyFrot754U+et5vMub73Z2a+e+57Jc555deqJz2jL&#x000A;dz+HdwB8EP20sgmH3IS9/iou8Sf+W6Sry51HOdblpv2v5IkrkXAL4f2f2M4r&#x000A;AfDBAfZNQhJ64vdKJ5W/lUK0JwAGMIABDGAAA9i/gNnUDsAA9jFgAmAAAxjA&#x000A;AAYwgAEMYACTVhZyABjAAPZk3/p4SykBDGAAAxjAAAYwgAEMYAJgAHcsYDa1&#x000A;AzCAfQyY54EBDGAAAxjAAAYwgAEMYAADGMAABjCAAQxgAAMYwAD+rm6YARjA&#x000A;APZzP+1HwMmgA062VggAA7gdyTUBpy4HHXAt11IhAAzgdmQ2bAGnJgpBB7w5&#x000A;l2ulEAAGcDtSkKu63V6YKAf+GjiTnRtroRB+Bsymdj6+Bh6VYkLuyxKTWIsS&#x000A;keoTF8LPgImPARfc39JRAPBmS4UAMIDb1QXrlBWAM9lWCgFgALexC14CsBlD&#x000A;i89G0AA+kKt9n90HHm1l4NhJgDd9N4IG8IHMt/sMcKGVgWMnAdZjaJ+NoAEM&#x000A;YNsFLwHYHUMvARjAvgNcaGHg2FGAN/02ggYwgE0uKADbMfSKCiRgNrXzAuAJ&#x000A;aUcc7/2QKm0pxISPAfM8sBcAC2M4yg9gAAMYwACmBQEYwAAGMIABDGAAU34A&#x000A;AxjAAPZ5vLwWGsCUH8C0IAADGMC0IMoPYAADmPIDmBYEYMq/D1M7AKYFUf7O&#x000A;Lz+AaUGUH8C0IABTfkILAjDl75ywkAPAlN/PfStLKQFM+QHsrRYUC+bvB5bE&#x000A;zuF6v/5QCu/xh+IRAAPY44BLkdPBBjzkaLupbAjAAGYM50PAUQl/0zgkEIDZ&#x000A;1M4/gEdimeFQLeUe16fXM+GUyoRjSoVT6WgomtY9UXhdfy0ZHu98wLoUq/qM&#x000A;Y2NyOpwalkQ4kw6nB6frI/br+qvRTCAA8zywfwBHJjekItk1TXRRKnlnVqJu&#x000A;3yNjRScr+X6VjmS157rUOx7wXMSpSrWgQmZXyaj5EAvLVWcjIotJpfrLUsyW&#x000A;JwAMYE8Blsm02pQtpWbkQlINOzuAnaWMqsmi7oudi2rN2er8IbRM5tSwnH9w&#x000A;CB0WZ1ipJZnSg+e+IZU5JwAGsKcA53XnohZ0syxumNcXdgDbl/ll+7mpcj7V&#x000A;+YDtL0LaKD8M2F4Yl8tqXcbMMLoKYAB7CnC8OTVTEvv7GIZ2ANuWGzHtNbki&#x000A;ciUAk1jntmepHgS8aT45KWdWZd4cnQcwgD0JeMSddA3vAViPpIuZoMxCPwrY&#x000A;3gwOSSzkHiUADGCP9sCz39QDl6pF94tBBDzU7IFr7hGAOyr+Xwu9A1hFyuZq&#x000A;eHYPwJecQuJxx9AdB3iseQ1caB4BOHjxB+CaTKaTq85uwFP6ZbpYTAcH8BWp&#x000A;J3UVEioZlkrBTNBPKbWcHTd30wAMYG8CVmP655Yd3QV4sG9Fd80D5vZKUACX&#x000A;+kTSqigyEpYJZ7ks53QFYhFneSO7AGAAewnwgL2yGxowH/svD6fM6DEX1b1O&#x000A;1K68GhhQ49F+exTNdThg94xtKdZnZnIqVg/1hyU6dHXW1kjlaomx/vEBAAPY&#x000A;Q4C/zjk7Cz0mMQ+0IM+U30zKfzfl9xJgNrXzI+CEU0ufWX3cFVcA7mDAxI+A&#x000A;U1tm9e/FFIABTHwIWF8DDw3FOrAFtVL+TCwHYAD7BHCHtiDKT1q72qcFARjA&#x000A;3uxb2ZEDwJQfwLQgAAMYwPvdgiQOYPcW27e/Ow5gAAMYwCzkADCAAXwQzRrA&#x000A;3gA8MpiJhobdB/ZjU6FVdyXHmVpoyAVcqoWm+oMAOBZW4zOnXamZzdC0uxel&#x000A;GpqpnbGAM/Oh+pUkgAHsLcCRSxOVBScyqA9DTl/E6TNrj65UJOJsGcBRJxvJ&#x000A;OvUAAA7JrLNQcabMf2pFKVZkNKdULi7VSnVFAy6VJZKXlTSAAewtwHI+owqV&#x000A;FaUuy/m0Ss054ypdKfer0oIGnKlcyqjcllMKAuD8uspdlBGVzufXVLIuk2bw&#x000A;HFXJkGjAk33r5qHpOoAB7C3AWdOpTEtYLVTNQLrkjKpVMU/NFTTgkn1KdnAg&#x000A;HQTAq/pjyllUUzJsPnHROZPru2iOljXgSxVTg9VBAAPYW4BtE12TerL5zP5C&#x000A;Xr0tFmxeD6EXZGMsnPyOW1CbANvL/5UJ3e3a05+S+XGxvybKPGQ5JZXFaGrf&#x000A;yw9gALcI2G5EEZNQrPnLgeKittw3b2jAZyarIpWxZBAAu6cfMRUwiUp03n0a&#x000A;qWYmsWor+se91Q/gDkonrIWOnHd74OmMuzGyWs7rLsg+hOPut5McmSmbTaE6&#x000A;H3C62QMvuqdfk/mw2wPPuLeRYtGLsgLgwMXjgItJew08ribsUbrvkh4uDpnL&#x000A;QX0NvL44bo8SQQBsT9pJqLq7hew5iaWdUXM0qgHPztjrYgEwgD02C72k1Hp1&#x000A;wVzzzSZVZlTmVboyUVLJUTOJ5cQzZn66HgTAGylz+msqlS2XlBo2eBNmPmvA&#x000A;zEJf6lvTvIsTAAawtwBHKuU5pzhoFxwV41VnydwHzmbjxYmqHkKflmp8QeKZ&#x000A;IABeycbzjhkzz2f75jZkOaVUbk4WFhwzCz2Yd5bj2ew4gAHsLcDxUigx5d4m&#x000A;Gr+QmHFnaVIziem03bKyEErMbiZVEAD3X357rOCe/vT2SScvT84WCmZLzvTU&#x000A;5NunUyoAgNnUzl+AvdeC2gQ41obyexEwATCAAQxgAAMYwAD+/ymlAGyTjiUB&#x000A;HLCwqV0HAab8Aexb2RMLwJQfwLQgAAMYwLQgyk8ADOCAl59N7WhBAPZx+Xke&#x000A;mBYEYAADGMAABjCAAUz5AQxgAAMYwLSgoABuS14BMIABHPQ7smxq93B+05b/&#x000A;jCtt+Vd/4r0f0ottKcSLACaEAJgQAmBCAEwI8XzY1I4QQgghhBBCCOFqnxDi&#x000A;mTDfTgiACSEAJoQAmAQ9bGpHCM2aMyWEZs2ZEkKzBjB5JCe7f+senOg+sfur&#x000A;J7pP7v7ks2+88LtfHKNZc6ak/Tkm8oY9OCSHdn/1kOyGeuRVef6FZ+R1mjVn&#x000A;altQV/N//pf3mjV8+RumEn/2U+ztF+CnD38rwK/LH5566uiP5QTNmjPV6ZLf&#x000A;/9AedO/1bXTv/b19//gz2NsnwM/LDx4AfPS11551v3L05OFtwEd+efjrdxz/&#x000A;tfn4I3mJZu2NtPmGWZfIr74t4NeOC4D3C3BXt/xlG/DRl57WPXLXUTP2eUXk&#x000A;1T8ZwEf+/HOR43/cfsf/2rm7nUSSMAzAbQNiWkEMAds/BjaoJBLEo/GEhOOZ&#x000A;u/B66qK3qht03D3aBHdwfJ6DkXzayRRdL/1VV2uvJ8C8uwKHzn8K8Ek7n+cC&#x000A;vLMAny5TE10FeBrOe73zsIr18vEovkoBXpQPt0fd8v7dcedaaDYBfsqv+9us&#x000A;Hk6KkN9Vtz47szC/qIqn03mYT1vbIxrhvN8U4J0FOHtOTXQKcCMMU20YbrNF&#x000A;ns5JNwb4OaQO7aT5+H5xPLQypA7w0UHVRFdZXYS7g8l1fpVlP8PgJr6KxVZR&#x000A;rg/W+WCzNosrsiwT4B0GOEtNdArwTfgr1Z7D5WFZBfRnDPA03Deis9B/O+qm&#x000A;HLQEmE2A40d+pw5wJ6xj6cfoMTu5nsWV2G0Zi5NqWsVZ9ctRArzLAKcmOgW4&#x000A;HS+9VYvTboSz+rvp5Gz0Xg96CHufX7/m/n8GeJya6BTgu/pj/iyM7+u8LmJx&#x000A;tqx+8LorwB8U4NRE1wGuQnob2uNfA3xUO912QHfh/NA7x1uAs9REpwB366xO&#x000A;Ultd3TT5HovlqJmUTQH+qADHN38QA9ypt5Ke4pd8ULXK8eSs61R/e9luLy2C&#x000A;axvvA5ya6CrAzX8E+CEWQ7Nd0UJ/XIBPlyGm9jSfxda4NRsdx5Vv2kCaxX+v&#x000A;wiJeb4+vl5ur7nrfN5D4DQGOTfQwpBxXa6tVGL9Um5Oxp86yoqh+8MepAH9Y&#x000A;gGMTna6+B2UxmRTlzyzrF/n0crZMJ+d7eLxoN8vNRnB/FKqGqOlZOKv9twDH&#x000A;JjrdNXwKF/H1cV5kJ/lj+txPd6GnIc2dq83zHgK8U1fdzROU6+5LapSHzeZd&#x000A;tcPbXxXF6lv3KrXU3VjsvR6wceDN2w+//VHK+nHbYfpvHA7K9f1TUb6kHYzF&#x000A;c6dIAR7P88nRzTy/FWDYtwBfNuvP9nH1eHNrlYcwqCpPy1CuLlKxMRxti1uD&#x000A;gRMHexDgf2m8bjGOX18dNlpOFHyGAMMulmb+qB2Y1kYKprWRgmktwJjWRgqm&#x000A;tZGCaW2k8JWntd98RoABAQYEGARYgOHTcmsHAAAArPaBveF+OwgwIMCAAPPV&#x000A;+aN2YFobKZjWRgqmtQAjwEYKprWRgmm9y5G2w5vXe/CKip+0+EUC/LZh5pQr&#x000A;/kHF/Mt1HeaB4p9THF1aRwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&#x000A;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH+lvmUF6&#x000A;/O3won4AAAAASUVORK5CYII='>
+</div>
+
+</div>
+</div>
+<div class='tree_progress'></div>
+<div class='ui small modal' id='modal-linejump'>
+<div class='ui custom form content'>
+<div class='field'>
+<div class='ui right action input'>
+<input placeholder='跳转至某一行...' type='number'>
+<div class='ui orange button'>
+跳转
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class='row column inner-comment' id='blob-comment'>
+<input id="comment_path" name="comment_path" type="hidden" value="k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip.png" />
+<div class='tree-comments'>
+<h3 id='tree_comm_title'>
+评论
+(
+<span class='comments-count'>
+0
+</span>
+)
+</h3>
+<div class='ui threaded comments middle aligned' id='notes-list'></div>
+<input id="ajax_add_note_id" name="ajax_add_note_id" type="hidden" />
+<div class='text-center'>
+<div class='tip-loading' style='display: none'>
+<div class='ui active mini inline loader'></div>
+正在加载...
+</div>
+</div>
+</div>
+<script>
+  "use strict";
+  $(function(){
+    var page = 1
+    var commentsCount = 0
+    var $container = $('.tree-comments')
+    var $comments = $container.find('.ui.comments')
+    var $tipLoading = $container.find('.tip-loading')
+    var $btnLoad = $container.find('.btn-load-more')
+    var noteAnchor = new Gitee.NoteAnchor({ defaultAnchor: '#tree_comm_title' })
+  
+    if (commentsCount < 1) {
+      return;
+    }
+  
+    var path;
+    if ($('#comment_path').val() === '') {
+      path = '/';
+    } else {
+      path = $('#comment_path').val();
+    }
+  
+    function loadComments () {
+      $btnLoad.hide();
+      $tipLoading.show();
+      $.ajax({
+        url: '/lyyao09/cdn/comment_list',
+        data: {
+          page: page,
+          path: path
+        },
+        success: function(data) {
+          var err;
+          try {
+            $tipLoading.hide();
+            $btnLoad.show();
+            if (data.status !== 0) {
+              $btnLoad.text('无更多评论')
+              return $btnLoad.prop('disabled', true).addClass('disabled');
+            } else {
+              TreeComment.CommentListHandler(data);
+              page += 1;
+              if (data.comments_count < 10) {
+                $('#ajax_add_note_id').val('');
+                $btnLoad.text('无更多评论')
+                $btnLoad.prop('disabled', true).addClass('disabled');
+              }
+              // osctree can not load script
+              $comments.find('.timeago').timeago();
+              $comments.find('.commenter-role-label').popup();
+              noteAnchor.locate();
+              toMathMlCode('', 'comments');
+              return $('.markdown-body pre code').each(function(i, block) {
+                return hljs.highlightBlock(block);
+              });
+            }
+          } catch (error) {
+            err = error;
+            return console.log('loadComments error:' + err);
+          }
+        }
+      });
+    };
+  
+  
+    function checkLoad () {
+      var listTop, top;
+      top = $(window).scrollTop();
+      listTop = $container.offset().top;
+      if (listTop >= top && listTop < top + $(window).height()) {
+        $(window).off('scroll', checkLoad);
+        return loadComments();
+      }
+    };
+  
+    $btnLoad.on('click', loadComments);
+    loadComments()
+  })
+</script>
+
+</div>
+<div class='inner-comment-box' id='comment-box'>
+<p>
+你可以在<a href="/login">登录</a>后，发表评论
+</p>
+
+</div>
+
+<div class='complaint'>
+<div class='ui modal small form' id='landing-comments-complaint-modal'>
+<i class='iconfont icon-close close'></i>
+<div class='header'>
+举报
+</div>
+<div class='content'>
+<div class='appeal-success-tip hide'>
+<i class='iconfont icon-ic_msg_success'></i>
+<div class='appeal-success-text'>
+举报成功
+</div>
+<span>
+我们将于2个工作日内通过站内信反馈结果给你！
+</span>
+</div>
+<div class='appeal-tip'>
+请认真填写举报原因，尽可能描述详细。
+</div>
+<div class='ui form appeal-form'>
+<div class='inline field'>
+<label class='left-part appeal-type-wrap'>
+举报类型
+</label>
+<div class='ui dropdown selection' id='appeal-comments-types'>
+<div class='text default'>
+请选择举报类型
+</div>
+<i class='dropdown icon'></i>
+<div class='menu'></div>
+</div>
+</div>
+<div class='inline field'>
+<label class='left-part'>
+举报原因
+</label>
+<textarea class='appeal-reason' id='appeal-comment-reason' name='msg' placeholder='请说明举报原因' rows='3'></textarea>
+</div>
+<div class='ui message callback-msg hide'></div>
+<div class='ui small error text message exceeded-size-tip'></div>
+</div>
+</div>
+<div class='actions'>
+<div class='ui button blank cancel'>
+取消
+</div>
+<div class='ui orange icon button disabled ok' id='complaint-comment-confirm'>
+发送
+</div>
+</div>
+</div>
+<script>
+  var $complaintCommentsModal = $('#landing-comments-complaint-modal'),
+      $complainCommentType = $complaintCommentsModal.find('#appeal-comments-types'),
+      $complaintModalTip = $complaintCommentsModal.find('.callback-msg'),
+      $complaintCommentsContent = $complaintCommentsModal.find('.appeal-reason'),
+      $complaintCommentBtn = $complaintCommentsModal.find('#complaint-comment-confirm'),
+      complaintSending = false,
+      initedCommentsType = false;
+  
+  function initCommentsTypeList() {
+    if (!initedCommentsType) {
+      $.ajax({
+        url: "/appeals/fetch_types",
+        method: 'get',
+        data: {'type': 'comment'},
+        success: function (data) {
+          var result = '';
+          for (var i = 0; i < data.length; i++) {
+            result = result + "<div class='item' data-value='" + data[i].id + "'>" + data[i].name + "</div>";
+          }
+          $complainCommentType.find('.menu').html(result);
+        }
+      });
+      $complainCommentType.dropdown({showOnFocus: false});
+      initedCommentsType = true;
+    }
+  }
+  $complainCommentType.on('click', function() {
+    $complaintCommentsModal.modal({
+      autofocus: false,
+      onApprove: function() {
+        return false;
+      },
+      onHidden: function() {
+        restoreCommonentDefault();
+      }
+    }).modal('show');
+  });
+  
+  $complaintCommentsContent.on('change keyup', function(e) {
+    var content = $(this).val();
+    if ($.trim(content).length > 0 && $complainCommentType.dropdown('get value').length > 0 ) {
+      $complaintCommentBtn.removeClass('disabled');
+      return;
+    }
+    $complaintCommentBtn.addClass('disabled');
+  });
+  
+  
+  $complainCommentType.dropdown({
+    showOnFocus: false,
+    onChange: function(value, text, $selectedItem) {
+      if (value.length > 0 && $.trim($complaintCommentsContent.val()).length > 0) {
+        $complaintCommentBtn.removeClass('disabled');
+        return
+      }
+      $complaintCommentBtn.addClass('disabled');
+    }
+  });
+  
+  function restoreCommonentDefault() {
+    $complainCommentType.dropdown('restore defaults');
+    $complaintCommentsContent.val('');
+    $('.exceeded-size-tip').text('').hide();
+    $complaintModalTip.text('').hide();
+    setTimeout(function() {
+      setCommentSendTip(false);
+    }, 1500);
+  }
+  
+  $complaintCommentBtn.on('click',function(e){
+    var reason = $complaintCommentsContent.val();
+    var appealableId = $('#landing-comments-complaint-modal').attr('data-id');
+    if (complaintSending) {
+      return;
+    }
+    var appealType = $complainCommentType.dropdown('get value');
+    var formData = new FormData();
+    formData.append('appeal_type_id', appealType);
+    formData.append('reason', reason);
+    formData.append('appeal_type','Note');
+    formData.append('target_id',appealableId);
+    $.ajax({
+      type: 'POST',
+      url: "/appeals",
+      cache: false,
+      contentType: false,
+      processData: false,
+      data: formData,
+      beforeSend: function() {
+        setCommentSendStatus(true);
+      },
+      success: function(res) {
+        if (res.status == 200) {
+          setCommentSendTip(true);
+          setTimeout(function() {
+            $complaintCommentsModal.modal('hide');
+            restoreCommonentDefault();
+          }, 3000);
+        }
+        setCommentSendStatus(false);
+      },
+      error: function(err) {
+        showCommonTips(err.responseJSON.message, 'error');
+        setCommentSendStatus(false);
+      }
+    })
+  });
+  
+  function showCommonTips(text, type) {
+    $complaintModalTip.text(text).show();
+    if (type == 'error') {
+      $complaintModalTip.removeClass('success').addClass('error');
+    } else {
+      $complaintModalTip.removeClass('error').addClass('success');
+    }
+  }
+  
+  function setCommentSendStatus(value) {
+    complaintSending = value;
+    if (complaintSending) {
+      $complaintCommentBtn.addClass('loading');
+      $complaintCommentsContent.attr('readonly', true);
+      $complainCommentType.attr('readonly', true);
+    } else {
+      $complaintCommentBtn.removeClass('loading');
+      $complaintCommentsContent.attr('readonly', false);
+      $complainCommentType.attr('readonly', false);
+    }
+  }
+  
+  function setCommentSendTip(value) {
+    if (value) {
+      $('.appeal-success-tip').removeClass('hide');
+      $('.appeal-tip').addClass('hide');
+      $('.appeal-form').addClass('hide');
+      $('#landing-comments-complaint-modal .actions').addClass('hide');
+    } else {
+      $('.appeal-success-tip').addClass('hide');
+      $('.appeal-tip').removeClass('hide');
+      $('.appeal-form').removeClass('hide');
+      $('#landing-comments-complaint-modal .actions').removeClass('hide');
+    }
+  }
+</script>
+
+</div>
+<script>
+  "use strict";
+  $('.js-check-star').checkbox('set unchecked')
+</script>
+
+</div>
+</div>
+</div>
+<div class='four wide column' style='display: none;'>
+<div class='project__right-side'>
+<div class='side-item intro'>
+<div class='header'>
+<h4>简介</h4>
+</div>
+<div class='content intro-info'>
+<span class='git-project-desc-text text-muted'>暂无描述</span>
+<a class='hide spread' href='javascript:void(0);'>
+展开
+<i class='caret down icon'></i>
+</a>
+<a class='retract hide' href='javascript:void(0);'>
+收起
+<i class='caret up icon'></i>
+</a>
+<div class='intro-list'>
+<div class='hide item'>
+<i class='iconfont icon-link'></i>
+<span class='git-project-homepage'>
+<a href="/lyyao09/cdn/blob/master/k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip.png" id="homepage" rel="nofollow" target="_blank">/lyyao09/cdn/blob/master/k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip.png</a>
+</span>
+</div>
+
+</div>
+</div>
+<div class='content intro-form'>
+<div class='ui small input'>
+<textarea name='project[description]' placeholder='描述' rows='5'></textarea>
+</div>
+<div class='ui small input'>
+<input data-regex-value='(^$)|(^(http|https):\/\/(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).*)|(^(http|https):\/\/[a-zA-Z0-9]+([_\-\.]{1}[a-zA-Z0-9]+)*\.[a-zA-Z]{2,10}(:[0-9]{1,10})?(\?.*)?(\/.*)?$)' name='project[homepage]' placeholder='主页(eg: https://gitee.com)' type='text'>
+</div>
+<button class='ui orange button mt-1 btn-save'>
+保存更改
+</button>
+<div class='ui blank button btn-cancel-edit'>
+取消
+</div>
+</div>
+</div>
+<div class='side-item release'>
+<div class='header'>
+<h4>发行版</h4>
+</div>
+<div class='content'>
+<span class='text-muted'>
+暂无发行版
+</span>
+</div>
+</div>
+<div class='side-item contrib' data-url='/lyyao09/cdn/contributors_count?ref=master' id='contributor'>
+<div class='header'>
+<h4>
+贡献者
+<span class='text-muted' id='contributor-count'></span>
+</h4>
+<a class="ui link button pull-right" href="/lyyao09/cdn/contributors?ref=master">全部</a>
+</div>
+<div class='content' id='contributor-list'></div>
+<div class='ui active centered inline loader' id='contributor-loader'></div>
+</div>
+<div class='side-item events' data-url='/lyyao09/cdn/events.json' id='proj-events'>
+<div class='header'>
+<h4>近期动态</h4>
+</div>
+<div class='content'>
+<div class='ui comments' id='event-list'></div>
+<a class="loadmore hide" href="javascript:void(0);">加载更多
+<i class='icon dropdown'></i>
+</a><center>
+<div class='text-muted nomore hide'>不能加载更多了</div>
+<div class='ui inline loader active'></div>
+</center>
+</div>
+</div>
+</div>
+<script>
+  window.gon.projectRightSide = {
+    homepage: null,
+    description: "",
+    url: "/lyyao09/cdn/update_description"
+  }
+  
+  $('#license-popup').popup({ position: 'bottom center', lastResort: 'bottom center' })
+</script>
+
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    $(function() {
+      Tree.init();
+      return TreeCommentActions.init();
+    });
+  
+  }).call(this);
+</script>
+
+</div>
+<script>
+  (function() {
+    var donateModal;
+  
+    Gitee.modalHelper = new GiteeModalHelper({
+      alertText: '提示',
+      okText: '确定'
+    });
+  
+    donateModal = new ProjectDonateModal({
+      el: '#project-donate-modal',
+      alipayUrl: '/lyyao09/cdn/alipay',
+      wepayUrl: '/lyyao09/cdn/wepay',
+      nameIsBlank: '名称不能为空',
+      nameTooLong: '名称过长（最多为 36 个字符）',
+      modalHelper: Gitee.modalHelper
+    });
+  
+    if (null === 'true') {
+      donateModal.show();
+    }
+  
+    $('#project-donate').on('click', function() {
+      return donateModal.show();
+    });
+  
+  }).call(this);
+</script>
+<script>
+  Tree.initHighlightTheme('white')
+</script>
+
+
+</div>
+<div class='gitee-project-extension'>
+<div class='extension public'>1</div>
+<div class='extension https'>https://gitee.com/lyyao09/cdn.git</div>
+<div class='extension ssh'>git@gitee.com:lyyao09/cdn.git</div>
+<div class='extension namespace'>lyyao09</div>
+<div class='extension repo'>cdn</div>
+<div class='extension name'>cdn</div>
+<div class='extension branch'>master</div>
+</div>
+
+<script>
+  $(function() {
+    GitLab.GfmAutoComplete.dataSource = "/lyyao09/cdn/autocomplete_sources"
+    GitLab.GfmAutoComplete.Emoji.assetBase = '/assets/emoji'
+    GitLab.GfmAutoComplete.setup();
+  });
+</script>
+
+<footer id='git-footer-main'>
+<div class='ui container'>
+<div class='logo-row'>
+<img class='logo-img' src='/static/images/logo-black.svg?t=158106666'>
+</div>
+<div class='name-important'>
+深圳市奥思网络科技有限公司版权所有
+</div>
+<div class='ui two column grid d-flex-center'>
+<div class='nine wide column git-footer-left'>
+<div class='ui four column grid' id='footer-left'>
+<div class='column'>
+<div class='ui link list'>
+<div class='item'>
+<a class="item" href="/about_us">关于我们</a>
+</div>
+<div class='item'>
+<a class="item" href="https://www.oschina.net/news/131099/oschina-hiring">加入我们</a>
+</div>
+<div class='item'>
+<a class="item" href="/terms">使用条款</a>
+</div>
+<div class='item'>
+<a class="item" href="/oschina/git-osc/issues">意见建议</a>
+</div>
+<div class='item'>
+<a class="item" href="/links.html">合作伙伴</a>
+</div>
+</div>
+</div>
+<div class='column'>
+<div class='ui link list'>
+<div class='item'>
+<a class="item" href="/all-about-git">Git 大全</a>
+</div>
+<div class='item'>
+<a class="item" href="https://oschina.gitee.io/learn-git-branching/">Git 命令学习</a>
+</div>
+<div class='item'>
+<a class="item" href="https://copycat.gitee.com/">CopyCat 代码克隆检测</a>
+</div>
+<div class='item'>
+<a class="item" href="/appclient">APP与插件下载</a>
+</div>
+</div>
+</div>
+<div class='column'>
+<div class='ui link list'>
+<div class='item'>
+<a class="item" href="/gitee-stars">Gitee 封面人物</a>
+</div>
+<div class='item'>
+<a class="item" href="/gvp">GVP 项目</a>
+</div>
+<div class='item'>
+<a class="item" href="https://blog.gitee.com/">Gitee 博客</a>
+</div>
+<div class='item'>
+<a class="item" href="/enterprises#nonprofit-plan">Gitee 公益计划</a>
+</div>
+</div>
+</div>
+<div class='column'>
+<div class='ui link list'>
+<div class='item'>
+<a class="item" href="/api/v5/swagger">OpenAPI</a>
+</div>
+<div class='item'>
+<a class="item" href="/help">帮助文档</a>
+</div>
+<div class='item'>
+<a class="item" href="/self_services">在线自助服务</a>
+</div>
+<div class='item'>
+<a class="item" href="/git-osc">更新日志</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class='seven wide column right aligned followus git-footer-right'>
+<div class='qrcode weixin'>
+<img alt="Qrcode weixin" src="https://assets.gitee.com/assets/qrcode-weixin-9e7cfb27165143d2b8e8b268a52ea822.jpg" />
+<p class='weixin-text'>微信服务号</p>
+</div>
+<div class='phone-and-qq column'>
+<div class='ui list official-support-container'>
+<div class='item'>
+<a class="icon-popup" href="//shang.qq.com/wpa/qunwpa?idkey=df785aa7af71f7d74149ab062742d761b845464350ecba25eb440357a3e573b7" title="点击加入 Gitee 官方群"><i class='iconfont icon-logo-qq'></i>
+<span>官方技术交流QQ群：1050025484</span>
+</a></div>
+<div class='item mail-and-zhihu'>
+<a href="mailto: git@oschina.cn"><i class='iconfont icon-msg-mail'></i>
+<span id='git-footer-email'>git#oschina.cn</span>
+</a></div>
+<div class='item mail-and-zhihu'>
+<a href="https://www.zhihu.com/org/ma-yun-osc/" target="_blank"><i class='iconfont icon-zhihu'></i>
+<span>Gitee</span>
+</a></div>
+<div class='item tel'>
+<a>
+<i class='iconfont icon-tel'></i>
+<span>售前及售后使用咨询：400-606-0201</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class='bottombar'>
+<div class='ui container'>
+<div class='ui d-flex d-flex-between'>
+<div class='seven wide column partner d-flex'>
+<div class='open-atom d-flex-center'>
+<img alt="Logo openatom" class="logo-openatom mr-1" src="https://assets.gitee.com/assets/logo-openatom-d083391cc8a54e283529f3fc11cc38ca.svg" />
+<a href="https://www.openatom.org/" target="_blank">开放原子开源基金会</a>
+<div class='sub-title ml-1'>合作代码托管平台</div>
+</div>
+<div class='report-12377 d-flex-center ml-3'>
+<img alt="12377@2x" class="report-12377__logo mr-1" src="https://assets.gitee.com/assets/12377@2x-1aa42ed2d2256f82a61ecf57be1ec244.png" />
+<a href="https://12377.cn" target="_blank">违法和不良信息举报中心</a>
+</div>
+<div class='copyright ml-3'>
+<a href="http://beian.miit.gov.cn/">粤ICP备12009483号</a>
+</div>
+</div>
+<div class='nine wide column right aligned'>
+<i class='icon world'></i>
+<a href="/language/zh-CN">简 体</a>
+/
+<a href="/language/zh-TW">繁 體</a>
+/
+<a href="/language/en">English</a>
+</div>
+</div>
+</div>
+</div>
+</footer>
+<script>
+  var officialEmail = $('#git-footer-email').text()
+  $('#git-footer-main .icon-popup').popup({ position: 'bottom center' })
+  $('#git-footer-email').text(officialEmail.replace('#', '@'))
+  window.gon.popover_card_locale = {
+    follow:"关注",
+    unfollow:"已关注",
+    gvp_title: "GVP - Gitee 最有价值开源项目",
+    project: "项目",
+    org: "开源组织",
+    member: "",
+    author: "作者",
+    user_blocked: "该用户已被屏蔽或已注销",
+    net_error: "网络错误",
+    unknown_exception: "未知异常"
+  }
+  window.gon.select_message = {
+    placeholder: "请输入个人空间地址或完整的邮箱地址"
+  }
+</script>
+<script src="https://assets.gitee.com/webpacks/popover_card-5e5f80166768e5968f94.bundle.js"></script>
+
+
+<div class='side-toolbar'>
+<div class='button toolbar-help'>
+<i class='iconfont icon-help'></i>
+</div>
+<div class='ui popup left center dark'>点此查找更多帮助</div>
+<div class='toolbar-help-dialog'>
+<div class='toolbar-dialog-header'>
+<h3 class='toolbar-dialog-title'>搜索帮助</h3>
+<form accept-charset="UTF-8" action="/help/load_keywords_data" class="toolbar-help-search-form" method="get"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /></div>
+<div class='ui icon input fluid toolbar-help-search'>
+<input name='keywords' placeholder='请输入产品名称或问题' type='text'>
+<i class='icon search'></i>
+</div>
+</form>
+
+<i class='iconfont icon-close toolbar-dialog-close-icon'></i>
+</div>
+<div class='toolbar-dialog-content'>
+<div class='toolbar-help-hot-search'>
+<div class='toolbar-roll'>
+<a class="init active" href="https://oschina.gitee.io/learn-git-branching/?utm_source==gitee-help-widget" title="Git 命令在线学习"><i class='Blue icon icon-command iconfont'></i>
+<span>Git 命令在线学习</span>
+</a><a class="init " href="https://gitee.com/help/articles/4261?utm_source==gitee-help-widget" title="如何在 Gitee 导入 GitHub 仓库"><i class='icon icon-clipboard iconfont orange'></i>
+<span>如何在 Gitee 导入 GitHub 仓库</span>
+</a></div>
+<div class='toolbar-list'>
+<div class='toolbar-list-item'>
+<a href="/help/articles/4114">Git 仓库基础操作</a>
+</div>
+<div class='toolbar-list-item'>
+<a href="/help/articles/4166">企业版和社区版功能对比</a>
+</div>
+<div class='toolbar-list-item'>
+<a href="/help/articles/4191">SSH 公钥设置</a>
+</div>
+<div class='toolbar-list-item'>
+<a href="/help/articles/4194">如何处理代码冲突</a>
+</div>
+<div class='toolbar-list-item'>
+<a href="/help/articles/4232">仓库体积过大，如何减小？</a>
+</div>
+<div class='toolbar-list-item'>
+<a href="/help/articles/4279">如何找回被删除的仓库数据</a>
+</div>
+<div class='toolbar-list-item'>
+<a href="/help/articles/4283">Gitee 产品配额说明</a>
+</div>
+<div class='toolbar-list-item'>
+<a href="/help/articles/4284">GitHub仓库快速导入Gitee及同步更新</a>
+</div>
+<div class='toolbar-list-item'>
+<a href="/help/articles/4328">什么是 Release（发行版）</a>
+</div>
+</div>
+</div>
+<div class='toolbar-help-search-reseult'>
+<div class='toolbar-help-flex-column'>
+<div class='ui centered inline loader toolbar-help-loader'></div>
+<div class='toolbar-list'></div>
+<div class='toolbar-help-link-to-help'>
+<a href="" target="_blank">查看更多搜索结果</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  var opt = { position: 'left center'};
+  var $helpSideToolbar = $('.button.toolbar-help');
+  var $toolbarRoll = $('.toolbar-roll');
+  
+  $(function() {
+    if (false) {
+      $helpSideToolbar.popup(opt).popup({lastResort:'left center'})
+    } else {
+      $helpSideToolbar.popup({lastResort:'left center'}).popup('show', opt);
+      setTimeout(function() {
+        $helpSideToolbar.popup('hide', opt);
+      }, 3000);
+    }
+  
+    if ($toolbarRoll.length) {
+      setInterval(function() {
+        var $nextActiveLink = $toolbarRoll.find('a.active').next();
+        if (!$nextActiveLink.length) {
+          $nextActiveLink = $toolbarRoll.find('a:first-child');
+        }
+        $nextActiveLink.attr('class', 'active').siblings().removeClass('active init');
+      }, 5000);
+    }
+  })
+</script>
+
+<div class='button share-link'>
+<i class='iconfont icon-share'></i>
+</div>
+<div class='ui popup dark'>
+<div class='header'>
+分享到
+</div>
+<div class='bdsharebuttonbox' style='display: flex'>
+<a class='iconfont icon-home-service-wechat' data-cmd='weixin' title='分享到微信'></a>
+<a class='iconfont icon-weibo' data-cmd='tsina' title='分享到新浪微博'></a>
+<a class='iconfont icon-qq' data-cmd='sqq' title='分享到QQ好友'></a>
+<a class='iconfont icon-qzone' data-cmd='qzone' title='分享到QQ空间'></a>
+</div>
+</div>
+<div class='popup button' id='home-comment'>
+<i class='iconfont icon-comment'></i>
+</div>
+<div class='ui popup dark'>评论</div>
+<div class='toolbar-appeal popup button'>
+<i class='iconfont icon-report'></i>
+</div>
+<div class='ui popup dark'>
+仓库举报
+</div>
+<script>
+  $('.toolbar-appeal').popup({ position: 'left center' });
+</script>
+
+<div class='button gotop popup' id='gotop'>
+<i class='iconfont icon-top'></i>
+</div>
+<div class='ui popup dark'>回到顶部</div>
+</div>
+<div class='form modal normal-modal tiny ui' id='unlanding-complaint-modal'>
+<i class='iconfont icon-close close'></i>
+<div class='header'>
+登录提示
+</div>
+<div class='container actions'>
+<div class='content'>
+该操作需登录 Gitee 帐号，请先登录后再操作。
+</div>
+<div class='ui orange icon large button ok'>
+立即登录
+</div>
+<div class='ui button blank cancel'>
+没有帐号，去注册
+</div>
+</div>
+</div>
+<script>
+  var $elm = $('.toolbar-appeal');
+  
+  $elm.on('click', function() {
+    var modals = $("#unlanding-complaint-modal.normal-modal");
+    if (modals.length > 1) {
+      modals.eq(0).modal('show');
+    } else {
+      modals.modal('show');
+    }
+  })
+  $("#unlanding-complaint-modal.normal-modal").modal({
+    onDeny: function() {
+      window.location.href = "/signup?from=";
+    },
+    onApprove: function() {
+      window.location.href = "/login?from=";
+    }
+  })
+</script>
+
+<style>
+  .side-toolbar .bdsharebuttonbox a {
+    font-size: 24px;
+    color: white !important;
+    opacity: 0.9;
+    margin: 6px 6px 0px 6px;
+    background-image: none;
+    text-indent: 0;
+    height: auto;
+    width: auto;
+  }
+  
+  #enterprises-index #udesk_btn a{
+    margin: 0px 20px 217px 0px !important;
+  }
+</style>
+<script>
+  (function() {
+    $('#project-user-message').popup({
+      position: 'left center'
+    });
+  
+  }).call(this);
+</script>
+<script>
+  Gitee.initSideToolbar({
+    hasComment: true,
+    commentUrl: '/lyyao09/cdn#tree_comm_title'
+  })
+</script>
+<script>
+  window._bd_share_config = {
+    "common": {
+      "bdSnsKey": {},
+      "bdText": document.title,
+      "bdMini": "1",
+      "bdMiniList": ["bdxc","tqf","douban","bdhome","sqq","thx","ibaidu","meilishuo","mogujie","diandian","huaban","duitang","hx","fx","youdao","sdo","qingbiji","people","xinhua","mail","isohu","yaolan","wealink","ty","iguba","fbook","twi","linkedin","h163","evernotecn","copy","print"],
+      "bdPic": "",
+      "bdStyle": "1",
+      "bdSize": "32"
+    },
+    "share": {}
+  }
+</script>
+<script src="/bd_share/static/api/js/share.js"></script>
+
+
+
+
+<script>
+  (function() {
+    this.__gac = {
+      domain: 'www.oschina.net'
+    };
+  
+  }).call(this);
+</script>
+
+</body>
+</html>

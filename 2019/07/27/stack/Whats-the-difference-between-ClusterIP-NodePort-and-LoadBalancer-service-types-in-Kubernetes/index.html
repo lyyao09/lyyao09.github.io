@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyyao09.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="问题描述1  - 我正在阅读文档，我对措辞有点困惑。它说：  ClusterIP：在集群内部IP上公开服务。选择此值使服务只能从群集中访问。这是默认的ServiceType NodePort：在每个Node的IP上公开静态端口（NodePort）服务。将自动创建NodePort服务到ClusterIP服务的路由。您可以通过请求：来从群集外部请求NodePort服务。 LoadBalancer：使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes的各种Service类型（ClusterIP，NodePort和LoadBalancer）有什么区别">
+<meta property="og:url" content="https://lyyao09.github.io/2019/07/27/stack/Whats-the-difference-between-ClusterIP-NodePort-and-LoadBalancer-service-types-in-Kubernetes/index.html">
+<meta property="og:site_name" content="云原生知识星球">
+<meta property="og:description" content="问题描述1  - 我正在阅读文档，我对措辞有点困惑。它说：  ClusterIP：在集群内部IP上公开服务。选择此值使服务只能从群集中访问。这是默认的ServiceType NodePort：在每个Node的IP上公开静态端口（NodePort）服务。将自动创建NodePort服务到ClusterIP服务的路由。您可以通过请求：来从群集外部请求NodePort服务。 LoadBalancer：使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-27T10:03:45.000Z">
+<meta property="article:modified_time" content="2023-12-03T14:33:55.347Z">
+<meta property="article:author" content="LeaoYao">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://lyyao09.github.io/2019/07/27/stack/Whats-the-difference-between-ClusterIP-NodePort-and-LoadBalancer-service-types-in-Kubernetes/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Kubernetes的各种Service类型（ClusterIP，NodePort和LoadBalancer）有什么区别 | 云原生知识星球</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">云原生知识星球</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/27/stack/Whats-the-difference-between-ClusterIP-NodePort-and-LoadBalancer-service-types-in-Kubernetes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kubernetes的各种Service类型（ClusterIP，NodePort和LoadBalancer）有什么区别
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-27 10:03:45" itemprop="dateCreated datePublished" datetime="2019-07-27T10:03:45+00:00">2019-07-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>1  - 我正在阅读文档，我对措辞有点困惑。它说：</p>
+<blockquote>
+<p><strong>ClusterIP</strong>：在集群内部IP上公开服务。选择此值使服务只能从群集中访问。这是默认的ServiceType</p>
+<p><strong>NodePort</strong>：在每个Node的IP上公开静态端口（NodePort）服务。将自动创建NodePort服务到ClusterIP服务的路由。您可以通过请求<NodeIP>：<NodePort>来从群集外部请求NodePort服务。</p>
+<p><strong>LoadBalancer</strong>：使用云提供商的负载均衡器在外部公开服务。将自动创建外部负载均衡器到NodePort和ClusterIP服务的路由。</p>
+</blockquote>
+<p>NodePort服务类型是否仍然使用ClusterIP，而只是在不同的端口，该端口对外部客户端开放？那么在这种情况下，<NodeIP>：<NodePort>与<ClusterIP>：<NodePort>相同？</p>
+<p>或者，NodeIP是否是运行kubectl get nodes得到的IP，而不是用于ClusterIP的虚拟IP？</p>
+<p>2  - 同样在以下链接的图表中：</p>
+<p><a target="_blank" rel="noopener" href="http://kubernetes.io/images/docs/services-iptables-overview.svg">http://kubernetes.io/images/docs/services-iptables-overview.svg</a></p>
+<p>客户端在节点内是否有任何特殊原因？我认为在ClusterIP服务类型的情况下，它需要在Cluster内。如果为NodePort绘制一个类似的图表，那么把客户端画在Node和Cluster之外是否有效，或者我是否忽略了什么？</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>ClusterIP公开以下内容：</p>
+<ul>
+<li><code>spec.clusterIp:spec.ports[*].port</code></li>
+</ul>
+<p>您只能在群集内访问此服务。可以从spec.clusterIp端口访问它。如果设置了spec.ports [*].targetPort，它将从端口路由到targetPort。调用kubectl get services时获得的CLUSTER-IP是内部在集群内分配给此服务的IP。</p>
+<p>NodePort公开以下内容：</p>
+<ul>
+<li><code>&lt;NodeIP&gt;:spec.ports[*].nodePort</code></li>
+<li><code>spec.clusterIp:spec.ports[*].port</code></li>
+</ul>
+<p>如果通过nodePort的方式从节点的外部IP访问此服务，它会将请求路由到spec.clusterIp:spec.ports[*].port，然后将其路由到spec.ports [*].targetPort，如果设置。也可以使用与ClusterIP相同的方式访问此服务。</p>
+<p>您的NodeIP是节点的外部IP地址。您无法从<ClusterIP>:spec.ports [*].nodePort访问您的服务。</p>
+<p>LoadBalancer公开以下内容：</p>
+<ul>
+<li><code>spec.loadBalancerIp:spec.ports[*].port</code></li>
+<li><code>&lt;NodeIP&gt;:spec.ports[*].nodePort</code></li>
+<li><code>spec.clusterIp:spec.ports[*].port</code></li>
+</ul>
+<p>您可以从负载均衡器的IP地址访问此服务，该IP地址将您的请求路由到nodePort，而nodePort又将请求路由到clusterIP端口。您可以像访问NodePort或ClusterIP服务一样访问此服务。</p>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/41509439/whats-the-difference-between-clusterip-nodeport-and-loadbalancer-service-types">What’s the difference between ClusterIP, NodePort and LoadBalancer service types in Kubernetes</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/07/27/stack/Docker-Swarm-Kubernetes-Mesos-Core-OS-Fleet/" rel="prev" title="Docker-Swarm，Kubernetes，Mesos和Core-OS Fleet">
+      <i class="fa fa-chevron-left"></i> Docker-Swarm，Kubernetes，Mesos和Core-OS Fleet
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/07/27/stack/Ingress-vs-Load-Balancer/" rel="next" title="Ingress vs LoadBalancer">
+      Ingress vs LoadBalancer <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%A5%A8%E5%9B%9E%E7%AD%94"><span class="nav-number">2.</span> <span class="nav-text">高票回答</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E6%96%87%E9%93%BE%E6%8E%A5"><span class="nav-number">3.</span> <span class="nav-text">原文链接</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LeaoYao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">83</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LeaoYao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

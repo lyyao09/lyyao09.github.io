@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyyao09.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta property="og:type" content="website">
+<meta property="og:title" content="云原生知识星球">
+<meta property="og:url" content="https://lyyao09.github.io/index.html">
+<meta property="og:site_name" content="云原生知识星球">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="LeaoYao">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://lyyao09.github.io/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>云原生知识星球</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">云原生知识星球</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2023/05/28/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-RedHat8%E7%8E%AF%E5%A2%83%E5%AE%B9%E5%99%A8%E5%86%85Iptables%E5%91%BD%E4%BB%A4%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/05/28/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-RedHat8%E7%8E%AF%E5%A2%83%E5%AE%B9%E5%99%A8%E5%86%85Iptables%E5%91%BD%E4%BB%A4%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">K8S问题排查-RedHat8环境容器内Iptables命令失效问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-05-28 22:12:11" itemprop="dateCreated datePublished" datetime="2023-05-28T22:12:11+00:00">2023-05-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p><code>K8S</code>集群环境中有个容器化的组件<code>A</code>需要在节点上创建<code>iptables</code>规则实现请求转换，在<code>centos 7</code>的操作系统上功能正常，但在<code>redhat 8</code>的操作系统上发现该功能失效。具体来说，就是容器内<code>iptables</code>命令执行后没有生效。</p>
+<h2 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h2><p>业务组件<code>A</code>的功能是基于<code>iptables</code>命令的，查看当前容器内使用的<code>iptables</code>版本：</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~ <span class="comment"># iptables -V</span></span><br><span class="line">iptables v1.6.2</span><br></pre></td></tr></table></figure>
+
+<p>查看使用的<code>centos 7</code>宿主机上的<code>iptables</code>版本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># iptables -V</span></span><br><span class="line">iptables v1.4.21</span><br></pre></td></tr></table></figure>
+
+<p>对比<code>redhat8.4</code>的环境，发现它提供的<code>iptables</code>版本较高，且**模式从默认的<code>legacy</code>变成了<code>nf_tables</code>**：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# iptables -V</span><br><span class="line">iptables v1.8.4 (nf_tables)</span><br></pre></td></tr></table></figure>
+
+<p>从<code>redhat</code>官方资料看[1]，该模式无法修改，因为在制作<code>rpm</code>包时删掉了<code>legacy</code>模式依赖的二进制文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">iptables changelog:</span><br><span class="line">Raw</span><br><span class="line">* Wed Jul 11 2018 Phil Sutter - 1.8.0-1</span><br><span class="line">- New upstream version 1.8.0</span><br><span class="line">- Drop compat sub-package</span><br><span class="line">- Use nft tool versions, drop legacy ones </span><br></pre></td></tr></table></figure>
+
+<p>而其他操作系统，如<code>debian</code>、<code>alpine</code>安装的高版本<code>iptables</code>均支持<code>legacy</code>和<code>nf_tables</code>两种模式，且支持切换：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">update-alternatives --<span class="built_in">set</span> iptables /usr/sbin/iptables-legacy</span><br><span class="line">update-alternatives --<span class="built_in">set</span> ip6tables /usr/sbin/ip6tables-legacy</span><br><span class="line"></span><br><span class="line">update-alternatives --<span class="built_in">set</span> iptables /usr/sbin/iptables-nft</span><br><span class="line">update-alternatives --<span class="built_in">set</span> ip6tables /usr/sbin/ip6tables-nft</span><br></pre></td></tr></table></figure>
+
+<p>至此，基本确认是<code>iptables</code>模式不匹配导致的规则下发失效。实测在<code>redhat8.4</code>的环境，基于<code>alpine</code>的基础镜像制作的组件<code>A</code>，通过上述命令修改<code>iptables</code>为<code>nf_tables</code>模式后，规则下发正常。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>为了同时支持<code>centos 7</code>和<code>redhat 8</code>，组件<code>A</code>需要在容器启动时按需选择<code>iptables</code>的模式，保证老环境使用原来的<code>legacy</code>模式，新环境调整为<code>nf_tables</code>模式。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://access.redhat.com/solutions/4377321">https://access.redhat.com/solutions/4377321</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/redcat8850/p/16135814.html">https://www.cnblogs.com/redcat8850/p/16135814.html</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2023/05/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%8D%87%E7%BA%A7K8S%E5%90%8Eapiserver%E7%9A%84token%E8%B6%85%E6%9C%9F%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/05/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%8D%87%E7%BA%A7K8S%E5%90%8Eapiserver%E7%9A%84token%E8%B6%85%E6%9C%9F%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">K8S问题排查-升级K8S后apiserver的token超期问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-05-14 21:23:12" itemprop="dateCreated datePublished" datetime="2023-05-14T21:23:12+00:00">2023-05-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p><code>K8S</code>集群环境稳定运行一年后，<code>pod</code>重启卡在<code>ContainerCreating</code>状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# kubectl get pod -n kube-system -owide</span><br><span class="line">NAME                                      READY   STATUS    RESTARTS   AGE    IP                NODE    </span><br><span class="line">calico-kube-controllers-cd96b6c89-bpjp6   1/1     Running   	   0          40h    10.10.0.1     node3</span><br><span class="line">calico-node-ffsz8                         1/1     Running   	   0          14s    10.10.0.1     node3</span><br><span class="line">calico-node-nsmwl                         1/1     Running   	   0          14s    10.10.0.2     node2</span><br><span class="line">calico-node-w4ngt                         1/1     Running   	   0          14s    10.10.0.1     node1</span><br><span class="line">coredns-55c8f5fd88-hw76t                  1/1     Running		   1          260d   192.168.135.55    node3</span><br><span class="line">xxx-55c8f5fd88-vqwbz                      1/1     ContainerCreating 1          319d   192.168.104.22    node2</span><br></pre></td></tr></table></figure>
+
+<h2 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h2><p><code>describe</code>查看</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# kubectl describe pod -n xxx xxx</span><br><span class="line">Events:</span><br><span class="line">  Type     Reason                  Age                 From               Message</span><br><span class="line">  ----     ------                  ----                ----               -------</span><br><span class="line">  Normal   Scheduled               52m                 default-scheduler  Successfully assigned xxx/xxx to node1</span><br><span class="line">  Warning  FailedCreatePodSandBox  52m                 kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = [failed to set up sandbox container &quot;xxx&quot; network for pod &quot;xxx&quot;: networkPlugin cni failed to set up pod &quot;xxx&quot; network: connection is unauthorized: Unauthorized, failed to clean up sandbox container &quot;xxx&quot; network for pod &quot;xxx&quot;: networkPlugin cni failed to teardown pod &quot;xxx&quot; network: error getting ClusterInformation: connection is unauthorized: Unauthorized]</span><br><span class="line">  Normal   SandboxChanged          50m (x10 over 52m)  kubelet            Pod sandbox changed, it will be killed and re-created.</span><br></pre></td></tr></table></figure>
+
+<p>事件里显示的<code>Unauthorized</code>，也就是因为无权限从<code>kube-apiserver</code>中获取相关信息，查看对应<code>pod</code>使用的<code>token</code>，发现确实存在过期时间相关的定义：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> alg: &quot;RS256&quot;,</span><br><span class="line"> kid: &quot;nuXGyK2zjFNBRnO1ayeOxJDm_luMf4eqQFnqJbsVl7I&quot;</span><br><span class="line">&#125;.</span><br><span class="line">&#123;</span><br><span class="line"> aud: [</span><br><span class="line">  &quot;https://kubernetes.default.svc.cluster.local&quot;</span><br><span class="line"> ],</span><br><span class="line"> exp: 1703086264, // 时间过期的定义，一年后该token过期</span><br><span class="line"> iat: 1671550264,</span><br><span class="line"> nbf: 1671550264,</span><br><span class="line"> iss: &quot;https://kubernetes.default.svc.cluster.local&quot;,</span><br><span class="line"> kubernetes.io: &#123;</span><br><span class="line">  namespace: &quot;kube-system&quot;,</span><br><span class="line">  pod: &#123;</span><br><span class="line">   name: &quot;xxx&quot;,</span><br><span class="line">   uid: &quot;c7300d73-c716-4bbc-ad2b-80353d99073b&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">  serviceaccount: &#123;</span><br><span class="line">   name: &quot;multus&quot;,</span><br><span class="line">   uid: &quot;1600e098-6a86-4296-8410-2051d45651ce&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">  warnafter: 1671553871</span><br><span class="line"> &#125;,</span><br><span class="line"> sub: &quot;system:serviceaccount:kube-system:xxx&quot;</span><br><span class="line">&#125;.</span><br></pre></td></tr></table></figure>
+
+<p>查看相关<code>issue[1,2,3]</code>，基本确认是**<code>k8s</code>版本迭代引起的**，为了提供更安全的<code>token</code>机制，从<code>v1.21</code>版本开始，<code>BoundServiceAccountTokenVolume</code>特性进入<code>beta</code>版本，并默认启用。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
+<li>如果不想使用该特性，可以按照下面提供的方法[4]，对<code>kube-apiserver</code>和<code>kube-controller-manager</code>组件添加<code>feature gate</code>禁用即可。</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1. How can this feature be enabled / disabled in a live cluster?</span><br><span class="line">	Feature gate name: BoundServiceAccountTokenVolume</span><br><span class="line">	Components depending on the feature gate: kube-apiserver and kube-controller-manager</span><br><span class="line">	Will enabling / disabling the feature require downtime of the control plane? yes, need to restart kube-apiserver and kube-controller-manager.</span><br><span class="line">	Will enabling / disabling the feature require downtime or reprovisioning of a node? no.</span><br><span class="line">2. Does enabling the feature change any default behavior? yes, pods&#x27; service account tokens will expire after 1 year by default and are not stored as Secrets any more.</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>如果需要使用该特性，则要求使用<code>token</code>的一方适配修改，做到不缓存或者<code>token</code>失效后支持自动刷新新的<code>token</code>到内存即可，已知新版本的<code>client-go</code>和<code>fabric8</code>客户端均已支持。</li>
+</ol>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/k8snetworkplumbingwg/multus-cni/issues/852">https://github.com/k8snetworkplumbingwg/multus-cni/issues/852</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/projectcalico/calico/issues/5712">https://github.com/projectcalico/calico/issues/5712</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bystander/p/rancher-jian-kong-bu-xian-shi-jian-kong-shu-ju-wen.html">https://www.cnblogs.com/bystander/p/rancher-jian-kong-bu-xian-shi-jian-kong-shu-ju-wen.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/enhancements/blob/master/keps/sig-auth/1205-bound-service-account-tokens/README.md">https://github.com/kubernetes/enhancements/blob/master/keps/sig-auth/1205-bound-service-account-tokens/README.md</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2023/04/23/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Calico-node%E9%95%9C%E5%83%8F%E7%BC%96%E8%AF%91%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/04/23/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Calico-node%E9%95%9C%E5%83%8F%E7%BC%96%E8%AF%91%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/" class="post-title-link" itemprop="url">总结分享-Calico-node镜像编译问题记录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-23 20:11:12" itemprop="dateCreated datePublished" datetime="2023-04-23T20:11:12+00:00">2023-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/share/" itemprop="url" rel="index"><span itemprop="name">share</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="编译过程"><a href="#编译过程" class="headerlink" title="编译过程"></a>编译过程</h2><p>参考官方资料[1]，执行编译命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 projectcalico]# make -C node image</span><br><span class="line">&quot;Build dependency versions&quot;</span><br><span class="line">BIRD_VERSION          = v0.3.3-151-g767b5389</span><br><span class="line">&quot;Test dependency versions&quot;</span><br><span class="line">CNI_VER               = master</span><br><span class="line">&quot;Calico git version&quot;</span><br><span class="line">GIT_VERSION           =</span><br><span class="line">make: Entering directory `/home/go/gopath/src/github.com/projectcalico/node&#x27;</span><br><span class="line">mkdir -p .go-pkg-cache bin /home/go/gopath/pkg/mod &amp;&amp; docker run --rm --net=host --init -e GOPRIVATE=&#x27;github.com/tigera/*&#x27; -e GO111MODULE=on -v /home/go/gopath/pkg/mod:/go/pkg/mod:rw -e LOCAL_USER_ID=0 -e GOCACHE=/go-cache -e GOARCH=amd64 -e GOPATH=/go -e OS=linux -e GOOS=linux -e GOFLAGS= -v /home/go/gopath/src/github.com/projectcalico/node:/go/src/github.com/projectcalico/node:rw -v /home/go/gopath/src/github.com/projectcalico/node/.go-pkg-cache:/go-cache:rw -w /go/src/github.com/projectcalico/node calico/go-build:v0.40 sh -c &#x27; go mod download&#x27;</span><br><span class="line">...</span><br><span class="line">Starting with UID : 0</span><br><span class="line">useradd: UID 0 is not unique</span><br><span class="line">su-exec: getpwnam(user): Success</span><br><span class="line">make: *** [remote-deps] Error 1</span><br><span class="line">make: Leaving directory `/home/go/gopath/src/github.com/projectcalico/node&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>从日志看，构建在<code>remote-deps</code>阶段失败，错误是<code>useradd: UID 0 is not unique</code>。从日志中的<code>docker</code>启动容器的命令看，是有个<code>LOCAL_USER_ID=0</code>的参数，说明是想以<code>root</code>用户起容器，但这个过程执行了<code>useradd</code>命令添加用户（理论上是不应该执行到这里的）。</p>
+<p>分析<code>calico-node</code>的<code>entrypoint.sh</code>，如果是以<code>root</code>用户启动，代码走到第10行就结束了，而判断是否为<code>root</code>用户的依据是<code>RUN_AS_ROOT</code>参数。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Add <span class="built_in">local</span> user</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Either use the LOCAL_USER_ID <span class="keyword">if</span> passed <span class="keyword">in</span> at runtime or</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">fallback</span></span><br><span class="line"></span><br><span class="line">USER_ID=$&#123;LOCAL_USER_ID:-9001&#125;</span><br><span class="line"></span><br><span class="line">if [ &quot;$&#123;RUN_AS_ROOT&#125;&quot; = &quot;true&quot; ]; then</span><br><span class="line">  exec &quot;$@&quot;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">echo &quot;Starting with UID : $USER_ID&quot; 1&gt;&amp;2</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Do not create mail box.</span></span><br><span class="line">/bin/sed -i &#x27;s/^CREATE_MAIL_SPOOL=yes/CREATE_MAIL_SPOOL=no/&#x27; /etc/default/useradd</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Don<span class="string">&#x27;t pass &quot;-m&quot; to useradd if the home directory already exists (which can occur if it was volume mounted in) otherwise it will fail.</span></span></span><br><span class="line">if [[ ! -d &quot;/home/user&quot; ]]; then</span><br><span class="line">    /usr/sbin/useradd -m -U -s /bin/bash -u $USER_ID user</span><br><span class="line">else</span><br><span class="line">    /usr/sbin/useradd -U -s /bin/bash -u $USER_ID user</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">exec /sbin/su-exec user &quot;$@&quot;</span><br></pre></td></tr></table></figure>
+
+<p>从<code>make</code>的执行结果看，没有发现<code>RUN_AS_ROOT</code>变量，再查看<code>calico-node</code>的<code>Makefile</code>文件，也没有定义，<strong>猜测是缺少了RUN_AS_ROOT变量定义导致的</strong>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 projectcalico]# grep -r &quot;RUN_AS_ROOT&quot; ./node/</span><br></pre></td></tr></table></figure>
+
+<p>参考官网资料[2]，发现<code>go-build</code>的<code>Makefile</code>里有针对<code>root</code>用户的处理：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ifeq</span> (<span class="string">&quot;<span class="variable">$(LOCAL_USER_ID)</span>&quot;</span>, <span class="string">&quot;0&quot;</span>)</span><br><span class="line"><span class="comment"># The build needs to run as root.</span></span><br><span class="line">EXTRA_DOCKER_ARGS+=-e RUN_AS_ROOT=&#x27;true&#x27;</span><br><span class="line"><span class="keyword">endif</span></span><br></pre></td></tr></table></figure>
+
+<p>同步修改到<code>calico-node</code>的<code>Makefile</code>文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 projectcalico]# grep -r &quot;RUN_AS_ROOT&quot; ./node/</span><br><span class="line">./node/Makefile.common: EXTRA_DOCKER_ARGS+=-e RUN_AS_ROOT=&#x27;true&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>再次执行<code>make</code>命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 projectcalico]# make -C node image</span><br><span class="line">&quot;Build dependency versions&quot;</span><br><span class="line">BIRD_VERSION          = v0.3.3-151-g767b5389</span><br><span class="line">&quot;Test dependency versions&quot;</span><br><span class="line">CNI_VER               = master</span><br><span class="line">&quot;Calico git version&quot;</span><br><span class="line">GIT_VERSION           =</span><br><span class="line">make: Entering directory `/home/go/gopath/src/github.com/projectcalico/node&#x27;</span><br><span class="line">mkdir -p .go-pkg-cache bin /home/go/gopath/pkg/mod &amp;&amp; docker run --rm --net=host --init -e GOPRIVATE=&#x27;github.com/tigera/*&#x27; -e RUN_AS_ROOT=&#x27;true&#x27; -e GO111MODULE=on -v /home/go/gopath/pkg/mod:/go/pkg/mod:rw -e GOCACHE=/go-cache -e GOARCH=amd64 -e GOPATH=/go -e OS=linux -e GOOS=linux -e GOFLAGS= -e LOCAL_USER_ID=0 -v /home/go/gopath/src/github.com/projectcalico/node:/go/src/github.com/projectcalico/node:rw -v /home/go/gopath/src/github.com/projectcalico/node/.go-pkg-cache:/go-cache:rw -w /go/src/github.com/projectcalico/node -e CGO_ENABLED=1 calico/go-build:v0.40 sh -c &#x27; go build -v -o dist/bin//calico-node-amd64  -ldflags &quot; -X github.com/projectcalico/node/pkg/startup.VERSION= -X github.com/projectcalico/node/buildinfo.GitVersion=&lt;unknown&gt; -X github.com/projectcalico/node/buildinfo.BuildDate=2023-05-09T06:06:42+0000 -X github.com/projectcalico/node/buildinfo.GitRevision=&lt;unknown&gt;&quot; ./cmd/calico-node/main.go&#x27;</span><br><span class="line">github.com/kelseyhightower/confd/pkg/backends</span><br><span class="line">github.com/projectcalico/libcalico-go/lib/apis/v1/unversioned</span><br><span class="line">github.com/projectcalico/libcalico-go/lib/backend/encap</span><br><span class="line">...</span><br><span class="line">Starting with UID : 9001</span><br><span class="line">calico-node-amd64 -v</span><br><span class="line"></span><br><span class="line">docker build --pull -t calico/node:latest-amd64 . --build-arg BIRD_IMAGE=calico/bird:v0.3.3-151-g767b5389-amd64 --build-arg QEMU_IMAGE=calico/go-build:v0.40 --build-arg GIT_VERSION= -f ./Dockerfile.amd64</span><br><span class="line">Sending build context to Docker daemon   66.3MB</span><br><span class="line">Step 1/40 : ARG ARCH=x86_64</span><br><span class="line">Step 2/40 : ARG GIT_VERSION=unknown</span><br><span class="line">Step 3/40 : ARG IPTABLES_VER=1.8.2-16</span><br><span class="line">Step 4/40 : ARG RUNIT_VER=2.1.2</span><br><span class="line">Step 5/40 : ARG BIRD_IMAGE=calico/bird:latest</span><br><span class="line">Step 6/40 : FROM calico/bpftool:v5.3-amd64 as bpftool</span><br><span class="line">...</span><br><span class="line">Step 16/40 : RUN dnf install -y &#x27;dnf-command(config-manager)&#x27; &amp;&amp;     dnf config-manager --set-enabled PowerTools &amp;&amp;     yum install -y rpm-build yum-utils make &amp;&amp;     yum install -y wget glibc-static gcc &amp;&amp;     yum -y update-minimal --security --sec-severity=Important --sec-severity=Critical</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">Running <span class="keyword">in</span> eca2b4c5f0b4</span></span><br><span class="line">CentOS Linux 8 - AppStream                       51  B/s |  38  B     00:00</span><br><span class="line">Error: Failed to download metadata for repo &#x27;appstream&#x27;: Cannot prepare internal mirrorlist: No URLs in mirrorlist</span><br></pre></td></tr></table></figure>
+
+<p>从编译日志看，问题是<code>yum</code>安装依赖包出错了，原因是使用了默认源<code>vault.centos.org</code>，更改<code>Dockerfile.amd64</code>，替换成国内的阿里源[3]：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-ARG CENTOS_MIRROR_BASE_URL=http://vault.centos.org/8.1.1911</span><br><span class="line">+ARG CENTOS_MIRROR_BASE_URL=https://mirrors.aliyun.com/centos-vault/8.1.1911</span><br><span class="line"></span><br><span class="line">+RUN mv /etc/yum.repos.d /etc/yum.repo.d-bk &amp;&amp; \</span><br><span class="line">+   mkdir -p /etc/yum.repos.d &amp;&amp; mv /centos.repo /etc/yum.repos.d &amp;&amp; \</span><br><span class="line">+   yum clean all &amp;&amp; yum makecache &amp;&amp; \</span><br><span class="line">    dnf install -y &#x27;dnf-command(config-manager)&#x27; &amp;&amp; \</span><br><span class="line">    # Enable PowerTools repo for &#x27;-devel&#x27; packages</span><br><span class="line">-   dnf config-manager --set-enabled PowerTools &amp;&amp; \</span><br></pre></td></tr></table></figure>
+
+<p>更改<code>centos.repo</code>文件，跳过<code>gpgcheck</code>校验，增加<code>PowerTool</code>源：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[centos-8-base-os]</span><br><span class="line">name = CentOS - BaseOS</span><br><span class="line">baseurl = https://mirrors.aliyun.com/centos-vault/8.1.1911/BaseOS/x86_64/os</span><br><span class="line">enabled = 1</span><br><span class="line">gpgkey = https://mirrors.aliyun.com/keys/RPM-GPG-KEY-CentOS-Official</span><br><span class="line">gpgcheck = 0</span><br><span class="line"></span><br><span class="line">[centos-8-appstream]</span><br><span class="line">name = CentOS - AppStream</span><br><span class="line">baseurl = https://mirrors.aliyun.com/centos-vault/8.1.1911/AppStream/x86_64/os</span><br><span class="line">enabled = 1</span><br><span class="line">gpgkey = https://mirrors.aliyun.com/keys/RPM-GPG-KEY-CentOS-Official</span><br><span class="line">gpgcheck = 0</span><br><span class="line"></span><br><span class="line">[Centos8-PowerTool-local1]</span><br><span class="line">name=Centos8-PowerTool-local1</span><br><span class="line">baseurl=https://mirrors.aliyun.com/centos-vault/8.1.1911/PowerTools/x86_64/os</span><br><span class="line">enabled=1</span><br><span class="line">gpgcheck=0</span><br></pre></td></tr></table></figure>
+
+<p>继续编译：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">docker build --pull -t calico/node:latest-amd64 . --build-arg BIRD_IMAGE=calico/bird:v0.3.3-151-g767b5389-amd64 --build-arg QEMU_IMAGE=calico/go-build:v0.40 --build-arg GIT_VERSION= -f ./Dockerfile.amd64</span><br><span class="line">Sending build context to Docker daemon   66.3MB</span><br><span class="line">Step 1/41 : ARG ARCH=x86_64</span><br><span class="line">Step 2/41 : ARG GIT_VERSION=unknown</span><br><span class="line">Step 3/41 : ARG IPTABLES_VER=1.8.2-16</span><br><span class="line">Step 4/41 : ARG RUNIT_VER=2.1.2</span><br><span class="line">Step 5/41 : ARG BIRD_IMAGE=calico/bird:latest</span><br><span class="line">Step 6/41 : FROM calico/bpftool:v5.3-amd64 as bpftool</span><br><span class="line">...</span><br><span class="line">Step 12/41 : ARG CENTOS_MIRROR_BASE_URL=https://mirrors.aliyun.com/centos-vault/8.1.1911</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">Using cache</span></span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">a96f716928d7</span></span><br><span class="line">...</span><br><span class="line">Step 17/41 : RUN mv /etc/yum.repos.d /etc/yum.repo.d-bk &amp;&amp;     mkdir -p /etc/yum.repos.d &amp;&amp; mv /centos.repo /etc/yum.repos.d &amp;&amp;     yum clean all &amp;&amp; yum makecache &amp;&amp;     dnf install -y &#x27;dnf-command(config-manager)&#x27; &amp;&amp;     yum install -y rpm-build yum-utils make &amp;&amp;     yum install -y wget glibc-static gcc &amp;&amp;     yum -y update-minimal --security --sec-severity=Important --sec-severity=Critical</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">Using cache</span></span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">a9ffd418a7a4</span></span><br><span class="line">...</span><br><span class="line">Step 24/41 : FROM registry.access.redhat.com/ubi8/ubi-minimal:8.1-407</span><br><span class="line">8.1-407: Pulling from ubi8/ubi-minimal</span><br><span class="line">Digest: sha256:01b8fb7b3ad16a575651a4e007e8f4d95b68f727b3a41fc57996be9a790dc4fa</span><br><span class="line">Status: Image is up to date for registry.access.redhat.com/ubi8/ubi-minimal:8.1-407</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">6ce38bb5210c</span></span><br><span class="line">...</span><br><span class="line">Step 39/41 : COPY dist/bin/calico-node-amd64 /bin/calico-node</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">Using cache</span></span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">916fbf133fb0</span></span><br><span class="line">Step 40/41 : COPY --from=bpftool /bpftool /bin</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">Using cache</span></span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">f797db5c4eb4</span></span><br><span class="line">Step 41/41 : CMD [&quot;start_runit&quot;]</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">Using cache</span></span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">fe6496ded4a6</span></span><br><span class="line">[Warning] One or more build-args [QEMU_IMAGE] were not consumed</span><br><span class="line">Successfully built fe6496ded4a6</span><br><span class="line">Successfully tagged calico/node:latest-amd64</span><br><span class="line">touch .calico_node.created-amd64</span><br><span class="line">make: Leaving directory `/home/go/gopath/src/github.com/projectcalico/node&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>查看编译的镜像：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 github.com]# docker images</span><br><span class="line">REPOSITORY                                                  TAG                          IMAGE ID       CREATED         SIZE</span><br><span class="line">calico/node                                                 latest-amd64                 77f4ca933207   7 hours ago     264MB</span><br><span class="line">&lt;none&gt;                                                      &lt;none&gt;                       420e5252b060   7 hours ago     633MB</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/projectcalico/calico/blob/master/DEVELOPER_GUIDE.md">https://github.com/projectcalico/calico/blob/master/DEVELOPER_GUIDE.md</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/projectcalico/go-build/blob/7a75e06f7e9b39df8697ca96f6d5f42369155902/Makefile.common">https://github.com/projectcalico/go-build/blob/7a75e06f7e9b39df8697ca96f6d5f42369155902/Makefile.common</a></li>
+<li><a target="_blank" rel="noopener" href="https://mirrors.aliyun.com/centos-vault/8.1.1911/">https://mirrors.aliyun.com/centos-vault/8.1.1911/</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2023/04/08/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E6%B2%A1%E6%9C%89Endpoint%E7%9A%84Service%E8%AF%B7%E6%B1%82Reject%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/04/08/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E6%B2%A1%E6%9C%89Endpoint%E7%9A%84Service%E8%AF%B7%E6%B1%82Reject%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">K8S问题排查-没有Endpoint的Service请求Reject失效问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-08 20:11:32" itemprop="dateCreated datePublished" datetime="2023-04-08T20:11:32+00:00">2023-04-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>客户的防火墙抓到了没有<code>Endpoint</code>的<code>Service</code>请求，从<code>K8S</code>角度来说，正常情况下不应该存在这种现象的，因为没有<code>Endpoint</code>的<code>Service</code>请求会被<code>iptables</code>规则<code>reject</code>掉才对。</p>
+<h2 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h2><p>先本地环境复现，创建一个没有后端的服务，例如<code>grafana-service111</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> [root@node01 ~]# kubectl get svc -A</span><br><span class="line">NAMESPACE     NAME                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE</span><br><span class="line">default       kubernetes               ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP                  2d</span><br><span class="line">kube-system   grafana-service          ClusterIP   10.96.78.163    &lt;none&gt;        3000/TCP                 2d</span><br><span class="line">kube-system   grafana-service111       ClusterIP   10.96.52.101    &lt;none&gt;        3000/TCP                 13s</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# kubectl get ep -A</span><br><span class="line">NAMESPACE     NAME                      ENDPOINTS                                                       AGE</span><br><span class="line">default       kubernetes                10.10.72.15:6443                                                2d</span><br><span class="line">kube-system   grafana-service           10.78.104.6:3000,10.78.135.5:3000                               2d</span><br><span class="line">kube-system   grafana-service111        &lt;none&gt;                                                          18s</span><br></pre></td></tr></table></figure>
+
+<p>进入一个业务<code>Pod</code>，并请求<code>grafana-service111</code>，结果请求卡住并超时终止：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# kubectl exec -it -n kube-system   influxdb-rs1-5bdc67f4cb-lnfgt bash</span><br><span class="line">root@influxdb-rs1-5bdc67f4cb-lnfgt:/# time curl http://10.96.52.101:3000</span><br><span class="line">curl: (7) Failed to connect to 10.96.52.101 port 3000: Connection timed out</span><br><span class="line"></span><br><span class="line">real    2m7.307s</span><br><span class="line">user    0m0.006s</span><br><span class="line">sys     0m0.008s</span><br></pre></td></tr></table></figure>
+
+<p>查看<code>grafana-service111</code>的<code>iptables</code>规则，发现有<code>reject</code>规则，但从上面的实测现象看，应该是没有生效：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]<span class="comment"># iptables-save |grep 10.96.52.101</span></span><br><span class="line">-A KUBE-SERVICES -d 10.96.52.101/32 -p tcp -m comment --comment <span class="string">&quot;kube-system/grafana-service111: has no endpoints&quot;</span> -m tcp --dport 3000 -j REJECT --reject-with icmp-port-unreachable</span><br></pre></td></tr></table></figure>
+
+<p>在业务<code>Pod</code>容器网卡上抓包，没有发现响应报文（<strong>不符合预期</strong>）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# tcpdump -n -i calie2568ca85e4 host 10.96.52.101</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on calie2568ca85e4, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">20:31:34.647286 IP 10.78.166.136.39230 &gt; 10.96.52.101.hbci: Flags [S], seq 1890821953, win 29200, options [mss 1460,sackOK,TS val 792301056 ecr 0,nop,wscale 7], length 0</span><br></pre></td></tr></table></figure>
+
+<p>在节点网卡上抓包，存在服务请求包（<strong>不符合预期</strong>）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# tcpdump -n -i eth0 host 10.96.52.101</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">20:33:36.994881 IP 10.10.72.10.41234 &gt; 10.96.52.101.hbci: Flags [S], seq 3530065013, win 29200, options [mss 1460,sackOK,TS val 792423403 ecr 0,nop,wscale 7], length 0</span><br><span class="line">20:33:37.995298 IP 10.10.72.10.41234 &gt; 10.96.52.101.hbci: Flags [S], seq 3530065013, win 29200, options [mss 1460,sackOK,TS val 792424404 ecr 0,nop,wscale 7], length 0</span><br><span class="line">20:33:39.999285 IP 10.10.72.10.41234 &gt; 10.96.52.101.hbci: Flags [S], seq 3530065013, win 29200, options [mss 1460,sackOK,TS val 792426408 ecr 0,nop,wscale 7], length 0</span><br></pre></td></tr></table></figure>
+
+<p>既然<code>reject</code>规则存在，初步怀疑可能影响该规则的组件有两个：</p>
+<ol>
+<li><code>kube-proxy</code></li>
+<li><code>calico-node</code></li>
+</ol>
+<p>基于上一篇《<a href="https://lyyao09.github.io/2023/03/25/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E4%BD%BF%E7%94%A8Kubeasz%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2K8S%E9%9B%86%E7%BE%A4/">使用Kubeasz一键部署K8S集群</a>》，<strong>在最新的<code>K8S</code>集群上做相同的测试，发现不存在该问题，说明该问题在新版本已经修复了</strong>。分别在<code>K8S</code>和<code>Calico</code>的<code>issue</code>上查询相关问题，最后发现是<code>Calico</code>的<code>bug</code>，相关<code>issue</code>见参考资料[1, 2]，修复记录见参考资料[3]。</p>
+<p>下面是新老版本的<code>Calico</code>处理<code>cali-FORWARD</code>链的差异点：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">有问题的环境：</span><br><span class="line">[root@node4 ~]<span class="comment"># iptables -t filter -S  cali-FORWARD</span></span><br><span class="line">-N cali-FORWARD</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:vjrMJCRpqwy5oRoX&quot;</span> -j MARK --set-xmark 0x0/0xe0000</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:A_sPAO0mcxbT9mOV&quot;</span> -m mark --mark 0x0/0x10000 -j cali-from-hep-forward</span><br><span class="line">-A cali-FORWARD -i cali+ -m comment --comment <span class="string">&quot;cali:8ZoYfO5HKXWbB3pk&quot;</span> -j cali-from-wl-dispatch</span><br><span class="line">-A cali-FORWARD -o cali+ -m comment --comment <span class="string">&quot;cali:jdEuaPBe14V2hutn&quot;</span> -j cali-to-wl-dispatch</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:12bc6HljsMKsmfr-&quot;</span> -j cali-to-hep-forward</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:MH9kMp5aNICL-Olv&quot;</span> -m comment --comment <span class="string">&quot;Policy explicitly accepted packet.&quot;</span> -m mark --mark 0x10000/0x10000 -j ACCEPT</span><br><span class="line">//问题在这最后这一条规则，新版本的calico把这条规则移到了FORWARD链</span><br><span class="line"></span><br><span class="line">正常的环境：</span><br><span class="line">[root@node01 ~]<span class="comment"># iptables -t filter -S cali-FORWARD</span></span><br><span class="line">-N cali-FORWARD</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:vjrMJCRpqwy5oRoX&quot;</span> -j MARK --set-xmark 0x0/0xe0000</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:A_sPAO0mcxbT9mOV&quot;</span> -m mark --mark 0x0/0x10000 -j cali-from-hep-forward</span><br><span class="line">-A cali-FORWARD -i cali+ -m comment --comment <span class="string">&quot;cali:8ZoYfO5HKXWbB3pk&quot;</span> -j cali-from-wl-dispatch</span><br><span class="line">-A cali-FORWARD -o cali+ -m comment --comment <span class="string">&quot;cali:jdEuaPBe14V2hutn&quot;</span> -j cali-to-wl-dispatch</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:12bc6HljsMKsmfr-&quot;</span> -j cali-to-hep-forward</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:NOSxoaGx8OIstr1z&quot;</span> -j cali-cidr-block</span><br></pre></td></tr></table></figure>
+
+<p>下面是在最新的<code>K8S</code>集群上做相同的测试记录，可以跟异常环境做对比。</p>
+<p>模拟一个业务请求<code>pod</code>：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 home]<span class="comment"># kubectl run busybox --image=busybox-curl:v1.0 --image-pull-policy=IfNotPresent -- sleep 300000</span></span><br><span class="line">pod/busybox created</span><br><span class="line"></span><br><span class="line">[root@node01 home]<span class="comment"># kubectl get pod -A -owide</span></span><br><span class="line">NAMESPACE     NAME                                         READY   STATUS    RESTARTS   AGE   IP             NODE           default       busybox                                      1/1     Running   0          14h   10.78.153.73   10.10.11.49 </span><br></pre></td></tr></table></figure>
+
+<p>模拟一个业务响应服务<code>metrics-server111</code>，并且该服务无后端<code>endpoint</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 home]# kubectl get svc -A</span><br><span class="line">NAMESPACE     NAME                        TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                  AGE</span><br><span class="line">default       kubernetes                  ClusterIP   10.68.0.1      &lt;none&gt;        443/TCP                  18h</span><br><span class="line">kube-system   dashboard-metrics-scraper   ClusterIP   10.68.174.38   &lt;none&gt;        8000/TCP                 17h</span><br><span class="line">kube-system   kube-dns                    ClusterIP   10.68.0.2      &lt;none&gt;        53/UDP,53/TCP,9153/TCP   17h</span><br><span class="line">kube-system   kube-dns-upstream           ClusterIP   10.68.41.41    &lt;none&gt;        53/UDP,53/TCP            17h</span><br><span class="line">kube-system   kubernetes-dashboard        NodePort    10.68.160.45   &lt;none&gt;        443:30861/TCP            17h</span><br><span class="line">kube-system   metrics-server              ClusterIP   10.68.65.249   &lt;none&gt;        443/TCP                  17h</span><br><span class="line">kube-system   metrics-server111           ClusterIP   10.68.224.53   &lt;none&gt;        443/TCP                  14h</span><br><span class="line">kube-system   node-local-dns              ClusterIP   None           &lt;none&gt;        9253/TCP                 17h</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# kubectl get ep -A</span><br><span class="line">NAMESPACE     NAME                        ENDPOINTS                                           AGE</span><br><span class="line">default       kubernetes                  172.28.11.49:6443                                   18h</span><br><span class="line">kube-system   dashboard-metrics-scraper   10.78.153.68:8000                                   18h</span><br><span class="line">kube-system   kube-dns                    10.78.153.67:53,10.78.153.67:53,10.78.153.67:9153   18h</span><br><span class="line">kube-system   kube-dns-upstream           10.78.153.67:53,10.78.153.67:53                     18h</span><br><span class="line">kube-system   kubernetes-dashboard        10.78.153.66:8443                                   18h</span><br><span class="line">kube-system   metrics-server              10.78.153.65:4443                                   18h</span><br><span class="line">kube-system   metrics-server111           &lt;none&gt;                                              15h</span><br><span class="line">kube-system   node-local-dns              172.28.11.49:9253                                   18h</span><br></pre></td></tr></table></figure>
+
+<p>进入业务请求<code>pod</code>，做<code>curl</code>测试，请求立刻被拒绝（<strong>符合预期</strong>）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 02-k8s]# kubectl exec -it busybox bash</span><br><span class="line">/ # curl -i -k https://10.68.224.53:443</span><br><span class="line">curl: (7) Failed to connect to 10.68.224.53 port 443 after 2 ms: Connection refused</span><br></pre></td></tr></table></figure>
+
+<p><code>tcpdump</code>抓取容器网卡报文，出现<code>tcp port https unreachable</code>（<strong>符合预期</strong>）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -n -i cali12d4a061371</span><br><span class="line">21:54:42.697437 IP 10.78.153.73.41606 &gt; 10.68.224.53.https: Flags [S], seq 3510100476, win 29200, options [mss 1460,sackOK,TS val 2134372616 ecr 0,nop,wscale 7], length 0</span><br><span class="line">21:54:42.698804 IP 10.10.11.49&gt; 10.78.153.73: ICMP 10.68.224.53 tcp port https unreachable, length 68</span><br></pre></td></tr></table></figure>
+
+<p><code>tcpdump</code>抓取节点网卡报文，无请求从测试容器内发出集群（<strong>符合预期</strong>）；</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 bin]# tcpdump -n -i eth0 host 10.68.224.53</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">^C</span><br><span class="line">0 packets captured</span><br><span class="line">2 packets received by filter</span><br><span class="line">0 packets dropped by kernel</span><br></pre></td></tr></table></figure>
+
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>升级<code>Calico</code>，要求版本<code>&gt;=v3.16.0</code>。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://github.com/projectcalico/calico/issues/1055">https://github.com/projectcalico/calico/issues/1055</a><br><a target="_blank" rel="noopener" href="https://github.com/projectcalico/calico/issues/3901">https://github.com/projectcalico/calico/issues/3901</a><br><a target="_blank" rel="noopener" href="https://github.com/projectcalico/felix/pull/2424">https://github.com/projectcalico/felix/pull/2424</a> </p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2023/04/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8%EF%BC%88%E7%BB%AD%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/04/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8%EF%BC%88%E7%BB%AD%EF%BC%89/" class="post-title-link" itemprop="url">K8S问题排查-VMWare虚拟化环境下Pod跨VXLAN通信异常（续）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-05 21:38:44" itemprop="dateCreated datePublished" datetime="2023-04-05T21:38:44+00:00">2023-04-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>这个问题[1]定位到<code>VMWare</code>虚拟化层面后就一直搁置下来了，但考虑到测试环境存在大量虚拟机部署的情况，并且支持虚拟化部署也是早晚的事，所以后续也在一直关注<code>VMWare</code>和<code>Redhat</code>的相关资料。</p>
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>幸运的是，从<code>Redhat</code>的官网里还真的找到了相关问题[2]，通过官网说明了解到，该问题出现的环境是<code>Redhat 8.3</code>和<code>8.4</code>，使用<code>vmxnet3</code>的适配器，并且使用<code>UDP</code>隧道协议，比如<code>vxlan</code>或<code>GRE</code>。</p>
+<p>官方给出的解决方案是：</p>
+<ol>
+<li>升级<code>Redhat</code>到<code>8.5 (kernel-4.18.0-348.el8)</code>及以后版本。</li>
+<li>升级<code>VMware ESXi</code>到<code>6.7P07</code>，<code>7.0U3 (7.0.3)</code> 及以后版本。</li>
+</ol>
+<p>上述更新包括对<code>vmxnet3 NIC</code>不支持的隧道禁用 <code>tx-checksum-ip-generic</code> 的逻辑，因此最终结果与下面的解决方法相同。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ethtool -K DEVNAME tx-checksum-ip-generic off</span><br></pre></td></tr></table></figure>
+
+<p>但是，实测结果显示，<strong>升级<code>Redhat</code>和<code>VMware</code>均无法解决</strong>，而临时禁用的命令是可以的。考虑到临时命令还涉及到持久化的问题，还是需要另找方法。</p>
+<p>既然使用<code>vmxnet3</code>网卡不行，是不是能换网卡类型？果然，根据这个思路，继续查找资料[3]，发现使用<code>E1000</code>类型的网卡可以解决该问题，实测结果也符合预期。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p><strong>临时方案：</strong>在创建虚拟机时，把网络适配器的类型改为 <code>E1000</code>或<code>E1000e</code>。</p>
+<p><strong>永久方案：</strong>依然需要等待<code>VMWare</code>和<code>Redhat</code>的官方修复。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://lyyao09.github.io/2022/06/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8/">https://lyyao09.github.io/2022/06/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8/</a></li>
+<li><a target="_blank" rel="noopener" href="https://access.redhat.com/solutions/5881451">https://access.redhat.com/solutions/5881451</a> </li>
+<li><a target="_blank" rel="noopener" href="https://zhangguanzhang.github.io/2022/07/28/redhat84-vxlan-esxi">https://zhangguanzhang.github.io/2022/07/28/redhat84-vxlan-esxi</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2023/03/25/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E4%BD%BF%E7%94%A8Kubeasz%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2K8S%E9%9B%86%E7%BE%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/03/25/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E4%BD%BF%E7%94%A8Kubeasz%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2K8S%E9%9B%86%E7%BE%A4/" class="post-title-link" itemprop="url">工具分享-使用Kubeasz一键部署K8S集群</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-25 21:13:43" itemprop="dateCreated datePublished" datetime="2023-03-25T21:13:43+00:00">2023-03-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>为了验证最新版本的<code>k8s</code>是否已修复某个<code>bug</code>，需要快速搭建一个<code>k8s</code>环境，本文选取资料[1]中的<code>kubeasz</code>工具，并记录部署过程及相关问题。</p>
+<h2 id="部署过程"><a href="#部署过程" class="headerlink" title="部署过程"></a>部署过程</h2><p>先下载工具脚本、<code>kubeasz</code>代码、二进制、默认容器镜像。</p>
+<p>使用如下命令开始安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 k8s]# ./ezdown -S</span><br><span class="line">2023-03-22 13:39:40 INFO Action begin: start_kubeasz_docker</span><br><span class="line">2023-03-22 13:39:41 INFO try to run kubeasz in a container</span><br><span class="line">2023-03-22 13:39:41 DEBUG get host IP: 10.10.11.49</span><br><span class="line">2023-03-22 13:39:41 DEBUG generate ssh key pair</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">10.10.11.49 SSH-2.0-OpenSSH_6.6.1</span></span><br><span class="line">f1b442b7fdaf757c7787536b17d12d76208a2dd7884d56fbd1d35817dc2e94ca</span><br><span class="line">2023-03-22 13:39:41 INFO Action successed: start_kubeasz_docker</span><br><span class="line"></span><br><span class="line">[root@node01 k8s]# docker ps</span><br><span class="line">CONTAINER ID   IMAGE                                                       COMMAND                  CREATED          STATUS          PORTS     NAMES</span><br><span class="line">f1b442b7fdaf   easzlab/kubeasz:3.5.0                                       &quot;sleep 36000&quot;            15 seconds ago   Up 14 seconds             kubeasz</span><br></pre></td></tr></table></figure>
+
+<p>执行后看不出是成功，还是失败。根据文档说明，进入容器内手动执行命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# docker exec -it kubeasz ezctl start-aio</span><br><span class="line">2023-03-22 06:15:05 INFO get local host ipadd: 10.10.11.49</span><br><span class="line">2023-03-22 06:15:05 DEBUG generate custom cluster files in /etc/kubeasz/clusters/default</span><br><span class="line">2023-03-22 06:15:05 DEBUG set versions</span><br><span class="line">2023-03-22 06:15:05 DEBUG disable registry mirrors</span><br><span class="line">2023-03-22 06:15:05 DEBUG cluster default: files successfully created.</span><br><span class="line">2023-03-22 06:15:05 INFO next steps 1: to config &#x27;/etc/kubeasz/clusters/default/hosts&#x27;</span><br><span class="line">2023-03-22 06:15:05 INFO next steps 2: to config &#x27;/etc/kubeasz/clusters/default/config.yml&#x27;</span><br><span class="line">ansible-playbook -i clusters/default/hosts -e @clusters/default/config.yml  playbooks/90.setup.yml</span><br><span class="line">2023-03-22 06:15:05 INFO cluster:default setup step:all begins in 5s, press any key to abort:</span><br><span class="line"></span><br><span class="line">PLAY [kube_master,kube_node,etcd,ex_lb,chrony] **********************************************************************************************************************************************************</span><br><span class="line"></span><br><span class="line">TASK [Gathering Facts] **********************************************************************************************************************************************************************************</span><br><span class="line">fatal: [10.10.11.49]: UNREACHABLE! =&gt; &#123;&quot;changed&quot;: false, &quot;msg&quot;: &quot;Failed to connect to the host via ssh: root@10.10.11.49: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password).&quot;, &quot;unreachable&quot;: true&#125;</span><br><span class="line"></span><br><span class="line">PLAY RECAP **********************************************************************************************************************************************************************************************</span><br><span class="line">10.10.11.49               : ok=0    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0</span><br></pre></td></tr></table></figure>
+
+<p>从日志看，提示权限有问题。实际测试可以正常的<code>ssh</code>免密登录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">bash-5.1# ssh-keygen</span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file in which to save the key (/root/.ssh/id_rsa):</span><br><span class="line">/root/.ssh/id_rsa already exists.</span><br><span class="line">Overwrite (y/n)?</span><br><span class="line">bash-5.1# ssh-copy-id root@10.10.11.49</span><br><span class="line">/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: &quot;/root/.ssh/id_rsa.pub&quot;</span><br><span class="line">/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed</span><br><span class="line">expr: warning: &#x27;^ERROR: &#x27;: using &#x27;^&#x27; as the first character</span><br><span class="line">of a basic regular expression is not portable; it is ignored</span><br><span class="line">/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys</span><br><span class="line">root@10.10.11.49&#x27;s password:</span><br><span class="line"></span><br><span class="line">Number of key(s) added: 1</span><br><span class="line"></span><br><span class="line">Now try logging into the machine, with:   &quot;ssh &#x27;root@10.10.11.49&#x27;&quot;</span><br><span class="line">and check to make sure that only the key(s) you wanted were added.</span><br><span class="line"></span><br><span class="line">bash-5.1# ssh root@10.10.11.49</span><br><span class="line">root@10.10.11.49&#x27;s password:</span><br></pre></td></tr></table></figure>
+
+<p>查看相关配置文件，权限正常：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 kubeasz]# ll ~/.ssh</span><br><span class="line">total 16</span><br><span class="line">-rw------- 1 root root 1752 Mar 22 14:25 authorized_keys</span><br><span class="line">-rw------- 1 root root 2602 Mar 22 14:25 id_rsa</span><br><span class="line">-rw-r--r-- 1 root root  567 Mar 22 14:25 id_rsa.pub</span><br><span class="line">-rw-r--r-- 1 root root 1295 Mar 22 13:39 known_hosts</span><br></pre></td></tr></table></figure>
+
+<p>不清楚具体哪里有问题，参考资料[2]，尝试改为用用户名密码执行。</p>
+<p>在容器内配置用户密码，检查通过：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">bash-5.1# vi /etc/ansible/hosts</span><br><span class="line">[webservers]</span><br><span class="line">10.10.11.49</span><br><span class="line"></span><br><span class="line">[webservers:vars]</span><br><span class="line">ansible_ssh_pass=&#x27;******&#x27;</span><br><span class="line">ansible_ssh_user=&#x27;root&#x27;</span><br><span class="line"></span><br><span class="line">bash-5.1# ansible webservers -m ping</span><br><span class="line">10.10.11.49 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;discovered_interpreter_python&quot;: &quot;/usr/bin/python&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;changed&quot;: false,</span><br><span class="line">    &quot;ping&quot;: &quot;pong&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改安装集群依赖的<code>clusters/default/hosts</code>文件，同样增加用户密码配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[etcd]</span><br><span class="line">10.10.11.49</span><br><span class="line"></span><br><span class="line">[etcd:vars]</span><br><span class="line">ansible_ssh_pass=&#x27;******&#x27;</span><br><span class="line">ansible_ssh_user=&#x27;root&#x27;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">master node(s)</span></span><br><span class="line">[kube_master]</span><br><span class="line">10.10.11.49</span><br><span class="line"></span><br><span class="line">[kube_master:vars]</span><br><span class="line">ansible_ssh_pass=&#x27;******&#x27;</span><br><span class="line">ansible_ssh_user=&#x27;root&#x27;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">work node(s)</span></span><br><span class="line">[kube_node]</span><br><span class="line">10.10.11.49</span><br><span class="line"></span><br><span class="line">[kube_node:vars]</span><br><span class="line">ansible_ssh_pass=&#x27;******&#x27;</span><br><span class="line">ansible_ssh_user=&#x27;root&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>执行命令，提示缺少<code>sshpass</code>工具：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 kubeasz]# docker exec -it kubeasz ezctl setup default all</span><br><span class="line">ansible-playbook -i clusters/default/hosts -e @clusters/default/config.yml  playbooks/90.setup.yml</span><br><span class="line">2023-03-22 07:35:46 INFO cluster:default setup step:all begins in 5s, press any key to abort:</span><br><span class="line"></span><br><span class="line">PLAY [kube_master,kube_node,etcd,ex_lb,chrony] **********************************************************************************************************************************************************</span><br><span class="line"></span><br><span class="line">TASK [Gathering Facts] **********************************************************************************************************************************************************************************</span><br><span class="line">fatal: [10.10.11.49]: FAILED! =&gt; &#123;&quot;msg&quot;: &quot;to use the &#x27;ssh&#x27; connection type with passwords, you must install the sshpass program&quot;&#125;</span><br><span class="line"></span><br><span class="line">PLAY RECAP **********************************************************************************************************************************************************************************************</span><br><span class="line">10.10.11.49               : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0</span><br></pre></td></tr></table></figure>
+
+<p>安装<code>sshpass</code>依赖包：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">bash-5.1# apk add sshpass</span><br><span class="line">fetch https://dl-cdn.alpinelinux.org/alpine/v3.16/main/x86_64/APKINDEX.tar.gz</span><br><span class="line">fetch https://dl-cdn.alpinelinux.org/alpine/v3.16/community/x86_64/APKINDEX.tar.gz</span><br><span class="line">(1/1) Installing sshpass (1.09-r0)</span><br><span class="line">Executing busybox-1.35.0-r17.trigger</span><br><span class="line">OK: 21 MiB in 47 packages</span><br></pre></td></tr></table></figure>
+
+<p>重复执行命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 kubeasz]# docker exec -it kubeasz ezctl setup default all</span><br><span class="line">ansible-playbook -i clusters/default/hosts -e @clusters/default/config.yml  playbooks/90.setup.yml</span><br><span class="line">2023-03-22 07:36:37 INFO cluster:default setup step:all begins in 5s, press any key to abort:</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">TASK [kube-node : 轮询等待kube-proxy启动] *********************************************************************************************************************************************************************</span><br><span class="line">changed: [10.10.11.49]</span><br><span class="line">FAILED - RETRYING: 轮询等待kubelet启动 (4 retries left).</span><br><span class="line">FAILED - RETRYING: 轮询等待kubelet启动 (3 retries left).</span><br><span class="line">FAILED - RETRYING: 轮询等待kubelet启动 (2 retries left).</span><br><span class="line">FAILED - RETRYING: 轮询等待kubelet启动 (1 retries left).</span><br><span class="line"></span><br><span class="line">TASK [kube-node : 轮询等待kubelet启动] ************************************************************************************************************************************************************************</span><br><span class="line">fatal: [10.10.11.49]: FAILED! =&gt; &#123;&quot;attempts&quot;: 4, &quot;changed&quot;: true, &quot;cmd&quot;: &quot;systemctl is-active kubelet.service&quot;, &quot;delta&quot;: &quot;0:00:00.014621&quot;, &quot;end&quot;: &quot;2023-03-22 15:42:07.230186&quot;, &quot;msg&quot;: &quot;non-zero return code&quot;, &quot;rc&quot;: 3, &quot;start&quot;: &quot;2023-03-22 15:42:07.215565&quot;, &quot;stderr&quot;: &quot;&quot;, &quot;stderr_lines&quot;: [], &quot;stdout&quot;: &quot;activating&quot;, &quot;stdout_lines&quot;: [&quot;activating&quot;]&#125;</span><br><span class="line"></span><br><span class="line">PLAY RECAP **********************************************************************************************************************************************************************************************</span><br><span class="line">10.10.11.49               : ok=85   changed=78   unreachable=0    failed=1    skipped=123  rescued=0    ignored=0</span><br><span class="line">localhost                  : ok=33   changed=30   unreachable=0    failed=0    skipped=11   rescued=0    ignored=0</span><br></pre></td></tr></table></figure>
+
+<p><code>kubelet</code>阶段失败，查看<code>kubelet</code>服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 log]# service kubelet status -l</span><br><span class="line">Redirecting to /bin/systemctl status  -l kubelet.service</span><br><span class="line">● kubelet.service - Kubernetes Kubelet</span><br><span class="line">   Loaded: loaded (/etc/systemd/system/kubelet.service; enabled; vendor preset: disabled)</span><br><span class="line">   Active: activating (auto-restart) (Result: exit-code) since Wed 2023-03-22 15:56:31 CST; 1s ago</span><br><span class="line">     Docs: https://github.com/GoogleCloudPlatform/kubernetes</span><br><span class="line">  Process: 147581 ExecStart=/opt/kube/bin/kubelet --config=/var/lib/kubelet/config.yaml --container-runtime-endpoint=unix:///run/containerd/containerd.sock --hostname-override=10.10.11.49 --kubeconfig=/etc/kubernetes/kubelet.kubeconfig --root-dir=/var/lib/kubelet --v=2 (code=exited, status=1/FAILURE)</span><br><span class="line"> Main PID: 147581 (code=exited, status=1/FAILURE)</span><br><span class="line"></span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.719832  147581 manager.go:228] Version: &#123;KernelVersion:3.10.0-862.11.6.el7.x86_64 ContainerOsVersion:CentOS Linux 7 (Core) DockerVersion: DockerAPIVersion: CadvisorVersion: CadvisorRevision:&#125;</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.720896  147581 server.go:659] &quot;--cgroups-per-qos enabled, but --cgroup-root was not specified.  defaulting to /&quot;</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.721939  147581 container_manager_linux.go:267] &quot;Container manager verified user specified cgroup-root exists&quot; cgroupRoot=[]</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.722392  147581 container_manager_linux.go:272] &quot;Creating Container Manager object based on Node Config&quot; nodeConfig=&#123;RuntimeCgroupsName: SystemCgroupsName: KubeletCgroupsName:</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.722503  147581 topology_manager.go:134] &quot;Creating topology manager with policy per scope&quot; topologyPolicyName=&quot;none&quot; topologyScopeName=&quot;container&quot;</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.722609  147581 container_manager_linux.go:308] &quot;Creating device plugin manager&quot;</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.722689  147581 manager.go:125] &quot;Creating Device Plugin manager&quot; path=&quot;/var/lib/kubelet/device-plugins/kubelet.sock&quot;</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.722763  147581 server.go:66] &quot;Creating device plugin registration server&quot; version=&quot;v1beta1&quot; socket=&quot;/var/lib/kubelet/device-plugins/kubelet.sock&quot;</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.722905  147581 state_mem.go:36] &quot;Initialized new in-memory state store&quot;</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: E0322 15:56:31.726502  147581 run.go:74] &quot;command failed&quot; err=&quot;failed to run Kubelet: validate service connection: CRI v1 runtime API is not implemented for endpoint \&quot;unix:///run/containerd/containerd.sock\&quot;: rpc error: code = Unimplemented desc = unknown service runtime.v1.RuntimeService&quot;</span><br></pre></td></tr></table></figure>
+
+<p>根据日志报错，参考资料[3]，删除<code> /etc/containerd/config.toml</code> 文件并重启<code> containerd</code> 即可：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mv</span> /etc/containerd/config.toml /root/config.toml.bak</span><br><span class="line">systemctl restart containerd</span><br></pre></td></tr></table></figure>
+
+<p>重复执行命令，后台查看发现<code>calico-node</code>启动失败，查看日志如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Events:</span><br><span class="line">  Type     Reason     Age                From               Message</span><br><span class="line">  ----     ------     ----               ----               -------</span><br><span class="line">  Normal   Scheduled  41s                default-scheduler  Successfully assigned kube-system/calico-node-rqpjm to 10.10.11.49</span><br><span class="line">  Normal   Pulling    20s (x2 over 31s)  kubelet            Pulling image &quot;easzlab.io.local:5000/calico/cni:v3.23.5&quot;</span><br><span class="line">  Warning  Failed     19s (x2 over 31s)  kubelet            Failed to pull image &quot;easzlab.io.local:5000/calico/cni:v3.23.5&quot;: rpc error: code = Unknown desc = failed to pull and unpack image &quot;easzlab.io.local:5000/calico/cni:v3.23.5&quot;: failed to resolve reference &quot;easzlab.io.local:5000/calico/cni:v3.23.5&quot;: failed to do request: Head &quot;https://easzlab.io.local:5000/v2/calico/cni/manifests/v3.23.5&quot;: http: server gave HTTP response to HTTPS client</span><br><span class="line">  Warning  Failed     19s (x2 over 31s)  kubelet            Error: ErrImagePull</span><br><span class="line">  Normal   BackOff    5s (x2 over 30s)   kubelet            Back-off pulling image &quot;easzlab.io.local:5000/calico/cni:v3.23.5&quot;</span><br><span class="line">  Warning  Failed     5s (x2 over 30s)   kubelet            Error: ImagePullBackOff</span><br></pre></td></tr></table></figure>
+
+<p>查看<code>docker</code>层面配置，并测试拉起镜像正常：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# cat /etc/docker/daemon.json</span><br><span class="line">&#123;</span><br><span class="line">  &quot;max-concurrent-downloads&quot;: 10,</span><br><span class="line">  &quot;insecure-registries&quot;: [&quot;easzlab.io.local:5000&quot;],</span><br><span class="line">  &quot;log-driver&quot;: &quot;json-file&quot;,</span><br><span class="line">  &quot;log-level&quot;: &quot;warn&quot;,</span><br><span class="line">  &quot;log-opts&quot;: &#123;</span><br><span class="line">    &quot;max-size&quot;: &quot;10m&quot;,</span><br><span class="line">    &quot;max-file&quot;: &quot;3&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">  &quot;data-root&quot;:&quot;/var/lib/docker&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[root@node01 log]# docker pull easzlab.io.local:5000/calico/cni:v3.23.5</span><br><span class="line">v3.23.5: Pulling from calico/cni</span><br><span class="line">Digest: sha256:9c5055a2b5bc0237ab160aee058135ca9f2a8f3c3eee313747a02edcec482f29</span><br><span class="line">Status: Image is up to date for easzlab.io.local:5000/calico/cni:v3.23.5</span><br><span class="line">easzlab.io.local:5000/calico/cni:v3.23.5</span><br></pre></td></tr></table></figure>
+
+<p>查看<code>containerd</code>层面，并测试拉起镜像也正常：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 log]# ctr image pull --plain-http=true easzlab.io.local:5000/calico/cni:v3.23.5</span><br><span class="line">easzlab.io.local:5000/calico/cni:v3.23.5:                                         resolved       |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">manifest-sha256:9c5055a2b5bc0237ab160aee058135ca9f2a8f3c3eee313747a02edcec482f29: done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:cc0e45adf05a30a90384ba7024dbabdad9ae0bcd7b5a535c28dede741298fea3:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:47c5dbbec31222325790ebad8c07d270a63689bd10dc8f54115c65db7c30ad1f:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:8efc3d73e2741a93be09f68c859da466f525b9d0bddb1cd2b2b633f14f232941:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">config-sha256:1c979d623de9aef043cb4ff489da5636d61c39e30676224af0055240e1816382:   done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:4c98a4f67c5a7b1058111d463051c98b23e46b75fc943fc2535899a73fc0c9f1:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:51729c6e2acda05a05e203289f5956954814d878f67feb1a03f9941ec5b4008b:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:050b055d5078c5c6ad085d106c232561b0c705aa2173edafd5e7a94a1e908fc5:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:7430548aa23e56c14da929bbe5e9a2af0f9fd0beca3bd95e8925244058b83748:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">elapsed: 3.1 s                                                                    total:  103.0  (33.2 MiB/s)</span><br><span class="line">unpacking linux/amd64 sha256:9c5055a2b5bc0237ab160aee058135ca9f2a8f3c3eee313747a02edcec482f29...</span><br><span class="line">done: 6.82968396s</span><br></pre></td></tr></table></figure>
+
+<p>根据资料[4]，查看<code>containerd</code>配置，并新增私有仓库的配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# containerd config default &gt; /etc/containerd/config.toml</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# vim  /etc/containerd/config.toml</span><br><span class="line">[plugins.&quot;io.containerd.grpc.v1.cri&quot;.registry]</span><br><span class="line">      config_path = &quot;&quot;</span><br><span class="line"></span><br><span class="line">      [plugins.&quot;io.containerd.grpc.v1.cri&quot;.registry.auths]</span><br><span class="line"></span><br><span class="line">      [plugins.&quot;io.containerd.grpc.v1.cri&quot;.registry.configs]</span><br><span class="line"></span><br><span class="line">      [plugins.&quot;io.containerd.grpc.v1.cri&quot;.registry.headers]</span><br><span class="line"></span><br><span class="line">      [plugins.&quot;io.containerd.grpc.v1.cri&quot;.registry.mirrors]</span><br><span class="line">        [plugins.&quot;io.containerd.grpc.v1.cri&quot;.registry.mirrors.&quot;easzlab.io.local:5000&quot;]</span><br><span class="line">          endpoint = [&quot;http://easzlab.io.local:5000&quot;]</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# service containerd restart</span><br></pre></td></tr></table></figure>
+
+<p>查看<code>pod</code>状态，又卡在了<code>ContainerCreating</code>状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# kubectl get pod -A</span><br><span class="line">NAMESPACE     NAME                                         READY   STATUS              RESTARTS   AGE</span><br><span class="line">kube-system   calico-kube-controllers-89b744d6c-klzwh      1/1     Running             0          5m35s</span><br><span class="line">kube-system   calico-node-wmvff                            1/1     Running             0          5m35s</span><br><span class="line">kube-system   coredns-6665999d97-mp7xc                     0/1     ContainerCreating   0          5m35s</span><br><span class="line">kube-system   dashboard-metrics-scraper-57566685b4-8q5fm   0/1     ContainerCreating   0          5m35s</span><br><span class="line">kube-system   kubernetes-dashboard-57db9bfd5b-h6jp4        0/1     ContainerCreating   0          5m35s</span><br><span class="line">kube-system   metrics-server-6bd9f986fc-njpnj              0/1     ContainerCreating   0          5m35s</span><br><span class="line">kube-system   node-local-dns-wz9bg                         1/1     Running             0          5m31s</span><br></pre></td></tr></table></figure>
+
+<p>选择一个<code>describe</code>查看：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Events:</span><br><span class="line">  Type     Reason                  Age                   From               Message</span><br><span class="line">  ----     ------                  ----                  ----               -------</span><br><span class="line">  Warning  FailedScheduling        6m7s                  default-scheduler  0/1 nodes are available: 1 node(s) had untolerated taint &#123;node.kubernetes.io/not-ready: &#125;. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling..</span><br><span class="line">  Normal   Scheduled               5m47s                 default-scheduler  Successfully assigned kube-system/coredns-6665999d97-mp7xc to 10.10.11.49</span><br><span class="line">  Warning  FailedCreatePodSandBox  5m46s                 kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = failed to setup network for sandbox &quot;072c164d79f4874a8d851d36115ea04b75a2155dae3cecdc764e923c9f38f86b&quot;: plugin type=&quot;calico&quot; failed (add): failed to find plugin &quot;calico&quot; in path [/opt/cni/bin]</span><br><span class="line">  Normal   SandboxChanged          33s (x25 over 5m46s)  kubelet            Pod sandbox changed, it will be killed and re-created.</span><br></pre></td></tr></table></figure>
+
+<p>从日志看，是<code>cni</code>插件不存在的问题，手动拷贝之后，查看<code>pod</code>状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 bin]# cd /opt/cni/bin/</span><br><span class="line">[root@node01 bin]# chmod +x *</span><br><span class="line">[root@node01 bin]# ll -h</span><br><span class="line">total 186M</span><br><span class="line">-rwxr-xr-x 1 root root 3.7M Mar 22 17:46 bandwidth</span><br><span class="line">-rwxr-xr-x 1 root root  56M Mar 22 17:46 calico</span><br><span class="line">-rwxr-xr-x 1 root root  56M Mar 22 17:46 calico-ipam</span><br><span class="line">-rwxr-xr-x 1 root root 2.4M Mar 22 17:46 flannel</span><br><span class="line">-rwxr-xr-x 1 root root 3.1M Mar 22 17:46 host-local</span><br><span class="line">-rwxr-xr-x 1 root root  56M Mar 22 17:46 install</span><br><span class="line">-rwxr-xr-x 1 root root 3.2M Mar 22 17:46 loopback</span><br><span class="line">-rwxr-xr-x 1 root root 3.6M Mar 22 17:46 portmap</span><br><span class="line">-rwxr-xr-x 1 root root 3.3M Mar 22 17:46 tuning</span><br><span class="line"></span><br><span class="line">[root@node01 bin]# kubectl get pod -A</span><br><span class="line">NAMESPACE     NAME                                         READY   STATUS    RESTARTS   AGE</span><br><span class="line">kube-system   calico-kube-controllers-89b744d6c-mpfgq      1/1     Running   0          37m</span><br><span class="line">kube-system   calico-node-h9sm2                            1/1     Running   0          37m</span><br><span class="line">kube-system   coredns-6665999d97-8pdbd                     1/1     Running   0          37m</span><br><span class="line">kube-system   dashboard-metrics-scraper-57566685b4-c2l8w   1/1     Running   0          37m</span><br><span class="line">kube-system   kubernetes-dashboard-57db9bfd5b-74lmb        1/1     Running   0          37m</span><br><span class="line">kube-system   metrics-server-6bd9f986fc-d9crl              1/1     Running   0          37m</span><br><span class="line">kube-system   node-local-dns-kvgv6                         1/1     Running   0          37m</span><br></pre></td></tr></table></figure>
+
+<p>部署完成。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://github.com/easzlab/kubeasz/blob/master/docs/setup/quickStart.md">https://github.com/easzlab/kubeasz/blob/master/docs/setup/quickStart.md</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c48b4a24c7d4">https://www.jianshu.com/p/c48b4a24c7d4</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/immaxfang/p/16721407.html">https://www.cnblogs.com/immaxfang/p/16721407.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/containerd/containerd/issues/4938">https://github.com/containerd/containerd/issues/4938</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2022/11/27/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E5%86%85%E7%BD%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AEGoland%E7%BD%91%E9%A1%B5%E7%89%88%E6%95%99%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/27/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E5%86%85%E7%BD%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AEGoland%E7%BD%91%E9%A1%B5%E7%89%88%E6%95%99%E7%A8%8B/" class="post-title-link" itemprop="url">工具分享-内网环境配置Goland网页版教程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-27 20:25:11" itemprop="dateCreated datePublished" datetime="2022-11-27T20:25:11+00:00">2022-11-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>说起开发工具<code>Goland</code>，做<code>Go</code>语言开发的同学应该都不陌生，但由于大部分同学的电脑资源有限，尤其是公司里配备的电脑，在本地使用<code>Goland</code>多多少少有些不够顺畅。</p>
+<p>如果公司内服务器资源充足，再加上容器化技术的加持，把<code>Goland</code>以容器的形式部署在服务器上运行是一个不错的解决方法。带着这个想法搜索资料[1]发现，<code>Goland </code>官方还真的开发了容器版，并且提供网页和客户端两种登录方式。下面给出<strong>内网环境下</strong>的配置步骤及采坑记录：</p>
+<blockquote>
+<p>注：</p>
+<ol>
+<li>以下操作同样适用于<code>Jetbrains</code>旗下的其他开发工具，比如<code>IDEA</code>。</li>
+<li><code>Goland</code>的注册方法不在本次教程讨论范围之内，请自行解决。</li>
+</ol>
+</blockquote>
+<h2 id="镜像获取"><a href="#镜像获取" class="headerlink" title="镜像获取"></a>镜像获取</h2><p><code>Goland</code>网页版功能是<code>jetbrains</code>官方[2]提供的<code>Docker</code>镜像，所以内网配置的<strong>前提</strong>是先从外网拉取到需要的镜像，然后导出镜像包并拷贝到内网中：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull registry.jetbrains.team/p/prj/containers/projector-goland</span><br><span class="line">docker save -o projector-goland.tar registry.jetbrains.team/p/prj/containers/projector-goland</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注：如果无法拉取官方的镜像，可以在公众号后台回复 <code>docker goland</code> 即可获取<code>goland</code> 网页版镜像。</p>
+</blockquote>
+<h2 id="服务启动"><a href="#服务启动" class="headerlink" title="服务启动"></a>服务启动</h2><p>拿到镜像后，找一个安装了<code>docker</code>的服务器或虚机，使用<code>docker run</code>命令启动：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd \</span><br><span class="line">           -u root \</span><br><span class="line">           -p 8887:8887 \</span><br><span class="line">           --net=host \</span><br><span class="line">           --privileged \</span><br><span class="line">           -v /home/admin/goland-dir:/root \</span><br><span class="line">           -v /etc/localtime:/etc/localtime \</span><br><span class="line">           -v /home/admin/goland-dir/sources.list:/etc/apt/sources.list \</span><br><span class="line">           --name goland \</span><br><span class="line">           --restart always \</span><br><span class="line">           registry.jetbrains.team/p/prj/containers/projector-goland</span><br></pre></td></tr></table></figure>
+
+<p>（<strong>重要</strong>）部分参数说明：</p>
+<ol>
+<li>指定用户：可选，默认不指定用户，容器启动时会使用一个<code>非root</code>用户<code>projector-user</code>，这里使用<code>root</code>用户启动是为了避免后续操作的权限问题；</li>
+<li>指定主机网络：可选，方便使用代理拉取代码，没有代理的话先从外网下载也可以；</li>
+<li>指定特权模式：可选，方便调试，没有开启的话直接使用<code>GoLand</code>调试会提示权限问题；</li>
+<li>挂载点1：<strong>必选</strong>，默认用户下，将<code>/home/projector-user</code>挂载到本地，root用户下直接将<code>root</code>目录挂载到本地；</li>
+<li>挂载点2：可选，保持容器时间与主机时间一致；</li>
+<li>挂载点3：可选，配置内网依赖源，方便下载<code>gcc</code>等编译所需的依赖；</li>
+</ol>
+<h2 id="浏览器访问"><a href="#浏览器访问" class="headerlink" title="浏览器访问"></a>浏览器访问</h2><p>容器正常启动后，在浏览器中通过<code>http://x.x.x.x:8887</code>地址登录网页版<code>GoLand</code>。</p>
+<h2 id="客户端访问"><a href="#客户端访问" class="headerlink" title="客户端访问"></a>客户端访问</h2><p>如果不习惯使用浏览器，官方还提供了原生客户端，我们通过地址[3]下载，打开后输入地址即可。</p>
+<h2 id="导入项目示例"><a href="#导入项目示例" class="headerlink" title="导入项目示例"></a>导入项目示例</h2><p>以导入<code>K8S</code>源码为例，登录到容器内，使用<code>git</code>命令拉取<code>kubernetes</code>源码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">projector-user@storage:~/go/src/github.com$ git clone https://github.com/kubernetes/kubernetes.git</span><br><span class="line">Cloning into &#x27;kubernetes&#x27;...</span><br><span class="line">fatal: unable to access &#x27;https://github.com/kubernetes/kubernetes.git/&#x27;: server certificate verification failed. CAfile: none CRLfile: none</span><br></pre></td></tr></table></figure>
+
+<p>拉取失败，提示<code>CA</code>证书问题，通过以下命令解决：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global http.sslVerify false</span><br></pre></td></tr></table></figure>
+
+<p>又拉取失败：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">projector-user@storage:~/go/src/github.com$ git clone https://github.com/kubernetes/kubernetes.git</span><br><span class="line">Cloning into &#x27;kubernetes&#x27;...</span><br><span class="line">fatal: unable to update url base from redirection:</span><br><span class="line">  asked for: https://github.com/kubernetes/kubernetes.git/info/refs?service=git-upload-pack</span><br><span class="line">   redirect: http://x.x.x.x/proxy.html?template=default&amp;tabs=pwd&amp;vlanid=0&amp;url=https://github.com%2Fkubernetes%2Fkubernetes.git%2Finfo%2Frefs%3Fservice%3Dgit-upload-pack</span><br></pre></td></tr></table></figure>
+
+<p>因为未配置代理，通过以下命令解决：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">设置：git config --global http.proxy http://user:password@http://x.x.x.xx:8080</span><br><span class="line">查看：git config --get --global http.proxy</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注：密码中如果存在特殊字符，请先转义。</p>
+</blockquote>
+<p>再次尝试拉取，拉取成功：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">projector-user@storage:~/go/src/github.com$ git clone https://github.com/kubernetes/kubernetes.git</span><br><span class="line">Cloning into &#x27;kubernetes&#x27;...</span><br><span class="line">remote: Enumerating objects: 1258541, done.</span><br><span class="line">remote: Counting objects: 100% (316/316), done.</span><br><span class="line">remote: Compressing objects: 100% (201/201), done.</span><br><span class="line">remote: Total 1258541 (delta 131), reused 150 (delta 111), pack-reused 1258225</span><br><span class="line">Receiving objects: 100% (1258541/1258541), 773.55 MiB | 805.00 KiB/s, done.</span><br><span class="line">Resolving deltas: 100% (906256/906256), done.</span><br><span class="line">Checking out files: 100% (23196/23196), done.</span><br></pre></td></tr></table></figure>
+
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="1-复制粘贴问题"><a href="#1-复制粘贴问题" class="headerlink" title="1. 复制粘贴问题"></a>1. 复制粘贴问题</h3><p>根据参考资料[4]，可以通过设置环境变量<code>ORG_JETBRAINS_PROJECTOR_SERVER_SSL_PROPERTIES_PATH</code>解决：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -e ORG_JETBRAINS_PROJECTOR_SERVER_SSL_PROPERTIES_PATH=/root/ssl/ssl.properties ...</span><br></pre></td></tr></table></figure>
+
+<p><code>ssl</code>的配置文件举例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">STORE_TYPE=JKS</span><br><span class="line">FILE_PATH=/root/ssl/keystore</span><br><span class="line">STORE_PASSWORD=xxx</span><br><span class="line">KEY_PASSWORD=xxx</span><br></pre></td></tr></table></figure>
+
+<p>通过查看启动日志确认<code>ssl</code>是否配置成功，如下日志所示，<code>WebSocket SSL is enabled: /root/ssl/ssl.properties</code>表示配置成功，此时在浏览器用<code>https://xxx:8887/?wss</code>访问即可。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Found IDE: goland</span><br><span class="line">OpenJDK 64-Bit Server VM warning: Option UseConcMarkSweepGC was deprecated in version 9.0 and will likely be removed in a future release.</span><br><span class="line">[DEBUG] :: IdeState :: Starting attempts to Init ProjectorClassLoader</span><br><span class="line">[DEBUG] :: IdeState :: Starting attempts to attach IJ injector agent</span><br><span class="line">[DEBUG] :: IdeState :: Starting attempts to initialize IDEA: fix AA and disable smooth scrolling (at start)</span><br><span class="line">[DEBUG] :: IdeState :: Starting attempts to Getting IDE colors</span><br><span class="line">[DEBUG] :: ProjectorServer :: Daemon thread starts</span><br><span class="line">[DEBUG] :: IdeState :: Starting attempts to search for editors</span><br><span class="line">[INFO] :: ProjectorServer :: ProjectorServer is starting on host 0.0.0.0/0.0.0.0 and port 8887</span><br><span class="line">[INFO] :: HttpWsServerBuilder :: WebSocket SSL is enabled: /root/ssl/ssl.properties</span><br><span class="line">[INFO] :: HttpWsServer :: Server started on host 0.0.0.0/0.0.0.0 and port 8887</span><br><span class="line">[DEBUG] :: IdeState :: &quot;Init ProjectorClassLoader&quot; is done</span><br><span class="line">[DEBUG] :: IdeState :: &quot;search for editors&quot; is done</span><br></pre></td></tr></table></figure>
+
+<p>登录后再次尝试，又可以快乐的<code>Ctrl+C</code>、<code>Ctrl+V</code>了。</p>
+<h3 id="2-自定义Keymap被重置问题"><a href="#2-自定义Keymap被重置问题" class="headerlink" title="2. 自定义Keymap被重置问题"></a>2. 自定义Keymap被重置问题</h3><p>根据参考资料[4]，可以通过设置环境变量<code>ORG_JETBRAINS_PROJECTOR_SERVER_AUTO_KEYMAP=false</code>解决：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -e ORG_JETBRAINS_PROJECTOR_SERVER_AUTO_KEYMAP=false ...</span><br></pre></td></tr></table></figure>
+
+<p>登录后再观察，发现自定义的<code>keymap</code>不会神奇的恢复了。</p>
+<h3 id="3-原生客户端全局搜索结果模糊问题"><a href="#3-原生客户端全局搜索结果模糊问题" class="headerlink" title="3. 原生客户端全局搜索结果模糊问题"></a>3. 原生客户端全局搜索结果模糊问题</h3><p>模糊部分刚好是搜索的字符串，使用起来问题也不大，如果忍不了，也可以暂时使用浏览器开心玩耍（浏览器下没有该问题）。</p>
+<blockquote>
+<p>更新：<code>v1.0.2</code>版本已修复该问题</p>
+</blockquote>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://fuckcloudnative.io/posts/run-jetbrains-ide-in-docker/">https://fuckcloudnative.io/posts/run-jetbrains-ide-in-docker/</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/JetBrains/projector-docker">https://github.com/JetBrains/projector-docker</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/JetBrains/projector-client/releases">https://github.com/JetBrains/projector-client/releases</a></li>
+<li><a target="_blank" rel="noopener" href="https://jetbrains.github.io/projector-client/mkdocs/latest/ij_user_guide/server_customization/">https://jetbrains.github.io/projector-client/mkdocs/latest/ij_user_guide/server_customization/</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2022/10/23/java/Karaf%E6%A1%86%E6%9E%B6%E5%8D%87%E7%BA%A7Lg4j%E5%8E%86%E7%A8%8B%20(%E7%BB%AD)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/10/23/java/Karaf%E6%A1%86%E6%9E%B6%E5%8D%87%E7%BA%A7Lg4j%E5%8E%86%E7%A8%8B%20(%E7%BB%AD)/" class="post-title-link" itemprop="url">Karaf框架升级Lg4j历程（续）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-10-23 14:15:21" itemprop="dateCreated datePublished" datetime="2022-10-23T14:15:21+00:00">2022-10-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>继《Karaf框架升级Lg4j历程》之后，今天又接到通知，需要将版本再升级到<code>2.18.0</code>，据说还是因为漏洞问题。网上查找，未发现有爆出什么漏洞，只找到了一个腾讯发布的相关通知《<a target="_blank" rel="noopener" href="https://security.tencent.com/ti/update_detail/ZN5pEF3RyiGHJCPXAwgtIkOzUjTB6Mr8">Apache Log4j官网普通更新</a>》。</p>
+<h2 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h2><p>有了前文的分析，我们知道，要解决漏洞，有三种升级方式：</p>
+<ol>
+<li><strong>升级框架</strong>：这个影响就比较大了，而且框架的版本发布周期比较慢，目前还没有编译好的框架包，要升级框架就需要自己编译出所有的框架包，风险较大；</li>
+<li><strong>升级依赖包</strong>：影响较小，如果没有配置依赖包的地方，可能无法升级；（实际确认，无法单独升级）</li>
+<li><strong>修改当前版本依赖包并重新编译</strong>：影响较小，如果与最新版本跨度较大，可能修改点会很多；</li>
+</ol>
+<p>综合比较，继续考虑使用第3个方案走走看，有了前文的经验，就直接修改依赖包版本到<code>2.18.0</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">pom.xml</span><br><span class="line">        &lt;version.org.apache.felix.configadmin&gt;1.9.20&lt;/version.org.apache.felix.configadmin&gt;</span><br><span class="line">        &lt;version.org.apache.felix.framework&gt;5.6.12&lt;/version.org.apache.felix.framework&gt;</span><br><span class="line">        &lt;version.org.apache.felix6.framework&gt;6.0.3&lt;/version.org.apache.felix6.framework&gt;</span><br><span class="line">-       &lt;version.org.apache.logging.log4j&gt;2.17.0&lt;/version.org.apache.logging.log4j&gt;</span><br><span class="line">+       &lt;version.org.apache.logging.log4j&gt;2.18.0&lt;/version.org.apache.logging.log4j&gt;</span><br><span class="line">        &lt;version.org.apache.servicemix.bundles.javax-inject&gt;1_3&lt;/version.org.apache.servicemix.bundles.javax-inject&gt;</span><br><span class="line">        &lt;version.org.jboss.logging&gt;3.4.1.Final&lt;/version.org.jboss.logging&gt;</span><br><span class="line">        &lt;version.org.mockito&gt;3.7.7&lt;/version.org.mockito&gt;</span><br></pre></td></tr></table></figure>
+
+<p>编译：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">root@895be557c3cd:/home/org.ops4j.pax.logging-logging-1.11.9# mvn clean install -Dmaven.test.skip=true</span><br><span class="line">...</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Reactor Summary:</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] OPS4J Pax Logging (Build POM) 1.11.9 ............... SUCCESS [  2.355 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - API (Java9) .................... SUCCESS [  2.039 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - API ............................ SUCCESS [  4.926 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Log4Jv1 implementation ......... SUCCESS [  2.235 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Log4Jv2 implementation ......... SUCCESS [  3.051 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Log4j v2 Extra packages ........ SUCCESS [  0.146 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Logback implementation ......... SUCCESS [  0.950 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Integration Tests .............. SUCCESS [  0.354 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf .......................... SUCCESS [  0.014 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf KAR Logger ............... SUCCESS [  0.142 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf KAR ...................... SUCCESS [  1.710 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf Distribution ............. SUCCESS [  2.522 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf Integration Tests 1.11.9 . SUCCESS [  0.703 s]</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] BUILD SUCCESS</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Total time: 22.711 s</span><br><span class="line">[INFO] Finished at: 2022-10-20T03:50:21Z</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
+
+<p>把新编译的<code>pax-logging-api</code>和<code>pax-logging-log4j</code>替换到依赖仓库中，重新编译交付件，发现日志功能异常，服务不再打印任何日志了，定位都无从下手；</p>
+<p>从参考资料[1]的代码提交记录看，<code>org.ops4j.pax.logging</code>为了升级<code>log4j</code>依赖包，不单单是改了版本，还涉及一些代码修改点，怀疑是有关系的：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">pax-logging-api/src/main/java/org/apache/logging/log4j/LogManager.java</span><br><span class="line">pax-logging-api/src/main/java/org/apache/logging/log4j/status/StatusLogger.java</span><br><span class="line">pax-logging-api/src/main/java/org/apache/logging/log4j/util/PaxPropertySource.java</span><br><span class="line">pax-logging-it/pom.xml</span><br><span class="line">pax-logging-log4j2/src/main/java/org/apache/logging/log4j/core/config/plugins/util/ResolverUtil.java</span><br><span class="line">pax-logging-log4j2/src/main/java/org/apache/logging/log4j/core/impl/ThrowableProxy.java</span><br><span class="line">pax-logging-log4j2/src/main/java/org/apache/logging/log4j/core/pattern/DatePatternConverter.java</span><br><span class="line">pax-logging-log4j2/src/main/java/org/ops4j/pax/logging/log4j2/internal/PaxLoggingServiceImpl.java</span><br><span class="line">pax-logging-samples/fragment-log4j2/src/main/java/org/ops4j/pax/logging/log4j2/extra/ListAppender.java</span><br><span class="line">pom.xml</span><br></pre></td></tr></table></figure>
+
+<p>对比发现，修改点不多，也不复杂，就尝试将更新的代码移植到<code>1.11.9</code>版本上；</p>
+<p>然后使用前文使用过的容器编译环境编译<code>jar</code>包：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">root@895be557c3cd:/home/org.ops4j.pax.logging-logging-1.11.9# mvn clean install -Dmaven.test.skip=true</span><br><span class="line">...</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Reactor Summary:</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] OPS4J Pax Logging (Build POM) 1.11.9 ............... SUCCESS [  2.355 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - API (Java9) .................... SUCCESS [  2.039 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - API ............................ SUCCESS [  4.926 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Log4Jv1 implementation ......... SUCCESS [  2.235 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Log4Jv2 implementation ......... SUCCESS [  3.051 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Log4j v2 Extra packages ........ SUCCESS [  0.146 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Logback implementation ......... SUCCESS [  0.950 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Integration Tests .............. SUCCESS [  0.354 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf .......................... SUCCESS [  0.014 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf KAR Logger ............... SUCCESS [  0.142 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf KAR ...................... SUCCESS [  1.710 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf Distribution ............. SUCCESS [  2.522 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf Integration Tests 1.11.9 . SUCCESS [  0.703 s]</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] BUILD SUCCESS</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Total time: 23.641 s</span><br><span class="line">[INFO] Finished at: 2022-10-20T03:55:39Z</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
+
+<p>升级<code>log4j</code>的版本编译成功。</p>
+<p>把新编译的<code>pax-logging-api</code>和<code>pax-logging-log4j</code>替换到依赖仓库中，重新编译交付件，发现日志功能正常；</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>把新编译的<code>pax-logging-api</code>和<code>pax-logging-log4j</code>替换到依赖仓库中，重新编译交付件，日志功能正常。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/ops4j/org.ops4j.pax.logging/commit/7c007343fe9844a17e9c6eaae3a833e6c19a579a">https://github.com/ops4j/org.ops4j.pax.logging/commit/7c007343fe9844a17e9c6eaae3a833e6c19a579a</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2022/08/20/java/karaf%E6%A1%86%E6%9E%B6%E8%A7%A3%E5%86%B3CVE-2015-4000%E6%BC%8F%E6%B4%9E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/20/java/karaf%E6%A1%86%E6%9E%B6%E8%A7%A3%E5%86%B3CVE-2015-4000%E6%BC%8F%E6%B4%9E/" class="post-title-link" itemprop="url">karaf框架解决CVE-2015-4000漏洞</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-20 09:15:21" itemprop="dateCreated datePublished" datetime="2022-08-20T09:15:21+00:00">2022-08-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h2><p>漏洞原理参考资料[1]，简单来说就是，当服务器<code>SSL/TLS</code>的瞬时<code>Diffie-Hellman</code>公共密钥小于等于<code>1024</code>位时，存在可以恢复纯文本信息的风险。</p>
+<p>复现方法很简单，使用<code>nmap -sV -Pn --script ssl-dh-params port ip</code> 命令扫描[2]，存在如下漏洞信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">nmap.exe -sV -Pn --script ssl-dh-params 443 192.168.1.10</span><br><span class="line">Starting Nmap 7.92 ( https://nmap.org ) at 2022-07-09 11:14</span><br><span class="line">Nmap scan report for 192.168.1.10</span><br><span class="line">Host is up (0.0033s latency).</span><br><span class="line">Not shown: 996 closed tcp ports (reset)</span><br><span class="line">…</span><br><span class="line">| ssl-dh-params:</span><br><span class="line">|   VULNERABLE:</span><br><span class="line">|   Diffie-Hellman Key Exchange Insufficient Group Strength</span><br><span class="line">|     State: VULNERABLE</span><br><span class="line">|       Transport Layer Security (TLS) services that use Diffie-Hellman groups</span><br><span class="line">|       of insufficient strength, especially those using one of a few commonly</span><br><span class="line">|       shared groups, may be susceptible to passive eavesdropping attacks.</span><br><span class="line">|     Check results:</span><br><span class="line">|       WEAK DH GROUP 1</span><br><span class="line">|             Cipher Suite: TLS_DHE_RSA_WITH_AES_256_CBC_SHA256</span><br><span class="line">|             Modulus Type: Safe prime</span><br><span class="line">|             Modulus Source: RFC2409/Oakley Group 2</span><br><span class="line">|             Modulus Length: 1024</span><br><span class="line">|             Generator Length: 8</span><br><span class="line">|             Public Key Length: 1024</span><br><span class="line">|     References:</span><br><span class="line">|_      https://weakdh.org</span><br></pre></td></tr></table></figure>
+
+<h2 id="修复方案"><a href="#修复方案" class="headerlink" title="修复方案"></a>修复方案</h2><p>参考[3,4]，修改方案如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 etc]# cat org.ops4j.pax.web.cfg</span><br><span class="line">...</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Excluded SSL/TLS Cipher Suites comma-separated list of Regular Expressions</span></span><br><span class="line">org.ops4j.pax.web.ssl.ciphersuites.excluded=.*NULL.*,.*RC4.*,.*MD5.*,.*DES.*,.*DSS.*,TLS_DHE.*,SSL.*,.*anon.*,.*EXPORT.*</span><br></pre></td></tr></table></figure>
+
+<p>修改后，再次使用<code>nmap -sV -Pn --script ssl-dh-params port ip</code>查看扫描结果，漏洞解决：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">nmap.exe -sV -Pn --script ssl-dh-params 443 192.168.1.10（主机IP）</span><br><span class="line">Starting Nmap 7.92 ( https://nmap.org ) at 2022-07-07 11:53</span><br><span class="line">Nmap scan report for 192.168.1.10</span><br><span class="line">Host is up (0.0032s latency).</span><br><span class="line">Not shown: 997 closed tcp ports (reset</span><br><span class="line">PORT     STATE SERVICE  VERSION</span><br><span class="line">22/tcp   open  ssh      OpenSSH 7.4 (protocol 2.0)</span><br><span class="line">111/tcp  open  rpcbind  2-4 (RPC #100000)</span><br><span class="line">...</span><br><span class="line">Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .</span><br><span class="line">Nmap done: 1 IP address (1 host up) scanned in 18.74 seconds </span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，<strong>添加完上面的参数后，可能会出现一个新的问题</strong>，扫描结果如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">nmap.exe -sV --script ssl-enum-ciphers -p 443 192.168.1.10</span><br><span class="line">Starting Nmap 6.40 ( http://nmap.org ) at 2022-08-20 22:26 CST</span><br><span class="line">Nmap scan report <span class="keyword">for</span> matrix-node1 (192.168.1.10)</span><br><span class="line">Host is up (0.000064s latency).</span><br><span class="line">PORT     STATE SERVICE    VERSION</span><br><span class="line">443/tcp open  https-alt</span><br><span class="line">| ssl-enum-ciphers:</span><br><span class="line">|   TLSv1.0:</span><br><span class="line">|     ciphers:</span><br><span class="line">|       TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA - strong</span><br><span class="line">|       ...</span><br><span class="line">|     compressors:</span><br><span class="line">|       NULL</span><br><span class="line">|   TLSv1.1:</span><br><span class="line">|     ciphers:</span><br><span class="line">|       TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA - strong</span><br><span class="line">|       ...</span><br><span class="line">|     compressors:</span><br><span class="line">|       NULL</span><br><span class="line">|   TLSv1.2:</span><br><span class="line">|     ciphers:</span><br><span class="line">|       TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA - strong</span><br><span class="line">|       ...</span><br><span class="line">|     compressors:</span><br><span class="line">|       NULL</span><br><span class="line">|_  least strength: strong</span><br></pre></td></tr></table></figure>
+
+<p>修改配置之前，扫描结果里显示仅开启了<code>TLSv1.2</code>，而修改配置之后，发现<code>TLSv1.0</code>和<code>TLSv1.1</code>都被开启了，这俩协议也是需要关闭：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 etc]<span class="comment"># cat org.ops4j.pax.web.cfg</span></span><br><span class="line">...</span><br><span class="line"><span class="comment"># Excluded SSL/TLS Cipher Suites comma-separated list of Regular Expressions</span></span><br><span class="line">org.ops4j.pax.web.ssl.ciphersuites.excluded=.*NULL.*,.*RC4.*,.*MD5.*,.*DES.*,.*DSS.*,TLS_DHE.*,SSL.*,.*anon.*,.*EXPORT.*</span><br><span class="line">org.ops4j.pax.web.ssl.protocols.excluded=TLSv1,TLSv1.1</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://access.redhat.com/zh_CN/articles/1480493">https://access.redhat.com/zh_CN/articles/1480493</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zcg-cpdd/p/15573841.html">https://www.cnblogs.com/zcg-cpdd/p/15573841.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/30523324/how-to-config-local-jetty-ssl-to-avoid-weak-phermeral-dh-key-error">https://stackoverflow.com/questions/30523324/how-to-config-local-jetty-ssl-to-avoid-weak-phermeral-dh-key-error</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/codice/ddf/blob/master/distribution/ddf-common/src/main/resources/etc/org.ops4j.pax.web.cfg">https://github.com/codice/ddf/blob/master/distribution/ddf-common/src/main/resources/etc/org.ops4j.pax.web.cfg</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2022/07/16/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%A4%96%E7%BD%AE%E5%AD%98%E5%82%A8%E6%8F%92%E4%BB%B6nfs-provisioner%E6%8A%A5%E9%94%99selfLink%20was%20empty/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/07/16/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%A4%96%E7%BD%AE%E5%AD%98%E5%82%A8%E6%8F%92%E4%BB%B6nfs-provisioner%E6%8A%A5%E9%94%99selfLink%20was%20empty/" class="post-title-link" itemprop="url">K8S问题排查-外置存储插件nfs-provisioner报错selfLink was empty</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-16 16:13:43" itemprop="dateCreated datePublished" datetime="2022-07-16T16:13:43+00:00">2022-07-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>本次发现的问题是踩到了新版本<code>Kubernetes</code>的坑，查找资料发现<code>zhangsi-lzq</code>大佬已经分析的很清楚了，此处转载过来仅做学习记录，并新增永久解决方案。</p>
+<blockquote>
+<p>作者：zhangsi-lzq<br>本文出处：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhangsi-lzq/p/14292628.html">https://www.cnblogs.com/zhangsi-lzq/p/14292628.html</a></p>
+</blockquote>
+<h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p><code>Kubernetes</code>升级为<code>1.20</code>版本后，原有的后端<code>nfs</code>存储<code>storageclass</code>无法自动创建<code>PV</code>。查看<code>PVC</code>状态一直为<code>pending</code>状态。</p>
+<h2 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h2><p>查看<code>nfs-provisioner</code>日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs nfs-client-provisioner-5f696dc8bb-qhmsn</span><br><span class="line">E0118 03:01:07.352670       1 streamwatcher.go:109] Unable to decode an event from the watch stream: http2: server sent GOAWAY and closed the connection; LastStreamID=3737, ErrCode=NO_ERROR, debug=&quot;&quot;</span><br><span class="line">E0118 03:01:07.353951       1 reflector.go:322] github.com/kubernetes-incubator/external-storage/lib/controller/controller.go:668: Failed to watch *v1.StorageClass: Get https://10.96.0.1:443/apis/storage.k8s.io/v1/storageclasses?resourceVersion=604432&amp;timeoutSeconds=387&amp;watch=true: dial tcp 10.96.0.1:443: connect: connection refused</span><br><span class="line">W0118 03:01:07.366606       1 reflector.go:341] github.com/kubernetes-incubator/external-storage/lib/controller/controller.go:665: watch of *v1.PersistentVolume ended with: too old resource version: 11565 (605173)</span><br><span class="line">W0118 03:01:07.367679       1 reflector.go:341] github.com/kubernetes-incubator/external-storage/lib/controller/controller.go:662: watch of *v1.PersistentVolumeClaim ended with: too old resource version: 11565 (605173)</span><br><span class="line">I0118 03:08:28.340240       1 controller.go:987] provision &quot;default/auth-platorm-redis-data-auth-platorm-redis-cluster-0&quot; class &quot;course-nfs-storage&quot;: started</span><br><span class="line">E0118 03:08:28.343582       1 controller.go:1004] provision &quot;default/auth-platorm-redis-data-auth-platorm-redis-cluster-0&quot; class &quot;course-nfs-storage&quot;: unexpected error getting claim reference: selfLink was empty, can&#x27;t make reference</span><br><span class="line">I0118 03:16:08.373590       1 controller.go:987] provision &quot;default/auth-platorm-redis-data-auth-platorm-redis-cluster-0&quot; class &quot;course-nfs-storage&quot;: started</span><br><span class="line">E0118 03:16:08.382178       1 controller.go:1004] provision &quot;default/auth-platorm-redis-data-auth-platorm-redis-cluster-0&quot; class &quot;course-nfs-storage&quot;: unexpected error getting claim reference: selfLink was empty, can&#x27;t make reference</span><br><span class="line">I0118 03:30:41.647626       1 controller.go:987] provision &quot;default/test-pvc&quot; class &quot;course-nfs-storage&quot;: started</span><br><span class="line">E0118 03:30:41.658419       1 controller.go:1004] provision &quot;default/test-pvc&quot; class &quot;course-nfs-storage&quot;: unexpected error getting claim reference: selfLink was empty, can&#x27;t make reference</span><br><span class="line">I0118 03:31:08.373713       1 controller.go:987] provision &quot;default/auth-platorm-redis-data-auth-platorm-redis-cluster-0&quot; class &quot;course-nfs-storage&quot;: started</span><br><span class="line">I0118 03:31:08.373969       1 controller.go:987] provision &quot;default/test-pvc&quot; class &quot;course-nfs-storage&quot;: started</span><br><span class="line">E0118 03:31:08.382279       1 controller.go:1004] provision &quot;default/test-pvc&quot; class &quot;course-nfs-storage&quot;: unexpected error getting claim reference: selfLink was empty, can&#x27;t make reference</span><br><span class="line">E0118 03:31:08.382791       1 controller.go:1004] provision &quot;default/auth-platorm-redis-data-auth-platorm-redis-cluster-0&quot; class &quot;course-nfs-storage&quot;: unexpected error getting claim reference: selfLink was empty, can&#x27;t make reference</span><br></pre></td></tr></table></figure>
+
+<p>报错信息<code>selfLink was empty</code>，于是上网查询相关内容，在官方<code>1.20</code>的<a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.20.md">变更说明</a>中[1]看到其中一条说明为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Stop propagating SelfLink (deprecated in 1.16) in kube-apiserver</span><br></pre></td></tr></table></figure>
+
+<p><code>selfLink</code>在<code>1.16</code>版本以后已经弃用，在<code>1.20</code>版本停用。而由于<code>nfs-provisione</code>r的实现是基于<code>selfLink</code>功能（同时也会影响其他用到<code>selfLink</code>这个功能的第三方软件），需要等<code>nfs-provisioner</code>的制作方重新提供新的解决方案。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>目前可用的临时方案是：修改<code>/etc/kubernetes/manifests/kube-apiserver.yaml</code>文件，找到如下内容后，在最后添加一项参数：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - command:</span><br><span class="line">    - kube-apiserver    </span><br><span class="line">    - --advertise-address=192.168.210.20    </span><br><span class="line">    - --....... </span><br><span class="line">    - --feature-gates=RemoveSelfLink=false　　#添加此行</span><br></pre></td></tr></table></figure>
+
+<p>如果是高可用的<code>k8s</code>集群，则需要在所<code>有master</code>节点上进行此操作。</p>
+<p>添加后需要删除<code>apiserver</code>的所有pod进行重启</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete pod kube-apiserver-master01 -n kube-system</span><br><span class="line">kubectl delete pod kube-apiserver-master02 -n kube-system</span><br><span class="line">kubectl delete pod kube-apiserver-master03 -n kube-system</span><br></pre></td></tr></table></figure>
+
+<p>三台<code>apiserver</code>被<code>kubelet</code>重启拉起后，再次查询<code>PVC</code>，可以看到<code>PVC</code>状态都为<code>Bound</code>，可以正常被<code>PV</code>绑定了。</p>
+<p>（新增）永久解决方案：查资料发现，<code>nfs-provisioner</code>项目实际上已经放弃[2,3]，转而提供了下面3个<code>provisioner</code>，可以根据需要适配更新：</p>
+<blockquote>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner">nfs-subdir-external-provisioner</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes-sigs/nfs-ganesha-server-and-external-provisioner">nfs-ganesha-server-and-external-provisioner</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes-csi/external-provisioner">external-provisioner</a></li>
+</ul>
+</blockquote>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.20.md">https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.20.md</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes-retired/nfs-provisioner">https://github.com/kubernetes-retired/nfs-provisioner</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes-sigs/sig-storage-lib-external-provisioner">https://github.com/kubernetes-sigs/sig-storage-lib-external-provisioner</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LeaoYao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">83</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LeaoYao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

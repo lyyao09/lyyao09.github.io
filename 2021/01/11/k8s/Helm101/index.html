@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyyao09.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Helm简介Helm是一个可简化Kubernetes应用程序安装和管理的工具。Helm可以理解为Kubernetes的apt&#x2F;yum&#x2F;homebrew。 此文档使用的是Helm的v3版本。如果我们使用的是Helm v2，请转到helm-v2分支。请参阅“Helm状态”以获取有关不同Helm版本的更多详细信息。 Helm状态Helm v3于2019年11月发布。新老版本的接口非常相似，但是Helm的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Helm入门">
+<meta property="og:url" content="https://lyyao09.github.io/2021/01/11/k8s/Helm101/index.html">
+<meta property="og:site_name" content="云原生知识星球">
+<meta property="og:description" content="Helm简介Helm是一个可简化Kubernetes应用程序安装和管理的工具。Helm可以理解为Kubernetes的apt&#x2F;yum&#x2F;homebrew。 此文档使用的是Helm的v3版本。如果我们使用的是Helm v2，请转到helm-v2分支。请参阅“Helm状态”以获取有关不同Helm版本的更多详细信息。 Helm状态Helm v3于2019年11月发布。新老版本的接口非常相似，但是Helm的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/lyyao09/cdn/raw/master/k8s/Helm101/helm-architecture.png">
+<meta property="og:image" content="https://gitee.com/lyyao09/cdn/raw/master/k8s/Helm101/guestbook-page.png">
+<meta property="article:published_time" content="2021-01-11T22:11:03.000Z">
+<meta property="article:modified_time" content="2023-12-03T14:33:55.179Z">
+<meta property="article:author" content="LeaoYao">
+<meta property="article:tag" content="kubernetes">
+<meta property="article:tag" content="helm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/lyyao09/cdn/raw/master/k8s/Helm101/helm-architecture.png">
+
+<link rel="canonical" href="https://lyyao09.github.io/2021/01/11/k8s/Helm101/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Helm入门 | 云原生知识星球</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">云原生知识星球</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/01/11/k8s/Helm101/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Helm入门
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-11 22:11:03" itemprop="dateCreated datePublished" datetime="2021-01-11T22:11:03+00:00">2021-01-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Helm简介"><a href="#Helm简介" class="headerlink" title="Helm简介"></a>Helm简介</h1><p><code>Helm</code>是一个可简化<code>Kubernetes</code>应用程序安装和管理的工具。<code>Helm</code>可以理解为<code>Kubernetes</code>的<code>apt/yum/homebrew</code>。</p>
+<p>此文档使用的是<a target="_blank" rel="noopener" href="https://helm.sh/">Helm</a>的<code>v3</code>版本。如果我们使用的是<code>Helm v2</code>，请转到<a target="_blank" rel="noopener" href="https://github.com/IBM/helm101/tree/helm-v2">helm-v2</a>分支。请参阅“<a target="_blank" rel="noopener" href="https://github.com/IBM/helm101#helm-status">Helm状态</a>”以获取有关不同<code>Helm</code>版本的更多详细信息。</p>
+<h2 id="Helm状态"><a href="#Helm状态" class="headerlink" title="Helm状态"></a>Helm状态</h2><p><code>Helm v3</code>于2019年11月发布。新老版本的接口非常相似，但是<code>Helm</code>的体系结构和内部架构发生了重大变化。有关更多详细信息，请查看<a target="_blank" rel="noopener" href="https://developer.ibm.com/technologies/containers/blogs/kubernetes-helm-3/">Helm 3</a>中的内容。</p>
+<p><code>Helm v2</code>计划支持1年“维护模式”。它指出以下内容：</p>
+<ul>
+<li>6个月的bug修复，直到2020年5月13日</li>
+<li>6个月的安全修复，直到2020年11月13日</li>
+<li>2020年11月13日开始，对Helm v2的支持将终止</li>
+</ul>
+<h1 id="为什么使用Helm"><a href="#为什么使用Helm" class="headerlink" title="为什么使用Helm"></a>为什么使用Helm</h1><p><code>Helm</code>通常被称为<code>Kubernetes</code>应用程序包管理器。那么，使用<code>Helm</code>而不直接使用<code>kubectl</code>有什么好处呢？</p>
+<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>这些实验提供了关于使用<code>Helm</code>优于直接通过<code>Kubectl</code>使用<code>Kubernetes</code>的优势的见解。后续的几个实验都分为两种情况：第一种情况提供了如何使用<code>kubectl</code>执行任务的示例；第二种情况提供了使用<code>Helm</code>的示例。完成所有实验后，我们可以：</p>
+<ul>
+<li>了解<code>Helm</code>的核心概念</li>
+<li>了解使用<code>Helm</code>而非直接使用<code>Kubernetes</code>进行部署的优势：<ul>
+<li>应用管理</li>
+<li>更新</li>
+<li>配置</li>
+<li>修订管理</li>
+<li>储存库和Chart图表共享</li>
+</ul>
+</li>
+</ul>
+<h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><ul>
+<li>有一个正在运行的<code>Kubernetes</code>集群。有关创建集群的详细信息，请参阅《 <a target="_blank" rel="noopener" href="https://cloud.ibm.com/docs/containers/cs_tutorials.html#cs_cluster_tutorial">IBM Cloud Kubernetes服务</a>或<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/setup/">Kubernetes入门指南</a>》。</li>
+<li>已通过<code>Kubernetes</code>集群安装并初始化了<code>Helm</code>。有关<code>Helm</code>入门，请参阅在IBM Cloud Kubernetes Service上安装Helm或《 Helm快速入门指南》。</li>
+</ul>
+<h2 id="Helm概览"><a href="#Helm概览" class="headerlink" title="Helm概览"></a>Helm概览</h2><p><code>Helm</code>是可简化<code>Kubernetes</code>应用程序安装和管理的工具。它使用一种称为“Chart”的打包格式，该格式是描述<code>Kubernetes</code>资源的文件的集合。它可以在任何地方（笔记本电脑，CI&#x2F;CD等）运行，并且可用于各种操作系统，例如<code>OSX，Linux和Windows</code>。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Helm101/helm-architecture.png" alt="helm-architecture"></p>
+<p><code>Helm 3</code>从<a target="_blank" rel="noopener" href="https://github.com/IBM/helm101/tree/helm-v2/tutorial#helm-overview">Helm 2客户端-服务器架构</a>转向了客户端架构。客户端仍称为<code>helm</code>，并且有一个改进的<code>Go</code>库，该库封装了<code>Helm</code>逻辑，以便可以由不同的客户端使用。客户端是一个<code>CLI</code>，用户可以与它进行交互以执行不同的操作，例如安装&#x2F;升级&#x2F;删除等。客户端与<code>Kubernetes API</code>服务器和<code>Chart</code>存储库进行交互。它将<code>Helm</code>模板文件渲染为<code>Kubernetes</code>清单文件，用于通过<code>Kubernetes API</code>在<code>Kubernetes</code>集群上执行操作。有关更多详细信息，请参见<a target="_blank" rel="noopener" href="https://helm.sh/docs/topics/architecture/">Helm架构</a>。</p>
+<p><a target="_blank" rel="noopener" href="https://helm.sh/docs/topics/charts/">Chart</a>被组织为目录内文件的集合，其中目录名是<code>Chart</code>的名称。它包含模板<code>YAML</code>文件，这些模板有助于在运行时提供配置值，并且无需修改<code>YAML</code>文件。这些模板基于<a target="_blank" rel="noopener" href="https://golang.org/pkg/text/template/">Go模板语</a>言，<a target="_blank" rel="noopener" href="https://github.com/Masterminds/sprig">Sprig lib</a>中的功能和<a target="_blank" rel="noopener" href="https://helm.sh/docs/howto/charts_tips_and_tricks/#know-your-template-functions">其他专用功能</a>提供了编程逻辑。</p>
+<p><code>Chart</code>存储库是可以存储和共享打包的<code>Chart</code>的位置。这类似于<code>Docker</code>中的镜像存储库。有关更多详细信息，请参考《<a target="_blank" rel="noopener" href="https://helm.sh/docs/topics/chart_repository/">Chart存储库指南</a>》。</p>
+<h2 id="Helm概念"><a href="#Helm概念" class="headerlink" title="Helm概念"></a>Helm概念</h2><p><code>Helm</code>术语：</p>
+<ul>
+<li>Chart - 包含在Kubernetes集群中运行的应用程序，工具或服务所需的所有资源定义。Chart基本上是预先配置的Kubernetes资源的软件包。</li>
+<li>Config - 包含可合并到Chart中以创建可发布对象的配置信息。</li>
+<li>helm - helm客户端。它将Chart呈现为清单文件。它直接与Kubernetes API服务器交互以安装，升级，查询和删除Kubernetes资源。</li>
+<li>Release - 在Kubernetes集群中运行的Chart实例。</li>
+<li>Repository - 存储Chart的仓库，可以与他人共享。</li>
+</ul>
+<h1 id="Lab0-安装Helm"><a href="#Lab0-安装Helm" class="headerlink" title="Lab0 安装Helm"></a>Lab0 安装Helm</h1><p>可以从源代码或预构建的二进制发行版中安装Helm客户端（<code>helm</code>）。在本实验中，我们将使用<code>Helm</code>社区的预构建二进制发行版（Linux amd64）。有关更多详细信息，请参阅<a target="_blank" rel="noopener" href="https://helm.sh/docs/intro/install/">Helm安装文档</a>。</p>
+<h2 id="前提依赖"><a href="#前提依赖" class="headerlink" title="前提依赖"></a>前提依赖</h2><ul>
+<li><code>Kubernete</code>s集群</li>
+</ul>
+<h2 id="安装Helm客户端"><a href="#安装Helm客户端" class="headerlink" title="安装Helm客户端"></a>安装Helm客户端</h2><ol>
+<li>下载适用于环境的最新版本的<code>Helm v3</code>，以下步骤适用于<code>Linux amd64</code>，请根据环境调整示例。</li>
+<li>解压：<code>$ tar -zxvf helm-v3.&lt;x&gt;.&lt;y&gt;-linux-amd64.tgz</code>。</li>
+<li>在解压后的目录中找到<code>helm</code>二进制文件，并将其移至所需位置：<code>mv linux-amd64/helm /usr/local/bin/helm</code>。最好是将复制到的位置设置到<code>path</code>环境变量，因为它避免了必须对<code>helm</code>命令进行路径设置。</li>
+<li>现在已安装了<code>Helm</code>客户端，可以使用<code>helm help</code>命令对其进行测试。</li>
+</ol>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>现在可以开始使用<code>Helm</code>了。</p>
+<h1 id="Lab1-使用Helm部署应用"><a href="#Lab1-使用Helm部署应用" class="headerlink" title="Lab1 使用Helm部署应用"></a>Lab1 使用Helm部署应用</h1><p>让我们研究一下<code>Helm</code>如何使用<code>Chart</code>来简化部署。我们首先使用<code>kubectl</code>将应用程序部署到<code>Kubernetes</code>集群，然后展示如何通过使用<code>Helm</code>部署同一应用程序。</p>
+<p>该应用程序是<a target="_blank" rel="noopener" href="https://github.com/IBM/guestbook">Guestbook App</a>，它是一个多层级的<code>Web</code>应用程序。</p>
+<h2 id="场景1-使用kubectl部署应用"><a href="#场景1-使用kubectl部署应用" class="headerlink" title="场景1: 使用kubectl部署应用"></a>场景1: 使用kubectl部署应用</h2><p>在本部分的实验中，我们将使用<code>Kubernetes</code>客户端<code>kubectl</code>部署应用程序。使用该应用程序的<a target="_blank" rel="noopener" href="https://github.com/IBM/guestbook/tree/master/v1">版本1</a>进行部署。</p>
+<p>如果已经从<a target="_blank" rel="noopener" href="https://github.com/IBM/kube101">kube101</a>安装了<code>guestbook</code>应用程序，请跳过本节，转到场景2中的<code>helm</code>示例。</p>
+<p>克隆<code>Guestbook App</code>存储库以获取文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/IBM/guestbook.git</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>使用克隆的<code>Git</code>库中的配置文件来部署容器，并使用以下命令为它们创建服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> guestbook/v1</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f redis-master-deployment.yaml</span></span><br><span class="line">deployment.apps/redis-master created</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f redis-master-service.yaml</span></span><br><span class="line">service/redis-master created</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f redis-slave-deployment.yaml</span></span><br><span class="line">deployment.apps/redis-slave created</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f redis-slave-service.yaml</span></span><br><span class="line">service/redis-slave created</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f guestbook-deployment.yaml</span></span><br><span class="line">deployment.apps/guestbook-v1 created</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f guestbook-service.yaml</span></span><br><span class="line">service/guestbook created</span><br></pre></td></tr></table></figure>
+
+<p>有关更多详细信息，请参阅<a target="_blank" rel="noopener" href="https://github.com/IBM/guestbook">README</a>。</p>
+</li>
+<li><p>查看<code>guestbook</code>：</p>
+<p>现在，我们可以通过在浏览器中打开刚创建的留言簿来玩（可能需要一些时间才能显示出来）。</p>
+<ul>
+<li><p>本地主机：如果我们在本地运行<code>Kubernetes</code>，请在浏览器中导航至<code>http://localhost:3000</code>以查看留言簿。</p>
+</li>
+<li><p>远程主机：</p>
+<ul>
+<li><p>要查看远程主机上的留言簿，请在<code>$ kubectl get services</code>输出的<strong>EXTERNAL-IP</strong>和<strong>PORTS</strong>列中找到负载均衡器的外部IP和端口。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get services</span></span><br><span class="line">NAME           TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)         </span><br><span class="line">guestbook      LoadBalancer   172.21.252.107   50.23.5.136   3000:31367/TCP </span><br><span class="line">redis-master   ClusterIP      172.21.97.222    &lt;none&gt;        6379/TCP       </span><br><span class="line">redis-slave    ClusterIP      172.21.43.70     &lt;none&gt;        6379/TCP       </span><br><span class="line">.........</span><br></pre></td></tr></table></figure>
+
+<p>在这种情况下，URL为<code>http://50.23.5.136:31367</code>。</p>
+<p>注意：如果未分配外部<code>IP</code>，则可以使用以下命令获取外部<code>IP</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get nodes -o wide</span></span><br><span class="line">NAME           STATUS    ROLES     AGE       VERSION        EXTERNAL-IP      OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME  </span><br><span class="line">10.47.122.98   Ready     &lt;none&gt;    1h        v1.10.11+IKS   173.193.92.112   Ubuntu 16.04.5 LTS   4.4.0-141-generic   docker://18.6.1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在这种情况下，URL为<code>http://173.193.92.112:31367</code>。WW在浏览器中导航到给定的输出（例如<code>http://50.23.5.136:31367</code>）。应该看到浏览器显示如下：</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Helm101/guestbook-page.png" alt="guestbook-page"></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="场景2-使用Helm部署应用"><a href="#场景2-使用Helm部署应用" class="headerlink" title="场景2: 使用Helm部署应用"></a>场景2: 使用Helm部署应用</h2><p>在实验的这一部分，我们将使用<code>Helm</code>部署应用程序。我们将设置<code>guestbook-demo</code>的发行版名称，以使其与之前的部署区分开。可在<a target="_blank" rel="noopener" href="https://github.com/IBM/helm101/blob/master/charts/guestbook">此处</a>获得<code>Helm chart</code>。克隆<code>Helm 101</code>存储库以获取文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/IBM/helm101</span><br></pre></td></tr></table></figure>
+
+<p><code>Chart</code>被定义为描述一组相关的<code>Kubernetes</code>资源的文件的集合。我们先查看文件，然后再安装。<code>guestbook</code> 的<code>chart</code>文件如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├──Chart.yaml \\包含有关信息的YAML文件</span><br><span class="line">├──LICENSE \\许可证</span><br><span class="line">├──README.md \\帮助文档，提供有关chart用法，配置，安装等信息</span><br><span class="line">├──template \\模板目录，当与values.yaml结合使用时将生成有效的Kubernetes清单文件</span><br><span class="line">│  ├──_helpers.tpl \\在整个chart中重复使用的模板帮助程序/定义</span><br><span class="line">│  ├──guestbook-deployment.yaml \\ Guestbook应用程序容器资源</span><br><span class="line">│  ├──guestbook-service.yaml \\ Guestbook应用服务资源</span><br><span class="line">│  ├──NOTES.txt \\一个纯文本文件，包含有关如何在安装后访问应用程序的简短使用说明</span><br><span class="line">│  ├──redis-master-deployment.yaml \\ Redis主容器资源</span><br><span class="line">│  ├──redis-master-service.yaml \\ Redis主服务资源</span><br><span class="line">│  ├──redis-slave-deployment.yaml \\ Redis从属容器资源</span><br><span class="line">│  └──redis-slave-service.yaml \\ Redis从属服务资源</span><br><span class="line">└──values.yaml \\chart的默认配置值</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：上面显示的模板文件将被传递到<code>Kubernetes</code>清单文件中，然后再传递给<code>Kubernetes API</code>服务器。因此，它们映射到我们在使用<code>kubectl</code>时部署的清单文件（不包含<code>README</code>和<code>NOTES</code>）。</p>
+</blockquote>
+<p>让我们继续并立即安装<code>chart</code>。如果<code>helm-demo</code>命名空间不存在，则需要使用以下命令创建它：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create namespace helm-demo</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>将应用程序作为<code>Helm chart</code>安装：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> helm101/charts</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm install guestbook-demo ./guestbook/ --namespace helm-demo</span></span><br><span class="line">NAME: guestbook-demo</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>我们应该看到类似于以下内容的输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">NAME: guestbook-demo</span><br><span class="line">LAST DEPLOYED: Mon Feb 24 18:08:02 2020</span><br><span class="line">NAMESPACE: helm-demo</span><br><span class="line">STATUS: deployed</span><br><span class="line">REVISION: 1</span><br><span class="line">TEST SUITE: None</span><br><span class="line">NOTES:</span><br><span class="line">1. Get the application URL by running these commands:</span><br><span class="line">  NOTE: It may take a few minutes for the LoadBalancer IP to be available.</span><br><span class="line">      You can watch the status of by running &#x27;kubectl get svc -w guestbook-demo --namespace helm-demo&#x27;</span><br><span class="line">  export SERVICE_IP=$(kubectl get svc --namespace helm-demo guestbook-demo -o jsonpath=&#x27;&#123;.status.loadBalancer.ingress[0].ip&#125;&#x27;)</span><br><span class="line">  echo http://$SERVICE_IP:3000</span><br></pre></td></tr></table></figure>
+
+<p>该<code>chart</code>的安装将执行<code>Redis</code>主服务器和从服务器以及<code>guestbook</code>应用的<code>Kubernetes</code>部署和服务创建。这是因为该<code>chart</code>是描述一组相关的<code>Kubernetes</code>资源的文件的集合，并且<code>Helm</code>通过<code>Kubernetes API</code>管理这些资源的创建。</p>
+<p>查看部署状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get deployment guestbook-demo --namespace helm-dem</span></span><br><span class="line">NAME             READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">guestbook-demo   2/2     2            2           51m</span><br></pre></td></tr></table></figure>
+
+<p>查看<code>pod</code>状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get pods --namespace helm-demo</span></span><br><span class="line">NAME                            READY     STATUS    RESTARTS   AGE</span><br><span class="line">guestbook-demo-6c9cf8b9-jwbs9   1/1       Running   0          52m</span><br><span class="line">guestbook-demo-6c9cf8b9-qk4fb   1/1       Running   0          52m</span><br><span class="line">redis-master-5d8b66464f-j72jf   1/1       Running   0          52m</span><br><span class="line">redis-slave-586b4c847c-2xt99    1/1       Running   0          52m</span><br><span class="line">redis-slave-586b4c847c-q7rq5    1/1       Running   0          52m</span><br></pre></td></tr></table></figure>
+
+<p>查看<code>service</code>状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get services --namespace helm-demo</span></span><br><span class="line">NAME             TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE</span><br><span class="line">guestbook-demo   LoadBalancer   172.21.43.244    &lt;pending&gt;     3000:31367/TCP   52m</span><br><span class="line">redis-master     ClusterIP      172.21.12.43     &lt;none&gt;        6379/TCP         52m</span><br><span class="line">redis-slave      ClusterIP      172.21.176.148   &lt;none&gt;        6379/TCP         52m</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>查看留言簿：</p>
+<p>现在，我们可以通过在浏览器中打开刚创建的留言簿来玩（可能需要一些时间才能显示出来）。</p>
+<ul>
+<li><p>本地主机：如果我们在本地运行<code>Kubernetes</code>，请在浏览器中导航至<code>http://localhost:3000</code>以查看留言簿。</p>
+</li>
+<li><p>远程主机：</p>
+<ul>
+<li><p>要查看远程主机上的留言簿，请在<code>$ kubectl get services</code>输出的<strong>EXTERNAL-IP</strong>和<strong>PORTS</strong>列中找到负载均衡器的外部<code>IP</code>和端口。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">export</span> SERVICE_IP=$(kubectl get svc --namespace helm-demo guestbook-demo -o jsonpath=<span class="string">&#x27;&#123;.status.loadBalancer.ingress[0].ip&#125;&#x27;</span>)</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">echo</span> http://<span class="variable">$SERVICE_IP</span></span></span><br><span class="line">http://50.23.5.136</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>在这种情况下，URL为<code>http://50.23.5.136:31367</code>。</p>
+<p>注意：如果未分配外部<code>IP</code>，则可以使用以下命令获取外部<code>IP</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get nodes -o wide</span></span><br><span class="line">NAME           STATUS    ROLES     AGE       VERSION        EXTERNAL-IP      OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME  </span><br><span class="line">10.47.122.98   Ready     &lt;none&gt;    1h        v1.10.11+IKS   173.193.92.112   Ubuntu 16.04.5 LTS   4.4.0-141-generic   docker://18.6.1</span><br></pre></td></tr></table></figure>
+
+<pre><code> - 在这种情况下，URL为`http://173.193.92.112:31367`。在浏览器中导航到给定的输出（例如`http://50.23.5.136:31367`）。应该看到浏览器显示如下：
+
+   ![guestbook-page](https://gitee.com/lyyao09/cdn/raw/master/k8s/Helm101/guestbook-page.png)
+</code></pre>
+<p>​     </p>
+<h2 id="结论-1"><a href="#结论-1" class="headerlink" title="结论"></a>结论</h2><p>恭喜，我们现在已经通过两种不同的方法将应用程序部署到<code>Kubernetes</code>。从本实验中，我们可以看到，与使用<code>kubectl</code>相比，使用<code>Helm</code>所需的命令更少，思考的时间也更少（通过提供<code>chart</code>路径而不是单个文件）。 <code>Helm</code>的应用程序管理为用户提供了这种简单性。</p>
+<h1 id="Lab2-使用Helm更新应用"><a href="#Lab2-使用Helm更新应用" class="headerlink" title="Lab2 使用Helm更新应用"></a>Lab2 使用Helm更新应用</h1><p>在<code>Lab1</code>中，我们使用<code>Helm</code>安装了<code>guestbook</code>示例应用程序，并看到了相较于<code>kubectl</code>的优势。我们可能认为自己已经足够了解使用<code>Helm</code>。但是<code>chart</code>的更新或修改呢？我们如何更新和修改正在运行的应用？</p>
+<p>在本实验中，我们将研究<code>chart</code>更改后如何更新正在运行的应用程序。为了说明这一点，我们将通过以下方式对原始留言簿的<code>chart</code>进行更改：</p>
+<ul>
+<li>删除<code>Redis</code>从节点并改为仅使用内存数据库</li>
+<li>将类型从<code>LoadBalancer</code>更改为<code>NodePort</code></li>
+</ul>
+<p>虽然是修改，但是本实验的目的是展示如何使用<code>Kubernetes</code>和<code>Helm</code>更新应用。那么，这样做有多容易呢？让我们继续看看。</p>
+<h2 id="场景1-使用kubectl更新应用"><a href="#场景1-使用kubectl更新应用" class="headerlink" title="场景1: 使用kubectl更新应用"></a>场景1: 使用kubectl更新应用</h2><p>在本部分的实验中，我们将直接使用<code>Kubernetes</code>更新以前部署的应用程序<a target="_blank" rel="noopener" href="https://github.com/IBM/guestbook">Guestbook</a>。</p>
+<ol>
+<li>这是一个可选步骤，从技术上讲，更新正在运行的应用程序不是必需的。进行此步骤的原因是“整理”-我们要为已部署的当前配置获取正确的文件。这样可以避免在以后进行更新甚至回滚时犯错误。在此更新的配置中，我们删除了<code>Redis</code>从节点。要使目录与配置匹配，请移动&#x2F;存档或仅从来文件夹中删除<code>Redis</code>从属文件：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd guestbook/v1</span><br><span class="line">rm redis-slave-service.yaml</span><br><span class="line">rm redis-slave-deployment.yaml</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：如果需要，可以稍后使用git checkout-<filename>命令来还原这些文件。</p>
+</blockquote>
+<ol start="2">
+<li>删除<code>Redis</code>从节点的<code>Service</code>和<code>Pod</code>：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl delete svc redis-slave --namespace default</span></span><br><span class="line">service &quot;redis-slave&quot; deleted</span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl delete deployment redis-slave --namespace default</span></span><br><span class="line">deployment.extensions &quot;redis-slave&quot; deleted</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>将<code>Guestbook</code>服务的<code>yaml</code>从<code>LoadBalancer</code>更新为<code>NodePort</code>类型：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i.bak &#x27;s/LoadBalancer/NodePort/g&#x27; guestbook-service.yaml</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>删除<code>Guestbook</code>运行时服务</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete svc guestbook --namespace default</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>重新创建具有<code>NodePort</code>类型的服务：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f guestbook-service.yaml</span><br></pre></td></tr></table></figure>
+
+<ol start="6">
+<li>使用以下命令检查更新：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get all --namespace default</span></span><br><span class="line">NAME                                READY     STATUS    RESTARTS   AGE</span><br><span class="line">pod/guestbook-v1-7fc76dc46-9r4s7    1/1       Running   0          1h</span><br><span class="line">pod/guestbook-v1-7fc76dc46-hspnk    1/1       Running   0          1h</span><br><span class="line">pod/guestbook-v1-7fc76dc46-sxzkt    1/1       Running   0          1h</span><br><span class="line">pod/redis-master-5d8b66464f-pvbl9   1/1       Running   0          1h</span><br><span class="line"></span><br><span class="line">NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE</span><br><span class="line">service/guestbook      NodePort    172.21.45.29    &lt;none&gt;        3000:31989/TCP   31s</span><br><span class="line">service/kubernetes     ClusterIP   172.21.0.1      &lt;none&gt;        443/TCP          9d</span><br><span class="line">service/redis-master   ClusterIP   172.21.232.61   &lt;none&gt;        6379/TCP         1h</span><br><span class="line"></span><br><span class="line">NAME                             READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">deployment.apps/guestbook-demo   3/3     3            3           1h</span><br><span class="line">deployment.apps/redis-master     1/1     1            1           1h</span><br><span class="line"></span><br><span class="line">NAME                                      DESIRED   CURRENT   READY     AGE</span><br><span class="line">replicaset.apps/guestbook-v1-7fc76dc46    3         3         3         1h</span><br><span class="line">replicaset.apps/redis-master-5d8b66464f   1         1         1         1h</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：服务类型已更改（更改为<code>NodePor</code>），并且已为留言簿服务分配了新端口（在此输出情况下为<code>31989</code>）。所有<code>redis-slave</code>资源均已删除。</p>
+</blockquote>
+<ol start="7">
+<li>获取节点的公共<code>IP</code>，并重新访问应用提供的服务：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes -o wide</span><br></pre></td></tr></table></figure>
+
+<h2 id="场景2-使用Helm更新应用"><a href="#场景2-使用Helm更新应用" class="headerlink" title="场景2: 使用Helm更新应用"></a>场景2: 使用Helm更新应用</h2><p>在本节中，我们将使用<code>Helm</code>更新以前部署的<code>guestbook-demo</code>应用程序。</p>
+<p>在开始之前，让我们花几分钟看一下<code>Helm</code>与直接使用<code>Kubernetes</code>相比如何简化流程。<code> Helm</code>使用模板语言为<code>chart</code>提供了极大的灵活性和强大的功能，从而为<code>chart</code>用户消除了复杂性。在留言簿示例中，我们将使用以下模板功能：</p>
+<ul>
+<li>Values：提供访问传递到<code>chart</code>中的值的对象。例如在<code>guestbook-service</code>中，它包含以下类型：<code>.Values.service.type</code>。此行提供了在升级或安装期间设置服务类型的功能。</li>
+<li>控制结构：在模板中也称为“动作”，控制结构使模板能够控制生成的流程。一个例子是在<code>redis-slave-service</code>中，它包含行<code>-if .Values.redis.slaveEnabled-</code>。该行允许我们在升级或安装期间启用&#x2F;禁用<code>REDIS</code>主&#x2F;从。</li>
+</ul>
+<p>如下所示，完整的<code>redis-slave-service.yaml</code>演示了在禁用<code>slaveEnabled</code>标志时文件如何变得冗余以及如何设置端口值。其他<code>chart</code>文件中还有更多的模板功能示例。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;- if .Values.redis.slaveEnabled -&#125;&#125;</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: redis-slave</span><br><span class="line">  labels:</span><br><span class="line">    app: redis</span><br><span class="line">    role: slave</span><br><span class="line">spec:</span><br><span class="line">  ports:</span><br><span class="line">  - port: &#123;&#123; .Values.redis.port &#125;&#125;</span><br><span class="line">    targetPort: redis-server	</span><br><span class="line">  selector:</span><br><span class="line">    app: redis</span><br><span class="line">    role: slave</span><br><span class="line">&#123;&#123;- end &#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>1. </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm list -n helm-demo</span><br></pre></td></tr></table></figure>
+
+<p>请注意，我们指定了名称空间。如果未指定，它将使用当前的名称空间上下文。我们应该看到类似于以下内容的输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm list -n helm-demo</span></span><br><span class="line">NAME           NAMESPACE REVISION  UPDATED                                 STATUS    CHART            APP VERSION</span><br><span class="line">guestbook-demo helm-demo 1         2020-02-24 18:08:02.017401264 +0000 UTC deployed  guestbook-0.2.0</span><br></pre></td></tr></table></figure>
+
+<p><code>list</code>命令提供已部署<code>chart</code>（发行版）的列表，其中提供了<code>chart</code>版本，名称空间，更新（修订）数量等信息。</p>
+<ol start="2">
+<li>我们更新应用程序：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> helm101/charts</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm upgrade guestbook-demo ./guestbook --<span class="built_in">set</span> redis.slaveEnabled=<span class="literal">false</span>,service.type=NodePort --namespace helm-demo</span></span><br><span class="line">Release &quot;guestbook-demo&quot; has been upgraded. Happy Helming!</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p><code>Helm</code>升级将采用现有版本，并根据提供的信息对其进行升级。我们应该看到类似于以下内容的输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm upgrade guestbook-demo ./guestbook --<span class="built_in">set</span> redis.slaveEnabled=<span class="literal">false</span>,service.type=NodePort --namespace helm-demo</span></span><br><span class="line">Release &quot;guestbook-demo&quot; has been upgraded. Happy Helming!</span><br><span class="line">NAME: guestbook-demo</span><br><span class="line">LAST DEPLOYED: Tue Feb 25 14:23:27 2020</span><br><span class="line">NAMESPACE: helm-demo</span><br><span class="line">STATUS: deployed</span><br><span class="line">REVISION: 2</span><br><span class="line">TEST SUITE: None</span><br><span class="line">NOTES:</span><br><span class="line">1. Get the application URL by running these commands:</span><br><span class="line">  export NODE_PORT=$(kubectl get --namespace helm-demo -o jsonpath=&quot;&#123;.spec.ports[0].nodePort&#125;&quot; services guestbook-demo)</span><br><span class="line">  export NODE_IP=$(kubectl get nodes --namespace helm-demo -o jsonpath=&quot;&#123;.items[0].status.addresses[0].address&#125;&quot;)</span><br><span class="line">  echo http://$NODE_IP:$NODE_PORT</span><br></pre></td></tr></table></figure>
+
+<p><code>upgrade</code>命令将应用程序升级到chart的指定版本，删除<code>redis-slave</code>资源，并将应用程序<code>service.type</code>更新为<code>NodePort</code>。</p>
+<p>使用<code>kubectl get all --namespace helm-demo</code>获取更新内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get all --namespace helm-demo</span></span><br><span class="line">NAME                                  READY   STATUS    RESTARTS   AGE</span><br><span class="line">pod/guestbook-demo-6c9cf8b9-dhqk9     1/1     Running   0          20h</span><br><span class="line">pod/guestbook-demo-6c9cf8b9-zddn2     1/1     Running   0          20h</span><br><span class="line">pod/redis-master-5d8b66464f-g7sh6     1/1     Running   0          20h</span><br><span class="line"></span><br><span class="line">NAME                     TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE</span><br><span class="line">service/guestbook-demo   NodePort    172.21.43.244    &lt;none&gt;        3000:31202/TCP   20h</span><br><span class="line">service/redis-master     ClusterIP   172.21.12.43     &lt;none&gt;        6379/TCP         20h</span><br><span class="line"></span><br><span class="line">NAME                             READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">deployment.apps/guestbook-demo   2/2     2            2           20h</span><br><span class="line">deployment.apps/redis-master     1/1     1            1           20h</span><br><span class="line"></span><br><span class="line">NAME                                        DESIRED   CURRENT   READY   AGE</span><br><span class="line">replicaset.apps/guestbook-demo-6c9cf8b9     2         2         2       20h</span><br><span class="line">replicaset.apps/redis-master-5d8b66464f     1         1         1       20h</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：服务类型已更改（更改为<code>NodePort</code>），并且已为留言簿服务分配了新端口（在此输出情况下为<code>31202</code>）。所有<code>redis-slave</code>资源均已删除。</p>
+</blockquote>
+<p>当我们使用<code>helm list -n helm-demo</code>命令检查Helm版本时，可以看到<code>revision</code>和日期已更新：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm list -n helm-demo</span></span><br><span class="line">NAME            NAMESPACE REVISION  UPDATED                                 STATUS    CHART            APP VERSION</span><br><span class="line">guestbook-demo  helm-demo 2         2020-02-25 14:23:27.06732381 +0000 UTC  deployed  guestbook-0.2.0</span><br></pre></td></tr></table></figure>
+
+<p>获取节点的公共<code>IP</code>，并重新访问应用提供的服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes -o wide</span><br></pre></td></tr></table></figure>
+
+<h2 id="结论-2"><a href="#结论-2" class="headerlink" title="结论"></a>结论</h2><p>恭喜，现在已经更新了应用程序！ <code>Helm</code>不需要任何手动更改资源，因此非常容易升级！所有配置都可以在命令行上即时设置，也可以使用替代文件设置。从将逻辑添加到模板文件后就可以实现这一点，这取决于<code>flag</code>标识，启用或禁用此功能。</p>
+<h1 id="Lab-3-跟踪已部署的应用程序"><a href="#Lab-3-跟踪已部署的应用程序" class="headerlink" title="Lab 3. 跟踪已部署的应用程序"></a>Lab 3. 跟踪已部署的应用程序</h1><p>假设我们部署了应用程序的不同发行版（即升级了正在运行的应用程序）。如何跟踪版本以及如何回滚？</p>
+<h2 id="场景1-使用Kubernetes进行修订管理"><a href="#场景1-使用Kubernetes进行修订管理" class="headerlink" title="场景1: 使用Kubernetes进行修订管理"></a>场景1: 使用Kubernetes进行修订管理</h2><p>在本部分的实验中，我们应该直接使用<code>Kubernetes</code>来说明留言簿的修订管理，但是我们不能。这是因为<code>Kubernetes</code>不为修订管理提供任何支持。我们有责任管理系统以及所做的任何更新或更改。但是，我们可以使用<code>Helm</code>进行修订管理。</p>
+<h2 id="场景2-使用Helm进行修订管理"><a href="#场景2-使用Helm进行修订管理" class="headerlink" title="场景2: 使用Helm进行修订管理"></a>场景2: 使用Helm进行修订管理</h2><p>在本部分的实验中，我们将使用<code>Helm</code>来说明对已部署的应用程序<code>guestbook-demo</code>的修订管理。</p>
+<p>使用<code>Helm</code>，每次进行安装，升级或回滚时，修订版本号都会增加1。第一个修订版本号始终为1。<code>Helm</code>将发布元数据保留在<code>Kubernetes</code>集群中存储的<code>Secrets</code>（默认）或<code>ConfigMap</code>中。每当发行版更改时，都会将其附加到现有数据中。这为<code>Helm</code>提供了回滚到先前版本的功能。</p>
+<p>让我们看看这在实践中如何工作。</p>
+<ol>
+<li>检查部署的数量：</li>
+</ol>
+<p>应该看到类似于以下的输出，因为在<code>Lab 1</code>中进行初始安装后，我们在<code>Lab 2</code>中进行了升级。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm <span class="built_in">history</span> guestbook-demo -n helm-demo</span></span><br><span class="line">REVISION    UPDATED                     STATUS      CHART           APP VERSION DESCRIPTION</span><br><span class="line">1           Mon Feb 24 18:08:02 2020    superseded  guestbook-0.2.0             Install complete</span><br><span class="line">2           Tue Feb 25 14:23:27 2020    deployed    guestbook-0.2.0             Upgrade complete</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>回滚到以前的版本：</li>
+</ol>
+<p>在此回滚中，<code>Helm</code>将检查从修订版1升级到修订版2时发生的更改。此信息使它能够调用<code>Kubernetes API</code>服务，以根据初始部署更新已部署的应用程序-换句话说，使用<code>Redis slave</code>并使用负载平衡器。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm rollback guestbook-demo 1 -n helm-demo</span></span><br><span class="line">Rollback was a success! Happy Helming!</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>再次检查历史记录：</li>
+</ol>
+<p>应该看到类似于以下的输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm <span class="built_in">history</span> guestbook-demo -n helm-demo</span></span><br><span class="line">REVISION    UPDATED                     STATUS      CHART           APP VERSION DESCRIPTION</span><br><span class="line">1           Mon Feb 24 18:08:02 2020    superseded  guestbook-0.2.0             Install complete</span><br><span class="line">2           Tue Feb 25 14:23:27 2020    superseded  guestbook-0.2.0             Upgrade complete</span><br><span class="line">3           Tue Feb 25 14:53:45 2020    deployed    guestbook-0.2.0             Rollback to 1</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>检查回滚结果：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get all --namespace helm-demo</span></span><br><span class="line">NAME                                  READY   STATUS    RESTARTS   AGE</span><br><span class="line">pod/guestbook-demo-6c9cf8b9-dhqk9     1/1     Running   0          20h</span><br><span class="line">pod/guestbook-demo-6c9cf8b9-zddn      1/1     Running   0          20h</span><br><span class="line">pod/redis-master-5d8b66464f-g7sh6     1/1     Running   0          20h</span><br><span class="line">pod/redis-slave-586b4c847c-tkfj5      1/1     Running   0          5m15s</span><br><span class="line">pod/redis-slave-586b4c847c-xxrdn      1/1     Running   0          5m15s</span><br><span class="line"></span><br><span class="line">NAME                     TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE</span><br><span class="line">service/guestbook-demo   LoadBalancer   172.21.43.244    &lt;pending&gt;     3000:31367/TCP   20h</span><br><span class="line">service/redis-master     ClusterIP      172.21.12.43     &lt;none&gt;        6379/TCP         20h</span><br><span class="line">service/redis-slave      ClusterIP      172.21.232.16    &lt;none&gt;        6379/TCP         5m15s</span><br><span class="line"></span><br><span class="line">NAME                             READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">deployment.apps/guestbook-demo   2/2     2            2           20h</span><br><span class="line">deployment.apps/redis-master     1/1     1            1           20h</span><br><span class="line">deployment.apps/redis-slave      2/2     2            2           5m15s</span><br><span class="line"></span><br><span class="line">NAME                                        DESIRED   CURRENT   READY   AGE</span><br><span class="line">replicaset.apps/guestbook-demo-26c9cf8b9    2         2         2       20h</span><br><span class="line">replicaset.apps/redis-master-5d8b66464f     1         1         1       20h</span><br><span class="line">replicaset.apps/redis-slave-586b4c847c      2         2         2       5m15s</span><br></pre></td></tr></table></figure>
+
+<p>从输出中可以再次看到，应用程序服务是<code>LoadBalancer</code>的服务类型，并且<code>Redis</code>主&#x2F;从部署已返回。这显示了实验2中升级的完整回滚。</p>
+<h2 id="结论-3"><a href="#结论-3" class="headerlink" title="结论"></a>结论</h2><p>从这个实验中，我们可以说<code>Helm</code>很好地进行了修订管理，而<code>Kubernetes</code>没有内置的功能！我们可能想知道为什么需要<code>helm rollback</code>，因为重新执行<code>helm upgrade</code>也可以回到老版本。这是一个很好的问题。从技术上讲，我们应该最终部署相同的资源（具有相同的参数）。但是，使用<code>helm rollback</code>的好处是，<code>Helm</code>可以管理（即记住）以前的<code>helm install\upgrade</code>的所有变体&#x2F;参数。通过<code>helm upgrade</code>进行回滚需要我们手动跟踪先前执行命令的方式。这不仅繁琐，而且容易出错。让<code>Helm</code>管理所有这些工作更加容易，安全和可靠，并且我们需要做的所有事情都告诉它可以使用哪个以前的版本，其余的都可以完成。</p>
+<h1 id="Lab-4-共享Helm-Charts"><a href="#Lab-4-共享Helm-Charts" class="headerlink" title="Lab 4. 共享Helm Charts"></a>Lab 4. 共享Helm Charts</h1><p>提供应用程序的一个关键方面意味着与他人共享。共享可以是直接的（由用户或在<code>CI/CD</code>管道中），也可以作为其他<code>chart</code>的依赖项。如果人们找不到你的应用程序，那么他们就无法使用它。</p>
+<p>共享的一种方法是使用<code>chart</code>库，该仓库可以存储和共享打包的<code>chart</code>。由于<code>chart</code>库仅适用于<code>Helm</code>，因此我们将仅查看<code>Helm chart</code>的用法和存储。</p>
+<h2 id="从公共仓库中获取Chart"><a href="#从公共仓库中获取Chart" class="headerlink" title="从公共仓库中获取Chart"></a>从公共仓库中获取Chart</h2><p><code>Helm charts</code>可以在远程存储库或本地环境&#x2F;存储库中使用。远程存储库可以是公共的，例如<a target="_blank" rel="noopener" href="https://github.com/bitnami/charts">Bitnami Charts</a>或<a target="_blank" rel="noopener" href="https://github.com/IBM/charts">IBM Helm Charts</a>，也可以是托管存储库，例如在<code>Google Cloud Storage</code>或<code>GitHub</code>上。有关更多详细信息，请参阅<a target="_blank" rel="noopener" href="https://helm.sh/docs/topics/chart_repository/">《 Helm Chart存储库指南》</a>。我们可以通过在本实验中检查<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/IBM/helm101/master/repo/stable/index.yaml">chart索引文件</a>来了解有关<code>chart</code>存储库结构的更多信息。</p>
+<p>在本部分的实验中，我们将展示如何从<a target="_blank" rel="noopener" href="https://ibm.github.io/helm101/">Helm101存储库</a>中安装留言簿<code>chart</code>。</p>
+<ol>
+<li>检查系统上配置的存储库：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm repo list</span></span><br><span class="line">Error: no repositories to show</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：默认情况下，<code>Helm v3</code>未安装<code>chart</code>存储库，而是期望我们自己为要使用的<code>chart</code>添加存储库。 <code>Helm Hub</code>可以集中搜索公共可用的分布式<code>chart</code>。使用<a target="_blank" rel="noopener" href="https://hub.helm.sh/">Helm Hub</a>，我们可以找到所需<code>chart</code>，然后将其添加到本地存储库列表中。 <code>Helm chart</code>存储库（如<code>Helm v2</code>）处于“维护模式”，将于2020年11月13日弃用。有关更多详细信息，请参见<a target="_blank" rel="noopener" href="https://github.com/helm/charts#status-of-the-project">项目状态</a>。</p>
+</blockquote>
+<ol start="2">
+<li>添加<code>helm101</code>仓库：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm repo add helm101 https://ibm.github.io/helm101/</span></span><br><span class="line">&quot;helm101&quot; has been added to your repositories</span><br></pre></td></tr></table></figure>
+
+<p>​	还可以通过运行以下命令在存储库中搜索<code>chart</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm search repo helm101</span></span><br><span class="line">NAME              CHART VERSION  APP VERSION DESCRIPTION</span><br><span class="line">helm101/guestbook 0.2.1                      A Helm chart to deploy Guestbook three tier web...</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>安装<code>chart</code>：</li>
+</ol>
+<p>如前所述，我们将安装<code>Helm101</code>存储库中的留言簿<code>chart</code>。当将仓库添加到我们的本地仓库清单中时，我们可以使用<code>repo name/chart name</code>（即<code>helm101/guestbook</code>）来引用<code>chart</code>。要查看实际效果，将应用程序安装到名为<code>repo-demo</code>的新命名空间中。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash">kubectl create namespace repo-demo</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">helm install guestbook-demo helm101/guestbook --namespace repo-demo</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">helm install guestbook-demo helm101/guestbook --namespace repo-demo</span></span><br><span class="line">NAME: guestbook-demo</span><br><span class="line">LAST DEPLOYED: Tue Feb 25 15:40:17 2020</span><br><span class="line">NAMESPACE: repo-demo</span><br><span class="line">STATUS: deployed</span><br><span class="line">REVISION: 1</span><br><span class="line">TEST SUITE: None</span><br><span class="line">NOTES:</span><br><span class="line">1. Get the application URL by running these commands:</span><br><span class="line">  NOTE: It may take a few minutes for the LoadBalancer IP to be available.</span><br><span class="line">        You can watch the status of by running &#x27;kubectl get svc -w guestbook-demo --namespace repo-demo&#x27;</span><br><span class="line">  export SERVICE_IP=$(kubectl get svc --namespace repo-demo guestbook-demo -o jsonpath=&#x27;&#123;.status.loadBalancer.ingress[0].ip&#125;&#x27;)</span><br><span class="line">  echo http://$SERVICE_IP:3000</span><br></pre></td></tr></table></figure>
+
+<p>检查是否按预期部署了该版本，如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm list -n repo-demo</span></span><br><span class="line">NAME           NAMESPACE   REVISION UPDATED                                   STATUS   CHART            APP VERSION</span><br><span class="line">guestbook-demo repo-demo   1        2020-02-25 15:40:17.627745329 +0000 UTC   deployed guestbook-0.2.1</span><br></pre></td></tr></table></figure>
+
+<h2 id="结论-4"><a href="#结论-4" class="headerlink" title="结论"></a>结论</h2><p>本实验简要介绍了<code>Helm</code>存储库，以显示如何安装<code>chart</code>。共享<code>chart</code>的能力意味着更易于使用。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+              <a href="/tags/helm/" rel="tag"># helm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/05/tools/How-to-debug-tests-in-maven-project/" rel="prev" title="如何在IntelliJ IDEA中的Maven项目中debug测试">
+      <i class="fa fa-chevron-left"></i> 如何在IntelliJ IDEA中的Maven项目中debug测试
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/04/17/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/" rel="next" title="如何使用fsck命令检查和修复文件系统">
+      如何使用fsck命令检查和修复文件系统 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Helm%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">Helm简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Helm%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.</span> <span class="nav-text">Helm状态</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8Helm"><span class="nav-number">2.</span> <span class="nav-text">为什么使用Helm</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87"><span class="nav-number">2.1.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E6%8F%90"><span class="nav-number">2.2.</span> <span class="nav-text">前提</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Helm%E6%A6%82%E8%A7%88"><span class="nav-number">2.3.</span> <span class="nav-text">Helm概览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Helm%E6%A6%82%E5%BF%B5"><span class="nav-number">2.4.</span> <span class="nav-text">Helm概念</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lab0-%E5%AE%89%E8%A3%85Helm"><span class="nav-number">3.</span> <span class="nav-text">Lab0 安装Helm</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E6%8F%90%E4%BE%9D%E8%B5%96"><span class="nav-number">3.1.</span> <span class="nav-text">前提依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85Helm%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">3.2.</span> <span class="nav-text">安装Helm客户端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">3.3.</span> <span class="nav-text">结论</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lab1-%E4%BD%BF%E7%94%A8Helm%E9%83%A8%E7%BD%B2%E5%BA%94%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">Lab1 使用Helm部署应用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF1-%E4%BD%BF%E7%94%A8kubectl%E9%83%A8%E7%BD%B2%E5%BA%94%E7%94%A8"><span class="nav-number">4.1.</span> <span class="nav-text">场景1: 使用kubectl部署应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF2-%E4%BD%BF%E7%94%A8Helm%E9%83%A8%E7%BD%B2%E5%BA%94%E7%94%A8"><span class="nav-number">4.2.</span> <span class="nav-text">场景2: 使用Helm部署应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA-1"><span class="nav-number">4.3.</span> <span class="nav-text">结论</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lab2-%E4%BD%BF%E7%94%A8Helm%E6%9B%B4%E6%96%B0%E5%BA%94%E7%94%A8"><span class="nav-number">5.</span> <span class="nav-text">Lab2 使用Helm更新应用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF1-%E4%BD%BF%E7%94%A8kubectl%E6%9B%B4%E6%96%B0%E5%BA%94%E7%94%A8"><span class="nav-number">5.1.</span> <span class="nav-text">场景1: 使用kubectl更新应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF2-%E4%BD%BF%E7%94%A8Helm%E6%9B%B4%E6%96%B0%E5%BA%94%E7%94%A8"><span class="nav-number">5.2.</span> <span class="nav-text">场景2: 使用Helm更新应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA-2"><span class="nav-number">5.3.</span> <span class="nav-text">结论</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lab-3-%E8%B7%9F%E8%B8%AA%E5%B7%B2%E9%83%A8%E7%BD%B2%E7%9A%84%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">6.</span> <span class="nav-text">Lab 3. 跟踪已部署的应用程序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF1-%E4%BD%BF%E7%94%A8Kubernetes%E8%BF%9B%E8%A1%8C%E4%BF%AE%E8%AE%A2%E7%AE%A1%E7%90%86"><span class="nav-number">6.1.</span> <span class="nav-text">场景1: 使用Kubernetes进行修订管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF2-%E4%BD%BF%E7%94%A8Helm%E8%BF%9B%E8%A1%8C%E4%BF%AE%E8%AE%A2%E7%AE%A1%E7%90%86"><span class="nav-number">6.2.</span> <span class="nav-text">场景2: 使用Helm进行修订管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA-3"><span class="nav-number">6.3.</span> <span class="nav-text">结论</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lab-4-%E5%85%B1%E4%BA%ABHelm-Charts"><span class="nav-number">7.</span> <span class="nav-text">Lab 4. 共享Helm Charts</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E5%85%AC%E5%85%B1%E4%BB%93%E5%BA%93%E4%B8%AD%E8%8E%B7%E5%8F%96Chart"><span class="nav-number">7.1.</span> <span class="nav-text">从公共仓库中获取Chart</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA-4"><span class="nav-number">7.2.</span> <span class="nav-text">结论</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LeaoYao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">83</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LeaoYao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

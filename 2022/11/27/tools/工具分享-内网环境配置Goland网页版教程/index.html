@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyyao09.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="背景说起开发工具Goland，做Go语言开发的同学应该都不陌生，但由于大部分同学的电脑资源有限，尤其是公司里配备的电脑，在本地使用Goland多多少少有些不够顺畅。 如果公司内服务器资源充足，再加上容器化技术的加持，把Goland以容器的形式部署在服务器上运行是一个不错的解决方法。带着这个想法搜索资料[1]发现，Goland 官方还真的开发了容器版，并且提供网页和客户端两种登录方式。下面给出内网环">
+<meta property="og:type" content="article">
+<meta property="og:title" content="工具分享-内网环境配置Goland网页版教程">
+<meta property="og:url" content="https://lyyao09.github.io/2022/11/27/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E5%86%85%E7%BD%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AEGoland%E7%BD%91%E9%A1%B5%E7%89%88%E6%95%99%E7%A8%8B/index.html">
+<meta property="og:site_name" content="云原生知识星球">
+<meta property="og:description" content="背景说起开发工具Goland，做Go语言开发的同学应该都不陌生，但由于大部分同学的电脑资源有限，尤其是公司里配备的电脑，在本地使用Goland多多少少有些不够顺畅。 如果公司内服务器资源充足，再加上容器化技术的加持，把Goland以容器的形式部署在服务器上运行是一个不错的解决方法。带着这个想法搜索资料[1]发现，Goland 官方还真的开发了容器版，并且提供网页和客户端两种登录方式。下面给出内网环">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-27T20:25:11.000Z">
+<meta property="article:modified_time" content="2023-12-03T14:33:55.372Z">
+<meta property="article:author" content="LeaoYao">
+<meta property="article:tag" content="tools">
+<meta property="article:tag" content="工具分享">
+<meta property="article:tag" content="goland">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://lyyao09.github.io/2022/11/27/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E5%86%85%E7%BD%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AEGoland%E7%BD%91%E9%A1%B5%E7%89%88%E6%95%99%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>工具分享-内网环境配置Goland网页版教程 | 云原生知识星球</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">云原生知识星球</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2022/11/27/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E5%86%85%E7%BD%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AEGoland%E7%BD%91%E9%A1%B5%E7%89%88%E6%95%99%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          工具分享-内网环境配置Goland网页版教程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-27 20:25:11" itemprop="dateCreated datePublished" datetime="2022-11-27T20:25:11+00:00">2022-11-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>说起开发工具<code>Goland</code>，做<code>Go</code>语言开发的同学应该都不陌生，但由于大部分同学的电脑资源有限，尤其是公司里配备的电脑，在本地使用<code>Goland</code>多多少少有些不够顺畅。</p>
+<p>如果公司内服务器资源充足，再加上容器化技术的加持，把<code>Goland</code>以容器的形式部署在服务器上运行是一个不错的解决方法。带着这个想法搜索资料[1]发现，<code>Goland </code>官方还真的开发了容器版，并且提供网页和客户端两种登录方式。下面给出<strong>内网环境下</strong>的配置步骤及采坑记录：</p>
+<blockquote>
+<p>注：</p>
+<ol>
+<li>以下操作同样适用于<code>Jetbrains</code>旗下的其他开发工具，比如<code>IDEA</code>。</li>
+<li><code>Goland</code>的注册方法不在本次教程讨论范围之内，请自行解决。</li>
+</ol>
+</blockquote>
+<h2 id="镜像获取"><a href="#镜像获取" class="headerlink" title="镜像获取"></a>镜像获取</h2><p><code>Goland</code>网页版功能是<code>jetbrains</code>官方[2]提供的<code>Docker</code>镜像，所以内网配置的<strong>前提</strong>是先从外网拉取到需要的镜像，然后导出镜像包并拷贝到内网中：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull registry.jetbrains.team/p/prj/containers/projector-goland</span><br><span class="line">docker save -o projector-goland.tar registry.jetbrains.team/p/prj/containers/projector-goland</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注：如果无法拉取官方的镜像，可以在公众号后台回复 <code>docker goland</code> 即可获取<code>goland</code> 网页版镜像。</p>
+</blockquote>
+<h2 id="服务启动"><a href="#服务启动" class="headerlink" title="服务启动"></a>服务启动</h2><p>拿到镜像后，找一个安装了<code>docker</code>的服务器或虚机，使用<code>docker run</code>命令启动：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd \</span><br><span class="line">           -u root \</span><br><span class="line">           -p 8887:8887 \</span><br><span class="line">           --net=host \</span><br><span class="line">           --privileged \</span><br><span class="line">           -v /home/admin/goland-dir:/root \</span><br><span class="line">           -v /etc/localtime:/etc/localtime \</span><br><span class="line">           -v /home/admin/goland-dir/sources.list:/etc/apt/sources.list \</span><br><span class="line">           --name goland \</span><br><span class="line">           --restart always \</span><br><span class="line">           registry.jetbrains.team/p/prj/containers/projector-goland</span><br></pre></td></tr></table></figure>
+
+<p>（<strong>重要</strong>）部分参数说明：</p>
+<ol>
+<li>指定用户：可选，默认不指定用户，容器启动时会使用一个<code>非root</code>用户<code>projector-user</code>，这里使用<code>root</code>用户启动是为了避免后续操作的权限问题；</li>
+<li>指定主机网络：可选，方便使用代理拉取代码，没有代理的话先从外网下载也可以；</li>
+<li>指定特权模式：可选，方便调试，没有开启的话直接使用<code>GoLand</code>调试会提示权限问题；</li>
+<li>挂载点1：<strong>必选</strong>，默认用户下，将<code>/home/projector-user</code>挂载到本地，root用户下直接将<code>root</code>目录挂载到本地；</li>
+<li>挂载点2：可选，保持容器时间与主机时间一致；</li>
+<li>挂载点3：可选，配置内网依赖源，方便下载<code>gcc</code>等编译所需的依赖；</li>
+</ol>
+<h2 id="浏览器访问"><a href="#浏览器访问" class="headerlink" title="浏览器访问"></a>浏览器访问</h2><p>容器正常启动后，在浏览器中通过<code>http://x.x.x.x:8887</code>地址登录网页版<code>GoLand</code>。</p>
+<h2 id="客户端访问"><a href="#客户端访问" class="headerlink" title="客户端访问"></a>客户端访问</h2><p>如果不习惯使用浏览器，官方还提供了原生客户端，我们通过地址[3]下载，打开后输入地址即可。</p>
+<h2 id="导入项目示例"><a href="#导入项目示例" class="headerlink" title="导入项目示例"></a>导入项目示例</h2><p>以导入<code>K8S</code>源码为例，登录到容器内，使用<code>git</code>命令拉取<code>kubernetes</code>源码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">projector-user@storage:~/go/src/github.com$ git clone https://github.com/kubernetes/kubernetes.git</span><br><span class="line">Cloning into &#x27;kubernetes&#x27;...</span><br><span class="line">fatal: unable to access &#x27;https://github.com/kubernetes/kubernetes.git/&#x27;: server certificate verification failed. CAfile: none CRLfile: none</span><br></pre></td></tr></table></figure>
+
+<p>拉取失败，提示<code>CA</code>证书问题，通过以下命令解决：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global http.sslVerify false</span><br></pre></td></tr></table></figure>
+
+<p>又拉取失败：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">projector-user@storage:~/go/src/github.com$ git clone https://github.com/kubernetes/kubernetes.git</span><br><span class="line">Cloning into &#x27;kubernetes&#x27;...</span><br><span class="line">fatal: unable to update url base from redirection:</span><br><span class="line">  asked for: https://github.com/kubernetes/kubernetes.git/info/refs?service=git-upload-pack</span><br><span class="line">   redirect: http://x.x.x.x/proxy.html?template=default&amp;tabs=pwd&amp;vlanid=0&amp;url=https://github.com%2Fkubernetes%2Fkubernetes.git%2Finfo%2Frefs%3Fservice%3Dgit-upload-pack</span><br></pre></td></tr></table></figure>
+
+<p>因为未配置代理，通过以下命令解决：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">设置：git config --global http.proxy http://user:password@http://x.x.x.xx:8080</span><br><span class="line">查看：git config --get --global http.proxy</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注：密码中如果存在特殊字符，请先转义。</p>
+</blockquote>
+<p>再次尝试拉取，拉取成功：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">projector-user@storage:~/go/src/github.com$ git clone https://github.com/kubernetes/kubernetes.git</span><br><span class="line">Cloning into &#x27;kubernetes&#x27;...</span><br><span class="line">remote: Enumerating objects: 1258541, done.</span><br><span class="line">remote: Counting objects: 100% (316/316), done.</span><br><span class="line">remote: Compressing objects: 100% (201/201), done.</span><br><span class="line">remote: Total 1258541 (delta 131), reused 150 (delta 111), pack-reused 1258225</span><br><span class="line">Receiving objects: 100% (1258541/1258541), 773.55 MiB | 805.00 KiB/s, done.</span><br><span class="line">Resolving deltas: 100% (906256/906256), done.</span><br><span class="line">Checking out files: 100% (23196/23196), done.</span><br></pre></td></tr></table></figure>
+
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="1-复制粘贴问题"><a href="#1-复制粘贴问题" class="headerlink" title="1. 复制粘贴问题"></a>1. 复制粘贴问题</h3><p>根据参考资料[4]，可以通过设置环境变量<code>ORG_JETBRAINS_PROJECTOR_SERVER_SSL_PROPERTIES_PATH</code>解决：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -e ORG_JETBRAINS_PROJECTOR_SERVER_SSL_PROPERTIES_PATH=/root/ssl/ssl.properties ...</span><br></pre></td></tr></table></figure>
+
+<p><code>ssl</code>的配置文件举例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">STORE_TYPE=JKS</span><br><span class="line">FILE_PATH=/root/ssl/keystore</span><br><span class="line">STORE_PASSWORD=xxx</span><br><span class="line">KEY_PASSWORD=xxx</span><br></pre></td></tr></table></figure>
+
+<p>通过查看启动日志确认<code>ssl</code>是否配置成功，如下日志所示，<code>WebSocket SSL is enabled: /root/ssl/ssl.properties</code>表示配置成功，此时在浏览器用<code>https://xxx:8887/?wss</code>访问即可。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Found IDE: goland</span><br><span class="line">OpenJDK 64-Bit Server VM warning: Option UseConcMarkSweepGC was deprecated in version 9.0 and will likely be removed in a future release.</span><br><span class="line">[DEBUG] :: IdeState :: Starting attempts to Init ProjectorClassLoader</span><br><span class="line">[DEBUG] :: IdeState :: Starting attempts to attach IJ injector agent</span><br><span class="line">[DEBUG] :: IdeState :: Starting attempts to initialize IDEA: fix AA and disable smooth scrolling (at start)</span><br><span class="line">[DEBUG] :: IdeState :: Starting attempts to Getting IDE colors</span><br><span class="line">[DEBUG] :: ProjectorServer :: Daemon thread starts</span><br><span class="line">[DEBUG] :: IdeState :: Starting attempts to search for editors</span><br><span class="line">[INFO] :: ProjectorServer :: ProjectorServer is starting on host 0.0.0.0/0.0.0.0 and port 8887</span><br><span class="line">[INFO] :: HttpWsServerBuilder :: WebSocket SSL is enabled: /root/ssl/ssl.properties</span><br><span class="line">[INFO] :: HttpWsServer :: Server started on host 0.0.0.0/0.0.0.0 and port 8887</span><br><span class="line">[DEBUG] :: IdeState :: &quot;Init ProjectorClassLoader&quot; is done</span><br><span class="line">[DEBUG] :: IdeState :: &quot;search for editors&quot; is done</span><br></pre></td></tr></table></figure>
+
+<p>登录后再次尝试，又可以快乐的<code>Ctrl+C</code>、<code>Ctrl+V</code>了。</p>
+<h3 id="2-自定义Keymap被重置问题"><a href="#2-自定义Keymap被重置问题" class="headerlink" title="2. 自定义Keymap被重置问题"></a>2. 自定义Keymap被重置问题</h3><p>根据参考资料[4]，可以通过设置环境变量<code>ORG_JETBRAINS_PROJECTOR_SERVER_AUTO_KEYMAP=false</code>解决：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -e ORG_JETBRAINS_PROJECTOR_SERVER_AUTO_KEYMAP=false ...</span><br></pre></td></tr></table></figure>
+
+<p>登录后再观察，发现自定义的<code>keymap</code>不会神奇的恢复了。</p>
+<h3 id="3-原生客户端全局搜索结果模糊问题"><a href="#3-原生客户端全局搜索结果模糊问题" class="headerlink" title="3. 原生客户端全局搜索结果模糊问题"></a>3. 原生客户端全局搜索结果模糊问题</h3><p>模糊部分刚好是搜索的字符串，使用起来问题也不大，如果忍不了，也可以暂时使用浏览器开心玩耍（浏览器下没有该问题）。</p>
+<blockquote>
+<p>更新：<code>v1.0.2</code>版本已修复该问题</p>
+</blockquote>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://fuckcloudnative.io/posts/run-jetbrains-ide-in-docker/">https://fuckcloudnative.io/posts/run-jetbrains-ide-in-docker/</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/JetBrains/projector-docker">https://github.com/JetBrains/projector-docker</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/JetBrains/projector-client/releases">https://github.com/JetBrains/projector-client/releases</a></li>
+<li><a target="_blank" rel="noopener" href="https://jetbrains.github.io/projector-client/mkdocs/latest/ij_user_guide/server_customization/">https://jetbrains.github.io/projector-client/mkdocs/latest/ij_user_guide/server_customization/</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tools/" rel="tag"># tools</a>
+              <a href="/tags/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB/" rel="tag"># 工具分享</a>
+              <a href="/tags/goland/" rel="tag"># goland</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/10/23/java/Karaf%E6%A1%86%E6%9E%B6%E5%8D%87%E7%BA%A7Lg4j%E5%8E%86%E7%A8%8B%20(%E7%BB%AD)/" rel="prev" title="Karaf框架升级Lg4j历程（续）">
+      <i class="fa fa-chevron-left"></i> Karaf框架升级Lg4j历程（续）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/03/25/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E4%BD%BF%E7%94%A8Kubeasz%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2K8S%E9%9B%86%E7%BE%A4/" rel="next" title="工具分享-使用Kubeasz一键部署K8S集群">
+      工具分享-使用Kubeasz一键部署K8S集群 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%95%9C%E5%83%8F%E8%8E%B7%E5%8F%96"><span class="nav-number">2.</span> <span class="nav-text">镜像获取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%8A%A8"><span class="nav-number">3.</span> <span class="nav-text">服务启动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%BF%E9%97%AE"><span class="nav-number">4.</span> <span class="nav-text">浏览器访问</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%AE%BF%E9%97%AE"><span class="nav-number">5.</span> <span class="nav-text">客户端访问</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E9%A1%B9%E7%9B%AE%E7%A4%BA%E4%BE%8B"><span class="nav-number">6.</span> <span class="nav-text">导入项目示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="nav-number">7.</span> <span class="nav-text">常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%A4%8D%E5%88%B6%E7%B2%98%E8%B4%B4%E9%97%AE%E9%A2%98"><span class="nav-number">7.1.</span> <span class="nav-text">1. 复制粘贴问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%87%AA%E5%AE%9A%E4%B9%89Keymap%E8%A2%AB%E9%87%8D%E7%BD%AE%E9%97%AE%E9%A2%98"><span class="nav-number">7.2.</span> <span class="nav-text">2. 自定义Keymap被重置问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%8E%9F%E7%94%9F%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%85%A8%E5%B1%80%E6%90%9C%E7%B4%A2%E7%BB%93%E6%9E%9C%E6%A8%A1%E7%B3%8A%E9%97%AE%E9%A2%98"><span class="nav-number">7.3.</span> <span class="nav-text">3. 原生客户端全局搜索结果模糊问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">8.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LeaoYao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">83</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LeaoYao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyyao09.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Big picture了解Calico支持的各种网络选项，以便可以根据需要选择最佳选项。 ValueCalico灵活的模块化体系结构支持广泛的部署选项，因此可以根据自己的特定环境和需求选择最佳的网络方案。这包括在BGP和非BGP的情况下，以underlying或overlay模式与各种CNI和IPAM插件以及基础网络类型一起运行的能力。 Concepts如果想完全了解可用的网络选项，我们建议确保自">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Calico中的网络模式选择最佳实践">
+<meta property="og:url" content="https://lyyao09.github.io/2020/08/24/k8s/Determine-best-networking-option/index.html">
+<meta property="og:site_name" content="云原生知识星球">
+<meta property="og:description" content="Big picture了解Calico支持的各种网络选项，以便可以根据需要选择最佳选项。 ValueCalico灵活的模块化体系结构支持广泛的部署选项，因此可以根据自己的特定环境和需求选择最佳的网络方案。这包括在BGP和非BGP的情况下，以underlying或overlay模式与各种CNI和IPAM插件以及基础网络类型一起运行的能力。 Concepts如果想完全了解可用的网络选项，我们建议确保自">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-24T22:09:22.000Z">
+<meta property="article:modified_time" content="2023-12-03T14:33:55.178Z">
+<meta property="article:author" content="LeaoYao">
+<meta property="article:tag" content="network">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://lyyao09.github.io/2020/08/24/k8s/Determine-best-networking-option/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Calico中的网络模式选择最佳实践 | 云原生知识星球</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">云原生知识星球</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/08/24/k8s/Determine-best-networking-option/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Calico中的网络模式选择最佳实践
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-24 22:09:22" itemprop="dateCreated datePublished" datetime="2020-08-24T22:09:22+00:00">2020-08-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="Big-picture"><a href="#Big-picture" class="headerlink" title="Big picture"></a>Big picture</h3><p>了解Calico支持的各种网络选项，以便可以根据需要选择最佳选项。</p>
+<h3 id="Value"><a href="#Value" class="headerlink" title="Value"></a>Value</h3><p>Calico灵活的模块化体系结构支持广泛的部署选项，因此可以根据自己的特定环境和需求选择最佳的网络方案。这包括在BGP和非BGP的情况下，以underlying或overlay模式与各种CNI和IPAM插件以及基础网络类型一起运行的能力。</p>
+<h3 id="Concepts"><a href="#Concepts" class="headerlink" title="Concepts"></a>Concepts</h3><p>如果想完全了解可用的网络选项，我们建议确保自己熟悉并理解以下概念。如果希望跳过学习并直接获得选择和建议，则可以跳至“网络选项”。</p>
+<h4 id="Kubernetes网络基础知识"><a href="#Kubernetes网络基础知识" class="headerlink" title="Kubernetes网络基础知识"></a>Kubernetes网络基础知识</h4><p>Kubernetes网络模型定义了一个“扁平”网络，其中：</p>
+<ul>
+<li>每个Pod都有自己的IP地址。	</li>
+<li>无需NAT，任何节点上的Pod均可与所有其他节点上的所有Pod通信。</li>
+</ul>
+<p>这将创建一个干净的，向后兼容的模型，从端口分配，命名，服务发现，负载平衡，应用程序配置和迁移的角度来看，可以将Pod像VM或物理主机一样对待。可以使用网络策略来定义网络分段，以将流量限制在这些基本网络功能内。</p>
+<p>在此模型中，可以灵活地支持不同的网络方案和环境。确切地如何实现网络的详细信息取决于所使用的CNI，网络和云提供商插件的组合。</p>
+<h4 id="CNI插件"><a href="#CNI插件" class="headerlink" title="CNI插件"></a>CNI插件</h4><p>CNI（容器网络接口）是一个标准API，允许将不同的网络实现插入Kubernetes。每当创建或销毁Pod时，Kubernetes都会调用API。CNI插件有两种类型：</p>
+<ul>
+<li>CNI网络插件：负责向Kubernetes Pod网络中添加Pod或从Kubernetes Pod网络中删除Pod。这包括创建&#x2F;删除每个Pod的网络接口，以及将其连接&#x2F;断开与其他网络实现的连接。</li>
+<li>CNI IPAM插件：负责在Pod创建或删除时分配和释放Pod的IP地址。根据插件的不同，这可能包括为每个节点分配一个或多个IP地址（CIDR）范围，或从底层公共云网络获取IP地址以分配给Pod。</li>
+</ul>
+<h4 id="云提供商集成"><a href="#云提供商集成" class="headerlink" title="云提供商集成"></a>云提供商集成</h4><p>Kubernetes云提供商集成是特定于云的控制器，可以配置基础云网络以帮助提供Kuberenetes网络。根据云提供商的不同，这可能包括自动将路由编程到基础云网络中，以便它本机知道如何路由Pod流量。</p>
+<h4 id="Kubenet"><a href="#Kubenet" class="headerlink" title="Kubenet"></a>Kubenet</h4><p>Kubenet是Kubernetes中内置的一个非常基本的网络插件。它没有实现跨节点通信或网络策略。它通常与云提供商集成一起使用，后者在云提供商网络中设置路由以在节点之间或在单节点环境中进行通信。Kubenet与Calico不兼容。</p>
+<h4 id="Overlay网络"><a href="#Overlay网络" class="headerlink" title="Overlay网络"></a>Overlay网络</h4><p>overlay网络是位于另一个网络之上的网络。在Kubernetes的上下文中，overlay网络可用于处理基础网络顶部节点之间的Pod到Pod流量，这些节点不知道Pod IP地址或哪些Pod在哪些节点上运行。overlay网络通过将基础网络不知道如何处理（例如使用Pod IP地址）的网络数据包封装在基础网络确实知道如何处理的外部数据包（例如节点IP地址）中。用于封装的两种常见网络协议是VXLAN和IP-in-IP。</p>
+<p>使用overlay网络的主要优点是它减少了对基础网络的依赖性。例如，可以在几乎任何基础网络之上运行VXLAN，而无需与基础网络集成或对其进行任何更改。</p>
+<p>使用overlay网络的主要缺点是：</p>
+<ul>
+<li>对性能有轻微影响。封装数据包的过程占用少量CPU，并且数据包中用于编码封装（VXLAN或IP-in-IP标头）所需的额外字节减少了可以发送的内部数据包的最大大小，这意味着需要为相同数量的总数据发送更多数据包。</li>
+<li>Pod IP地址无法在集群外部路由。</li>
+</ul>
+<h4 id="跨子网Overlay网络"><a href="#跨子网Overlay网络" class="headerlink" title="跨子网Overlay网络"></a>跨子网Overlay网络</h4><p>除了标准的VXLAN或IP-in-IP overlay外，Calico还支持VXLAN和IP-in-IP的“cross-subnet”模式。在这种模式下，在每个子网中，基础网络充当L2网络。在单个子网内发送的数据包不进行封装，因此可以获得非overlay网络的性能。跨子网发送的数据包像普通的overlay网络一样被封装，从而减少了对基础网络的依赖（无需与基础网络集成或对其进行任何更改）。</p>
+<p>就像使用标准overlay网络一样，基础网络也不知道Pod IP地址，并且Pod IP地址无法在集群外部路由。</p>
+<h4 id="Pod-IP路由到集群外部的能力"><a href="#Pod-IP路由到集群外部的能力" class="headerlink" title="Pod IP路由到集群外部的能力"></a>Pod IP路由到集群外部的能力</h4><p>不同的Kubernetes网络实现的一个重要区别特征是Pod IP地址是否可在整个较宽网络的集群外部路由。</p>
+<p><strong>不可路由</strong>	</p>
+<p>如果Pod IP地址无法在集群外部路由，则当Pod尝试建立与集群外部IP地址的网络连接时，Kubernetes将使用一种称为SNAT（源网络地址转换）的技术来更改源IP从Pod的IP地址到托管Pod的节点的IP地址。连接上的所有返回数据包都会自动映射回Pod IP地址。因此，Pod不知道发生了SNAT，连接的目的地将节点视为连接的源，而底层的更广泛的网络不会看到Pod IP地址。</p>
+<p>对于相反方向的连接，其中集群外部的某些设备需要连接到Pod，这只能通过Kubernetes service或Kubernetes ingress来完成。集群之外的任何人都无法直接连接到Pod IP地址，因为更广泛的网络不知道如何将数据包路由到Pod IP地址。</p>
+<p><strong>可路由</strong></p>
+<p>如果Pod IP地址可以在集群外部路由，则Pod可以不使用SNAT即可连接到外部世界，并且集群外部可以直接连接到Pod，而无需通过Kubernetes service或Kubernetes ingress。</p>
+<p>Pod IP可路由到集群外部的优点是：</p>
+<ul>
+<li>避免将SNAT用于出站连接对于与现有更广泛的安全要求进行集成可能至关重要。它还可以简化操作日志的调试和易懂性。</li>
+<li>如果有专门的工作负载，这意味着某些Pod需要直接访问而不需要通过Kubernetes service或Kubernetes ingress，那么可路由的Pod IP在操作上可能更简单。</li>
+</ul>
+<p>Pod IP地址可路由到集群外的主要缺点是，Pod IP在整个网络中必须是唯一的。因此，例如，如果运行多个群集，则需要为每个群集中的Pod使用不同的IP地址范围（CIDR）。当大规模运行时，或者如果现有其他企业对IP地址空间有大量重要需求，这又可能导致IP地址范围耗尽的挑战。</p>
+<p><strong>决定可路由性的因素是什么？</strong></p>
+<p>如果集群使用overlay网络，则Pod IP通常无法路由到集群外。</p>
+<p>如果集群不使用overlay网络，那么Pod IP是否路由到集群外取决于所用的CNI插件，云提供商集成或与物理网络（对于本地）BGP对等连接。</p>
+<h4 id="BGP"><a href="#BGP" class="headerlink" title="BGP"></a>BGP</h4><p>BGP（边界网关协议）是用于跨网络共享路由的基于标准的网络协议。它是互联网的基本组成部分之一，具有出色的扩展特性。</p>
+<p>Calico内置了对BGP的支持。在本地部署中，这使Calico可以与物理网络（通常连接到Top或Rack路由器）建立对等关系以交换路由，从而形成一个none-overlay网络，其中Pod IP地址可以在更广泛的网络中路由，就像附加的任何其他工作负载一样到网络。</p>
+<h3 id="关于Calico网络"><a href="#关于Calico网络" class="headerlink" title="关于Calico网络"></a>关于Calico网络</h3><p>Calico网络灵活的模块化架构包括以下内容。</p>
+<p><strong>Calico CNI网络插件</strong></p>
+<p>Calico CNI网络插件使用一对虚拟以太网设备（一对）将Pod连接到主机网络名称空间的L3路由。这种L3架构避免了许多其他Kubernetes网络解决方案中附加的L2桥不必要的复杂性和性能开销。</p>
+<p><strong>Calico CNI IPAM插件</strong></p>
+<p>Calico CNI IPAM插件为一个或多个可配置IP地址范围之外的Pod分配IP地址，并根据需要为每个节点动态分配IP块。与许多其他CNI IPAM插件（包括在许多网络解决方案中使用的主机本地IPAM插件）相比，具有更有效的IP地址空间使用。</p>
+<p><strong>Overlay网络模式</strong></p>
+<p>Calico可以提供VXLAN或IP-in-IP网络，包括cross-subnet模式。</p>
+<p><strong>Non-overlay网络模式</strong></p>
+<p>Calico可以提供在任何基础L2网络之上运行的non-overlay网络，或者是具有适当的云提供商集成的公共云网络或支持BGP的L3网络（通常是具有标准Top-of-Rack路由器）。</p>
+<p><strong>网络策略</strong></p>
+<p>Calico的网络策略执行引擎实现了Kubernetes网络策略的全部功能，以及Calico Network Policy的扩展功能。这可以与Calico的内置网络模式或任何其他Calico兼容的网络插件和云提供商集成结合使用。</p>
+<h3 id="与Calico兼容的CNI插件和云提供商集成"><a href="#与Calico兼容的CNI插件和云提供商集成" class="headerlink" title="与Calico兼容的CNI插件和云提供商集成"></a>与Calico兼容的CNI插件和云提供商集成</h3><p>除Calico CNI插件和内置网络模式外，Calico还与许多第三方CNI插件和云提供商集成兼容。</p>
+<p><strong>Amazon VPC CNI</strong></p>
+<p>Amazon VPC CNI插件从基础AWS VPC分配Pod IP，并使用AWS弹性网络接口提供VPC本机Pod网络（可在集群外部路由的Pod IP）。它是Amazon EKS中使用的默认网络，并与Calico一起用于网络策略实施。</p>
+<p><strong>Azure CNI</strong></p>
+<p>Azure CNI插件从基础Azure VNET分配Pod IP，将Azure虚拟网络配置为提供VNET本机Pod网络（可在群集外部路由的Pod IP）。它是Microsoft AKS中使用的默认网络，可与Calico一起执行网络策略。</p>
+<p><strong>Azure cloud provider</strong></p>
+<p>Azure云提供商集成可以用作Azure CNI插件的替代方法。它使用host-local IPAM插件分配Pod IP，并使用相应的路由对基础Azure VNET子网进行编程。Pod IP仅可在VNET子网内路由（这通常意味着它们无法路由到群集外部）。</p>
+<p><strong>Google cloud provider</strong></p>
+<p>Google云提供商集成使用host-local IPAM插件分配Pod IP，并对Google Cloud网络Alias IP范围进行编程，以在Google Cloud上提供VPC本机Pod网络（可在集群外部路由的Pod IP）。它是Google Kubernetes Engine（GKE）的默认设置，并带有Calico来执行网络策略。</p>
+<p><strong>Host local IPAM</strong></p>
+<p>host-local IPAM插件是常用的IP地址管理CNI插件，它为每个节点分配固定大小的IP地址范围（CIDR），然后从该范围内分配Pod IP地址。默认地址范围大小是256个IP地址（a&#x2F;24），其中两个IP地址是为特殊目的保留的，未分配给Pod。host-local IPAM插件的简单性使其易于理解，但与Calico CNI IPAM插件相比，其IP地址空间使用效率较低。</p>
+<p><strong>Flannel</strong></p>
+<p>Flannel使用从host-local IPAM插件获得的静态CIDR路由pod间的通信。Flannel提供了许多网络后端，但主要与VXLAN后端一起使用。Calico CNI和Calico网络策略可以与flannel和host-local IPAM插件结合使用，以提供具有策略实施功能的VXLAN网络。这种组合有时称为“Canal”。</p>
+<blockquote>
+<p>注意：Calico现在内置了对VXLAN的支持，为了简化起见，我们通常建议优先使用Calico + Flannel组合。</p>
+</blockquote>
+<h3 id="网络选择"><a href="#网络选择" class="headerlink" title="网络选择"></a>网络选择</h3><h4 id="本地"><a href="#本地" class="headerlink" title="本地"></a><strong>本地</strong></h4><p>Calico本地部署最常见的网络设置是non-overlay模式，该模式使用BGP与物理网络（通常是机架路由器的顶部）对等，以使Pod IP可在集群外部路由。（当然，可以根据需要配置其余的本地部署网络，以限制群集外的Pod IP路由的范围。）此设置提供了丰富的Calico高级功能，包括公告Kubernetes serviceIP的能力（cluster IPs or external IPs），以及在Pod，名称空间或节点级别控制IP地址管理的能力，以支持与现有企业网络和安全要求集成的各种可能性。</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>IPAM</th>
+<th>CNI</th>
+<th>Overlay</th>
+<th>Routing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Calico</td>
+<td>Calico</td>
+<td>Calico</td>
+<td>No</td>
+<td>BGP</td>
+</tr>
+</tbody></table>
+<p>如果不能将BGP对等连接到物理网络，并且群集在单个L2网络中，则还可以运行non-overlay模式，而Calico只能在群集中的节点之间对等BGP。即使这不是严格的overlay网络，也无法在集群外部路由Pod IP，因为基础网络没有Pod IP的路由。</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>IPAM</th>
+<th>CNI</th>
+<th>Overlay</th>
+<th>Routing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Calico</td>
+<td>Calico</td>
+<td>Calico</td>
+<td>No</td>
+<td>BGP</td>
+</tr>
+</tbody></table>
+<p>或者，可以在VXLAN或IP-in-IP模式下运行Calico，并使用cross-subnet模式来优化每个L2子网内的性能。</p>
+<p>推荐方案：</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>IPAM</th>
+<th>CNI</th>
+<th>Overlay</th>
+<th>Routing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Calico</td>
+<td>Calico</td>
+<td>Calico</td>
+<td>VXLAN</td>
+<td>Calico</td>
+</tr>
+</tbody></table>
+<p>替代方案：</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>IPAM</th>
+<th>CNI</th>
+<th>Overlay</th>
+<th>Routing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Calico</td>
+<td>Calico</td>
+<td>Calico</td>
+<td>IPIP</td>
+<td>BGP</td>
+</tr>
+</tbody></table>
+<h4 id="AWS"><a href="#AWS" class="headerlink" title="AWS"></a>AWS</h4><p>如果希望在集群外部可路由Pod IP地址，则必须使用Amazon VPC CNI插件。这是EKS的默认网络模式，并使用Calico的网络策略。Pod IP地址是从基础VPC分配的，每个节点的Pod的最大数量取决于实例类型。</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>IPAM</th>
+<th>CNI</th>
+<th>Overlay</th>
+<th>Routing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Calico</td>
+<td>AWS</td>
+<td>AWS</td>
+<td>No</td>
+<td>VPC&#x2F;Native</td>
+</tr>
+</tbody></table>
+<p>如果希望避免依赖特定的云提供商，或者由于IP地址范围耗尽的挑战，或者如果Amazon VPC CNI插件每个节点支持的最大Pod数量不足以从基础VPC分配Pod IP，则存在问题。根据需求，我们建议使用Calico的overlay + cross-subnet模式。Pod IP将无法在集群外部路由，但是可以在不依赖基础云网络的情况下将集群扩展到Kubernetes的极限。</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>IPAM</th>
+<th>CNI</th>
+<th>Overlay</th>
+<th>Routing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Calico</td>
+<td>Calico</td>
+<td>Calico</td>
+<td>VXLAN</td>
+<td>Calico</td>
+</tr>
+</tbody></table>
+<p>在这个简短的视频中，可以了解有关AWS上的Kubernetes Networking的更多信息，包括上述每个选项的工作原理。<a target="_blank" rel="noopener" href="https://www.projectcalico.org/everything-you-need-to-know-about-kubernetes-pod-networking-on-aws/">Everything you need to know about Kubernetes networking on AWS</a>。</p>
+<h4 id="Azure"><a href="#Azure" class="headerlink" title="Azure"></a>Azure</h4><p>如果希望在群集外部可以路由Pod IP地址，则必须使用Azure CNI插件。这由AKS和Calico进行网络策略支持。Pod IP地址是从基础VNET分配的。</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>IPAM</th>
+<th>CNI</th>
+<th>Overlay</th>
+<th>Routing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Calico</td>
+<td>Azure</td>
+<td>Azure</td>
+<td>No</td>
+<td>VPC&#x2F;Native</td>
+</tr>
+</tbody></table>
+<p>如果要使用AKS，但由于IP地址范围耗尽的问题而无法从基础VNET分配Pod IP，则可以将Calico与Azure云提供商集成一起使用。它使用host-local IPAM为每个节点分配&#x2F;24地址段，并为这些&#x2F;24地址段在群集的基础VNET子网中编程路由。在群集&#x2F;VNET子网外部无法路由Pod IP，因此如果需要，可以在多个群集中使用相同的Pod IP地址范围（CIDR）。</p>
+<blockquote>
+<p>注意：在某些AKS文档中将其称为kubenet + Calico，但实际上是带有Azure云提供程序的Calico CNI，并且不使用kubenet插件。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>IPAM</th>
+<th>CNI</th>
+<th>Overlay</th>
+<th>Routing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Calico</td>
+<td>Host Local</td>
+<td>Calico</td>
+<td>No</td>
+<td>VPC&#x2F;Native</td>
+</tr>
+</tbody></table>
+<p>如果不使用AKS，而是希望避免依赖于特定的云提供商，或者由于IP地址范围耗尽的问题而无法从基础VNET分配Pod IP，那么我们建议使用Calico的overlay + cross-subnet模式。Pod IP将无法在集群外部路由，但是可以在不依赖基础云网络的情况下将集群扩展到Kubernetes的极限。</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>IPAM</th>
+<th>CNI</th>
+<th>Overlay</th>
+<th>Routing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Calico</td>
+<td>Calico</td>
+<td>Calico</td>
+<td>VXLAN</td>
+<td>Calico</td>
+</tr>
+</tbody></table>
+<p>可以在此短视频中了解有关Azure上Kubernetes Networking的更多信息，包括上述每个选项的工作原理：<a target="_blank" rel="noopener" href="https://www.projectcalico.org/everything-you-need-to-know-about-kubernetes-pod-networking-on-azure/">Everything you need to know about Kubernetes networking on Azure</a></p>
+<h4 id="Google-Cloud"><a href="#Google-Cloud" class="headerlink" title="Google Cloud"></a>Google Cloud</h4><p>如果想在集群外部路由Pod IP地址，则必须将Google云提供商集成与host-local IPAM CNI插件结合使用。GKE和Calico都为网络策略提供了支持。从基础VPC分配Pod IP地址，并自动将相应的Alias IP地址分配给节点。</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>IPAM</th>
+<th>CNI</th>
+<th>Overlay</th>
+<th>Routing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Calico</td>
+<td>Host Local</td>
+<td>Calico</td>
+<td>No</td>
+<td>VPC&#x2F;Native</td>
+</tr>
+</tbody></table>
+<p>如果希望避免依赖特定的云提供商，或者由于IP地址范围耗尽的挑战而无法从基础VPC分配Pod IP，那么我们建议使用Calico的overlay模式。由于Google云网络是纯L3网络，因此不支持cross-subnet模式。Pod IP将无法在集群外部路由，但是可以在不依赖基础云网络的情况下将集群扩展到Kubernetes的极限。</p>
+<p>推荐方案：</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>IPAM</th>
+<th>CNI</th>
+<th>Overlay</th>
+<th>Routing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Calico</td>
+<td>Calico</td>
+<td>Calico</td>
+<td>VXLAN</td>
+<td>Calico</td>
+</tr>
+</tbody></table>
+<p>替代方案：</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>IPAM</th>
+<th>CNI</th>
+<th>Overlay</th>
+<th>Routing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Calico</td>
+<td>Calico</td>
+<td>Calico</td>
+<td>IPIP</td>
+<td>BGP</td>
+</tr>
+</tbody></table>
+<p>可以在此短片中了解有关Google云上的Kubernetes Networking的更多信息，包括上述每个选项的工作原理：<a target="_blank" rel="noopener" href="https://www.projectcalico.org/everything-you-need-to-know-about-kubernetes-pod-networking-on-google-cloud/">Everything you need to know about Kubernetes networking on Google cloud</a></p>
+<h4 id="IBM-Cloud"><a href="#IBM-Cloud" class="headerlink" title="IBM Cloud"></a>IBM Cloud</h4><p>如果使用的是IBM Cloud，则建议使用IKS，该产品具有内置Calico的功能，可提供cross-subnet +IPIP模式的网络模式。除了为Pod提供网络策略外，IKS还使用Calico网络策略来保护群集中的主机节点。</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>IPAM</th>
+<th>CNI</th>
+<th>Overlay</th>
+<th>Routing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Calico</td>
+<td>Calico</td>
+<td>Calico</td>
+<td>IPIP</td>
+<td>BGP</td>
+</tr>
+</tbody></table>
+<h4 id="Anywhere"><a href="#Anywhere" class="headerlink" title="Anywhere"></a>Anywhere</h4><p>上面的环境列表显然并不详尽。理解本指南中的概念和解释有助于确定适合的环境。如果仍然不确定，则可以通过Calico用户的Slack或Discourse论坛寻求建议。记住，如果要使用，而不想担心各种选项，则可以在几乎任何环境中以VXLAN + overlay模式运行Calico。</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>IPAM</th>
+<th>CNI</th>
+<th>Overlay</th>
+<th>Routing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Calico</td>
+<td>Calico</td>
+<td>Calico</td>
+<td>VXLAN</td>
+<td>Calico</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/network/" rel="tag"># network</a>
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/30/linux/Intro-to-BGP-with-BIRD/" rel="prev" title="BGP路由Bird介绍">
+      <i class="fa fa-chevron-left"></i> BGP路由Bird介绍
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/10/21/docker/Create-Tag-Retention-Rules/" rel="next" title="Harbor中如何创建tag保留规则">
+      Harbor中如何创建tag保留规则 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Big-picture"><span class="nav-number">1.</span> <span class="nav-text">Big picture</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Value"><span class="nav-number">2.</span> <span class="nav-text">Value</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Concepts"><span class="nav-number">3.</span> <span class="nav-text">Concepts</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Kubernetes%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">3.1.</span> <span class="nav-text">Kubernetes网络基础知识</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CNI%E6%8F%92%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">CNI插件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%91%E6%8F%90%E4%BE%9B%E5%95%86%E9%9B%86%E6%88%90"><span class="nav-number">3.3.</span> <span class="nav-text">云提供商集成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Kubenet"><span class="nav-number">3.4.</span> <span class="nav-text">Kubenet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Overlay%E7%BD%91%E7%BB%9C"><span class="nav-number">3.5.</span> <span class="nav-text">Overlay网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%A8%E5%AD%90%E7%BD%91Overlay%E7%BD%91%E7%BB%9C"><span class="nav-number">3.6.</span> <span class="nav-text">跨子网Overlay网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Pod-IP%E8%B7%AF%E7%94%B1%E5%88%B0%E9%9B%86%E7%BE%A4%E5%A4%96%E9%83%A8%E7%9A%84%E8%83%BD%E5%8A%9B"><span class="nav-number">3.7.</span> <span class="nav-text">Pod IP路由到集群外部的能力</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BGP"><span class="nav-number">3.8.</span> <span class="nav-text">BGP</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8ECalico%E7%BD%91%E7%BB%9C"><span class="nav-number">4.</span> <span class="nav-text">关于Calico网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8ECalico%E5%85%BC%E5%AE%B9%E7%9A%84CNI%E6%8F%92%E4%BB%B6%E5%92%8C%E4%BA%91%E6%8F%90%E4%BE%9B%E5%95%86%E9%9B%86%E6%88%90"><span class="nav-number">5.</span> <span class="nav-text">与Calico兼容的CNI插件和云提供商集成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E9%80%89%E6%8B%A9"><span class="nav-number">6.</span> <span class="nav-text">网络选择</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0"><span class="nav-number">6.1.</span> <span class="nav-text">本地</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AWS"><span class="nav-number">6.2.</span> <span class="nav-text">AWS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Azure"><span class="nav-number">6.3.</span> <span class="nav-text">Azure</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Google-Cloud"><span class="nav-number">6.4.</span> <span class="nav-text">Google Cloud</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IBM-Cloud"><span class="nav-number">6.5.</span> <span class="nav-text">IBM Cloud</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Anywhere"><span class="nav-number">6.6.</span> <span class="nav-text">Anywhere</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LeaoYao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">83</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LeaoYao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,2383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyyao09.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta property="og:type" content="website">
+<meta property="og:title" content="云原生知识星球">
+<meta property="og:url" content="https://lyyao09.github.io/page/4/index.html">
+<meta property="og:site_name" content="云原生知识星球">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="LeaoYao">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://lyyao09.github.io/page/4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>云原生知识星球</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">云原生知识星球</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/01/11/k8s/Helm101/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/01/11/k8s/Helm101/" class="post-title-link" itemprop="url">Helm入门</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-11 22:11:03" itemprop="dateCreated datePublished" datetime="2021-01-11T22:11:03+00:00">2021-01-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Helm简介"><a href="#Helm简介" class="headerlink" title="Helm简介"></a>Helm简介</h1><p><code>Helm</code>是一个可简化<code>Kubernetes</code>应用程序安装和管理的工具。<code>Helm</code>可以理解为<code>Kubernetes</code>的<code>apt/yum/homebrew</code>。</p>
+<p>此文档使用的是<a target="_blank" rel="noopener" href="https://helm.sh/">Helm</a>的<code>v3</code>版本。如果我们使用的是<code>Helm v2</code>，请转到<a target="_blank" rel="noopener" href="https://github.com/IBM/helm101/tree/helm-v2">helm-v2</a>分支。请参阅“<a target="_blank" rel="noopener" href="https://github.com/IBM/helm101#helm-status">Helm状态</a>”以获取有关不同<code>Helm</code>版本的更多详细信息。</p>
+<h2 id="Helm状态"><a href="#Helm状态" class="headerlink" title="Helm状态"></a>Helm状态</h2><p><code>Helm v3</code>于2019年11月发布。新老版本的接口非常相似，但是<code>Helm</code>的体系结构和内部架构发生了重大变化。有关更多详细信息，请查看<a target="_blank" rel="noopener" href="https://developer.ibm.com/technologies/containers/blogs/kubernetes-helm-3/">Helm 3</a>中的内容。</p>
+<p><code>Helm v2</code>计划支持1年“维护模式”。它指出以下内容：</p>
+<ul>
+<li>6个月的bug修复，直到2020年5月13日</li>
+<li>6个月的安全修复，直到2020年11月13日</li>
+<li>2020年11月13日开始，对Helm v2的支持将终止</li>
+</ul>
+<h1 id="为什么使用Helm"><a href="#为什么使用Helm" class="headerlink" title="为什么使用Helm"></a>为什么使用Helm</h1><p><code>Helm</code>通常被称为<code>Kubernetes</code>应用程序包管理器。那么，使用<code>Helm</code>而不直接使用<code>kubectl</code>有什么好处呢？</p>
+<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>这些实验提供了关于使用<code>Helm</code>优于直接通过<code>Kubectl</code>使用<code>Kubernetes</code>的优势的见解。后续的几个实验都分为两种情况：第一种情况提供了如何使用<code>kubectl</code>执行任务的示例；第二种情况提供了使用<code>Helm</code>的示例。完成所有实验后，我们可以：</p>
+<ul>
+<li>了解<code>Helm</code>的核心概念</li>
+<li>了解使用<code>Helm</code>而非直接使用<code>Kubernetes</code>进行部署的优势：<ul>
+<li>应用管理</li>
+<li>更新</li>
+<li>配置</li>
+<li>修订管理</li>
+<li>储存库和Chart图表共享</li>
+</ul>
+</li>
+</ul>
+<h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><ul>
+<li>有一个正在运行的<code>Kubernetes</code>集群。有关创建集群的详细信息，请参阅《 <a target="_blank" rel="noopener" href="https://cloud.ibm.com/docs/containers/cs_tutorials.html#cs_cluster_tutorial">IBM Cloud Kubernetes服务</a>或<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/setup/">Kubernetes入门指南</a>》。</li>
+<li>已通过<code>Kubernetes</code>集群安装并初始化了<code>Helm</code>。有关<code>Helm</code>入门，请参阅在IBM Cloud Kubernetes Service上安装Helm或《 Helm快速入门指南》。</li>
+</ul>
+<h2 id="Helm概览"><a href="#Helm概览" class="headerlink" title="Helm概览"></a>Helm概览</h2><p><code>Helm</code>是可简化<code>Kubernetes</code>应用程序安装和管理的工具。它使用一种称为“Chart”的打包格式，该格式是描述<code>Kubernetes</code>资源的文件的集合。它可以在任何地方（笔记本电脑，CI&#x2F;CD等）运行，并且可用于各种操作系统，例如<code>OSX，Linux和Windows</code>。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Helm101/helm-architecture.png" alt="helm-architecture"></p>
+<p><code>Helm 3</code>从<a target="_blank" rel="noopener" href="https://github.com/IBM/helm101/tree/helm-v2/tutorial#helm-overview">Helm 2客户端-服务器架构</a>转向了客户端架构。客户端仍称为<code>helm</code>，并且有一个改进的<code>Go</code>库，该库封装了<code>Helm</code>逻辑，以便可以由不同的客户端使用。客户端是一个<code>CLI</code>，用户可以与它进行交互以执行不同的操作，例如安装&#x2F;升级&#x2F;删除等。客户端与<code>Kubernetes API</code>服务器和<code>Chart</code>存储库进行交互。它将<code>Helm</code>模板文件渲染为<code>Kubernetes</code>清单文件，用于通过<code>Kubernetes API</code>在<code>Kubernetes</code>集群上执行操作。有关更多详细信息，请参见<a target="_blank" rel="noopener" href="https://helm.sh/docs/topics/architecture/">Helm架构</a>。</p>
+<p><a target="_blank" rel="noopener" href="https://helm.sh/docs/topics/charts/">Chart</a>被组织为目录内文件的集合，其中目录名是<code>Chart</code>的名称。它包含模板<code>YAML</code>文件，这些模板有助于在运行时提供配置值，并且无需修改<code>YAML</code>文件。这些模板基于<a target="_blank" rel="noopener" href="https://golang.org/pkg/text/template/">Go模板语</a>言，<a target="_blank" rel="noopener" href="https://github.com/Masterminds/sprig">Sprig lib</a>中的功能和<a target="_blank" rel="noopener" href="https://helm.sh/docs/howto/charts_tips_and_tricks/#know-your-template-functions">其他专用功能</a>提供了编程逻辑。</p>
+<p><code>Chart</code>存储库是可以存储和共享打包的<code>Chart</code>的位置。这类似于<code>Docker</code>中的镜像存储库。有关更多详细信息，请参考《<a target="_blank" rel="noopener" href="https://helm.sh/docs/topics/chart_repository/">Chart存储库指南</a>》。</p>
+<h2 id="Helm概念"><a href="#Helm概念" class="headerlink" title="Helm概念"></a>Helm概念</h2><p><code>Helm</code>术语：</p>
+<ul>
+<li>Chart - 包含在Kubernetes集群中运行的应用程序，工具或服务所需的所有资源定义。Chart基本上是预先配置的Kubernetes资源的软件包。</li>
+<li>Config - 包含可合并到Chart中以创建可发布对象的配置信息。</li>
+<li>helm - helm客户端。它将Chart呈现为清单文件。它直接与Kubernetes API服务器交互以安装，升级，查询和删除Kubernetes资源。</li>
+<li>Release - 在Kubernetes集群中运行的Chart实例。</li>
+<li>Repository - 存储Chart的仓库，可以与他人共享。</li>
+</ul>
+<h1 id="Lab0-安装Helm"><a href="#Lab0-安装Helm" class="headerlink" title="Lab0 安装Helm"></a>Lab0 安装Helm</h1><p>可以从源代码或预构建的二进制发行版中安装Helm客户端（<code>helm</code>）。在本实验中，我们将使用<code>Helm</code>社区的预构建二进制发行版（Linux amd64）。有关更多详细信息，请参阅<a target="_blank" rel="noopener" href="https://helm.sh/docs/intro/install/">Helm安装文档</a>。</p>
+<h2 id="前提依赖"><a href="#前提依赖" class="headerlink" title="前提依赖"></a>前提依赖</h2><ul>
+<li><code>Kubernete</code>s集群</li>
+</ul>
+<h2 id="安装Helm客户端"><a href="#安装Helm客户端" class="headerlink" title="安装Helm客户端"></a>安装Helm客户端</h2><ol>
+<li>下载适用于环境的最新版本的<code>Helm v3</code>，以下步骤适用于<code>Linux amd64</code>，请根据环境调整示例。</li>
+<li>解压：<code>$ tar -zxvf helm-v3.&lt;x&gt;.&lt;y&gt;-linux-amd64.tgz</code>。</li>
+<li>在解压后的目录中找到<code>helm</code>二进制文件，并将其移至所需位置：<code>mv linux-amd64/helm /usr/local/bin/helm</code>。最好是将复制到的位置设置到<code>path</code>环境变量，因为它避免了必须对<code>helm</code>命令进行路径设置。</li>
+<li>现在已安装了<code>Helm</code>客户端，可以使用<code>helm help</code>命令对其进行测试。</li>
+</ol>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>现在可以开始使用<code>Helm</code>了。</p>
+<h1 id="Lab1-使用Helm部署应用"><a href="#Lab1-使用Helm部署应用" class="headerlink" title="Lab1 使用Helm部署应用"></a>Lab1 使用Helm部署应用</h1><p>让我们研究一下<code>Helm</code>如何使用<code>Chart</code>来简化部署。我们首先使用<code>kubectl</code>将应用程序部署到<code>Kubernetes</code>集群，然后展示如何通过使用<code>Helm</code>部署同一应用程序。</p>
+<p>该应用程序是<a target="_blank" rel="noopener" href="https://github.com/IBM/guestbook">Guestbook App</a>，它是一个多层级的<code>Web</code>应用程序。</p>
+<h2 id="场景1-使用kubectl部署应用"><a href="#场景1-使用kubectl部署应用" class="headerlink" title="场景1: 使用kubectl部署应用"></a>场景1: 使用kubectl部署应用</h2><p>在本部分的实验中，我们将使用<code>Kubernetes</code>客户端<code>kubectl</code>部署应用程序。使用该应用程序的<a target="_blank" rel="noopener" href="https://github.com/IBM/guestbook/tree/master/v1">版本1</a>进行部署。</p>
+<p>如果已经从<a target="_blank" rel="noopener" href="https://github.com/IBM/kube101">kube101</a>安装了<code>guestbook</code>应用程序，请跳过本节，转到场景2中的<code>helm</code>示例。</p>
+<p>克隆<code>Guestbook App</code>存储库以获取文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/IBM/guestbook.git</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>使用克隆的<code>Git</code>库中的配置文件来部署容器，并使用以下命令为它们创建服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> guestbook/v1</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f redis-master-deployment.yaml</span></span><br><span class="line">deployment.apps/redis-master created</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f redis-master-service.yaml</span></span><br><span class="line">service/redis-master created</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f redis-slave-deployment.yaml</span></span><br><span class="line">deployment.apps/redis-slave created</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f redis-slave-service.yaml</span></span><br><span class="line">service/redis-slave created</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f guestbook-deployment.yaml</span></span><br><span class="line">deployment.apps/guestbook-v1 created</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f guestbook-service.yaml</span></span><br><span class="line">service/guestbook created</span><br></pre></td></tr></table></figure>
+
+<p>有关更多详细信息，请参阅<a target="_blank" rel="noopener" href="https://github.com/IBM/guestbook">README</a>。</p>
+</li>
+<li><p>查看<code>guestbook</code>：</p>
+<p>现在，我们可以通过在浏览器中打开刚创建的留言簿来玩（可能需要一些时间才能显示出来）。</p>
+<ul>
+<li><p>本地主机：如果我们在本地运行<code>Kubernetes</code>，请在浏览器中导航至<code>http://localhost:3000</code>以查看留言簿。</p>
+</li>
+<li><p>远程主机：</p>
+<ul>
+<li><p>要查看远程主机上的留言簿，请在<code>$ kubectl get services</code>输出的<strong>EXTERNAL-IP</strong>和<strong>PORTS</strong>列中找到负载均衡器的外部IP和端口。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get services</span></span><br><span class="line">NAME           TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)         </span><br><span class="line">guestbook      LoadBalancer   172.21.252.107   50.23.5.136   3000:31367/TCP </span><br><span class="line">redis-master   ClusterIP      172.21.97.222    &lt;none&gt;        6379/TCP       </span><br><span class="line">redis-slave    ClusterIP      172.21.43.70     &lt;none&gt;        6379/TCP       </span><br><span class="line">.........</span><br></pre></td></tr></table></figure>
+
+<p>在这种情况下，URL为<code>http://50.23.5.136:31367</code>。</p>
+<p>注意：如果未分配外部<code>IP</code>，则可以使用以下命令获取外部<code>IP</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get nodes -o wide</span></span><br><span class="line">NAME           STATUS    ROLES     AGE       VERSION        EXTERNAL-IP      OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME  </span><br><span class="line">10.47.122.98   Ready     &lt;none&gt;    1h        v1.10.11+IKS   173.193.92.112   Ubuntu 16.04.5 LTS   4.4.0-141-generic   docker://18.6.1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在这种情况下，URL为<code>http://173.193.92.112:31367</code>。WW在浏览器中导航到给定的输出（例如<code>http://50.23.5.136:31367</code>）。应该看到浏览器显示如下：</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Helm101/guestbook-page.png" alt="guestbook-page"></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="场景2-使用Helm部署应用"><a href="#场景2-使用Helm部署应用" class="headerlink" title="场景2: 使用Helm部署应用"></a>场景2: 使用Helm部署应用</h2><p>在实验的这一部分，我们将使用<code>Helm</code>部署应用程序。我们将设置<code>guestbook-demo</code>的发行版名称，以使其与之前的部署区分开。可在<a target="_blank" rel="noopener" href="https://github.com/IBM/helm101/blob/master/charts/guestbook">此处</a>获得<code>Helm chart</code>。克隆<code>Helm 101</code>存储库以获取文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/IBM/helm101</span><br></pre></td></tr></table></figure>
+
+<p><code>Chart</code>被定义为描述一组相关的<code>Kubernetes</code>资源的文件的集合。我们先查看文件，然后再安装。<code>guestbook</code> 的<code>chart</code>文件如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├──Chart.yaml \\包含有关信息的YAML文件</span><br><span class="line">├──LICENSE \\许可证</span><br><span class="line">├──README.md \\帮助文档，提供有关chart用法，配置，安装等信息</span><br><span class="line">├──template \\模板目录，当与values.yaml结合使用时将生成有效的Kubernetes清单文件</span><br><span class="line">│  ├──_helpers.tpl \\在整个chart中重复使用的模板帮助程序/定义</span><br><span class="line">│  ├──guestbook-deployment.yaml \\ Guestbook应用程序容器资源</span><br><span class="line">│  ├──guestbook-service.yaml \\ Guestbook应用服务资源</span><br><span class="line">│  ├──NOTES.txt \\一个纯文本文件，包含有关如何在安装后访问应用程序的简短使用说明</span><br><span class="line">│  ├──redis-master-deployment.yaml \\ Redis主容器资源</span><br><span class="line">│  ├──redis-master-service.yaml \\ Redis主服务资源</span><br><span class="line">│  ├──redis-slave-deployment.yaml \\ Redis从属容器资源</span><br><span class="line">│  └──redis-slave-service.yaml \\ Redis从属服务资源</span><br><span class="line">└──values.yaml \\chart的默认配置值</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：上面显示的模板文件将被传递到<code>Kubernetes</code>清单文件中，然后再传递给<code>Kubernetes API</code>服务器。因此，它们映射到我们在使用<code>kubectl</code>时部署的清单文件（不包含<code>README</code>和<code>NOTES</code>）。</p>
+</blockquote>
+<p>让我们继续并立即安装<code>chart</code>。如果<code>helm-demo</code>命名空间不存在，则需要使用以下命令创建它：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create namespace helm-demo</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>将应用程序作为<code>Helm chart</code>安装：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> helm101/charts</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm install guestbook-demo ./guestbook/ --namespace helm-demo</span></span><br><span class="line">NAME: guestbook-demo</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>我们应该看到类似于以下内容的输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">NAME: guestbook-demo</span><br><span class="line">LAST DEPLOYED: Mon Feb 24 18:08:02 2020</span><br><span class="line">NAMESPACE: helm-demo</span><br><span class="line">STATUS: deployed</span><br><span class="line">REVISION: 1</span><br><span class="line">TEST SUITE: None</span><br><span class="line">NOTES:</span><br><span class="line">1. Get the application URL by running these commands:</span><br><span class="line">  NOTE: It may take a few minutes for the LoadBalancer IP to be available.</span><br><span class="line">      You can watch the status of by running &#x27;kubectl get svc -w guestbook-demo --namespace helm-demo&#x27;</span><br><span class="line">  export SERVICE_IP=$(kubectl get svc --namespace helm-demo guestbook-demo -o jsonpath=&#x27;&#123;.status.loadBalancer.ingress[0].ip&#125;&#x27;)</span><br><span class="line">  echo http://$SERVICE_IP:3000</span><br></pre></td></tr></table></figure>
+
+<p>该<code>chart</code>的安装将执行<code>Redis</code>主服务器和从服务器以及<code>guestbook</code>应用的<code>Kubernetes</code>部署和服务创建。这是因为该<code>chart</code>是描述一组相关的<code>Kubernetes</code>资源的文件的集合，并且<code>Helm</code>通过<code>Kubernetes API</code>管理这些资源的创建。</p>
+<p>查看部署状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get deployment guestbook-demo --namespace helm-dem</span></span><br><span class="line">NAME             READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">guestbook-demo   2/2     2            2           51m</span><br></pre></td></tr></table></figure>
+
+<p>查看<code>pod</code>状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get pods --namespace helm-demo</span></span><br><span class="line">NAME                            READY     STATUS    RESTARTS   AGE</span><br><span class="line">guestbook-demo-6c9cf8b9-jwbs9   1/1       Running   0          52m</span><br><span class="line">guestbook-demo-6c9cf8b9-qk4fb   1/1       Running   0          52m</span><br><span class="line">redis-master-5d8b66464f-j72jf   1/1       Running   0          52m</span><br><span class="line">redis-slave-586b4c847c-2xt99    1/1       Running   0          52m</span><br><span class="line">redis-slave-586b4c847c-q7rq5    1/1       Running   0          52m</span><br></pre></td></tr></table></figure>
+
+<p>查看<code>service</code>状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get services --namespace helm-demo</span></span><br><span class="line">NAME             TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE</span><br><span class="line">guestbook-demo   LoadBalancer   172.21.43.244    &lt;pending&gt;     3000:31367/TCP   52m</span><br><span class="line">redis-master     ClusterIP      172.21.12.43     &lt;none&gt;        6379/TCP         52m</span><br><span class="line">redis-slave      ClusterIP      172.21.176.148   &lt;none&gt;        6379/TCP         52m</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>查看留言簿：</p>
+<p>现在，我们可以通过在浏览器中打开刚创建的留言簿来玩（可能需要一些时间才能显示出来）。</p>
+<ul>
+<li><p>本地主机：如果我们在本地运行<code>Kubernetes</code>，请在浏览器中导航至<code>http://localhost:3000</code>以查看留言簿。</p>
+</li>
+<li><p>远程主机：</p>
+<ul>
+<li><p>要查看远程主机上的留言簿，请在<code>$ kubectl get services</code>输出的<strong>EXTERNAL-IP</strong>和<strong>PORTS</strong>列中找到负载均衡器的外部<code>IP</code>和端口。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">export</span> SERVICE_IP=$(kubectl get svc --namespace helm-demo guestbook-demo -o jsonpath=<span class="string">&#x27;&#123;.status.loadBalancer.ingress[0].ip&#125;&#x27;</span>)</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">echo</span> http://<span class="variable">$SERVICE_IP</span></span></span><br><span class="line">http://50.23.5.136</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>在这种情况下，URL为<code>http://50.23.5.136:31367</code>。</p>
+<p>注意：如果未分配外部<code>IP</code>，则可以使用以下命令获取外部<code>IP</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get nodes -o wide</span></span><br><span class="line">NAME           STATUS    ROLES     AGE       VERSION        EXTERNAL-IP      OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME  </span><br><span class="line">10.47.122.98   Ready     &lt;none&gt;    1h        v1.10.11+IKS   173.193.92.112   Ubuntu 16.04.5 LTS   4.4.0-141-generic   docker://18.6.1</span><br></pre></td></tr></table></figure>
+
+<pre><code> - 在这种情况下，URL为`http://173.193.92.112:31367`。在浏览器中导航到给定的输出（例如`http://50.23.5.136:31367`）。应该看到浏览器显示如下：
+
+   ![guestbook-page](https://gitee.com/lyyao09/cdn/raw/master/k8s/Helm101/guestbook-page.png)
+</code></pre>
+<p>​     </p>
+<h2 id="结论-1"><a href="#结论-1" class="headerlink" title="结论"></a>结论</h2><p>恭喜，我们现在已经通过两种不同的方法将应用程序部署到<code>Kubernetes</code>。从本实验中，我们可以看到，与使用<code>kubectl</code>相比，使用<code>Helm</code>所需的命令更少，思考的时间也更少（通过提供<code>chart</code>路径而不是单个文件）。 <code>Helm</code>的应用程序管理为用户提供了这种简单性。</p>
+<h1 id="Lab2-使用Helm更新应用"><a href="#Lab2-使用Helm更新应用" class="headerlink" title="Lab2 使用Helm更新应用"></a>Lab2 使用Helm更新应用</h1><p>在<code>Lab1</code>中，我们使用<code>Helm</code>安装了<code>guestbook</code>示例应用程序，并看到了相较于<code>kubectl</code>的优势。我们可能认为自己已经足够了解使用<code>Helm</code>。但是<code>chart</code>的更新或修改呢？我们如何更新和修改正在运行的应用？</p>
+<p>在本实验中，我们将研究<code>chart</code>更改后如何更新正在运行的应用程序。为了说明这一点，我们将通过以下方式对原始留言簿的<code>chart</code>进行更改：</p>
+<ul>
+<li>删除<code>Redis</code>从节点并改为仅使用内存数据库</li>
+<li>将类型从<code>LoadBalancer</code>更改为<code>NodePort</code></li>
+</ul>
+<p>虽然是修改，但是本实验的目的是展示如何使用<code>Kubernetes</code>和<code>Helm</code>更新应用。那么，这样做有多容易呢？让我们继续看看。</p>
+<h2 id="场景1-使用kubectl更新应用"><a href="#场景1-使用kubectl更新应用" class="headerlink" title="场景1: 使用kubectl更新应用"></a>场景1: 使用kubectl更新应用</h2><p>在本部分的实验中，我们将直接使用<code>Kubernetes</code>更新以前部署的应用程序<a target="_blank" rel="noopener" href="https://github.com/IBM/guestbook">Guestbook</a>。</p>
+<ol>
+<li>这是一个可选步骤，从技术上讲，更新正在运行的应用程序不是必需的。进行此步骤的原因是“整理”-我们要为已部署的当前配置获取正确的文件。这样可以避免在以后进行更新甚至回滚时犯错误。在此更新的配置中，我们删除了<code>Redis</code>从节点。要使目录与配置匹配，请移动&#x2F;存档或仅从来文件夹中删除<code>Redis</code>从属文件：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd guestbook/v1</span><br><span class="line">rm redis-slave-service.yaml</span><br><span class="line">rm redis-slave-deployment.yaml</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：如果需要，可以稍后使用git checkout-<filename>命令来还原这些文件。</p>
+</blockquote>
+<ol start="2">
+<li>删除<code>Redis</code>从节点的<code>Service</code>和<code>Pod</code>：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl delete svc redis-slave --namespace default</span></span><br><span class="line">service &quot;redis-slave&quot; deleted</span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl delete deployment redis-slave --namespace default</span></span><br><span class="line">deployment.extensions &quot;redis-slave&quot; deleted</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>将<code>Guestbook</code>服务的<code>yaml</code>从<code>LoadBalancer</code>更新为<code>NodePort</code>类型：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i.bak &#x27;s/LoadBalancer/NodePort/g&#x27; guestbook-service.yaml</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>删除<code>Guestbook</code>运行时服务</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete svc guestbook --namespace default</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>重新创建具有<code>NodePort</code>类型的服务：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f guestbook-service.yaml</span><br></pre></td></tr></table></figure>
+
+<ol start="6">
+<li>使用以下命令检查更新：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get all --namespace default</span></span><br><span class="line">NAME                                READY     STATUS    RESTARTS   AGE</span><br><span class="line">pod/guestbook-v1-7fc76dc46-9r4s7    1/1       Running   0          1h</span><br><span class="line">pod/guestbook-v1-7fc76dc46-hspnk    1/1       Running   0          1h</span><br><span class="line">pod/guestbook-v1-7fc76dc46-sxzkt    1/1       Running   0          1h</span><br><span class="line">pod/redis-master-5d8b66464f-pvbl9   1/1       Running   0          1h</span><br><span class="line"></span><br><span class="line">NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE</span><br><span class="line">service/guestbook      NodePort    172.21.45.29    &lt;none&gt;        3000:31989/TCP   31s</span><br><span class="line">service/kubernetes     ClusterIP   172.21.0.1      &lt;none&gt;        443/TCP          9d</span><br><span class="line">service/redis-master   ClusterIP   172.21.232.61   &lt;none&gt;        6379/TCP         1h</span><br><span class="line"></span><br><span class="line">NAME                             READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">deployment.apps/guestbook-demo   3/3     3            3           1h</span><br><span class="line">deployment.apps/redis-master     1/1     1            1           1h</span><br><span class="line"></span><br><span class="line">NAME                                      DESIRED   CURRENT   READY     AGE</span><br><span class="line">replicaset.apps/guestbook-v1-7fc76dc46    3         3         3         1h</span><br><span class="line">replicaset.apps/redis-master-5d8b66464f   1         1         1         1h</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：服务类型已更改（更改为<code>NodePor</code>），并且已为留言簿服务分配了新端口（在此输出情况下为<code>31989</code>）。所有<code>redis-slave</code>资源均已删除。</p>
+</blockquote>
+<ol start="7">
+<li>获取节点的公共<code>IP</code>，并重新访问应用提供的服务：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes -o wide</span><br></pre></td></tr></table></figure>
+
+<h2 id="场景2-使用Helm更新应用"><a href="#场景2-使用Helm更新应用" class="headerlink" title="场景2: 使用Helm更新应用"></a>场景2: 使用Helm更新应用</h2><p>在本节中，我们将使用<code>Helm</code>更新以前部署的<code>guestbook-demo</code>应用程序。</p>
+<p>在开始之前，让我们花几分钟看一下<code>Helm</code>与直接使用<code>Kubernetes</code>相比如何简化流程。<code> Helm</code>使用模板语言为<code>chart</code>提供了极大的灵活性和强大的功能，从而为<code>chart</code>用户消除了复杂性。在留言簿示例中，我们将使用以下模板功能：</p>
+<ul>
+<li>Values：提供访问传递到<code>chart</code>中的值的对象。例如在<code>guestbook-service</code>中，它包含以下类型：<code>.Values.service.type</code>。此行提供了在升级或安装期间设置服务类型的功能。</li>
+<li>控制结构：在模板中也称为“动作”，控制结构使模板能够控制生成的流程。一个例子是在<code>redis-slave-service</code>中，它包含行<code>-if .Values.redis.slaveEnabled-</code>。该行允许我们在升级或安装期间启用&#x2F;禁用<code>REDIS</code>主&#x2F;从。</li>
+</ul>
+<p>如下所示，完整的<code>redis-slave-service.yaml</code>演示了在禁用<code>slaveEnabled</code>标志时文件如何变得冗余以及如何设置端口值。其他<code>chart</code>文件中还有更多的模板功能示例。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;- if .Values.redis.slaveEnabled -&#125;&#125;</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: redis-slave</span><br><span class="line">  labels:</span><br><span class="line">    app: redis</span><br><span class="line">    role: slave</span><br><span class="line">spec:</span><br><span class="line">  ports:</span><br><span class="line">  - port: &#123;&#123; .Values.redis.port &#125;&#125;</span><br><span class="line">    targetPort: redis-server	</span><br><span class="line">  selector:</span><br><span class="line">    app: redis</span><br><span class="line">    role: slave</span><br><span class="line">&#123;&#123;- end &#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>1. </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm list -n helm-demo</span><br></pre></td></tr></table></figure>
+
+<p>请注意，我们指定了名称空间。如果未指定，它将使用当前的名称空间上下文。我们应该看到类似于以下内容的输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm list -n helm-demo</span></span><br><span class="line">NAME           NAMESPACE REVISION  UPDATED                                 STATUS    CHART            APP VERSION</span><br><span class="line">guestbook-demo helm-demo 1         2020-02-24 18:08:02.017401264 +0000 UTC deployed  guestbook-0.2.0</span><br></pre></td></tr></table></figure>
+
+<p><code>list</code>命令提供已部署<code>chart</code>（发行版）的列表，其中提供了<code>chart</code>版本，名称空间，更新（修订）数量等信息。</p>
+<ol start="2">
+<li>我们更新应用程序：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> helm101/charts</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm upgrade guestbook-demo ./guestbook --<span class="built_in">set</span> redis.slaveEnabled=<span class="literal">false</span>,service.type=NodePort --namespace helm-demo</span></span><br><span class="line">Release &quot;guestbook-demo&quot; has been upgraded. Happy Helming!</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p><code>Helm</code>升级将采用现有版本，并根据提供的信息对其进行升级。我们应该看到类似于以下内容的输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm upgrade guestbook-demo ./guestbook --<span class="built_in">set</span> redis.slaveEnabled=<span class="literal">false</span>,service.type=NodePort --namespace helm-demo</span></span><br><span class="line">Release &quot;guestbook-demo&quot; has been upgraded. Happy Helming!</span><br><span class="line">NAME: guestbook-demo</span><br><span class="line">LAST DEPLOYED: Tue Feb 25 14:23:27 2020</span><br><span class="line">NAMESPACE: helm-demo</span><br><span class="line">STATUS: deployed</span><br><span class="line">REVISION: 2</span><br><span class="line">TEST SUITE: None</span><br><span class="line">NOTES:</span><br><span class="line">1. Get the application URL by running these commands:</span><br><span class="line">  export NODE_PORT=$(kubectl get --namespace helm-demo -o jsonpath=&quot;&#123;.spec.ports[0].nodePort&#125;&quot; services guestbook-demo)</span><br><span class="line">  export NODE_IP=$(kubectl get nodes --namespace helm-demo -o jsonpath=&quot;&#123;.items[0].status.addresses[0].address&#125;&quot;)</span><br><span class="line">  echo http://$NODE_IP:$NODE_PORT</span><br></pre></td></tr></table></figure>
+
+<p><code>upgrade</code>命令将应用程序升级到chart的指定版本，删除<code>redis-slave</code>资源，并将应用程序<code>service.type</code>更新为<code>NodePort</code>。</p>
+<p>使用<code>kubectl get all --namespace helm-demo</code>获取更新内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get all --namespace helm-demo</span></span><br><span class="line">NAME                                  READY   STATUS    RESTARTS   AGE</span><br><span class="line">pod/guestbook-demo-6c9cf8b9-dhqk9     1/1     Running   0          20h</span><br><span class="line">pod/guestbook-demo-6c9cf8b9-zddn2     1/1     Running   0          20h</span><br><span class="line">pod/redis-master-5d8b66464f-g7sh6     1/1     Running   0          20h</span><br><span class="line"></span><br><span class="line">NAME                     TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE</span><br><span class="line">service/guestbook-demo   NodePort    172.21.43.244    &lt;none&gt;        3000:31202/TCP   20h</span><br><span class="line">service/redis-master     ClusterIP   172.21.12.43     &lt;none&gt;        6379/TCP         20h</span><br><span class="line"></span><br><span class="line">NAME                             READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">deployment.apps/guestbook-demo   2/2     2            2           20h</span><br><span class="line">deployment.apps/redis-master     1/1     1            1           20h</span><br><span class="line"></span><br><span class="line">NAME                                        DESIRED   CURRENT   READY   AGE</span><br><span class="line">replicaset.apps/guestbook-demo-6c9cf8b9     2         2         2       20h</span><br><span class="line">replicaset.apps/redis-master-5d8b66464f     1         1         1       20h</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：服务类型已更改（更改为<code>NodePort</code>），并且已为留言簿服务分配了新端口（在此输出情况下为<code>31202</code>）。所有<code>redis-slave</code>资源均已删除。</p>
+</blockquote>
+<p>当我们使用<code>helm list -n helm-demo</code>命令检查Helm版本时，可以看到<code>revision</code>和日期已更新：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm list -n helm-demo</span></span><br><span class="line">NAME            NAMESPACE REVISION  UPDATED                                 STATUS    CHART            APP VERSION</span><br><span class="line">guestbook-demo  helm-demo 2         2020-02-25 14:23:27.06732381 +0000 UTC  deployed  guestbook-0.2.0</span><br></pre></td></tr></table></figure>
+
+<p>获取节点的公共<code>IP</code>，并重新访问应用提供的服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes -o wide</span><br></pre></td></tr></table></figure>
+
+<h2 id="结论-2"><a href="#结论-2" class="headerlink" title="结论"></a>结论</h2><p>恭喜，现在已经更新了应用程序！ <code>Helm</code>不需要任何手动更改资源，因此非常容易升级！所有配置都可以在命令行上即时设置，也可以使用替代文件设置。从将逻辑添加到模板文件后就可以实现这一点，这取决于<code>flag</code>标识，启用或禁用此功能。</p>
+<h1 id="Lab-3-跟踪已部署的应用程序"><a href="#Lab-3-跟踪已部署的应用程序" class="headerlink" title="Lab 3. 跟踪已部署的应用程序"></a>Lab 3. 跟踪已部署的应用程序</h1><p>假设我们部署了应用程序的不同发行版（即升级了正在运行的应用程序）。如何跟踪版本以及如何回滚？</p>
+<h2 id="场景1-使用Kubernetes进行修订管理"><a href="#场景1-使用Kubernetes进行修订管理" class="headerlink" title="场景1: 使用Kubernetes进行修订管理"></a>场景1: 使用Kubernetes进行修订管理</h2><p>在本部分的实验中，我们应该直接使用<code>Kubernetes</code>来说明留言簿的修订管理，但是我们不能。这是因为<code>Kubernetes</code>不为修订管理提供任何支持。我们有责任管理系统以及所做的任何更新或更改。但是，我们可以使用<code>Helm</code>进行修订管理。</p>
+<h2 id="场景2-使用Helm进行修订管理"><a href="#场景2-使用Helm进行修订管理" class="headerlink" title="场景2: 使用Helm进行修订管理"></a>场景2: 使用Helm进行修订管理</h2><p>在本部分的实验中，我们将使用<code>Helm</code>来说明对已部署的应用程序<code>guestbook-demo</code>的修订管理。</p>
+<p>使用<code>Helm</code>，每次进行安装，升级或回滚时，修订版本号都会增加1。第一个修订版本号始终为1。<code>Helm</code>将发布元数据保留在<code>Kubernetes</code>集群中存储的<code>Secrets</code>（默认）或<code>ConfigMap</code>中。每当发行版更改时，都会将其附加到现有数据中。这为<code>Helm</code>提供了回滚到先前版本的功能。</p>
+<p>让我们看看这在实践中如何工作。</p>
+<ol>
+<li>检查部署的数量：</li>
+</ol>
+<p>应该看到类似于以下的输出，因为在<code>Lab 1</code>中进行初始安装后，我们在<code>Lab 2</code>中进行了升级。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm <span class="built_in">history</span> guestbook-demo -n helm-demo</span></span><br><span class="line">REVISION    UPDATED                     STATUS      CHART           APP VERSION DESCRIPTION</span><br><span class="line">1           Mon Feb 24 18:08:02 2020    superseded  guestbook-0.2.0             Install complete</span><br><span class="line">2           Tue Feb 25 14:23:27 2020    deployed    guestbook-0.2.0             Upgrade complete</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>回滚到以前的版本：</li>
+</ol>
+<p>在此回滚中，<code>Helm</code>将检查从修订版1升级到修订版2时发生的更改。此信息使它能够调用<code>Kubernetes API</code>服务，以根据初始部署更新已部署的应用程序-换句话说，使用<code>Redis slave</code>并使用负载平衡器。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm rollback guestbook-demo 1 -n helm-demo</span></span><br><span class="line">Rollback was a success! Happy Helming!</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>再次检查历史记录：</li>
+</ol>
+<p>应该看到类似于以下的输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm <span class="built_in">history</span> guestbook-demo -n helm-demo</span></span><br><span class="line">REVISION    UPDATED                     STATUS      CHART           APP VERSION DESCRIPTION</span><br><span class="line">1           Mon Feb 24 18:08:02 2020    superseded  guestbook-0.2.0             Install complete</span><br><span class="line">2           Tue Feb 25 14:23:27 2020    superseded  guestbook-0.2.0             Upgrade complete</span><br><span class="line">3           Tue Feb 25 14:53:45 2020    deployed    guestbook-0.2.0             Rollback to 1</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>检查回滚结果：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get all --namespace helm-demo</span></span><br><span class="line">NAME                                  READY   STATUS    RESTARTS   AGE</span><br><span class="line">pod/guestbook-demo-6c9cf8b9-dhqk9     1/1     Running   0          20h</span><br><span class="line">pod/guestbook-demo-6c9cf8b9-zddn      1/1     Running   0          20h</span><br><span class="line">pod/redis-master-5d8b66464f-g7sh6     1/1     Running   0          20h</span><br><span class="line">pod/redis-slave-586b4c847c-tkfj5      1/1     Running   0          5m15s</span><br><span class="line">pod/redis-slave-586b4c847c-xxrdn      1/1     Running   0          5m15s</span><br><span class="line"></span><br><span class="line">NAME                     TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE</span><br><span class="line">service/guestbook-demo   LoadBalancer   172.21.43.244    &lt;pending&gt;     3000:31367/TCP   20h</span><br><span class="line">service/redis-master     ClusterIP      172.21.12.43     &lt;none&gt;        6379/TCP         20h</span><br><span class="line">service/redis-slave      ClusterIP      172.21.232.16    &lt;none&gt;        6379/TCP         5m15s</span><br><span class="line"></span><br><span class="line">NAME                             READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">deployment.apps/guestbook-demo   2/2     2            2           20h</span><br><span class="line">deployment.apps/redis-master     1/1     1            1           20h</span><br><span class="line">deployment.apps/redis-slave      2/2     2            2           5m15s</span><br><span class="line"></span><br><span class="line">NAME                                        DESIRED   CURRENT   READY   AGE</span><br><span class="line">replicaset.apps/guestbook-demo-26c9cf8b9    2         2         2       20h</span><br><span class="line">replicaset.apps/redis-master-5d8b66464f     1         1         1       20h</span><br><span class="line">replicaset.apps/redis-slave-586b4c847c      2         2         2       5m15s</span><br></pre></td></tr></table></figure>
+
+<p>从输出中可以再次看到，应用程序服务是<code>LoadBalancer</code>的服务类型，并且<code>Redis</code>主&#x2F;从部署已返回。这显示了实验2中升级的完整回滚。</p>
+<h2 id="结论-3"><a href="#结论-3" class="headerlink" title="结论"></a>结论</h2><p>从这个实验中，我们可以说<code>Helm</code>很好地进行了修订管理，而<code>Kubernetes</code>没有内置的功能！我们可能想知道为什么需要<code>helm rollback</code>，因为重新执行<code>helm upgrade</code>也可以回到老版本。这是一个很好的问题。从技术上讲，我们应该最终部署相同的资源（具有相同的参数）。但是，使用<code>helm rollback</code>的好处是，<code>Helm</code>可以管理（即记住）以前的<code>helm install\upgrade</code>的所有变体&#x2F;参数。通过<code>helm upgrade</code>进行回滚需要我们手动跟踪先前执行命令的方式。这不仅繁琐，而且容易出错。让<code>Helm</code>管理所有这些工作更加容易，安全和可靠，并且我们需要做的所有事情都告诉它可以使用哪个以前的版本，其余的都可以完成。</p>
+<h1 id="Lab-4-共享Helm-Charts"><a href="#Lab-4-共享Helm-Charts" class="headerlink" title="Lab 4. 共享Helm Charts"></a>Lab 4. 共享Helm Charts</h1><p>提供应用程序的一个关键方面意味着与他人共享。共享可以是直接的（由用户或在<code>CI/CD</code>管道中），也可以作为其他<code>chart</code>的依赖项。如果人们找不到你的应用程序，那么他们就无法使用它。</p>
+<p>共享的一种方法是使用<code>chart</code>库，该仓库可以存储和共享打包的<code>chart</code>。由于<code>chart</code>库仅适用于<code>Helm</code>，因此我们将仅查看<code>Helm chart</code>的用法和存储。</p>
+<h2 id="从公共仓库中获取Chart"><a href="#从公共仓库中获取Chart" class="headerlink" title="从公共仓库中获取Chart"></a>从公共仓库中获取Chart</h2><p><code>Helm charts</code>可以在远程存储库或本地环境&#x2F;存储库中使用。远程存储库可以是公共的，例如<a target="_blank" rel="noopener" href="https://github.com/bitnami/charts">Bitnami Charts</a>或<a target="_blank" rel="noopener" href="https://github.com/IBM/charts">IBM Helm Charts</a>，也可以是托管存储库，例如在<code>Google Cloud Storage</code>或<code>GitHub</code>上。有关更多详细信息，请参阅<a target="_blank" rel="noopener" href="https://helm.sh/docs/topics/chart_repository/">《 Helm Chart存储库指南》</a>。我们可以通过在本实验中检查<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/IBM/helm101/master/repo/stable/index.yaml">chart索引文件</a>来了解有关<code>chart</code>存储库结构的更多信息。</p>
+<p>在本部分的实验中，我们将展示如何从<a target="_blank" rel="noopener" href="https://ibm.github.io/helm101/">Helm101存储库</a>中安装留言簿<code>chart</code>。</p>
+<ol>
+<li>检查系统上配置的存储库：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm repo list</span></span><br><span class="line">Error: no repositories to show</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：默认情况下，<code>Helm v3</code>未安装<code>chart</code>存储库，而是期望我们自己为要使用的<code>chart</code>添加存储库。 <code>Helm Hub</code>可以集中搜索公共可用的分布式<code>chart</code>。使用<a target="_blank" rel="noopener" href="https://hub.helm.sh/">Helm Hub</a>，我们可以找到所需<code>chart</code>，然后将其添加到本地存储库列表中。 <code>Helm chart</code>存储库（如<code>Helm v2</code>）处于“维护模式”，将于2020年11月13日弃用。有关更多详细信息，请参见<a target="_blank" rel="noopener" href="https://github.com/helm/charts#status-of-the-project">项目状态</a>。</p>
+</blockquote>
+<ol start="2">
+<li>添加<code>helm101</code>仓库：</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm repo add helm101 https://ibm.github.io/helm101/</span></span><br><span class="line">&quot;helm101&quot; has been added to your repositories</span><br></pre></td></tr></table></figure>
+
+<p>​	还可以通过运行以下命令在存储库中搜索<code>chart</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm search repo helm101</span></span><br><span class="line">NAME              CHART VERSION  APP VERSION DESCRIPTION</span><br><span class="line">helm101/guestbook 0.2.1                      A Helm chart to deploy Guestbook three tier web...</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>安装<code>chart</code>：</li>
+</ol>
+<p>如前所述，我们将安装<code>Helm101</code>存储库中的留言簿<code>chart</code>。当将仓库添加到我们的本地仓库清单中时，我们可以使用<code>repo name/chart name</code>（即<code>helm101/guestbook</code>）来引用<code>chart</code>。要查看实际效果，将应用程序安装到名为<code>repo-demo</code>的新命名空间中。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash">kubectl create namespace repo-demo</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">helm install guestbook-demo helm101/guestbook --namespace repo-demo</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">helm install guestbook-demo helm101/guestbook --namespace repo-demo</span></span><br><span class="line">NAME: guestbook-demo</span><br><span class="line">LAST DEPLOYED: Tue Feb 25 15:40:17 2020</span><br><span class="line">NAMESPACE: repo-demo</span><br><span class="line">STATUS: deployed</span><br><span class="line">REVISION: 1</span><br><span class="line">TEST SUITE: None</span><br><span class="line">NOTES:</span><br><span class="line">1. Get the application URL by running these commands:</span><br><span class="line">  NOTE: It may take a few minutes for the LoadBalancer IP to be available.</span><br><span class="line">        You can watch the status of by running &#x27;kubectl get svc -w guestbook-demo --namespace repo-demo&#x27;</span><br><span class="line">  export SERVICE_IP=$(kubectl get svc --namespace repo-demo guestbook-demo -o jsonpath=&#x27;&#123;.status.loadBalancer.ingress[0].ip&#125;&#x27;)</span><br><span class="line">  echo http://$SERVICE_IP:3000</span><br></pre></td></tr></table></figure>
+
+<p>检查是否按预期部署了该版本，如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm list -n repo-demo</span></span><br><span class="line">NAME           NAMESPACE   REVISION UPDATED                                   STATUS   CHART            APP VERSION</span><br><span class="line">guestbook-demo repo-demo   1        2020-02-25 15:40:17.627745329 +0000 UTC   deployed guestbook-0.2.1</span><br></pre></td></tr></table></figure>
+
+<h2 id="结论-4"><a href="#结论-4" class="headerlink" title="结论"></a>结论</h2><p>本实验简要介绍了<code>Helm</code>存储库，以显示如何安装<code>chart</code>。共享<code>chart</code>的能力意味着更易于使用。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/01/05/tools/How-to-debug-tests-in-maven-project/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/01/05/tools/How-to-debug-tests-in-maven-project/" class="post-title-link" itemprop="url">如何在IntelliJ IDEA中的Maven项目中debug测试</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-05 20:06:12" itemprop="dateCreated datePublished" datetime="2021-01-05T20:06:12+00:00">2021-01-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="什么是Debug"><a href="#什么是Debug" class="headerlink" title="什么是Debug"></a><strong>什么是Debug</strong></h3><p>Debug调试是为了找到并修复代码中的错误。这是朝着编写没有bug的代码的方向迈出的重要一步，而没有bug的代码可以创建可靠的软件。</p>
+<p>因此，我将以简单的步骤说明如何在IntelliJ IDEA中调试Maven项目的Test测试。</p>
+<h3 id="Debug测试"><a href="#Debug测试" class="headerlink" title="Debug测试"></a><strong>Debug测试</strong></h3><p><strong>Step 1 :</strong></p>
+<p>Debug测试例需要使用到Maven surefire plugin插件。以下使用到的命令是在Ubuntu上执行的。</p>
+<p>首先是在需要调试的代码行中<strong>打断点</strong>。为此，只需在代码编辑区域中单击行的左上角，即可在调试期间暂停测试。单击时将出现一个<strong>红点</strong>。</p>
+<p><strong>Step 2 :</strong></p>
+<p>进入包含maven项目的集成测试的目录后，在命令行上键入以下命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd &lt;path-to-the-directory-containing-your-maven-project&#x27;s-integrationtests&gt;</span><br><span class="line">mvn clean install -Dmaven.surefire.debug</span><br></pre></td></tr></table></figure>
+
+<p>测试将自动暂停，并在端口5005上等待远程调试器。（端口5005为默认端口）。我们可以在命令行中看到一条语句，通知它正在监听端口5005。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Listening for transport dt_socket at address: 5005</span><br></pre></td></tr></table></figure>
+
+<p>如果需要配置其他端口，则可以将更详细的值传递给上述命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn clean install -Dmaven.surefire.debug=&quot;-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000 -Xnoagent -Djava.compiler=NONE&quot;</span><br></pre></td></tr></table></figure>
+
+<p>此命令将会监听端口8000而不是5005。</p>
+<p><strong>Step 3 :</strong></p>
+<p>如果是第一次运行调试器，则必须在IntelliJ IDEA中编辑<code>Debug配置</code>。如果已经完成了配置并将远程调试器端口设置为5005，则无需再次编辑配置。</p>
+<p>Debug配置可以安装如下流程进行编辑：</p>
+<ul>
+<li>在IDE中转到“Run –&gt; Edit Configurations…”</li>
+<li>在出现的对话框中，单击左上角的“ +”号</li>
+<li>在下拉列表中找到“Remote”选项</li>
+<li>在出现的下一个窗口中，在必须指定端口的地方指定端口</li>
+<li>然后“Apply ”，然后单击“Ok”。</li>
+</ul>
+<p><strong>Step 4 :</strong></p>
+<p>然后，可以使用IDE附加到正在运行的测试。</p>
+<ul>
+<li>转到Run –&gt; Debug…</li>
+<li>然后选择之前指定的配置</li>
+</ul>
+<p>现在，测试已附加到远程调试器。上面就是我们需要做的所有事情。</p>
+<p>测试将在我们之前指定的断点处暂停。在运行测试时，进出请求的详细信息可以在IDE中看到。我们也可以单击并逐个删除断点，并在每次暂停后通过IDE恢复程序。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/12/30/k8s/Top10-Must-Know-Kubernetes-Design-Patterns/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/30/k8s/Top10-Must-Know-Kubernetes-Design-Patterns/" class="post-title-link" itemprop="url">10个必须知道的Kubernetes设计模式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-30 22:31:22" itemprop="dateCreated datePublished" datetime="2020-12-30T22:31:22+00:00">2020-12-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>以下是<a target="_blank" rel="noopener" href="https://developers.redhat.com/books/kubernetes-patterns">Kubernetes patterns手册</a>中为初学者总结的必须知道的十大设计模式。熟悉这些模式将有助于理解Kubernetes的基本概念，这反过来又将有助于讨论和设计基于Kubernetes的应用程序。</p>
+<p>Kubernetes中有许多重要的概念，但下面这些是最重要的概念：</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Top10-Must-Know-Kubernetes-Design-Patterns/top_10_kubernetes_patterns-768x394.png" alt="top_10_kubernetes_patterns"></p>
+<p>为了帮助理解，这些模式被组织成以下几个类别，灵感来自Gang of Four’s的设计模式。</p>
+<h2 id="基本模式"><a href="#基本模式" class="headerlink" title="基本模式"></a>基本模式</h2><p>这些模式代表了容器化应用程序必须遵守的原则和最佳实践，以便成为优秀的云公民。不管应用程序的性质如何，我们都应该遵循这些准则。遵循这些原则将有助于确保我们的应用程序适用于Kubernetes上的自动化。</p>
+<h3 id="健康探测模式"><a href="#健康探测模式" class="headerlink" title="健康探测模式"></a>健康探测模式</h3><p>Health Probe要求每个容器都应该实现特定的API，以帮助平台以最健康的方式观察和管理应用程序。为了完全自动化，云本地应用程序必须具有高度的可观察性，允许推断其状态，以便Kubernetes可以检测应用程序是否已启动并准备好为请求提供服务。这些观察结果会影响Pods的生命周期管理以及将流量路由到应用程序的方式。</p>
+<h3 id="可预测需求模式"><a href="#可预测需求模式" class="headerlink" title="可预测需求模式"></a>可预测需求模式</h3><p>可预测的需求解释了为什么每个容器都应该声明它的资源配置文件，并且只限于指定的资源需求。在共享云环境中成功部署应用程序、管理和共存的基础依赖于识别和声明应用程序的资源需求和运行时依赖性。此模式描述应该如何声明应用程序需求，无论它们是硬运行时依赖项还是资源需求。声明的需求对于Kubernetes在集群中的应用程序找到合适的位置至关重要。</p>
+<h3 id="自动放置模式"><a href="#自动放置模式" class="headerlink" title="自动放置模式"></a>自动放置模式</h3><p>自动放置解释了如何影响多节点集群中的工作负载分布。放置是Kubernetes调度器的核心功能，用于为满足容器资源请求的节点分配新的pod，并遵守调度策略。该模式描述了Kubernetes调度算法的原理以及从外部影响布局决策的方式。</p>
+<h2 id="结构模式"><a href="#结构模式" class="headerlink" title="结构模式"></a>结构模式</h2><p>拥有良好的云本地容器是第一步，但还不够。下一步是重用容器并将它们组合成Pod以实现预期的结果。这一类中的模式侧重于结构化和组织Pod中的容器，以满足不同的用例。</p>
+<h3 id="Init-Container模式"><a href="#Init-Container模式" class="headerlink" title="Init Container模式"></a>Init Container模式</h3><p>Init容器为初始化相关的任务和主应用程序容器引入了一个单独的生命周期。Init容器通过为不同于主应用程序容器的初始化相关任务提供单独的生命周期来实现关注点的分离。这个模式引入了一个基本的Kubernetes概念，当需要初始化逻辑时，这个概念在许多其他模式中使用。</p>
+<h3 id="Sidecar模式"><a href="#Sidecar模式" class="headerlink" title="Sidecar模式"></a>Sidecar模式</h3><p>Sidecar描述了如何在不改变容器的情况下扩展和增强已有容器的功能。此模式是基本的容器模式之一，它允许单用途容器紧密地协作。</p>
+<h2 id="行为模式"><a href="#行为模式" class="headerlink" title="行为模式"></a>行为模式</h2><p>这些模式描述了管理平台确保的pod的生命周期保证。根据工作负载的类型，Pod可以作为批处理作业一直运行到完成，也可以计划定期运行。它可以作为守护程序服务或单例运行。选择正确的生命周期管理原语将帮助我们运行具有所需保证的Pod。</p>
+<h3 id="批处理模式"><a href="#批处理模式" class="headerlink" title="批处理模式"></a>批处理模式</h3><p>批处理作业描述如何运行一个独立的原子工作单元直到完成。此模式适用于在分布式环境中管理独立的原子工作单元。</p>
+<h3 id="有状态服务模式"><a href="#有状态服务模式" class="headerlink" title="有状态服务模式"></a>有状态服务模式</h3><p>有状态服务描述如何使用Kubernetes创建和管理分布式有状态应用程序。这类应用程序需要持久身份、网络、存储和普通性等特性。StatefulSet原语为这些构建块提供了强有力的保证，非常适合有状态应用程序的管理。</p>
+<h3 id="服务发现模式"><a href="#服务发现模式" class="headerlink" title="服务发现模式"></a>服务发现模式</h3><p>服务发现解释了客户端如何访问和发现提供应用程序服务的实例。为此，Kubernetes提供了多种机制，这取决于服务使用者和生产者位于集群上还是集群外。</p>
+<h2 id="高级模式"><a href="#高级模式" class="headerlink" title="高级模式"></a>高级模式</h2><p>此类别中的模式更复杂，代表更高级别的应用程序管理模式。这里的一些模式（比如Controller）是永不过时的，Kubernetes本身就是建立在这些模式之上的。</p>
+<h3 id="Controller模式"><a href="#Controller模式" class="headerlink" title="Controller模式"></a>Controller模式</h3><p>控制器是一种模式，它主动监视和维护一组处于所需状态的Kubernetes资源。Kubernetes本身的核心由一组控制器组成，这些控制器定期监视并协调应用程序的当前状态与声明的目标状态。这个模式描述了如何利用这个核心概念为我们自己的应用程序扩展平台。</p>
+<h3 id="Operator模式"><a href="#Operator模式" class="headerlink" title="Operator模式"></a>Operator模式</h3><p>Operator是一个控制器，它使用CustomResourceDefinitions将特定应用程序的操作知识封装为算法和自动化形式。Operator模式允许我们扩展控制器模式以获得更大的灵活性和表现力。Kubernetes的<a target="_blank" rel="noopener" href="http://operatorhub.io/">Operator</a>越来越多，这种模式正成为操作复杂分布式系统的主要形式。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>今天，Kubernetes是最流行的容器编排平台。它由所有主要的软件公司共同开发和支持，并作为一项服务由所有主要的云提供商提供。Kubernetes支持Linux和Windows系统，以及所有主要的编程语言。该平台还可以编排和自动化无状态和有状态的应用程序、批处理作业、周期性任务和无服务器工作负载。这里描述的模式是Kubernetes附带的一组更广泛的模式中最常用的模式，如下所示。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Top10-Must-Know-Kubernetes-Design-Patterns/KubernetePatternsLevels-SingleColor-Copy-of-Full-768x495.png" alt="KubernetePatternsLevels"></p>
+<p>Kubernetes是新的应用程序可移植层。如果你是一个软件开发人员或架构师，Kubernetes很可能会以这样或那样的形式成为你生活的一部分。学习这里描述的Kubernetes模式将改变我们对这个平台的看法。我相信Kubernetes和由此产生的概念将成为面向对象编程概念的基础。</p>
+<p>这里的模式试图创建类似Gang of Four的设计模式，但是用于容器编排。阅读这篇文章一定不是结束，而是你的Kubernetes之旅的开始。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/12/28/k8s/Kubernetes-Patterns-The-Init-Container-Pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/28/k8s/Kubernetes-Patterns-The-Init-Container-Pattern/" class="post-title-link" itemprop="url">Kubernetes模式：initContainer使用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-28 21:48:10" itemprop="dateCreated datePublished" datetime="2020-12-28T21:48:10+00:00">2020-12-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Init模式"><a href="#Init模式" class="headerlink" title="Init模式"></a>Init模式</h2><p>初始化逻辑通常在编程语言中很常见。在面向对象编程语言中，我们有构造函数的概念。构造函数是一个函数（或方法），每当对象被实例化时都会被调用。构造器的目的是“准备”对象以完成它应该做的工作。例如，它设置变量的默认值，创建数据库连接对象，确保对象正确运行所需的先决条件的存在。例如，如果创建了一个user对象，那么它至少需要用户的用户名、名和姓，这样它才能正常工作。不同语言之间的构造函数实现是不同的。但是，所有这些都只被调用一次，并且只在对象实例化时调用。</p>
+<p>初始化模式的目的是将对象与其初始化逻辑解耦。因此，如果一个对象需要一些种子数据输入到数据库中，这就属于构造函数逻辑而不是应用程序逻辑。这允许我们更改对象的“启动”方式，而不影响其“工作”方式。</p>
+<p>Kubernetes使用相同的模式。虽然对象是面向对象语言的原子单元，但是Kubernetes有Pods。因此，如果我们有一个应用程序在需要一些初始化逻辑的容器上运行，那么将此工作交给另一个容器是一个很好的做法。Kubernetes有一种用于特定作业的容器类型：init containers。</p>
+<h2 id="Init-Containers"><a href="#Init-Containers" class="headerlink" title="Init Containers"></a>Init Containers</h2><p>在Kubernetes中，init容器是在同一个Pod中的其他容器之前启动和执行的容器。它的目的是<strong>为Pod上托管的主应用程序执行初始化逻辑</strong>。例如，创建必要的用户帐户、执行数据库迁移、创建数据库模式等等。</p>
+<h2 id="Init-Containers设计注意事项"><a href="#Init-Containers设计注意事项" class="headerlink" title="Init Containers设计注意事项"></a>Init Containers设计注意事项</h2><p>在创建init容器时，我们应该考虑一些注意事项：</p>
+<ul>
+<li>它们总是比Pod里的其他容器先执行。因此，它们不应该包含需要很长时间才能完成的复杂逻辑。启动脚本通常很小而且简洁。如果我们发现在init容器中添加了太多的逻辑，那就应该考虑将它的一部分移到应用程序容器本身。</li>
+<li>Init容器按顺序启动和执行。除非成功完成其前置容器，否则不会调用init容器。因此，如果启动任务很长，可以考虑将其分成若干步骤，每个步骤都由init容器处理，以便知道哪些步骤失败。</li>
+<li>如果任何init容器失败，整个Pod将重新启动（除非将restartPolicy设置为Never）。重新启动Pod意味着重新执行所有容器，包括任何init容器。因此，我们可能需要确保启动逻辑能够容忍多次执行而不会导致重复。例如，如果数据库迁移已经完成，那么应该忽略再次执行迁移命令。</li>
+<li>在一个或多个依赖项可用之前，init容器是延迟应用程序初始化的一个很好的候选者。例如，如果我们的应用程序依赖于一个施加了API请求速率限制的API，可能需要等待一段时间才能从该API接收响应。在应用程序容器中实现此逻辑可能很复杂；因为它需要与运行状况和准备状态探测相结合。一种更简单的方法是创建一个init容器，该容器等待API准备好后才能成功退出。只有在init容器成功完成其工作之后，应用程序容器才会启动。</li>
+<li>Init容器不能像应用程序容器那样使用liveness和readiness探针。原因是它们注定要成功启动和退出，就像Jobs和CronJobs的行为一样。</li>
+<li>同一个Pod内的所有容器共享相同的卷和网络。我们可以使用此特性在应用程序及其init容器之间共享数据。</li>
+</ul>
+<h2 id="Init-Containers的“请求”和“限制”行为"><a href="#Init-Containers的“请求”和“限制”行为" class="headerlink" title="Init Containers的“请求”和“限制”行为"></a>Init Containers的“请求”和“限制”行为</h2><p>正如我们刚刚讨论的，init容器总是在同一个Pod上的其他应用程序容器之前启动。因此，调度程序为init容器的资源和限制提供了更高的优先级。这种行为必须被彻底考虑，因为它可能会导致不期望的结果。例如，如果我们有一个init容器和一个应用程序容器，并且将init容器的资源和限制设置为高于应用程序容器的资源和限制，那么只有在存在满足init容器要求的可用节点时，才会调度整个Pod。换句话说，即使有一个未使用的节点可以运行应用程序容器，如果init容器具有该节点可以处理的更高的资源先决条件，那么Pod也不会部署到该节点。因此，在定义init容器的请求和限制时，应该尽可能严格。<strong>作为最佳实践，除非绝对需要，否则不要将这些参数设置为高于应用程序容器的值。</strong></p>
+<h2 id="场景01-初始化数据库"><a href="#场景01-初始化数据库" class="headerlink" title="场景01:初始化数据库"></a>场景01:初始化数据库</h2><p>在这个场景中，我们为MySQL数据库提供服务。此数据库用于测试应用程序。它不一定要包含真实的数据，但是它必须有足够的数据种子，这样我们就可以测试应用程序的查询速度。我们使用init容器来处理下载SQL转储文件并将其还原到数据库中，该数据库托管在另一个容器中。这种情况可以说明如下：</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Kubernetes-Patterns-The-Init-Container-Pattern/init.png" alt="init"></p>
+<p>yaml定义文件可能如下所示：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mydb</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">db</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">fetch</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">mwendler/wget</span></span><br><span class="line">      <span class="attr">command:</span> [<span class="string">&quot;wget&quot;</span>,<span class="string">&quot;--no-check-certificate&quot;</span>,<span class="string">&quot;https://sample-videos.com/sql/Sample-SQL-File-1000rows.sql&quot;</span>,<span class="string">&quot;-O&quot;</span>,<span class="string">&quot;/docker-entrypoint-initdb.d/dump.sql&quot;</span>]</span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/docker-entrypoint-initdb.d</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">dump</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">mysql</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MYSQL_ROOT_PASSWORD</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;example&quot;</span></span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/docker-entrypoint-initdb.d</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">dump</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">emptyDir:</span> &#123;&#125;</span><br><span class="line">      <span class="attr">name:</span> <span class="string">dump</span></span><br></pre></td></tr></table></figure>
+
+<p>上面的定义创建了一个Pod，它承载两个容器：init容器和application容器。让我们看看这个定义有趣的方面：</p>
+<ul>
+<li><p>init容器负责下载包含数据库转储的SQL文件。我们使用mwendler&#x2F;wget映像，因为我们只需要wget命令。</p>
+</li>
+<li><p>下载的SQL的目标目录是MySQL镜像用来执行SQL文件的目录（&#x2F;docker-entrypoint-initdb.d）。此行为内置到我们在应用程序容器中使用的MySQL镜像中。</p>
+</li>
+<li><p>init容器将&#x2F;docker-entrypoint-initdb.d挂载到一个emptyDir卷。因为两个容器托管在同一个Pod上，所以它们共享相同的卷。因此，数据库容器可以访问emptyDir卷上的SQL文件。</p>
+</li>
+</ul>
+<p><strong>如果没有Init Containers会发生什么</strong></p>
+<p>在这个例子中，我们使用初始化模式作为最佳实践。如果我们在不使用init模式的情况下实现相同的逻辑，那么我们必须基于mysql基本镜像创建一个新映像，安装wget，然后使用它下载SQL文件。这种方法的缺点是：</p>
+<ul>
+<li><p>如果需要对下载逻辑进行任何更改，则需要创建一个新镜像，将其推送到定义文件中并更改其引用。这增加了维护自定义镜像的负担。</p>
+</li>
+<li><p>它在DB容器及其启动逻辑之间创建了一个紧密耦合的关系，这使得应用程序更难管理，并且增加了引入错误和bug的可能性。</p>
+</li>
+</ul>
+<h2 id="场景02：延迟应用程序启动"><a href="#场景02：延迟应用程序启动" class="headerlink" title="场景02：延迟应用程序启动"></a>场景02：延迟应用程序启动</h2><p>init容器的另一个常见用例是当我们需要应用程序等待另一个服务完全运行（响应请求）时。以下定义演示了这种情况：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-pod</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-myservice</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox:1.28</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup myservice; do echo waiting for myservice; sleep 2; done;&#x27;</span>]</span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox:1.28</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;echo The app is running! &amp;&amp; sleep 3600&#x27;</span>]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>所以，假设在myapp容器上运行的应用程序必须依赖myservice正常后才能正常工作。我们需要延迟myapp直到myservice准备好。我们通过使用一个简单的nslookup命令（第11行）来实现这一点，该命令不断检查“myservice”的成功名称解析。如果nslookup能够解析“myservice”，则服务将启动。使用一个成功的退出代码，init容器终止，让位于应用程序容器开始。否则，容器将在重试之前休眠两秒钟，从而延迟应用程序容器的启动。</p>
+<p>为了完整起见，这是myservice的定义文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myservice</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">9376</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><ul>
+<li>Init模式是设计需要启动逻辑的应用程序时必须遵循的重要实践。</li>
+<li>Kubernetes提供init容器作为将应用程序逻辑与其启动过程分离的一种方法。</li>
+<li>将应用程序初始化逻辑放在init容器中有许多优点：<ul>
+<li>我们将实施关注点分离原则。应用程序可以有自己的工程师团队，而其初始化逻辑由另一个团队编写。</li>
+<li>在授权和访问控制方面，拥有一个独立的团队来处理应用程序的初始化步骤，可以给公司带来更大的灵活性。例如，如果启动应用程序需要使用需要安全许可的资源（例如，修改防火墙规则），则可以由具有适当凭据的人员来完成。应用程序团队不参与操作。</li>
+<li>如果涉及太多的初始化步骤，可以将它们分解为多个init容器，然后依次执行。如果一个步骤失败，init容将报告一个错误，这将使我们更好地了解逻辑的哪一部分不成功。</li>
+</ul>
+</li>
+<li>在使用init容器时，应该考虑以下几点：<ul>
+<li>初始化容器在失败时重新启动。因此，它们的代码必须是幂等的。</li>
+<li>Init容器的请求和限制会先被调度程序用于调度判断。错误的值可能会对调度器决定将整个Pod（包括应用程序容器）放置在哪里产生负面影响。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/12/26/k8s/Kubernetes-InitContainers-Volume-Pre-Population/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/26/k8s/Kubernetes-InitContainers-Volume-Pre-Population/" class="post-title-link" itemprop="url">Kubernetes使用InitContainers和Volume预填充数据</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-26 21:55:32" itemprop="dateCreated datePublished" datetime="2020-12-26T21:55:32+00:00">2020-12-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Kubernetes中的<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">InitContainer资源</a>是一个有趣且非常有用的资源。在许多情况下，我们会看到它曾用于在Pod部署时，创建容器之前在卷中预填充数据，因此在业务容器启动时，卷数据已被初始化。</p>
+<p>就我而言，我有一个带有单个静态页面的简单Web前端，它使用标准的nginx基础镜像：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> nginx</span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> index.html /usr/share/nginx/html/index.html</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> smartos.ipxe /usr/share/nginx/html/smartos.ipxe</span></span><br></pre></td></tr></table></figure>
+
+<p>该镜像的构建和下载速度非常快，这非常棒，但是部分原因是它是无状态的。例如，smartos.ipxe文件中需要一些数据，这些数据在启动应用程序时需要可用，否则这些引用将无法按预期工作（抽象为404 HTTP响应）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#!ipxe</span><br><span class="line">dhcp</span><br><span class="line">set base-url http://sdc-ipxe.east.gourmet.yoga</span><br><span class="line">kernel $&#123;base-url&#125;/smartos/smartos/platform/i86pc/kernel/amd64/unix -B smartos=true,console=ttyb,ttyb-mode=&quot;115200,8,n,1,-&quot;</span><br><span class="line">module $&#123;base-url&#125;/smartos/smartos/platform/i86pc/amd64/boot_archive type=rootfs name=ramdisk</span><br><span class="line">boot</span><br></pre></td></tr></table></figure>
+
+<p>但是，这些文件不是应用程序的一部分，因为它们经常更新。因此，每次推出新版本时，我们都希望该卷中包含最新版本，并且由于我们不需要维护镜像中的这些文件，否则在我们的Registry中存储起来会非常大且昂贵，我们可以在Pod中的容器上挂载一个Volume来提供它们。</p>
+<p>因此，基本上，我们需要一种方法来预填充要装入到&#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html&#x2F;smartos的卷。</p>
+<p>使用InitContainer资源，我们可以指定要运行的命令，并且像Pod中的任何其他容器一样，我们可以分配要挂载的卷，因此让我们从这样的Kubernetes清单开始：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">sdc-ipxe-deployment</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">sdc-ipxe</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">sdc-ipxe</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">sdc-ipxe</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">initContainers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-data</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">ubuntu:xenial</span></span><br><span class="line">        <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>,<span class="string">&quot;-c&quot;</span>]</span><br><span class="line">        <span class="attr">args:</span> [<span class="string">&quot;apt update; apt install -y wget tar; wget https://us-east.manta.joyent.com/Joyent_Dev/public/SmartOS/platform-latest.tgz; tar xvf platform-latest.tgz -C /data; mkdir /data/smartos; mv /data/platform* /data/smartos/platform&quot;</span>]</span><br><span class="line">        <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/data</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">sdc-data</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">sdc-data</span></span><br><span class="line">        <span class="attr">hostPath:</span></span><br><span class="line">          <span class="attr">path:</span> <span class="string">/mnt/kube-data/sdc-ipxe/</span></span><br><span class="line">          <span class="attr">type:</span> <span class="string">DirectoryOrCreate</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>因此，在这一点上，我们正在准备卷sdc数据，将其挂载到initContainer的&#x2F;data目录上并运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt update; apt install -y wget tar; wget https://us-east.manta.joyent.com/Joyent_Dev/public/SmartOS/platform-latest.tgz; tar xvf platform-latest.tgz -C /data; mkdir /data/smartos; mv /data/platform* /data/smartos/platform</span><br></pre></td></tr></table></figure>
+
+<p>上述命令下载数据并将其提取到卷中。现在，我们向yaml中添加一个container，然后再次附加该Volume，将可以使用预填充的数据：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">sdc-ipxe-deployment</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">sdc-ipxe</span></span><br><span class="line"><span class="string">...</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">sdc-ipxe</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">coolregistryusa.bix/jmarhee/sdc-ipxe:latest</span></span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">Always</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">        <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/usr/share/nginx/html/smartos</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">sdc-data</span></span><br><span class="line"><span class="string">...</span></span><br></pre></td></tr></table></figure>
+
+<p>在业务容器中配置相同名称的卷，则业务容器就可以通过&#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html&#x2F;smartos目录获取sdc数据。</p>
+<p>如果我们的应用程序依赖于具有可变需求的配置，则这种模式是有用的。可能是我们需要获得令牌，或者地址是动态的，并且需要通过磁盘上的文件而不是环境（比如负载平衡器，Web服务器或具有配置文件的数据库客户端，不容易通过它处理）传递文件（因为它们更改的频率不同）（Secret或ConfigMap），这种方法提供了一个易于编程的界面，用于预先填充或完成传递给容器的数据的模板化。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/12/26/k8s/Updating-Kubernetes-Raspberry-Pi-Cluster-To-Containerd/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/26/k8s/Updating-Kubernetes-Raspberry-Pi-Cluster-To-Containerd/" class="post-title-link" itemprop="url">将Kubernetes群集的Docker切换到为Containerd</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-26 20:35:20" itemprop="dateCreated datePublished" datetime="2020-12-26T20:35:20+00:00">2020-12-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>由于Docker在Kubernetes v1.20中已弃用，最近几天在Twitter上发生了很多讨论。</p>
+<h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>Kubernetes v1.20的废弃说明：</p>
+<p>如果想了解更多，强烈建议查看此<a target="_blank" rel="noopener" href="https://twitter.com/Dixie3Flatline/status/1334188913724850177?s=19">Twitter</a>。</p>
+<p>考虑到最近部署了一个Raspberry Pi Kubernetes集群，因此想就地进行更新，以使用Containerd代替Docker作为容器运行时。</p>
+<blockquote>
+<p>免责声明–不要在生产集群中这样做。对于这些集群，只需删除现有节点，然后滚动引入新节点。这个博客只是关于Raspberry Pi集群的一个有趣的话题，看看是否可以在无需重建节点的情况下就地完成更新。</p>
+</blockquote>
+<p>因此，要做的第一件事是drain需要更新的节点（我的节点称为k8s-node-1）并且cordon它：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl drain k8s-node-1 --ignore-daemonsets</span><br></pre></td></tr></table></figure>
+
+<p>然后ssh进入节点并停止kubelet：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop kubelet</span><br></pre></td></tr></table></figure>
+
+<p>然后删除Docker：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get remove docker.io</span><br></pre></td></tr></table></figure>
+
+<p>删除旧的依赖项：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get autoremove</span><br></pre></td></tr></table></figure>
+
+<p>现在unmask现有的containerd服务（Docker使用containerd，这就是为什么它已经存在的原因）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl unmask containerd</span><br></pre></td></tr></table></figure>
+
+<p>安装所需的依赖项：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install unzip make golang-go libseccomp2 libseccomp-dev btrfs-progs libbtrfs-dev</span><br></pre></td></tr></table></figure>
+
+<p>完成以上步骤后，现在我们按照<a target="_blank" rel="noopener" href="https://github.com/containerd/containerd/blob/master/BUILDING.md">官方说明</a>开始安装containerd。</p>
+<p>无论如何，以root身份进行所有操作，获取containerd的源代码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get -d github.com/containerd/containerd</span><br></pre></td></tr></table></figure>
+
+<p>获取protoc 并安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget -c https://github.com/google/protobuf/releases/download/v3.11.4/protoc-3.11.4-linux-x86_64.zip</span><br><span class="line">sudo unzip protoc-3.11.4-linux-x86_64.zip -d /usr/local</span><br></pre></td></tr></table></figure>
+
+<p>获取runc 的源代码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get -d github.com/opencontainers/runc</span><br></pre></td></tr></table></figure>
+
+<p>进入到下载的包目录（检查$ GOPATH变量），使用make进行构建和安装runc和containerd：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cd ~/go/src/github.com/opencontainers/runc</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line">cd ~/go/src/github.com/containerd/containerd</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+<p>现在，将containerd.service文件复制到systemd以创建containerd的服务、启动服务并查看启动状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cp containerd.service /etc/systemd/system/</span><br><span class="line">chmod 644 /etc/systemd/system/containerd.service</span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start containerd</span><br><span class="line">systemctl enable containerd</span><br><span class="line">systemctl status containerd</span><br></pre></td></tr></table></figure>
+
+<p>差不多完成了，现在我们需要更新kubelet，将默认使用的docker改为containerd（参考<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/">flag设置</a>）。我们可以通过运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i &#x27;s/3.2/3.2 --container-runtime=remote --container-runtime-endpoint=unix:\/\/\/run\/containerd\/containerd.sock/g&#x27; /var/lib/kubelet/kubeadm-flags.env</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果上面的命令不起作用，请直接修改kubeadm-flags.env文件。</p>
+</blockquote>
+<p>重启kubelet并查看服务状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl start kubelet</span><br><span class="line">systemctl status kubelet</span><br></pre></td></tr></table></figure>
+
+<p>最后，uncordon节点，并查看节点信息中的Runtime已变为containerd：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl uncordon k8s-node-1</span><br><span class="line">kubectl get nodes -o wide</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/12/25/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/25/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/" class="post-title-link" itemprop="url">为什么Helm可以解决Kubernetes原生回滚问题？</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-25 22:15:35" itemprop="dateCreated datePublished" datetime="2020-12-25T22:15:35+00:00">2020-12-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题引出"><a href="#问题引出" class="headerlink" title="问题引出"></a>问题引出</h2><p>Helm是将应用程序部署到Kubernetes的绝佳工具。我们可以打包所有deployment和service等yaml文件，并使用一个简单的命令将它们部署到集群中。</p>
+<p>但是Helm的另一个非常酷的功能是能够轻松升级和回滚版本（在集群中运行的Helm Chart实例的术语）的功能。</p>
+<p>现在，我们可以使用kubectl进行此操作。如果我们使用<code>kubectl apply</code>升级deployment资源，则可以使用<code>kubectl rollout undo</code>来回滚该升级。这很棒！这是Kubernetes的最佳功能之一。</p>
+<p>升级deployment时，将为该deployment创建一个新的replicaset，该replicaset将在一组新的Pod中运行升级后的应用程序。</p>
+<p>如果使用<code>kubectl rollout undo</code>进行回滚，会删除最新replicaset中的容器，并回滚到旧replicaset的容器。</p>
+<p><strong>但是这里有一个潜在的问题。如果删除旧的replicaset会怎样？</strong>如果发生这种情况，我们将无法回滚升级。好吧，我们无法使用<code>kubectl rollout undo</code>将其回滚，但是如果我们使用Helm，会发生什么？</p>
+<p>让我们来看一个演示。</p>
+<h2 id="Helm环境准备"><a href="#Helm环境准备" class="headerlink" title="Helm环境准备"></a>Helm环境准备</h2><p>创建一个称为testchart的Chart：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm create testchart	</span><br></pre></td></tr></table></figure>
+
+<p>删除模板目录中所有不必要的文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm -rf ./testchart/templates/*</span><br></pre></td></tr></table></figure>
+
+<p>创建一个deployment yaml文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl create deployment nginx \</span><br><span class="line">--image=nginx:1.17 \</span><br><span class="line">--dry-run=client \</span><br><span class="line">--output=yaml &gt; ./testchart/templates/deployment.yaml</span><br></pre></td></tr></table></figure>
+
+<p>这将创建以下yaml并将其另存为templates目录中的deployment.yaml：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">creationTimestamp:</span> <span class="literal">null</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">strategy:</span> &#123;&#125;</span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">creationTimestamp:</span> <span class="literal">null</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">nginx:1.17</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">resources:</span> &#123;&#125;</span><br><span class="line"><span class="attr">status:</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建deployment：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create deployment nginx --image=nginx:1.17 </span><br></pre></td></tr></table></figure>
+
+<p>为service生成yaml：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl expose deployment nginx \</span><br><span class="line">--type=LoadBalancer \</span><br><span class="line">--port=80 \</span><br><span class="line">--dry-run=client \</span><br><span class="line">--output=yaml &gt; ./testchart/templates/service.yaml</span><br></pre></td></tr></table></figure>
+
+<p>这将为我们提供以下yaml并将其另存为模板目录中的service.yaml：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">creationTimestamp:</span> <span class="literal">null</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">LoadBalancer</span></span><br><span class="line"><span class="attr">status:</span></span><br><span class="line">  <span class="attr">loadBalancer:</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>删除deployment，模板化values.yaml 和deployment.yaml文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete deployment nginx</span><br><span class="line">rm ./testchart/values.yaml</span><br><span class="line">echo &quot;containerImage: nginx:1.17&quot; &gt; ./testchart/values.yaml</span><br><span class="line">sed -i &#x27;s/nginx:1.17/&#123;&#123; .Values.containerImage &#125;&#125;/g&#x27; ./testchart/templates/deployment.yaml</span><br></pre></td></tr></table></figure>
+
+<p>最终，deployment.yaml文件如下所示：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">creationTimestamp:</span> <span class="literal">null</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">strategy:</span> &#123;&#125;</span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">creationTimestamp:</span> <span class="literal">null</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">image:</span> &#123;&#123; <span class="string">.Values.containerImage</span> &#125;&#125;</span><br><span class="line">        <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">resources:</span> &#123;&#125;</span><br><span class="line"><span class="attr">status:</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>改造后的yaml中容器镜像不再是硬编码的。它将从values.yaml文件中获取nginx:1.17的值，或者我们可以使用set标志来覆盖它（我们将在一分钟内完成）。</p>
+<h2 id="Helm部署示例"><a href="#Helm部署示例" class="headerlink" title="Helm部署示例"></a>Helm部署示例</h2><p>首先，将Chart部署到Kubernetes集群中：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install testchart ./testchart</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/helm-install-1.png" alt="helm-install-1"></p>
+<p>该应用程序版本是Chart.yaml文件中设置的默认版本（尚未更新）</p>
+<p>检查部署中运行的镜像版本：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get deployment -o jsonpath=&#x27;&#123; .items[*].spec.template.spec.containers[*].image &#125;&#123;&quot;\n&quot;&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/helm-history-updated.png" alt="get-container-image-1"></p>
+<p>查看到的容器镜像就是Chart中values.yaml文件中定义的镜像版本。</p>
+<p>现在升级Release，将默认的容器镜像值替换为set标志指定的值：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm upgrade testchart ./testchart --set containerImage=nginx:1.18</span><br></pre></td></tr></table></figure>
+
+<p>确认版本已升级（检查版本号）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm list</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/get-container-image-1.png" alt="helm-upgrade-1"></p>
+<p>另外，请确认Release历史：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm history testchart</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/helm-upgrade-1.png" alt="helm-history-updated"></p>
+<p>这样我们就可以看到该Release的初始部署，然后是升级。应用版本保持不变，因为我没有更改Chart.yaml文件中的值。但是，镜像版本已更改，我们可以通过以下方式看到：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get deployment -o jsonpath=&#x27;&#123; .items[*].spec.template.spec.containers[*].image &#125;&#123;&quot;\n&quot;&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/kubectl-rollout-undo.png" alt="get-container-image-2"></p>
+<p>因此，我们已经升级了在deployment中容器运行的镜像版本。</p>
+<p>让我们看一下deployment的replicasets：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get replicasets</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/get-replicasets-2.png" alt="get-replicasets-1"></p>
+<p>因此，我们为Helm版本创建的deployment有两个replicasets。最初的一个运行nginx v1.17，最新的一个运行nginx v1.18。</p>
+<p>如果我们想使用kubectl回退升级，则可以使用（不要运行此代码！）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout undo deployment nginx</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/get-replicasets-1.png" alt="kubectl-rollout-undo"></p>
+<p>这里将发生的是，删除最新replicasets下的Pod，并创建旧replicasets下的Pod，将nginx回滚到v1.17。</p>
+<p>但是我们不会那样做，因为我们正在使用Helm。</p>
+<h2 id="问题复现"><a href="#问题复现" class="headerlink" title="问题复现"></a>问题复现</h2><p>继续在当前环境中获取最旧的replicasets名称，并删除它：：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">REPLICA_SET=$(kubectl get replicasets -o jsonpath=&#x27;&#123;.items[0].metadata.name &#125;&#x27; --sort-by=.metadata.creationTimestamp)</span><br><span class="line">kubectl delete replicasets $REPLICA_SET</span><br></pre></td></tr></table></figure>
+
+<p>因此，我们现在只有一个replicasets：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get replicasets</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/get-container-image-2.png" alt="get-replicasets-2"></p>
+<p>现在尝试使用<code>kubectl rollout undo</code>命令进行回滚：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout undo deployment nginx</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/kubectl-rollout-undo-2.png" alt="kubectl-rollout-undo-2"></p>
+<p>失败的原因是我们删除了旧的replicasets，因此该deployment没有历史记录，可以通过以下方式查看：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout history deployment nginx</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/kubectl-rollout-history.png" alt="kubectl-rollout-history"></p>
+<h2 id="使用Helm回滚"><a href="#使用Helm回滚" class="headerlink" title="使用Helm回滚"></a>使用Helm回滚</h2><p>虽然旧的replicasets被删除了，但是Helm的实现机制决定了使用Helm部署的Release会保留历史：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm history testchart</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/helm-history-2.png" alt="helm-history-2"></p>
+<p>所以，我们可以使用Helm回滚：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm rollback testchart 1</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/helm-rollback.png" alt="helm-rollback"></p>
+<p>查看Release状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm list</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/helm-list-rollback.png" alt="helm-list-rollback"></p>
+<p>查看Release历史：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm history testchart</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/get-replicasets-3.png" alt="helm-rollback-history"></p>
+<p>查看replicasets：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get replicasets</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/helm-rollback-history.png" alt="get-replicasets-3"></p>
+<p>旧的replicasets又回来了！怎么样？</p>
+<h2 id="原理探究"><a href="#原理探究" class="headerlink" title="原理探究"></a>原理探究</h2><p>让我们看一下集群中的secrets：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secrets</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/kubectl-get-secrets.png" alt="kubectl-get-secrets"></p>
+<p>可以看出，这些secrets中会存储Helm发布所有历史记录！初始版本（v1），升级（v2）和回滚（v3）。</p>
+<p>让我们仔细看看v1版本：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret sh.helm.release.v1.testchart.v1 -o json</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/kubectl-get-secrets-2.png" alt="kubectl-get-secrets-2"></p>
+<p>嗯，这个Release内容看起来很有趣。我们可以做的是对base64进行解码，然后通过<a target="_blank" rel="noopener" href="http://www.txtwizard.net/compression%E8%BF%9B%E8%A1%8C%E8%A7%A3%E5%8E%8B%E7%BC%A9%EF%BC%8C%E5%BE%97%E5%88%B0%E7%BB%93%E6%9E%9C%E5%A6%82%E4%B8%8B%EF%BC%9A">http://www.txtwizard.net/compression进行解压缩，得到结果如下：</a></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;name&quot;</span><span class="string">:&quot;testchart&quot;</span>,</span><br><span class="line"><span class="attr">&quot;info&quot;:</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;first_deployed&quot;</span><span class="string">:&quot;2020-08-09T11:21:20.4665817+01:00&quot;</span>,</span><br><span class="line">        <span class="string">&quot;last_deployed&quot;</span><span class="string">:&quot;2020-08-09T11:21:20.4665817+01:00&quot;</span>,</span><br><span class="line">        <span class="string">&quot;deleted&quot;</span><span class="string">:&quot;&quot;</span>,</span><br><span class="line">        <span class="string">&quot;description&quot;</span><span class="string">:&quot;Install</span> <span class="string">complete&quot;</span>,</span><br><span class="line">        <span class="string">&quot;status&quot;</span><span class="string">:&quot;superseded&quot;</span>&#125;,</span><br><span class="line">        <span class="string">&quot;chart&quot;</span><span class="string">:</span>&#123;<span class="attr">&quot;metadata&quot;:</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;name&quot;</span><span class="string">:&quot;testchart&quot;</span>,</span><br><span class="line">        <span class="string">&quot;version&quot;</span><span class="string">:&quot;0.1.0&quot;</span>,</span><br><span class="line">        <span class="string">&quot;description&quot;</span><span class="string">:&quot;A</span> <span class="string">Helm</span> <span class="string">chart</span> <span class="string">for</span> <span class="string">Kubernetes&quot;</span>,</span><br><span class="line">        <span class="string">&quot;apiVersion&quot;</span><span class="string">:&quot;v2&quot;</span>,</span><br><span class="line">        <span class="string">&quot;appVersion&quot;</span><span class="string">:&quot;1.16.0&quot;</span>,</span><br><span class="line">        <span class="string">&quot;type&quot;</span><span class="string">:&quot;application&quot;</span>&#125;,</span><br><span class="line">        <span class="string">&quot;lock&quot;</span><span class="string">:null</span>,</span><br><span class="line">        <span class="string">&quot;templates&quot;</span><span class="string">:</span>[</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="attr">&quot;name&quot;:</span></span><br><span class="line">                <span class="string">&quot;templates/deployment.yaml&quot;</span>,</span><br><span class="line">                <span class="string">&quot;data&quot;</span><span class="string">:&quot;YXBpVmVyc2lvbjogYXBwcy92MQpraW5kOiBEZXBsb3ltZW50Cm1ldGFkYXRhOgogIGNyZWF0aW9uVGltZXN0YW1wOiBudWxsCiAgbGFiZWxzOgogICAgYXBwOiBuZ2lueAogIG5hbWU6IG5naW54CnNwZWM6CiAgcmVwbGljYXM6IDEKICBzZWxlY3RvcjoKICAgIG1hdGNoTGFiZWxzOgogICAgICBhcHA6IG5naW54CiAgc3RyYXRlZ3k6IHt9CiAgdGVtcGxhdGU6CiAgICBtZXRhZGF0YToKICAgICAgY3JlYXRpb25UaW1lc3RhbXA6IG51bGwKICAgICAgbGFiZWxzOgogICAgICAgIGFwcDogbmdpbngKICAgIHNwZWM6CiAgICAgIGNvbnRhaW5lcnM6CiAgICAgIC0gaW1hZ2U6IHt7IC5WYWx1ZXMuY29udGFpbmVySW1hZ2UgfX0KICAgICAgICBuYW1lOiBuZ2lueAogICAgICAgIHJlc291cmNlczoge30Kc3RhdHVzOiB7fQo=&quot;</span>&#125;,&#123;<span class="string">&quot;name&quot;</span><span class="string">:&quot;templates/service.yaml&quot;</span>,<span class="string">&quot;data&quot;</span><span class="string">:&quot;YXBpVmVyc2lvbjogdjEKa2luZDogU2VydmljZQptZXRhZGF0YToKICBjcmVhdGlvblRpbWVzdGFtcDogbnVsbAogIGxhYmVsczoKICAgIGFwcDogbmdpbngKICBuYW1lOiBuZ2lueApzcGVjOgogIHBvcnRzOgogIC0gcG9ydDogODAKICAgIHByb3RvY29sOiBUQ1AKICAgIHRhcmdldFBvcnQ6IDgwCiAgc2VsZWN0b3I6CiAgICBhcHA6IG5naW54CiAgdHlwZTogTG9hZEJhbGFuY2VyCnN0YXR1czoKICBsb2FkQmFsYW5jZXI6IHt9Cg==&quot;</span>&#125;],<span class="string">&quot;values&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;containerImage&quot;</span><span class="string">:&quot;nginx:1.17&quot;</span>&#125;,<span class="string">&quot;schema&quot;</span><span class="string">:null</span>,<span class="string">&quot;files&quot;</span><span class="string">:</span>[&#123;<span class="string">&quot;name&quot;</span><span class="string">:&quot;.helmignore&quot;</span>,<span class="string">&quot;data&quot;</span><span class="string">:&quot;IyBQYXR0ZXJucyB0byBpZ25vcmUgd2hlbiBidWlsZGluZyBwYWNrYWdlcy4KIyBUaGlzIHN1cHBvcnRzIHNoZWxsIGdsb2IgbWF0Y2hpbmcsIHJlbGF0aXZlIHBhdGggbWF0Y2hpbmcsIGFuZAojIG5lZ2F0aW9uIChwcmVmaXhlZCB3aXRoICEpLiBPbmx5IG9uZSBwYXR0ZXJuIHBlciBsaW5lLgouRFNfU3RvcmUKIyBDb21tb24gVkNTIGRpcnMKLmdpdC8KLmdpdGlnbm9yZQouYnpyLwouYnpyaWdub3JlCi5oZy8KLmhnaWdub3JlCi5zdm4vCiMgQ29tbW9uIGJhY2t1cCBmaWxlcwoqLnN3cAoqLmJhawoqLnRtcAoqLm9yaWcKKn4KIyBWYXJpb3VzIElERXMKLnByb2plY3QKLmlkZWEvCioudG1wcm9qCi52c2NvZGUvCg==&quot;</span>&#125;]&#125;,</span><br><span class="line">                <span class="string">&quot;manifest&quot;</span><span class="string">:&quot;---\n#</span> </span><br><span class="line">                    <span class="attr">Source:</span> <span class="string">testchart/templates/service.yaml\n</span></span><br><span class="line">                    <span class="attr">apiVersion:</span> <span class="string">v1\n</span></span><br><span class="line">                    <span class="attr">kind:</span> <span class="string">Service\nmetadata:\n</span>  </span><br><span class="line">                    <span class="attr">creationTimestamp:</span> <span class="literal">null</span><span class="string">\n</span>  </span><br><span class="line">                    <span class="string">labels:\n</span>    </span><br><span class="line">                    <span class="attr">app:</span> <span class="string">nginx\n</span>  </span><br><span class="line">                    <span class="attr">name:</span> <span class="string">nginx\n</span></span><br><span class="line">                    <span class="string">spec:\n</span>  </span><br><span class="line">                    <span class="string">ports:\n</span>  </span><br><span class="line">                    <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span><span class="string">\n</span>    </span><br><span class="line">                    <span class="attr">protocol:</span> <span class="string">TCP\n</span>    </span><br><span class="line">                    <span class="attr">targetPort:</span> <span class="number">80</span><span class="string">\n</span>  </span><br><span class="line">                    <span class="string">selector:\n</span>    </span><br><span class="line">                    <span class="attr">app:</span> <span class="string">nginx\n</span>  </span><br><span class="line">                    <span class="attr">type:</span> <span class="string">LoadBalancer\n</span></span><br><span class="line">                    <span class="string">status:\n</span>  <span class="attr">loadBalancer:</span> &#123;&#125;<span class="string">\n---\n#</span> </span><br><span class="line">                     </span><br><span class="line">                    <span class="attr">Source:</span> <span class="string">testchart/templates/deployment.yaml\n</span></span><br><span class="line">                    <span class="attr">apiVersion:</span> <span class="string">apps/v1\n</span></span><br><span class="line">                    <span class="attr">kind:</span> <span class="string">Deployment\n</span></span><br><span class="line">                    <span class="string">metadata:\n</span>  </span><br><span class="line">                    <span class="attr">creationTimestamp:</span> <span class="literal">null</span><span class="string">\n</span>  </span><br><span class="line">                    <span class="string">labels:\n</span>    </span><br><span class="line">                    <span class="attr">app:</span> <span class="string">nginx\n</span>  </span><br><span class="line">                    <span class="attr">name:</span> <span class="string">nginx\nspec:\n</span>  </span><br><span class="line">                    <span class="attr">replicas:</span> <span class="number">1</span><span class="string">\n</span>  </span><br><span class="line">                    <span class="string">selector:\n</span>    </span><br><span class="line">                    <span class="string">matchLabels:\n</span>      </span><br><span class="line">                    <span class="attr">app:</span> <span class="string">nginx\n</span>  </span><br><span class="line">                    <span class="attr">strategy:</span> &#123;&#125;<span class="string">\n</span>  </span><br><span class="line">                    <span class="string">template:\n</span>    </span><br><span class="line">                    <span class="string">metadata:\n</span>      </span><br><span class="line">                    <span class="attr">creationTimestamp:</span> <span class="literal">null</span><span class="string">\n</span>      </span><br><span class="line">                    <span class="string">labels:\n</span>        </span><br><span class="line">                    <span class="attr">app:</span> <span class="string">nginx\n</span>    </span><br><span class="line">                    <span class="string">spec:\n</span>      </span><br><span class="line">                    <span class="string">containers:\n</span>      </span><br><span class="line">                    <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">nginx:1.17\n</span>        </span><br><span class="line">                    <span class="attr">name:</span> <span class="string">nginx\n</span>        </span><br><span class="line">                    <span class="attr">resources:</span> &#123;&#125;<span class="string">\n</span></span><br><span class="line">                    <span class="attr">status:</span> &#123;&#125;<span class="string">\n&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;version&quot;</span><span class="string">:1</span>,</span><br><span class="line">                    <span class="string">&quot;namespace&quot;</span><span class="string">:&quot;default&quot;</span></span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+
+<p>BOOM！看起来就像我们的deployment和service清单！我们可以看到最初的Helm版本中包含的所有信息（确认容器镜像为nginx:1.17）！</p>
+<p>因此，通过将这些信息作为secrets存储在目标Kubernetes集群中，即使已删除了旧的replicasets，Helm也可以回滚升级！太酷了！</p>
+<p>不过结果还不是很清晰，查看data字段……看起来像是加密信息。</p>
+<p>让我们解密吧！这次在命令行上：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret sh.helm.release.v1.testchart.v1 -o jsonpath=&quot;&#123; .data.release &#125;&quot; | base64 -d | gunzip -c | jq &#x27;.chart.templates[].data&#x27; | tr -d &#x27;&quot;&#x27; | base64 -d</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/decode-helm-secret.png" alt="decode-helm-secret"></p>
+<p>哈！这里有deployment和service的yaml文件！</p>
+<p>通过使用Helm，即使已删除deployment的旧replicasets，我们也可以回滚，因为Helm将Release历史记录在secrets并存储在目标Kubernetes集群中。通过使用上面的代码，我们可以解密这些secrets并查看其中包含的信息。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/12/25/k8s/Decoding-A-Helm-Chart-Releases/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/25/k8s/Decoding-A-Helm-Chart-Releases/" class="post-title-link" itemprop="url">解析Helm Char Release内容</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-25 21:05:35" itemprop="dateCreated datePublished" datetime="2020-12-25T21:05:35+00:00">2020-12-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>如果我们在集群中安装了Helm Chart，可能会想知道Release的存储位置。</p>
+<h2 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h2><p>让我们从一些背景开始。安装一个简单的Nginx Helm Chart：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm install --name my-release stable/nginx-ingress</span></span><br></pre></td></tr></table></figure>
+
+<p>现在，要获取已安装Helm的详细信息，可以使用四个命令。</p>
+<p><strong>helm ls</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm <span class="built_in">ls</span></span> </span><br><span class="line">NAME        REVISION	UPDATED                 	STATUS  	</span><br><span class="line">my-release  1      	    Wed Sep 12 07:41:48 2018	DEPLOYED</span><br></pre></td></tr></table></figure>
+
+<p>通常，我们要运行的第一个命令是helm ls。执行此操作是为了了解我们的集群中当前安装了哪些Helm Chart。无论它们是否失败，<code>STATUS</code>会展示出部署结果是成功还是失败。</p>
+<p><strong>helm get</strong></p>
+<p>一旦获得安装Chart的名称。下一步通常是尝试更详细地了解安装了什么。<code>helm get</code>命令可以为我们提供帮助。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm get my-release</span></span><br><span class="line">REVISION: 1</span><br><span class="line">RELEASED: Thu Mar 23 15:59:14 2017</span><br><span class="line">CHART: nginx-1.0</span><br><span class="line">USER-SUPPLIED VALUES:</span><br><span class="line">foo: bar</span><br><span class="line"></span><br><span class="line">COMPUTED VALUES:</span><br><span class="line">foo: bar</span><br><span class="line">image: nginx</span><br><span class="line">imagePullPolicy: IfNotPresent</span><br><span class="line">ingress:</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">**....**</span>  </span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>helm status</strong></p>
+<p>如果我们遇到任何问题，并且希望获得Chart开发人员写下的一些说明。<code>helm status</code>可以通过呈现NOTES.txt文件来帮助我们。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ helm status my-release</span><br><span class="line">The nginx-ingress controller has been installed. </span><br><span class="line">Get the application URL by running these commands:</span><br><span class="line">export NODE_IP=$(kubectl --namespace &#123;&#123; .Release.Namespace &#125;&#125; get nodes -o jsonpath=&quot;&#123;.items[0].status.addresses[1].address&#125;&quot;)   </span><br><span class="line">echo &quot;Visit http://10.10.10.10:80 to access your application via HTTP.&quot;  </span><br><span class="line">echo &quot;Visit https://10.10.10.10:443 to access your application via HTTPS.&quot;</span><br></pre></td></tr></table></figure>
+
+<p>上面的Helm状态可以通过values.yaml或–set修改。这是从NOTES.txt呈现的帮助者文本。</p>
+<p><strong>helm history</strong></p>
+<p>最后，我们还可以获得Chart部署的修订历史记录。当运行<code>helm upgrade</code>命令时会更新版本。假设我们要使用override.yaml覆盖某些值。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm upgrade --install my-release --values override.yaml --<span class="built_in">set</span> foo=notbar nginx</span> </span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm <span class="built_in">history</span> my-release</span></span><br><span class="line">REVISION    UPDATED                     STATUS      CHART           DESCRIPTION</span><br><span class="line">1           Thu Mar 23 15:57:40 2020    SUPERSEDED  nginx-0.4.3 Install complete</span><br><span class="line">2           Thu Mar 23 15:59:14 2020    DEPLOYED    nginx-0.4.3 Upgrade complete</span><br></pre></td></tr></table></figure>
+
+<p>所有这些信息都存储在哪里？</p>
+<ul>
+<li><p>Helm v2版本，默认位置在<code>configmap</code>中：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get configmap -n kube-system -l <span class="string">&quot;OWNER=TILLER&quot;</span></span></span><br><span class="line">NAME                     DATA      AGE</span><br><span class="line">my-release.v1          1         7m</span><br><span class="line">my-release.v2          1         6m</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>Helm v3版本，默认位置在<code>secrets</code>中。<strong>强烈建议这样做</strong>，因为这些数据包含许多有关我们部署的信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get secrets -n kube-system</span></span><br><span class="line">NAME                     DATA      AGE</span><br><span class="line">my-release.v1          1         7m</span><br><span class="line">my-release.v2          1         6m</span><br><span class="line">default-token-43hfuds  1         1d</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="解析Configmap内容"><a href="#解析Configmap内容" class="headerlink" title="解析Configmap内容"></a>解析Configmap内容</h2><p>步骤1. 获取Configmap数据：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get configmap -n kube-system my-release.v1 -o=jsonpath=<span class="string">&#x27;&#123;.data.release&#125;&#x27;</span> &gt; release-encoded</span></span><br></pre></td></tr></table></figure>
+
+<p>步骤2. 确保编码后的Release包含如下字符串：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">H4sIAAAAAAAC/+w6TY8cS.....</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">you should see a long block of string like above</span></span><br></pre></td></tr></table></figure>
+
+<p>步骤3. 解析数据：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat release-encoded | base64 -d | gzip -cd &gt; release-decoded</span><br></pre></td></tr></table></figure>
+
+<p>步骤4. 查看数据：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat release-decoded</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">you should see a whole bunch of data <span class="keyword">for</span> the chart similar to above when you did helm get.</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">but also this data contains a lot more like. the actual template. Value rendered.. etc...</span> </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">try it :) i already gave you the commands 🤠⽕😁🏃🏼‍</span></span><br></pre></td></tr></table></figure>
+
+<p>将Chart存储在<code>configmaps</code>中的问题在于，一旦黑客进入我们的集群，它就会成为黑客的金钥匙。将其存储为<code>secrets</code>可以提供某种保护（假设我们对机密信息进行了加密）。☸️</p>
+<h2 id="解析Secrets内容"><a href="#解析Secrets内容" class="headerlink" title="解析Secrets内容"></a>解析Secrets内容</h2><p>步骤1. 解析指定版本的Release所有内容（Template内容依然是编码格式）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret sh.helm.release.v1.my-release.v1 -o jsonpath=&quot;&#123; .data.release &#125;&quot; | base64 -d | gunzip -c | jq .</span><br></pre></td></tr></table></figure>
+
+<p>步骤2. 解析指定版本的Release中的Template内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret sh.helm.release.v1.my-release.v1 -o jsonpath=&quot;&#123; .data.release &#125;&quot; | base64 -d | gunzip -c | jq &#x27;.chart.templates[].data&#x27; | tr -d &#x27;&quot;&#x27; | base64 -d</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注：该方法同样适用于解析Configmap内容。</p>
+</blockquote>
+<h2 id="一些建议"><a href="#一些建议" class="headerlink" title="一些建议"></a>一些建议</h2><p>还有一些保护<code>tiller</code>的方法，例如使用https连接。但是，按照设计，<code>tiller</code>仍然需要大量特权才能在我们的集群中运行。并且仍然违反<strong>最小特权原则</strong>。<strong>我的建议是尽快移至helm3</strong>。</p>
+<p>Helm3完全删除了tiller，而是依靠本地计算机的身份验证在群集中工作。默认情况下，它还将Chart数据作为<code>secrets</code>存储在群集中。<strong>Helm2将在2020年12月停止提供安全修复程序</strong>。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/11/12/k8s/Kubernetes-Production-Best-Practices/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/12/k8s/Kubernetes-Production-Best-Practices/" class="post-title-link" itemprop="url">Kubernetes生产环境最佳实践</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-12 22:10:44" itemprop="dateCreated datePublished" datetime="2020-11-12T22:10:44+00:00">2020-11-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>本文提供了在Kubernetes上部署安全，可伸缩和弹性服务的最佳实践。内容开源在<a target="_blank" rel="noopener" href="https://github.com/learnk8s/kubernetes-production-best-practices">github仓库</a>。如果有缺少或不足之处，欢迎提issue。</p>
+<h2 id="Part1-应用开发"><a href="#Part1-应用开发" class="headerlink" title="Part1 应用开发"></a>Part1 应用开发</h2><h3 id="健康检测"><a href="#健康检测" class="headerlink" title="健康检测"></a><strong>健康检测</strong></h3><ul>
+<li><strong>为容器配置Readiness探针</strong><ul>
+<li>如果未设置readiness探针，则kubelet会假定该应用程序已准备就绪，可以在容器启动后立即接收流量。</li>
+<li>如果容器需要2分钟才能启动，则这2分钟内对容器的所有请求将失败。</li>
+</ul>
+</li>
+<li><strong>发生致命错误时允许容器崩溃</strong><ul>
+<li><p>如果应用程序遇到不可恢复的错误，则应使其崩溃。</p>
+</li>
+<li><p>此类不可恢复的错误的示例是：</p>
+<ol>
+<li>未捕获的异常</li>
+<li>代码中的错字（动态语言）</li>
+<li>无法加载标头或依赖项</li>
+</ol>
+</li>
+<li><p>上述错误不应发信号通知Liveness探针失败。相反，应该立即退出该进程，并让kubelet重新启动容器。</p>
+</li>
+</ul>
+</li>
+<li><strong>配置被动的Liveness探针</strong><ul>
+<li>Liveness探针旨在容器卡住时重新启动容器。</li>
+<li>考虑以下情形：如果应用程序正在处理无限循环，则无法退出。当该进程消耗100％的CPU时，将没有时间回复（其他）Readiness探针检查，并且最终将其从服务中删除。但是，该Pod仍被注册为当前Deployment的活动副本。如果没有Liveness探针，它将保持运行状态，但与服务分离。换句话说，该进程不仅不处理任何请求，而且也在消耗资源。</li>
+<li>请注意，不应该使用Liveness探针来处理应用程序中的致命错误，并要求Kubernetes重新启动应用程序。相反，应该让应用程序崩溃。仅在过程无响应的情况下，才应将“liveness”探针用作恢复机制。</li>
+</ul>
+</li>
+<li><strong>两个探针的值不同</strong><ul>
+<li>当“liveness”和“readiness”探针指向相同的端点时，探针的作用会合并在一起。当应用程序发出信号表明尚未准备就绪或尚待运行时，kubelet会将容器与服务分离并同时将其删除。这时可能会注意到连接断开，因为容器没有足够的时间耗尽当前连接或处理传入的连接。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://freecontent.manning.com/handling-client-requests-properly-with-kubernetes/">handling-client-requests-properly-with-kubernetes&#x2F;</a></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>请注意，readiness和liveness没有默认值。</p>
+</blockquote>
+<h3 id="应用独立"><a href="#应用独立" class="headerlink" title="应用独立"></a><strong>应用独立</strong></h3><ul>
+<li><p><strong>Readiness探针是独立的</strong></p>
+<ul>
+<li>Readiness不包括对服务的依赖性，例如：数据库、数据库的迁移、API、第三方服务（<a target="_blank" rel="noopener" href="https://blog.colinbreck.com/kubernetes-liveness-and-readiness-probes-how-to-avoid-shooting-yourself-in-the-foot/#shootingyourselfinthefootwithreadinessprobes">反例</a>）</li>
+</ul>
+</li>
+<li><p><strong>应用重试连接到依赖服务</strong></p>
+<ul>
+<li>应用启动时，它不应该因为数据库等依赖项尚未就绪而崩溃。相反，应用程序应继续尝试重新连接数据库，直到成功为止。</li>
+<li>Kubernetes希望可以以任何顺序启动应用程序。当确保应用程序可以重新连接到诸如数据库之类的依赖项时，便知道可以提供更强大，更灵活的服务。</li>
+</ul>
+</li>
+</ul>
+<h3 id="友好关闭"><a href="#友好关闭" class="headerlink" title="友好关闭"></a><strong>友好关闭</strong></h3><ul>
+<li><strong>应用程序未通过SIGTERM关闭，但可以正常终止连接</strong><ul>
+<li>可能需要一些时间才能感知到诸如kube-proxy或Ingress控制器之类的组件endpoint更改。因此，尽管标记为已终止，流量仍可能流向Pod。</li>
+<li>应用程序应停止在所有剩余连接上接受新请求，并在耗尽传出队列后将其关闭。</li>
+<li>如果想回顾endpoint在群集中的传播方式，请参考：<a target="_blank" rel="noopener" href="https://freecontent.manning.com/handling-client-requests-properly-with-kubernetes/">handling-client-requests-properly-with-kubernetes&#x2F;</a></li>
+</ul>
+</li>
+<li><strong>应用程序仍在宽限期内处理传入的请求</strong><ul>
+<li>可能要考虑使用容器生命周期事件（例如preStop处理程序）来自定义Pod删除之前发生的情况。</li>
+</ul>
+</li>
+<li><strong>Dockerfile中的CMD将SIGTERM转发到进程</strong><ul>
+<li>通过在应用中捕获SIGTERM信号，可以在Pod即将终止时收到通知。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://pracucci.com/graceful-shutdown-of-kubernetes-pods.html">graceful-shutdown-of-kubernetes-pods</a></li>
+</ul>
+</li>
+<li><strong>关闭所有空闲的keep-alive套接字</strong><ul>
+<li>如果应用程序调用未关闭TCP连接（例如使用TCP保持活动状态或连接池），它将连接到一个Pod，而不使用该服务中的其他Pod。</li>
+<li>不应该突然终止长期存在的连接。相反，应该在关闭应用程序之前终止它们。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="http://dillonbuchanan.com/programming/gracefully-shutting-down-a-nodejs-http-server/">gracefully-shutting-down-a-nodejs-http-server</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="失败容忍"><a href="#失败容忍" class="headerlink" title="失败容忍"></a><strong>失败容忍</strong></h3><ul>
+<li><strong>为Deployment部署运行多个副本</strong><ul>
+<li>切勿单独运行一个Pod类型的资源，而是考虑将Pod作为Deployment，DaemonSet，ReplicaSet或StatefulSet的一部分进行部署。</li>
+<li>示例参考：<a target="_blank" rel="noopener" href="https://cloudmark.github.io/Node-Management-In-GKE/#replicas">Node-Management-In-GKE</a></li>
+</ul>
+</li>
+<li><strong>避免将Pod放置在单个节点中</strong><ul>
+<li>即使运行Pod的多个副本，也无法保证丢失节点不会影响服务。</li>
+<li>应该将反关联性规则应用于部署，以便Pod分布在群集的所有节点中。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinit">inter-pod-affinity-and-anti-affinit</a></li>
+</ul>
+</li>
+<li><strong>设定Pod中断预算</strong><ul>
+<li>drain节点后，该节点上的所有Pod都将被删除并重新安排。</li>
+<li>为了保护Deployment免受可能同时摧毁多个Pod的意外事件的影响，可以定义Pod中断预算。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/pods/disruptions/">pod-disruptions</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="资源使用"><a href="#资源使用" class="headerlink" title="资源使用"></a><strong>资源使用</strong></h3><ul>
+<li><strong>为所有容器设置内存限制和请求</strong><ul>
+<li>资源限制用于限制容器可以使用多少CPU和内存，并使用containerSpec的resources属性设置。</li>
+<li>调度程序将这些用作度量标准之一，以确定哪个节点最适合当前Pod。</li>
+<li>根据调度程序，没有内存限制的容器的内存利用率为零。</li>
+<li>如果可调度在任何节点上的Pod数量不受限制，则会导致资源超负荷使用并可能导致节点（和kubelet）崩溃。</li>
+<li>如果容器进程超出内存限制，则该进程将终止。由于CPU是可压缩的资源，因此如果容器超出限制，则将限制该过程。即使它可以使用当时可用的某些CPU。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://medium.com/@betz.mark/understanding-resource-limits-in-kubernetes-memory-6b41e9a955f9">understanding-resource-limits-in-kubernetes-memory</a>，<a target="_blank" rel="noopener" href="https://medium.com/@betz.mark/understanding-resource-limits-in-kubernetes-cpu-time-9eff74d3161b">understanding-resource-limits-in-kubernetes-cpu</a></li>
+</ul>
+</li>
+<li><strong>将CPU请求设置为1个CPU或以下</strong><ul>
+<li>除非有计算密集型作业，否则建议将请求设置为1个CPU或更低.</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=xjpHggHKm78">YouTube视频</a></li>
+</ul>
+</li>
+<li><strong>禁用CPU限制—除非有很好的用例</strong><ul>
+<li>CPU 资源以 <em>CPU</em> 单位度量。</li>
+<li>cpu：1表示每秒1个CPU单位。如果有1个线程，则每秒消耗的CPU时间不能超过1秒。如果有2个线程，则可以在0.5秒内消耗1个CPU单位。8个线程可以在0.125秒内消耗1个CPU单位。此后，请求将受到限制。</li>
+<li>如果不确定最佳应用设置，最好不要设置CPU限制。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://medium.com/@betz.mark/understanding-resource-limits-in-kubernetes-cpu-time-9eff74d3161b">understanding-resource-limits-in-kubernetes-cpu</a></li>
+</ul>
+</li>
+<li><strong>命名空间具有LimitRange</strong><ul>
+<li>如果我们认为可能忘记设置内存和CPU限制，则应考虑使用LimitRange对象为当前名称空间中部署的容器定义标准大小。</li>
+<li>设置方法参考：<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/policy/limit-range/">limit-range</a></li>
+</ul>
+</li>
+<li><strong>为Pod设置适当的服务质量（QoS）</strong><ul>
+<li>当节点进入过量使用状态（即使用过多资源）时，Kubernetes会尝试驱逐该节点中的某些Pod。</li>
+<li>Kubernetes根据定义明确的逻辑对Pod进行排名和逐出。</li>
+<li>设置方法参考：<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/">quality-service-pod</a></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>请注意，如果不确定如何配置正确的CPU或内存限制，则可以使用Kubernetes中的Vertical Pod Autoscaler。自动缩放器会分析应用并给出建议的值。</p>
+</blockquote>
+<h3 id="标签资源"><a href="#标签资源" class="headerlink" title="标签资源"></a><strong>标签资源</strong></h3><ul>
+<li><strong>定义技术标签</strong></li>
+<li><strong>定义业务标签</strong></li>
+<li><strong>定义安全标签</strong></li>
+</ul>
+<h3 id="日志配置"><a href="#日志配置" class="headerlink" title="日志配置"></a><strong>日志配置</strong></h3><ul>
+<li><strong>将应用程序日志记录到stdout和stderr</strong><ul>
+<li>有两种日志记录策略：被动和主动。使用被动日志记录的应用程序不了解日志记录基础结构，而是将消息记录到标准输出中。</li>
+<li>在主动日志记录中，该应用程序与中间聚合器建立网络连接，将数据发送到第三方日志记录服务，或直接写入数据库或索引。主动日志记录被视为反模式，应避免使用它。</li>
+<li>最佳实践参考：<a target="_blank" rel="noopener" href="https://12factor.net/logs">logs</a></li>
+</ul>
+</li>
+<li><strong>避免使用sidecar记录日志（如果可以的话）</strong><ul>
+<li>如果希望将日志转换应用于具有非标准日志事件模型的应用程序，则可能需要使用sidecar容器。</li>
+<li>使用Sidecar容器，可以在将日志条目运送到其他地方之前对其进行规范化。例如，先将Apache日志转换为Logstash JSON格式，然后再将其发送到日志基础结构。但是，如果可以控制应用程序，则可以从一开始就输出正确的格式。这样可以节省为集群中的每个Pod运行额外的容器的时间。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Pod扩缩容"><a href="#Pod扩缩容" class="headerlink" title="Pod扩缩容"></a><strong>Pod扩缩容</strong></h3><ul>
+<li><strong>容器在其本地文件系统中不存储任何状态</strong><ul>
+<li>容器可以访问本地文件系统，用户可能会想使用它来持久化数据。</li>
+<li>但是，将持久性数据存储在容器的本地文件系统中会阻止Pod进行水平缩放（即通过添加或删除Pod的副本）。</li>
+<li>这是因为，通过使用本地文件系统，每个容器都维护自己的“状态”，这意味着Pod副本的状态可能会随时间而变化。从用户的角度来看，这会导致行为不一致（例如，当请求命中一个Pod时，一条特定的用户信息可用，但当请求命中另一个Pod时，则不可用）。</li>
+<li>相反，任何持久性信息都应保存在Pod外部的集中位置。例如，在集群中的PersistentVolume中，或者在集群外部的某些存储服务中甚至更好。</li>
+</ul>
+</li>
+<li><strong>对具有可变使用模式的应用程序使用HPA</strong><ul>
+<li>HPA是内置的Kubernetes功能，可监视应用程序并根据当前使用情况自动添加或删除Pod副本。</li>
+<li>配置HPA可使应用在任何流量情况下（包括意外的高峰）保持可用并响应。</li>
+<li>配置HPA时必须创建一个HorizontalPodAutoscaler资源，该资源定义要监视的应用程序的度量。</li>
+<li>HPA可以监视内置资源指标（Pod的CPU和内存使用情况）或自定义指标。对于自定义指标，还负责收集和公开这些指标，例如，可以使用Prometheus和Prometheus Adapter进行此操作。</li>
+</ul>
+</li>
+<li><strong>Vertical Pod Autoscaler仍处于Beta版，请勿使用</strong><ul>
+<li>类似于HPA，还有VPA。</li>
+<li>VPA可以自动调整Pod的资源请求和限制，以便当Pod需要更多资源时可以获取它们（增加&#x2F;减少单个Pod的资源称为垂直缩放，与水平缩放相对）。</li>
+<li>这对于缩放无法水平缩放的应用程序很有用。</li>
+<li>但是，HPA当前处于beta版本，它具有一些已知的局限性（例如，通过更改其资源要求来扩展Pod，要求终止Pod并重新启动它）。</li>
+<li>考虑到这些限制以及Kubernetes上大多数应用程序都可以水平扩展的事实，建议不要在生产环境中使用VPA（至少要等到稳定的版本才能使用）。</li>
+</ul>
+</li>
+<li><strong>如果工作负载差异很大，请使用群集自动伸缩放器</strong><ul>
+<li>群集自动缩放器是“自动缩放器”的另一种类型（HAP和VPA除外）。</li>
+<li>群集自动缩放器可以通过添加或删除工作节点来自动缩放群集的大小。</li>
+<li>当由于现有工作节点上的资源不足而无法调度Pod时，会进行放大操作。在这种情况下，Cluster Autoscaler将创建一个新的工作节点，以便可以调度Pod。同样，当现有工作节点的利用率较低时，群集自动伸缩程序可以通过从一个工作节点中逐出所有工作负载并将其删除来进行缩减。</li>
+<li>对于高度可变的工作负载，例如当Pods的数量可能在短时间内成倍增长然后返回到先前的值时，使用Cluster Autoscaler是有意义的。在这种情况下，群集自动伸缩器可以满足需求高峰，而不会通过过度配置工作节点来浪费资源。</li>
+<li>但是，如果工作负载变化不大，则可能不值得设置Cluster Autoscaler，因为它可能永远不会触发。如果工作负载缓慢且单调地增长，则足以监视现有工作节点的利用率并在达到临界值时手动添加其他工作节点。</li>
+</ul>
+</li>
+</ul>
+<h3 id="配置原则"><a href="#配置原则" class="headerlink" title="配置原则"></a><strong>配置原则</strong></h3><ul>
+<li><strong>外部化所有配置</strong><ul>
+<li>配置应在应用程序代码之外进行维护。</li>
+<li>这有几个好处。首先，更改配置不需要重新编译应用程序。其次，可以在应用程序运行时更新配置。第三，相同的代码可以在不同的环境中使用。</li>
+<li>在Kubernetes中，可以将配置保存在ConfigMaps中，然后可以在将卷作为环境变量传入时将其安装到容器中。</li>
+<li>在ConfigMap中仅保存非敏感配置。对于敏感信息（例如凭据），请使用Secret资源。</li>
+</ul>
+</li>
+<li><strong>将Secrets作为卷而不是环境变量安装</strong><ul>
+<li>Secret资源的内容应作为卷装入容器中，而不应作为环境变量传递。</li>
+<li>这是为了防止秘密值出现在用于启动容器的命令中，该命令可能由不应该访问秘密值的人员看到。</li>
+</ul>
+</li>
+</ul>
+<h2 id="Part2-集群管理"><a href="#Part2-集群管理" class="headerlink" title="Part2 集群管理"></a>Part2 集群管理</h2><h3 id="命名空间限制"><a href="#命名空间限制" class="headerlink" title="命名空间限制"></a><strong>命名空间限制</strong></h3><ul>
+<li><strong>命名空间具有LimitRange</strong><ul>
+<li>没有限制的容器可能导致与其他容器的资源争用以及计算资源的消耗。</li>
+<li>Kubernetes具有两个限制资源利用的功能：ResourceQuota和LimitRange。</li>
+<li>使用LimitRange对象，可以定义资源请求的默认值以及名称空间内单个容器的限制。</li>
+<li>在该命名空间内创建的，未明确指定请求和限制值的任何容器都将分配为默认值。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/policy/resource-quotas/">resource-quotas</a></li>
+</ul>
+</li>
+<li><strong>命名空间具有ResourceQuotas</strong><ul>
+<li>使用ResourceQuotas，可以限制命名空间内所有容器的总资源消耗。</li>
+<li>定义命名空间的资源配额会限制属于该名称空间的所有容器可以消耗的CPU，内存或存储资源的总量。</li>
+<li>还可以为其他Kubernetes对象设置配额，例如当前名称空间中的Pod数量。</li>
+<li>如果存在他人使用群集并创建20000 ConfigMap，则可以使用LimitRange来防止这种情况。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Pod安全策略"><a href="#Pod安全策略" class="headerlink" title="Pod安全策略"></a><strong>Pod安全策略</strong></h3><ul>
+<li><p><strong>启用Pod安全策略</strong></p>
+<ul>
+<li>例如，可以使用Kubernetes Pod安全策略来限制：<ol>
+<li>访问主机进程或网络名称空间；</li>
+<li>运行特权容器容器；</li>
+<li>运行的用户；</li>
+<li>访问主机文件系统；</li>
+<li>Linux功能，Seccomp或SELinux配置文件</li>
+</ol>
+</li>
+<li>选择正确的策略取决于集群的性质。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://resources.whitesourcesoftware.com/blog-whitesource/kubernetes-pod-security-policy">kubernetes-pod-security-policy</a></li>
+</ul>
+</li>
+<li><p><strong>禁用特权容器</strong></p>
+<ul>
+<li>在Pod中，容器可以以“特权”模式运行，并且对主机系统上的资源的访问几乎不受限制。</li>
+<li>尽管在某些特定的用例中，必须具有这种级别的访问权限，但总的来说，让容器执行此操作存在安全风险。</li>
+<li>特权Pod的有效使用案例包括在节点上使用硬件，例如GPU。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">security-context</a></li>
+</ul>
+</li>
+<li><p><strong>在容器中使用只读文件系统</strong></p>
+<ul>
+<li>在容器中运行只读文件系统会强制容器不可变。</li>
+<li>这不仅减轻了一些旧的（且有风险的）做法（例如热修补），而且还帮助防止了恶意进程在容器内存储或操作数据的风险。</li>
+<li>使用只读文件系统运行容器听起来可能很简单，但是可能会带来一些复杂性。</li>
+<li>如果需要写日志或将文件存储在临时文件夹中怎么办？</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://medium.com/@axbaretto/running-docker-containers-securely-in-production-98b8104ef68">running-docker-containers-securely-in-production</a></li>
+</ul>
+</li>
+<li><p><strong>防止容器以root身份运行</strong></p>
+<ul>
+<li>在容器中运行的进程与主机上的任何其他进程没有什么不同，只不过它有一小部分元数据声明它在容器中。</li>
+<li>因此，容器中的根与主机上的根（uid 0）相同。</li>
+<li>如果用户设法脱离了以root用户身份在容器中运行的应用程序，则他们可能能够使用同一root用户获得对主机的访问权限。</li>
+<li>配置容器以使用非特权用户是防止特权升级攻击的最佳方法。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://medium.com/@mccode/processes-in-containers-should-not-run-as-root-2feae3f0df3b">processes-in-containers-should-not-run-as-root</a></li>
+</ul>
+</li>
+<li><p><strong>限制capabilities</strong></p>
+<ul>
+<li><p>Linux capabilities使进程能够执行许多特权操作，其中只有root用户默认可以执行。</p>
+</li>
+<li><p>例如，CAP_CHOWN允许进程“对文件UID和GID进行任意更改”。</p>
+</li>
+<li><p>即使进程不是以root身份运行，进程也有可能通过提升特权来使用那些类似root的功能。</p>
+</li>
+<li><p>换句话说，如果不想受到损害，则应仅启用所需的功能。</p>
+</li>
+<li><p>但是应该启用什么功能？为什么？以下两篇文章探讨了有关Linux内核功能的理论和最佳实践：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.container-solutions.com/linux-capabilities-why-they-exist-and-how-they-work">Linux Capabilities: Why They Exist and How They Work</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.container-solutions.com/linux-capabilities-in-practice">Linux Capabilities In Practice</a></p>
+</li>
+</ul>
+</li>
+<li><p><strong>防止特权升级</strong></p>
+<ul>
+<li>应该在关闭特权升级的情况下运行容器，以防止使用setuid或setgid二进制文件提升特权。</li>
+</ul>
+</li>
+</ul>
+<h3 id="网络策略"><a href="#网络策略" class="headerlink" title="网络策略"></a><strong>网络策略</strong></h3><ul>
+<li><strong>启用网络策略</strong><ul>
+<li>Kubernetes网络策略指定Pod组的访问权限，就像云中的安全组用于控制对VM实例的访问一样。</li>
+<li>换句话说，它在Kubernetes集群上运行的Pod之间创建了防火墙。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://ahmet.im/blog/kubernetes-network-policy/">Securing Kubernetes Cluster Networking</a></li>
+</ul>
+</li>
+<li><strong>每个命名空间中都有一个保守的NetworkPolicy</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/ahmetb/kubernetes-network-policy-recipes">存储库</a>包含Kubernetes网络策略的各种用例和示例YAML文件。</li>
+<li>如果想知道如何丢弃&#x2F;限制在Kubernetes上运行的应用程序的流量，请阅读<a target="_blank" rel="noopener" href="https://github.com/ahmetb/kubernetes-network-policy-recipes">how to drop&#x2F;restrict traffic to applications running on Kubernetes</a>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="RBAC策略"><a href="#RBAC策略" class="headerlink" title="RBAC策略"></a><strong>RBAC策略</strong></h3><ul>
+<li><strong>禁用默认服务帐户的自动挂载RBAC策略</strong><ul>
+<li>请注意，默认的ServiceAccount将自动安装到所有Pod的文件系统中，详见<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#use-the-default-service-account-to-access-the-api-server">use-the-default-service-account-to-access-the-api-server</a></li>
+<li>可能要禁用它并提供更详细的策略。</li>
+</ul>
+</li>
+<li><strong>设置为所需的最少特权</strong><ul>
+<li>寻找有关如何设置RBAC规则的好的建议是一项挑战。</li>
+<li>在<a target="_blank" rel="noopener" href="https://thenewstack.io/three-realistic-approaches-to-kubernetes-rbac/">Kubernetes RBAC的3种现实方法</a>中，可以找到三种实用场景和有关如何入门的实用建议。</li>
+</ul>
+</li>
+<li><strong>RBAC策略是精细的，不能共享</strong><ul>
+<li>Zalando有一个简洁的策略来定义角色和ServiceAccounts。</li>
+<li>首先，他们描述他们的要求：<ol>
+<li>用户应该能够部署，但不应允许他们查看如“secret”这类资源</li>
+<li>管理员应拥有对所有资源的完全访问权限</li>
+<li>默认情况下，应用程序不应获得对Kubernetes API的写访问权限</li>
+<li>对于某些用途，可以有Kubernetes API写权限。</li>
+</ol>
+</li>
+<li>四个要求转化为五个单独的角色：<ol>
+<li>ReadOnly</li>
+<li>PowerUser</li>
+<li>Operator</li>
+<li>Controller</li>
+<li>Admin</li>
+</ol>
+</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://kubernetes-on-aws.readthedocs.io/en/latest/dev-guide/arch/access-control/adr-004-roles-and-service-accounts.html">access-control-roles-and-service-accounts</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="自定义策略"><a href="#自定义策略" class="headerlink" title="自定义策略"></a><strong>自定义策略</strong></h3><ul>
+<li><strong>只允许从已知registry部署容器</strong><ul>
+<li>可能要考虑的最常见的自定义策略之一是限制可以在群集中部署的镜像。</li>
+<li><a target="_blank" rel="noopener" href="https://blog.openpolicyagent.org/securing-the-kubernetes-api-with-open-policy-agent-ce93af0552c3#3c6e">参考文档</a>说明了如何使用开放策略代理来限制未批准的镜像。</li>
+</ul>
+</li>
+<li><strong>强制Ingress主机名唯一</strong><ul>
+<li>用户创建Ingress清单时，可以使用其中的任何主机名。</li>
+<li>但是，可能希望阻止用户多次使用相同的主机名并互相覆盖。</li>
+<li>Open Policy Agent的<a target="_blank" rel="noopener" href="https://www.openpolicyagent.org/docs/latest/kubernetes-tutorial/#4-define-a-policy-and-load-it-into-opa-via-kubernetes">官方文档</a>包含有关如何在validation Webhook中检查Ingress资源的教程。</li>
+</ul>
+</li>
+<li><strong>仅在Ingress主机名中使用批准的域名</strong><ul>
+<li>用户创建Ingress清单时，可以使用其中的任何主机名。</li>
+<li>但是，可能希望阻止用户使用无效的主机名。</li>
+<li>Open Policy Agent的<a target="_blank" rel="noopener" href="https://www.openpolicyagent.org/docs/latest/kubernetes-tutorial/#4-define-a-policy-and-load-it-into-opa-via-kubernetes">官方文档</a>包含有关如何在validation Webhook中检查Ingress资源的教程。</li>
+</ul>
+</li>
+</ul>
+<h2 id="Part3-集群配置"><a href="#Part3-集群配置" class="headerlink" title="Part3 集群配置"></a>Part3 集群配置</h2><blockquote>
+<p>该部分还在进行中。如果对这部分内容有意见，欢迎提issue。</p>
+</blockquote>
+<h3 id="集群要求"><a href="#集群要求" class="headerlink" title="集群要求"></a><strong>集群要求</strong></h3><ul>
+<li><p><strong>集群通过CIS基准测试</strong></p>
+<ul>
+<li>互联网安全中心提供了一些准则和基准测试，以确保代码安全的最佳做法</li>
+<li>他们还维护了Kubernetes的基准，可以从<a target="_blank" rel="noopener" href="https://www.cisecurity.org/benchmark/kubernetes/">官方网站</a>上下载该基准。</li>
+<li>虽然可以阅读冗长的指南并手动检查集群是否符合要求，但更简单的方法是下载并执行<a target="_blank" rel="noopener" href="https://github.com/aquasecurity/kube-bench">kube-bench</a>。</li>
+<li>kube-bench是一个工具，用于自动执行CIS Kubernetes基准测试并报告集群中的错误配置。</li>
+</ul>
+<blockquote>
+<p>请注意，无法使用kube-bench检查托管集群（例如GKE，EKS和AKS）的主节点。主节点由云提供商控制。</p>
+</blockquote>
+</li>
+<li><p><strong>禁用云提供商的元数据API</strong></p>
+<ul>
+<li>云平台（AWS，Azure，GCE等）通常将本地元数据服务公开给实例。</li>
+<li>默认情况下，实例上运行的Pod可以访问这些API，并且可以包含该节点的云凭据或诸如kubelet凭据之类的置备数据。</li>
+<li>这些凭据可用于在群集内升级或升级到同一帐户下的其他云服务。</li>
+</ul>
+</li>
+<li><p><strong>限制对Alpha或Beta功能的访问</strong></p>
+<ul>
+<li>Alpha和Beta Kubernetes功能正在积极开发中，可能会存在限制或错误，从而导致安全漏洞。</li>
+<li>始终评估Alpha或Beta功能可能提供的价值，以防对安全状况造成潜在风险。</li>
+<li>如有疑问，请禁用不使用的功能。</li>
+</ul>
+</li>
+</ul>
+<h3 id="身份认证"><a href="#身份认证" class="headerlink" title="身份认证"></a><strong>身份认证</strong></h3><ul>
+<li><p><strong>使用OpenID（OIDC）令牌作为用户身份验证策略</strong></p>
+<ul>
+<li>Kubernetes支持各种身份验证方法，包括OpenID Connect（OIDC）。</li>
+<li>OpenID Connect允许单点登录（SSO）（例如Google身份）连接到Kubernetes集群和其他开发工具。</li>
+<li>无需单独记住或管理凭据。</li>
+<li>可能有多个群集连接到同一OpenID提供程序。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://thenewstack.io/kubernetes-single-sign-one-less-identity/">kubernetes-single-sign-one-less-identity</a></li>
+</ul>
+</li>
+<li><p><strong>ServiceAccount令牌仅适用于应用程序和控制器</strong></p>
+<ul>
+<li>ServiceAccount不应用于尝试与Kubernetes群集进行交互的最终用户，但对于在Kubernetes上运行的应用程序和工作负载，它们是首选的身份验证策略。</li>
+</ul>
+</li>
+</ul>
+<h3 id="日志设置"><a href="#日志设置" class="headerlink" title="日志设置"></a><strong>日志设置</strong></h3><ul>
+<li><strong>有一个日志保留和归档策略</strong><ul>
+<li>应该保留30-45天的历史日志。</li>
+</ul>
+</li>
+<li><strong>从节点，控制平面，审计中收集日志</strong><ul>
+<li>从哪些地方收集日志：<ol>
+<li>节点 (kubelet, container runtime)</li>
+<li>控制平面 (API server, scheduler, controller manager)</li>
+<li>Kubernetes审计 (all requests to the API server)</li>
+</ol>
+</li>
+<li>应该收集什么：<ol>
+<li>应用名称。从元数据标签中检索。</li>
+<li>应用程序实例。从元数据标签中检索。</li>
+<li>应用程序版本。从元数据标签中检索。</li>
+<li>集群ID。从Kubernetes集群检索。</li>
+<li>容器名称。从Kubernetes API检索。</li>
+<li>运行此容器的群集节点。从Kubernetes集群检索。</li>
+<li>运行容器的Pod名称。从Kubernetes集群检索。</li>
+<li>命名空间。从Kubernetes集群检索。</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><strong>在每个节点上最好有一个守护程序来收集日志，而不是sidecar</strong><ul>
+<li>应用程序日志应输出到标准输出，而不是文件。</li>
+<li>每个节点上的守护程序可以从容器运行时收集日志（如果记录到文件，则可能需要每个pod的sidecar容<strong>器）。</strong></li>
+</ul>
+</li>
+<li><strong>提供日志聚合工具</strong><ul>
+<li>使用日志聚合工具，例如EFK技术栈（Elasticsearch，Fluentd，Kibana），DataDog，Sumo Logic，Sysdig，GCP Stackdriver，Azure Monitor，AWS CloudWatch。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/10/21/docker/Create-Tag-Retention-Rules/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/21/docker/Create-Tag-Retention-Rules/" class="post-title-link" itemprop="url">Harbor中如何创建tag保留规则</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-21 20:26:07" itemprop="dateCreated datePublished" datetime="2020-10-21T20:26:07+00:00">2020-10-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-03 14:33:55" itemprop="dateModified" datetime="2023-12-03T14:33:55+00:00">2023-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="创建Tag保留规则"><a href="#创建Tag保留规则" class="headerlink" title="创建Tag保留规则"></a>创建Tag保留规则</h2><p>一个repository可以快速积累大量镜像tag，在给定时间之后或一旦它们被后续镜像构建取代后，可能不需要许多镜像tag。这些多余的tag显然会消耗大量的存储容量。作为Harbor系统管理员，可以定义规则来管理给定repository中要保留多少个tag，或将某些tag保留多长时间。</p>
+<h2 id="Tag保留规则如何工作"><a href="#Tag保留规则如何工作" class="headerlink" title="Tag保留规则如何工作"></a>Tag保留规则如何工作</h2><p>在repositories上而不是projects上定义tag保留规则（<em>repository属于project内的概念</em>）。在定义保留规则时，这可以提供更大的粒度。顾名思义，当我们为repositories定义保留规则时，也即在定义要保留的tag。我们没有定义规则来显式删除tag，而是当设置规则时，repositories中任何未标识为可保留的标记都将被丢弃。</p>
+<p>tag保留规则具有3个按顺序应用的过滤器，如下表所述。</p>
+<table>
+<thead>
+<tr>
+<th align="left">Order</th>
+<th align="left">Filter</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">First</td>
+<td align="left">一个或多个repository</td>
+<td align="left">标识要在其上应用规则的一个或多个repository。可以标识具有特定名称或名称片段的repository，或者不具有该名称或名称片段的repository。允许使用通配符（例如* repo，repo *和**）。首先使用repository filter以标记要对其应用保留规则的repository。根据标签标准，将识别出的repository指定用于进一步匹配。在此阶段，对没有指定的repository不采取任何措施。</td>
+</tr>
+<tr>
+<td align="left">Second</td>
+<td align="left">保留数量</td>
+<td align="left">通过指定最大数量的标签或指定最大保留标签的时间来设置要保留的标签。</td>
+</tr>
+<tr>
+<td align="left">Third</td>
+<td align="left">要保留的标签</td>
+<td align="left">标识要应用规则的一个或多个标签。可以标识具有特定名称或名称片段的标签，或者不具有该名称或名称片段的标签。允许使用通配符（例如* tag，tag *和**）。</td>
+</tr>
+</tbody></table>
+<p>有关如何应用**通配符的信息，请参见<a target="_blank" rel="noopener" href="https://github.com/bmatcuk/doublestar#patterns%E3%80%82">https://github.com/bmatcuk/doublestar#patterns。</a></p>
+<h3 id="Example-1"><a href="#Example-1" class="headerlink" title="Example 1"></a>Example 1</h3><ul>
+<li>在一个project中有5个repositories，repositories A到E。<ul>
+<li>repository A具有100个镜像tag，所有这些镜像tag均已在上周有pull操作。</li>
+<li>repository B到E每个都有6个镜像，上个月都没有pull操作。</li>
+</ul>
+</li>
+<li>将repositories过滤器设置为**，这意味着包括了project中的所有repositories。</li>
+<li>设置保留策略，以在每个repositories中保留最近提取的10个映像。</li>
+<li>将标签过滤器设置为**，这意味着包括repositories中的所有标签。</li>
+</ul>
+<p>在此示例中，规则在repository A中保留了10个最近有pull操作的镜像，并且在repository B至E中的每一个中都保留了所有6个镜像。因此，project中总共保留了34个镜像tag。换句话说，该规则不会将repository A到E中的所有镜像都视为单个池，然后从中选择10个最新镜像。因此，即使repository A中的第11至第100个标签比repository B至E中的任何标签相比都有pull操作，也将保留repository B至E中的所有标签，因为每个repository中的标签少于10个。</p>
+<h3 id="Example-2"><a href="#Example-2" class="headerlink" title="Example 2"></a>Example 2</h3><p>本示例使用与示例1相同的project和repositories，但设置了保留策略以保留每个repository中最近7天内有pull操作的镜像。</p>
+<p>在这种情况下，保留了repository A中的所有镜像，因为它们是最近7天内有pull操作的。repository B到E中的任何镜像都不会保留，因为它们在上周都没有发生pull操作。在此示例中，保留了100个镜像，而示例1中则保留了34个镜像。</p>
+<h2 id="Tag保留规则和原生Docker-Tag删除问题"><a href="#Tag保留规则和原生Docker-Tag删除问题" class="headerlink" title="Tag保留规则和原生Docker Tag删除问题"></a>Tag保留规则和原生Docker Tag删除问题</h2><p><strong>警告</strong>：由于本机Docker tag删除行为，当前的保留策略实施存在问题。如果有多个tag引用相同的SHA摘要，并且如果这些tag的子集被配置的保留策略标记为要删除，则所有其余tag也将被删除。这违反了保留策略，因此在这种情况下，所有tag都将保留。在以后的更新版本中将解决此问题，以便tag保留策略可以删除tag而不删除摘要和其他共享tag。</p>
+<p>例如，我们有以下tag，这些tag根据其推送时间列出，并且它们都引用相同的SHA摘要：</p>
+<ul>
+<li><code>harbor-1.8</code>, pushed 8&#x2F;14&#x2F;2019 12:00am</li>
+<li><code>harbor-release</code>, pushed 8&#x2F;14&#x2F;2019 03:00am</li>
+<li><code>harbor-nightly</code>, pushed 8&#x2F;14&#x2F;2019 06:00am</li>
+<li><code>harbor-latest</code>, pushed 8&#x2F;14&#x2F;2019 09:00am</li>
+</ul>
+<p>如果配置了保留策略，以保留与Harbor- *匹配的两个最新标记，以便删除Harbor-rc和Harbor-latest。但是，由于所有tag都引用相同的SHA摘要，因此此策略还将删除标签Harbor-1.8和Harbor-release，因此将保留所有标签。（时间和删除的tag有点对不上）</p>
+<h2 id="在一个Repository上合并规则"><a href="#在一个Repository上合并规则" class="headerlink" title="在一个Repository上合并规则"></a>在一个Repository上合并规则</h2><p>每个project最多可以定义15条规则。我们可以将多个规则应用于一个repository或一组repositories。在将多个规则应用于repository 时，它们将使用OR逻辑而不是AND逻辑来应用。这样，就不会在给定的repository 上优先应用规则。规则在后台同时运行，每个规则的结果集在运行结束时合并。</p>
+<h3 id="Example-3"><a href="#Example-3" class="headerlink" title="Example 3"></a>Example 3</h3><p>本示例使用与示例1和2相同的project和repositories，但是设置了两个规则：</p>
+<ul>
+<li>规则1：保留每个repository中最近7天内pull操作的所有镜像。</li>
+<li>规则2：每个repository中最多保留10个镜像。</li>
+</ul>
+<p>对于repository A，规则1保留所有镜像，因为它们都是在上周发生pull操作的。规则2保留最近发生pull操作的10个镜像。因此，由于这两个规则是通过OR关系应用的，所有100个镜像都保留在repository A中。</p>
+<p>对于repositories B-E，规则1将保留0个镜像，因为上周未发生pull操作。规则2将保留所有6个镜像，因为6 &lt;10。因此，由于这两个规则以OR关系应用，对于repositories B-E，每个repository将保留所有6个图像。</p>
+<p>在此示例中，所有镜像均被保留。</p>
+<h3 id="Example-4"><a href="#Example-4" class="headerlink" title="Example 4"></a>Example 4</h3><p>本示例使用与先前示例不同的repository。</p>
+<ul>
+<li><p>包含12个tag的repository：</p>
+<table>
+<thead>
+<tr>
+<th align="left">Production</th>
+<th align="left">Release Candidate</th>
+<th align="left">Release</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>2.1-your_repo-prod</code></td>
+<td align="left"><code>2.1-your_repo-rc</code></td>
+<td align="left"><code>2.1-your_repo-release</code></td>
+</tr>
+<tr>
+<td align="left"><code>2.2-your_repo-prod</code></td>
+<td align="left"><code>2.2-your_repo-rc</code></td>
+<td align="left"><code>2.2-your_repo-release</code></td>
+</tr>
+<tr>
+<td align="left"><code>3.1-your_repo-prod</code></td>
+<td align="left"><code>3.1-your_repo-rc</code></td>
+<td align="left"><code>3.1-your_repo-release</code></td>
+</tr>
+<tr>
+<td align="left"><code>4.4-your_repo-prod</code></td>
+<td align="left"><code>4.4-your_repo-rc</code></td>
+<td align="left"><code>4.4-your_repo-release</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>在此repository上定义了3个tag保留规则：</p>
+<ul>
+<li><p>保留以2开头的10个最近发生pull操作的镜像tag。</p>
+</li>
+<li><p>保留以-prod结尾的10个最近发生pull操作的镜像tag。</p>
+</li>
+<li><p>保留所有不包含2.1-your_repo-prod的tag。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>在此示例中，规则将应用于以下7个tag（与预期不符，官方收到反馈后已修改）：</p>
+<ul>
+<li><code>2.1-your_repo-rc</code></li>
+<li><code>2.1-your_repo-release</code></li>
+<li><code>2.2-your_repo-prod</code></li>
+<li><code>2.2-your_repo-rc</code></li>
+<li><code>2.2-your_repo-release</code></li>
+<li><code>3.1-your_repo-prod</code></li>
+<li><code>4.4-your_repo-prod</code></li>
+</ul>
+<h2 id="Tag保留规则如何与项目配额搭配使用"><a href="#Tag保留规则如何与项目配额搭配使用" class="headerlink" title="Tag保留规则如何与项目配额搭配使用"></a>Tag保留规则如何与项目配额搭配使用</h2><p>Harbor系统管理员可以设置一个project可以包含的tag数量及其可以使用的存储量的最大值。有关project配额的信息，请参阅<a target="_blank" rel="noopener" href="https://goharbor.io/docs/1.10/administration/configure-project-quotas/">配置project配额</a>。</p>
+<p>如果在project上设置配额，则不能超过该配额。即使设置的保留规则超过配额，配额也将应用于project。换句话说，不能使用保留规则来绕过配额。</p>
+<h2 id="配置Tag保留规则实例"><a href="#配置Tag保留规则实例" class="headerlink" title="配置Tag保留规则实例"></a>配置Tag保留规则实例</h2><ol>
+<li><p>使用至少具有项目管理员特权的帐户登录到Harbor界面。</p>
+</li>
+<li><p>转到”project”，选择一个project，然后选择tag保留。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Create-Tag-Retention-Rules/tag-retention1.png" alt="tag-retention"></p>
+</li>
+<li><p>单击”添加规则”以添加规则。</p>
+</li>
+<li><p>在“repositories”下拉菜单中，选择匹配或排除。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Create-Tag-Retention-Rules/tag-retention3.png" alt="tag-retention"></p>
+</li>
+<li><p>在“repositories”文本框中，标识要在其上应用规则的repository。</p>
+<p>可以通过输入以下信息来定义要在哪些repositories上应用规则：</p>
+</li>
+</ol>
+<ul>
+<li><p>repository名称，例如my_repo_1。</p>
+</li>
+<li><p>以逗号分隔的repository名称列表，例如my_repo_1，my_repo_2，your_repo_3。</p>
+</li>
+<li><p>带通配符的部分repository名称，例如my _ <em>，</em> _ 3或*<em>repo</em>*。</p>
+</li>
+<li><p>**将规则应用于project中的所有repositories。</p>
+<p> 如果选择<strong>匹配</strong>，则规则将应用于标识的repository。如果选择<strong>排除</strong>，则该规则将应用于project中除已标识的repositories之外的所有repositories。</p>
+</li>
+</ul>
+<ol start="6">
+<li><p>在“按镜像或天数计数”下拉菜单中，定义要保留的tag数量或保留的时间。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Create-Tag-Retention-Rules/tag-retention4.png" alt="tag-retention"></p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th align="left">Option</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>retain the most recently pushed # images</strong></td>
+<td align="left">输入要保留的最大镜像个数，保留最近发生push操作的镜像。不考虑镜像的时间。</td>
+</tr>
+<tr>
+<td align="left"><strong>retain the most recently pulled # images</strong></td>
+<td align="left">输入要保留的最大镜像个数，保留最近发生pull操作的镜像。不考虑镜像的时间。</td>
+</tr>
+<tr>
+<td align="left"><strong>retain the images pushed within the last # days</strong></td>
+<td align="left">输入保留镜像的天数，仅保留在此期间发生push操作的镜像。不考虑镜像数量。</td>
+</tr>
+<tr>
+<td align="left"><strong>retain the images pulled within the last # days</strong></td>
+<td align="left">输入保留镜像的天数，仅保留在此期间发生pull操作的镜像。不考虑镜像数量。</td>
+</tr>
+<tr>
+<td align="left"><strong>retain always</strong></td>
+<td align="left">始终保留此规则标识的镜像。</td>
+</tr>
+</tbody></table>
+<ol start="7">
+<li><p>在”tag”下拉菜单中，选择匹配或排除。  </p>
+</li>
+<li><p>在“标签”文本框中，标识要在其上应用规则的tag。</p>
+<p>可以通过输入以下信息来定义要在其上应用规则的tag：</p>
+</li>
+</ol>
+<ul>
+<li>tag名称，例如my_tag_1。</li>
+<li>tag名称的逗号分隔列表，例如my_tag_1，my_tag_2，your_tag_3。</li>
+<li>带通配符的部分tag名称，例如my _ <em>，</em> _ 3或* <em>tag</em> *。</li>
+<li>**将规则应用于project中的所有tag。</li>
+</ul>
+<ol start="9">
+<li><p>单击”添加”以保存规则。</p>
+</li>
+<li><p>（可选）单击“添加规则”以添加更多规则，每个project最多15条。</p>
+</li>
+<li><p>（可选）在“计划”下，单击“编辑”，然后选择运行规则的频率。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Create-Tag-Retention-Rules/tag-retention2.png" alt="tag-retention"></p>
+<p>如果选择“自定义”，请输入cron job命令以配置规则。</p>
+<p>注意：如果定义多个规则，则计划将应用于所有规则。不能配置不同的规则在不同的时间运行。</p>
+</li>
+<li><p>单击“模拟运行”以测试定义的一个或多个规则。</p>
+</li>
+<li><p>单击“立即运行”以立即运行规则。</p>
+</li>
+</ol>
+<p><strong>警告</strong>：运行规则后，将无法还原它。强烈建议先执行模拟运行，然后再运行规则。</p>
+<p>要修改现有规则，请使用规则旁边的操作下拉菜单来禁用，编辑或删除该规则。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Create-Tag-Retention-Rules/tag-retention5.png" alt="tag-retention"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LeaoYao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">83</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LeaoYao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
