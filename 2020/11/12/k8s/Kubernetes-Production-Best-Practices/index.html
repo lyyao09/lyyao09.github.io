@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyyao09.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文提供了在Kubernetes上部署安全，可伸缩和弹性服务的最佳实践。内容开源在github仓库。如果有缺少或不足之处，欢迎提issue。 Part1 应用开发健康检测 为容器配置Readiness探针 如果未设置readiness探针，则kubelet会假定该应用程序已准备就绪，可以在容器启动后立即接收流量。 如果容器需要2分钟才能启动，则这2分钟内对容器的所有请求将失败。   发生致命错误时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes生产环境最佳实践">
+<meta property="og:url" content="https://lyyao09.github.io/2020/11/12/k8s/Kubernetes-Production-Best-Practices/index.html">
+<meta property="og:site_name" content="云原生知识星球">
+<meta property="og:description" content="本文提供了在Kubernetes上部署安全，可伸缩和弹性服务的最佳实践。内容开源在github仓库。如果有缺少或不足之处，欢迎提issue。 Part1 应用开发健康检测 为容器配置Readiness探针 如果未设置readiness探针，则kubelet会假定该应用程序已准备就绪，可以在容器启动后立即接收流量。 如果容器需要2分钟才能启动，则这2分钟内对容器的所有请求将失败。   发生致命错误时">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-12T22:10:44.000Z">
+<meta property="article:modified_time" content="2024-01-01T05:51:41.544Z">
+<meta property="article:author" content="LuckYao">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://lyyao09.github.io/2020/11/12/k8s/Kubernetes-Production-Best-Practices/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Kubernetes生产环境最佳实践 | 云原生知识星球</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">云原生知识星球</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/11/12/k8s/Kubernetes-Production-Best-Practices/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kubernetes生产环境最佳实践
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-12 22:10:44" itemprop="dateCreated datePublished" datetime="2020-11-12T22:10:44+00:00">2020-11-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 05:51:41" itemprop="dateModified" datetime="2024-01-01T05:51:41+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文提供了在Kubernetes上部署安全，可伸缩和弹性服务的最佳实践。内容开源在<a target="_blank" rel="noopener" href="https://github.com/learnk8s/kubernetes-production-best-practices">github仓库</a>。如果有缺少或不足之处，欢迎提issue。</p>
+<h2 id="Part1-应用开发"><a href="#Part1-应用开发" class="headerlink" title="Part1 应用开发"></a>Part1 应用开发</h2><h3 id="健康检测"><a href="#健康检测" class="headerlink" title="健康检测"></a><strong>健康检测</strong></h3><ul>
+<li><strong>为容器配置Readiness探针</strong><ul>
+<li>如果未设置readiness探针，则kubelet会假定该应用程序已准备就绪，可以在容器启动后立即接收流量。</li>
+<li>如果容器需要2分钟才能启动，则这2分钟内对容器的所有请求将失败。</li>
+</ul>
+</li>
+<li><strong>发生致命错误时允许容器崩溃</strong><ul>
+<li><p>如果应用程序遇到不可恢复的错误，则应使其崩溃。</p>
+</li>
+<li><p>此类不可恢复的错误的示例是：</p>
+<ol>
+<li>未捕获的异常</li>
+<li>代码中的错字（动态语言）</li>
+<li>无法加载标头或依赖项</li>
+</ol>
+</li>
+<li><p>上述错误不应发信号通知Liveness探针失败。相反，应该立即退出该进程，并让kubelet重新启动容器。</p>
+</li>
+</ul>
+</li>
+<li><strong>配置被动的Liveness探针</strong><ul>
+<li>Liveness探针旨在容器卡住时重新启动容器。</li>
+<li>考虑以下情形：如果应用程序正在处理无限循环，则无法退出。当该进程消耗100％的CPU时，将没有时间回复（其他）Readiness探针检查，并且最终将其从服务中删除。但是，该Pod仍被注册为当前Deployment的活动副本。如果没有Liveness探针，它将保持运行状态，但与服务分离。换句话说，该进程不仅不处理任何请求，而且也在消耗资源。</li>
+<li>请注意，不应该使用Liveness探针来处理应用程序中的致命错误，并要求Kubernetes重新启动应用程序。相反，应该让应用程序崩溃。仅在过程无响应的情况下，才应将“liveness”探针用作恢复机制。</li>
+</ul>
+</li>
+<li><strong>两个探针的值不同</strong><ul>
+<li>当“liveness”和“readiness”探针指向相同的端点时，探针的作用会合并在一起。当应用程序发出信号表明尚未准备就绪或尚待运行时，kubelet会将容器与服务分离并同时将其删除。这时可能会注意到连接断开，因为容器没有足够的时间耗尽当前连接或处理传入的连接。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://freecontent.manning.com/handling-client-requests-properly-with-kubernetes/">handling-client-requests-properly-with-kubernetes&#x2F;</a></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>请注意，readiness和liveness没有默认值。</p>
+</blockquote>
+<h3 id="应用独立"><a href="#应用独立" class="headerlink" title="应用独立"></a><strong>应用独立</strong></h3><ul>
+<li><p><strong>Readiness探针是独立的</strong></p>
+<ul>
+<li>Readiness不包括对服务的依赖性，例如：数据库、数据库的迁移、API、第三方服务（<a target="_blank" rel="noopener" href="https://blog.colinbreck.com/kubernetes-liveness-and-readiness-probes-how-to-avoid-shooting-yourself-in-the-foot/#shootingyourselfinthefootwithreadinessprobes">反例</a>）</li>
+</ul>
+</li>
+<li><p><strong>应用重试连接到依赖服务</strong></p>
+<ul>
+<li>应用启动时，它不应该因为数据库等依赖项尚未就绪而崩溃。相反，应用程序应继续尝试重新连接数据库，直到成功为止。</li>
+<li>Kubernetes希望可以以任何顺序启动应用程序。当确保应用程序可以重新连接到诸如数据库之类的依赖项时，便知道可以提供更强大，更灵活的服务。</li>
+</ul>
+</li>
+</ul>
+<h3 id="友好关闭"><a href="#友好关闭" class="headerlink" title="友好关闭"></a><strong>友好关闭</strong></h3><ul>
+<li><strong>应用程序未通过SIGTERM关闭，但可以正常终止连接</strong><ul>
+<li>可能需要一些时间才能感知到诸如kube-proxy或Ingress控制器之类的组件endpoint更改。因此，尽管标记为已终止，流量仍可能流向Pod。</li>
+<li>应用程序应停止在所有剩余连接上接受新请求，并在耗尽传出队列后将其关闭。</li>
+<li>如果想回顾endpoint在群集中的传播方式，请参考：<a target="_blank" rel="noopener" href="https://freecontent.manning.com/handling-client-requests-properly-with-kubernetes/">handling-client-requests-properly-with-kubernetes&#x2F;</a></li>
+</ul>
+</li>
+<li><strong>应用程序仍在宽限期内处理传入的请求</strong><ul>
+<li>可能要考虑使用容器生命周期事件（例如preStop处理程序）来自定义Pod删除之前发生的情况。</li>
+</ul>
+</li>
+<li><strong>Dockerfile中的CMD将SIGTERM转发到进程</strong><ul>
+<li>通过在应用中捕获SIGTERM信号，可以在Pod即将终止时收到通知。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://pracucci.com/graceful-shutdown-of-kubernetes-pods.html">graceful-shutdown-of-kubernetes-pods</a></li>
+</ul>
+</li>
+<li><strong>关闭所有空闲的keep-alive套接字</strong><ul>
+<li>如果应用程序调用未关闭TCP连接（例如使用TCP保持活动状态或连接池），它将连接到一个Pod，而不使用该服务中的其他Pod。</li>
+<li>不应该突然终止长期存在的连接。相反，应该在关闭应用程序之前终止它们。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="http://dillonbuchanan.com/programming/gracefully-shutting-down-a-nodejs-http-server/">gracefully-shutting-down-a-nodejs-http-server</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="失败容忍"><a href="#失败容忍" class="headerlink" title="失败容忍"></a><strong>失败容忍</strong></h3><ul>
+<li><strong>为Deployment部署运行多个副本</strong><ul>
+<li>切勿单独运行一个Pod类型的资源，而是考虑将Pod作为Deployment，DaemonSet，ReplicaSet或StatefulSet的一部分进行部署。</li>
+<li>示例参考：<a target="_blank" rel="noopener" href="https://cloudmark.github.io/Node-Management-In-GKE/#replicas">Node-Management-In-GKE</a></li>
+</ul>
+</li>
+<li><strong>避免将Pod放置在单个节点中</strong><ul>
+<li>即使运行Pod的多个副本，也无法保证丢失节点不会影响服务。</li>
+<li>应该将反关联性规则应用于部署，以便Pod分布在群集的所有节点中。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinit">inter-pod-affinity-and-anti-affinit</a></li>
+</ul>
+</li>
+<li><strong>设定Pod中断预算</strong><ul>
+<li>drain节点后，该节点上的所有Pod都将被删除并重新安排。</li>
+<li>为了保护Deployment免受可能同时摧毁多个Pod的意外事件的影响，可以定义Pod中断预算。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/pods/disruptions/">pod-disruptions</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="资源使用"><a href="#资源使用" class="headerlink" title="资源使用"></a><strong>资源使用</strong></h3><ul>
+<li><strong>为所有容器设置内存限制和请求</strong><ul>
+<li>资源限制用于限制容器可以使用多少CPU和内存，并使用containerSpec的resources属性设置。</li>
+<li>调度程序将这些用作度量标准之一，以确定哪个节点最适合当前Pod。</li>
+<li>根据调度程序，没有内存限制的容器的内存利用率为零。</li>
+<li>如果可调度在任何节点上的Pod数量不受限制，则会导致资源超负荷使用并可能导致节点（和kubelet）崩溃。</li>
+<li>如果容器进程超出内存限制，则该进程将终止。由于CPU是可压缩的资源，因此如果容器超出限制，则将限制该过程。即使它可以使用当时可用的某些CPU。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://medium.com/@betz.mark/understanding-resource-limits-in-kubernetes-memory-6b41e9a955f9">understanding-resource-limits-in-kubernetes-memory</a>，<a target="_blank" rel="noopener" href="https://medium.com/@betz.mark/understanding-resource-limits-in-kubernetes-cpu-time-9eff74d3161b">understanding-resource-limits-in-kubernetes-cpu</a></li>
+</ul>
+</li>
+<li><strong>将CPU请求设置为1个CPU或以下</strong><ul>
+<li>除非有计算密集型作业，否则建议将请求设置为1个CPU或更低.</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=xjpHggHKm78">YouTube视频</a></li>
+</ul>
+</li>
+<li><strong>禁用CPU限制—除非有很好的用例</strong><ul>
+<li>CPU 资源以 <em>CPU</em> 单位度量。</li>
+<li>cpu：1表示每秒1个CPU单位。如果有1个线程，则每秒消耗的CPU时间不能超过1秒。如果有2个线程，则可以在0.5秒内消耗1个CPU单位。8个线程可以在0.125秒内消耗1个CPU单位。此后，请求将受到限制。</li>
+<li>如果不确定最佳应用设置，最好不要设置CPU限制。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://medium.com/@betz.mark/understanding-resource-limits-in-kubernetes-cpu-time-9eff74d3161b">understanding-resource-limits-in-kubernetes-cpu</a></li>
+</ul>
+</li>
+<li><strong>命名空间具有LimitRange</strong><ul>
+<li>如果我们认为可能忘记设置内存和CPU限制，则应考虑使用LimitRange对象为当前名称空间中部署的容器定义标准大小。</li>
+<li>设置方法参考：<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/policy/limit-range/">limit-range</a></li>
+</ul>
+</li>
+<li><strong>为Pod设置适当的服务质量（QoS）</strong><ul>
+<li>当节点进入过量使用状态（即使用过多资源）时，Kubernetes会尝试驱逐该节点中的某些Pod。</li>
+<li>Kubernetes根据定义明确的逻辑对Pod进行排名和逐出。</li>
+<li>设置方法参考：<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/">quality-service-pod</a></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>请注意，如果不确定如何配置正确的CPU或内存限制，则可以使用Kubernetes中的Vertical Pod Autoscaler。自动缩放器会分析应用并给出建议的值。</p>
+</blockquote>
+<h3 id="标签资源"><a href="#标签资源" class="headerlink" title="标签资源"></a><strong>标签资源</strong></h3><ul>
+<li><strong>定义技术标签</strong></li>
+<li><strong>定义业务标签</strong></li>
+<li><strong>定义安全标签</strong></li>
+</ul>
+<h3 id="日志配置"><a href="#日志配置" class="headerlink" title="日志配置"></a><strong>日志配置</strong></h3><ul>
+<li><strong>将应用程序日志记录到stdout和stderr</strong><ul>
+<li>有两种日志记录策略：被动和主动。使用被动日志记录的应用程序不了解日志记录基础结构，而是将消息记录到标准输出中。</li>
+<li>在主动日志记录中，该应用程序与中间聚合器建立网络连接，将数据发送到第三方日志记录服务，或直接写入数据库或索引。主动日志记录被视为反模式，应避免使用它。</li>
+<li>最佳实践参考：<a target="_blank" rel="noopener" href="https://12factor.net/logs">logs</a></li>
+</ul>
+</li>
+<li><strong>避免使用sidecar记录日志（如果可以的话）</strong><ul>
+<li>如果希望将日志转换应用于具有非标准日志事件模型的应用程序，则可能需要使用sidecar容器。</li>
+<li>使用Sidecar容器，可以在将日志条目运送到其他地方之前对其进行规范化。例如，先将Apache日志转换为Logstash JSON格式，然后再将其发送到日志基础结构。但是，如果可以控制应用程序，则可以从一开始就输出正确的格式。这样可以节省为集群中的每个Pod运行额外的容器的时间。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Pod扩缩容"><a href="#Pod扩缩容" class="headerlink" title="Pod扩缩容"></a><strong>Pod扩缩容</strong></h3><ul>
+<li><strong>容器在其本地文件系统中不存储任何状态</strong><ul>
+<li>容器可以访问本地文件系统，用户可能会想使用它来持久化数据。</li>
+<li>但是，将持久性数据存储在容器的本地文件系统中会阻止Pod进行水平缩放（即通过添加或删除Pod的副本）。</li>
+<li>这是因为，通过使用本地文件系统，每个容器都维护自己的“状态”，这意味着Pod副本的状态可能会随时间而变化。从用户的角度来看，这会导致行为不一致（例如，当请求命中一个Pod时，一条特定的用户信息可用，但当请求命中另一个Pod时，则不可用）。</li>
+<li>相反，任何持久性信息都应保存在Pod外部的集中位置。例如，在集群中的PersistentVolume中，或者在集群外部的某些存储服务中甚至更好。</li>
+</ul>
+</li>
+<li><strong>对具有可变使用模式的应用程序使用HPA</strong><ul>
+<li>HPA是内置的Kubernetes功能，可监视应用程序并根据当前使用情况自动添加或删除Pod副本。</li>
+<li>配置HPA可使应用在任何流量情况下（包括意外的高峰）保持可用并响应。</li>
+<li>配置HPA时必须创建一个HorizontalPodAutoscaler资源，该资源定义要监视的应用程序的度量。</li>
+<li>HPA可以监视内置资源指标（Pod的CPU和内存使用情况）或自定义指标。对于自定义指标，还负责收集和公开这些指标，例如，可以使用Prometheus和Prometheus Adapter进行此操作。</li>
+</ul>
+</li>
+<li><strong>Vertical Pod Autoscaler仍处于Beta版，请勿使用</strong><ul>
+<li>类似于HPA，还有VPA。</li>
+<li>VPA可以自动调整Pod的资源请求和限制，以便当Pod需要更多资源时可以获取它们（增加&#x2F;减少单个Pod的资源称为垂直缩放，与水平缩放相对）。</li>
+<li>这对于缩放无法水平缩放的应用程序很有用。</li>
+<li>但是，HPA当前处于beta版本，它具有一些已知的局限性（例如，通过更改其资源要求来扩展Pod，要求终止Pod并重新启动它）。</li>
+<li>考虑到这些限制以及Kubernetes上大多数应用程序都可以水平扩展的事实，建议不要在生产环境中使用VPA（至少要等到稳定的版本才能使用）。</li>
+</ul>
+</li>
+<li><strong>如果工作负载差异很大，请使用群集自动伸缩放器</strong><ul>
+<li>群集自动缩放器是“自动缩放器”的另一种类型（HAP和VPA除外）。</li>
+<li>群集自动缩放器可以通过添加或删除工作节点来自动缩放群集的大小。</li>
+<li>当由于现有工作节点上的资源不足而无法调度Pod时，会进行放大操作。在这种情况下，Cluster Autoscaler将创建一个新的工作节点，以便可以调度Pod。同样，当现有工作节点的利用率较低时，群集自动伸缩程序可以通过从一个工作节点中逐出所有工作负载并将其删除来进行缩减。</li>
+<li>对于高度可变的工作负载，例如当Pods的数量可能在短时间内成倍增长然后返回到先前的值时，使用Cluster Autoscaler是有意义的。在这种情况下，群集自动伸缩器可以满足需求高峰，而不会通过过度配置工作节点来浪费资源。</li>
+<li>但是，如果工作负载变化不大，则可能不值得设置Cluster Autoscaler，因为它可能永远不会触发。如果工作负载缓慢且单调地增长，则足以监视现有工作节点的利用率并在达到临界值时手动添加其他工作节点。</li>
+</ul>
+</li>
+</ul>
+<h3 id="配置原则"><a href="#配置原则" class="headerlink" title="配置原则"></a><strong>配置原则</strong></h3><ul>
+<li><strong>外部化所有配置</strong><ul>
+<li>配置应在应用程序代码之外进行维护。</li>
+<li>这有几个好处。首先，更改配置不需要重新编译应用程序。其次，可以在应用程序运行时更新配置。第三，相同的代码可以在不同的环境中使用。</li>
+<li>在Kubernetes中，可以将配置保存在ConfigMaps中，然后可以在将卷作为环境变量传入时将其安装到容器中。</li>
+<li>在ConfigMap中仅保存非敏感配置。对于敏感信息（例如凭据），请使用Secret资源。</li>
+</ul>
+</li>
+<li><strong>将Secrets作为卷而不是环境变量安装</strong><ul>
+<li>Secret资源的内容应作为卷装入容器中，而不应作为环境变量传递。</li>
+<li>这是为了防止秘密值出现在用于启动容器的命令中，该命令可能由不应该访问秘密值的人员看到。</li>
+</ul>
+</li>
+</ul>
+<h2 id="Part2-集群管理"><a href="#Part2-集群管理" class="headerlink" title="Part2 集群管理"></a>Part2 集群管理</h2><h3 id="命名空间限制"><a href="#命名空间限制" class="headerlink" title="命名空间限制"></a><strong>命名空间限制</strong></h3><ul>
+<li><strong>命名空间具有LimitRange</strong><ul>
+<li>没有限制的容器可能导致与其他容器的资源争用以及计算资源的消耗。</li>
+<li>Kubernetes具有两个限制资源利用的功能：ResourceQuota和LimitRange。</li>
+<li>使用LimitRange对象，可以定义资源请求的默认值以及名称空间内单个容器的限制。</li>
+<li>在该命名空间内创建的，未明确指定请求和限制值的任何容器都将分配为默认值。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/policy/resource-quotas/">resource-quotas</a></li>
+</ul>
+</li>
+<li><strong>命名空间具有ResourceQuotas</strong><ul>
+<li>使用ResourceQuotas，可以限制命名空间内所有容器的总资源消耗。</li>
+<li>定义命名空间的资源配额会限制属于该名称空间的所有容器可以消耗的CPU，内存或存储资源的总量。</li>
+<li>还可以为其他Kubernetes对象设置配额，例如当前名称空间中的Pod数量。</li>
+<li>如果存在他人使用群集并创建20000 ConfigMap，则可以使用LimitRange来防止这种情况。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Pod安全策略"><a href="#Pod安全策略" class="headerlink" title="Pod安全策略"></a><strong>Pod安全策略</strong></h3><ul>
+<li><p><strong>启用Pod安全策略</strong></p>
+<ul>
+<li>例如，可以使用Kubernetes Pod安全策略来限制：<ol>
+<li>访问主机进程或网络名称空间；</li>
+<li>运行特权容器容器；</li>
+<li>运行的用户；</li>
+<li>访问主机文件系统；</li>
+<li>Linux功能，Seccomp或SELinux配置文件</li>
+</ol>
+</li>
+<li>选择正确的策略取决于集群的性质。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://resources.whitesourcesoftware.com/blog-whitesource/kubernetes-pod-security-policy">kubernetes-pod-security-policy</a></li>
+</ul>
+</li>
+<li><p><strong>禁用特权容器</strong></p>
+<ul>
+<li>在Pod中，容器可以以“特权”模式运行，并且对主机系统上的资源的访问几乎不受限制。</li>
+<li>尽管在某些特定的用例中，必须具有这种级别的访问权限，但总的来说，让容器执行此操作存在安全风险。</li>
+<li>特权Pod的有效使用案例包括在节点上使用硬件，例如GPU。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">security-context</a></li>
+</ul>
+</li>
+<li><p><strong>在容器中使用只读文件系统</strong></p>
+<ul>
+<li>在容器中运行只读文件系统会强制容器不可变。</li>
+<li>这不仅减轻了一些旧的（且有风险的）做法（例如热修补），而且还帮助防止了恶意进程在容器内存储或操作数据的风险。</li>
+<li>使用只读文件系统运行容器听起来可能很简单，但是可能会带来一些复杂性。</li>
+<li>如果需要写日志或将文件存储在临时文件夹中怎么办？</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://medium.com/@axbaretto/running-docker-containers-securely-in-production-98b8104ef68">running-docker-containers-securely-in-production</a></li>
+</ul>
+</li>
+<li><p><strong>防止容器以root身份运行</strong></p>
+<ul>
+<li>在容器中运行的进程与主机上的任何其他进程没有什么不同，只不过它有一小部分元数据声明它在容器中。</li>
+<li>因此，容器中的根与主机上的根（uid 0）相同。</li>
+<li>如果用户设法脱离了以root用户身份在容器中运行的应用程序，则他们可能能够使用同一root用户获得对主机的访问权限。</li>
+<li>配置容器以使用非特权用户是防止特权升级攻击的最佳方法。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://medium.com/@mccode/processes-in-containers-should-not-run-as-root-2feae3f0df3b">processes-in-containers-should-not-run-as-root</a></li>
+</ul>
+</li>
+<li><p><strong>限制capabilities</strong></p>
+<ul>
+<li><p>Linux capabilities使进程能够执行许多特权操作，其中只有root用户默认可以执行。</p>
+</li>
+<li><p>例如，CAP_CHOWN允许进程“对文件UID和GID进行任意更改”。</p>
+</li>
+<li><p>即使进程不是以root身份运行，进程也有可能通过提升特权来使用那些类似root的功能。</p>
+</li>
+<li><p>换句话说，如果不想受到损害，则应仅启用所需的功能。</p>
+</li>
+<li><p>但是应该启用什么功能？为什么？以下两篇文章探讨了有关Linux内核功能的理论和最佳实践：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.container-solutions.com/linux-capabilities-why-they-exist-and-how-they-work">Linux Capabilities: Why They Exist and How They Work</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.container-solutions.com/linux-capabilities-in-practice">Linux Capabilities In Practice</a></p>
+</li>
+</ul>
+</li>
+<li><p><strong>防止特权升级</strong></p>
+<ul>
+<li>应该在关闭特权升级的情况下运行容器，以防止使用setuid或setgid二进制文件提升特权。</li>
+</ul>
+</li>
+</ul>
+<h3 id="网络策略"><a href="#网络策略" class="headerlink" title="网络策略"></a><strong>网络策略</strong></h3><ul>
+<li><strong>启用网络策略</strong><ul>
+<li>Kubernetes网络策略指定Pod组的访问权限，就像云中的安全组用于控制对VM实例的访问一样。</li>
+<li>换句话说，它在Kubernetes集群上运行的Pod之间创建了防火墙。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://ahmet.im/blog/kubernetes-network-policy/">Securing Kubernetes Cluster Networking</a></li>
+</ul>
+</li>
+<li><strong>每个命名空间中都有一个保守的NetworkPolicy</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/ahmetb/kubernetes-network-policy-recipes">存储库</a>包含Kubernetes网络策略的各种用例和示例YAML文件。</li>
+<li>如果想知道如何丢弃&#x2F;限制在Kubernetes上运行的应用程序的流量，请阅读<a target="_blank" rel="noopener" href="https://github.com/ahmetb/kubernetes-network-policy-recipes">how to drop&#x2F;restrict traffic to applications running on Kubernetes</a>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="RBAC策略"><a href="#RBAC策略" class="headerlink" title="RBAC策略"></a><strong>RBAC策略</strong></h3><ul>
+<li><strong>禁用默认服务帐户的自动挂载RBAC策略</strong><ul>
+<li>请注意，默认的ServiceAccount将自动安装到所有Pod的文件系统中，详见<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#use-the-default-service-account-to-access-the-api-server">use-the-default-service-account-to-access-the-api-server</a></li>
+<li>可能要禁用它并提供更详细的策略。</li>
+</ul>
+</li>
+<li><strong>设置为所需的最少特权</strong><ul>
+<li>寻找有关如何设置RBAC规则的好的建议是一项挑战。</li>
+<li>在<a target="_blank" rel="noopener" href="https://thenewstack.io/three-realistic-approaches-to-kubernetes-rbac/">Kubernetes RBAC的3种现实方法</a>中，可以找到三种实用场景和有关如何入门的实用建议。</li>
+</ul>
+</li>
+<li><strong>RBAC策略是精细的，不能共享</strong><ul>
+<li>Zalando有一个简洁的策略来定义角色和ServiceAccounts。</li>
+<li>首先，他们描述他们的要求：<ol>
+<li>用户应该能够部署，但不应允许他们查看如“secret”这类资源</li>
+<li>管理员应拥有对所有资源的完全访问权限</li>
+<li>默认情况下，应用程序不应获得对Kubernetes API的写访问权限</li>
+<li>对于某些用途，可以有Kubernetes API写权限。</li>
+</ol>
+</li>
+<li>四个要求转化为五个单独的角色：<ol>
+<li>ReadOnly</li>
+<li>PowerUser</li>
+<li>Operator</li>
+<li>Controller</li>
+<li>Admin</li>
+</ol>
+</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://kubernetes-on-aws.readthedocs.io/en/latest/dev-guide/arch/access-control/adr-004-roles-and-service-accounts.html">access-control-roles-and-service-accounts</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="自定义策略"><a href="#自定义策略" class="headerlink" title="自定义策略"></a><strong>自定义策略</strong></h3><ul>
+<li><strong>只允许从已知registry部署容器</strong><ul>
+<li>可能要考虑的最常见的自定义策略之一是限制可以在群集中部署的镜像。</li>
+<li><a target="_blank" rel="noopener" href="https://blog.openpolicyagent.org/securing-the-kubernetes-api-with-open-policy-agent-ce93af0552c3#3c6e">参考文档</a>说明了如何使用开放策略代理来限制未批准的镜像。</li>
+</ul>
+</li>
+<li><strong>强制Ingress主机名唯一</strong><ul>
+<li>用户创建Ingress清单时，可以使用其中的任何主机名。</li>
+<li>但是，可能希望阻止用户多次使用相同的主机名并互相覆盖。</li>
+<li>Open Policy Agent的<a target="_blank" rel="noopener" href="https://www.openpolicyagent.org/docs/latest/kubernetes-tutorial/#4-define-a-policy-and-load-it-into-opa-via-kubernetes">官方文档</a>包含有关如何在validation Webhook中检查Ingress资源的教程。</li>
+</ul>
+</li>
+<li><strong>仅在Ingress主机名中使用批准的域名</strong><ul>
+<li>用户创建Ingress清单时，可以使用其中的任何主机名。</li>
+<li>但是，可能希望阻止用户使用无效的主机名。</li>
+<li>Open Policy Agent的<a target="_blank" rel="noopener" href="https://www.openpolicyagent.org/docs/latest/kubernetes-tutorial/#4-define-a-policy-and-load-it-into-opa-via-kubernetes">官方文档</a>包含有关如何在validation Webhook中检查Ingress资源的教程。</li>
+</ul>
+</li>
+</ul>
+<h2 id="Part3-集群配置"><a href="#Part3-集群配置" class="headerlink" title="Part3 集群配置"></a>Part3 集群配置</h2><blockquote>
+<p>该部分还在进行中。如果对这部分内容有意见，欢迎提issue。</p>
+</blockquote>
+<h3 id="集群要求"><a href="#集群要求" class="headerlink" title="集群要求"></a><strong>集群要求</strong></h3><ul>
+<li><p><strong>集群通过CIS基准测试</strong></p>
+<ul>
+<li>互联网安全中心提供了一些准则和基准测试，以确保代码安全的最佳做法</li>
+<li>他们还维护了Kubernetes的基准，可以从<a target="_blank" rel="noopener" href="https://www.cisecurity.org/benchmark/kubernetes/">官方网站</a>上下载该基准。</li>
+<li>虽然可以阅读冗长的指南并手动检查集群是否符合要求，但更简单的方法是下载并执行<a target="_blank" rel="noopener" href="https://github.com/aquasecurity/kube-bench">kube-bench</a>。</li>
+<li>kube-bench是一个工具，用于自动执行CIS Kubernetes基准测试并报告集群中的错误配置。</li>
+</ul>
+<blockquote>
+<p>请注意，无法使用kube-bench检查托管集群（例如GKE，EKS和AKS）的主节点。主节点由云提供商控制。</p>
+</blockquote>
+</li>
+<li><p><strong>禁用云提供商的元数据API</strong></p>
+<ul>
+<li>云平台（AWS，Azure，GCE等）通常将本地元数据服务公开给实例。</li>
+<li>默认情况下，实例上运行的Pod可以访问这些API，并且可以包含该节点的云凭据或诸如kubelet凭据之类的置备数据。</li>
+<li>这些凭据可用于在群集内升级或升级到同一帐户下的其他云服务。</li>
+</ul>
+</li>
+<li><p><strong>限制对Alpha或Beta功能的访问</strong></p>
+<ul>
+<li>Alpha和Beta Kubernetes功能正在积极开发中，可能会存在限制或错误，从而导致安全漏洞。</li>
+<li>始终评估Alpha或Beta功能可能提供的价值，以防对安全状况造成潜在风险。</li>
+<li>如有疑问，请禁用不使用的功能。</li>
+</ul>
+</li>
+</ul>
+<h3 id="身份认证"><a href="#身份认证" class="headerlink" title="身份认证"></a><strong>身份认证</strong></h3><ul>
+<li><p><strong>使用OpenID（OIDC）令牌作为用户身份验证策略</strong></p>
+<ul>
+<li>Kubernetes支持各种身份验证方法，包括OpenID Connect（OIDC）。</li>
+<li>OpenID Connect允许单点登录（SSO）（例如Google身份）连接到Kubernetes集群和其他开发工具。</li>
+<li>无需单独记住或管理凭据。</li>
+<li>可能有多个群集连接到同一OpenID提供程序。</li>
+<li>更多信息参考：<a target="_blank" rel="noopener" href="https://thenewstack.io/kubernetes-single-sign-one-less-identity/">kubernetes-single-sign-one-less-identity</a></li>
+</ul>
+</li>
+<li><p><strong>ServiceAccount令牌仅适用于应用程序和控制器</strong></p>
+<ul>
+<li>ServiceAccount不应用于尝试与Kubernetes群集进行交互的最终用户，但对于在Kubernetes上运行的应用程序和工作负载，它们是首选的身份验证策略。</li>
+</ul>
+</li>
+</ul>
+<h3 id="日志设置"><a href="#日志设置" class="headerlink" title="日志设置"></a><strong>日志设置</strong></h3><ul>
+<li><strong>有一个日志保留和归档策略</strong><ul>
+<li>应该保留30-45天的历史日志。</li>
+</ul>
+</li>
+<li><strong>从节点，控制平面，审计中收集日志</strong><ul>
+<li>从哪些地方收集日志：<ol>
+<li>节点 (kubelet, container runtime)</li>
+<li>控制平面 (API server, scheduler, controller manager)</li>
+<li>Kubernetes审计 (all requests to the API server)</li>
+</ol>
+</li>
+<li>应该收集什么：<ol>
+<li>应用名称。从元数据标签中检索。</li>
+<li>应用程序实例。从元数据标签中检索。</li>
+<li>应用程序版本。从元数据标签中检索。</li>
+<li>集群ID。从Kubernetes集群检索。</li>
+<li>容器名称。从Kubernetes API检索。</li>
+<li>运行此容器的群集节点。从Kubernetes集群检索。</li>
+<li>运行容器的Pod名称。从Kubernetes集群检索。</li>
+<li>命名空间。从Kubernetes集群检索。</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><strong>在每个节点上最好有一个守护程序来收集日志，而不是sidecar</strong><ul>
+<li>应用程序日志应输出到标准输出，而不是文件。</li>
+<li>每个节点上的守护程序可以从容器运行时收集日志（如果记录到文件，则可能需要每个pod的sidecar容<strong>器）。</strong></li>
+</ul>
+</li>
+<li><strong>提供日志聚合工具</strong><ul>
+<li>使用日志聚合工具，例如EFK技术栈（Elasticsearch，Fluentd，Kibana），DataDog，Sumo Logic，Sysdig，GCP Stackdriver，Azure Monitor，AWS CloudWatch。</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/21/docker/Create-Tag-Retention-Rules/" rel="prev" title="Harbor中如何创建tag保留规则">
+      <i class="fa fa-chevron-left"></i> Harbor中如何创建tag保留规则
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/12/25/k8s/Decoding-A-Helm-Chart-Releases/" rel="next" title="解析Helm Char Release内容">
+      解析Helm Char Release内容 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Part1-%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91"><span class="nav-number">1.</span> <span class="nav-text">Part1 应用开发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%81%A5%E5%BA%B7%E6%A3%80%E6%B5%8B"><span class="nav-number">1.1.</span> <span class="nav-text">健康检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E7%8B%AC%E7%AB%8B"><span class="nav-number">1.2.</span> <span class="nav-text">应用独立</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8B%E5%A5%BD%E5%85%B3%E9%97%AD"><span class="nav-number">1.3.</span> <span class="nav-text">友好关闭</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%B1%E8%B4%A5%E5%AE%B9%E5%BF%8D"><span class="nav-number">1.4.</span> <span class="nav-text">失败容忍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E4%BD%BF%E7%94%A8"><span class="nav-number">1.5.</span> <span class="nav-text">资源使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E7%AD%BE%E8%B5%84%E6%BA%90"><span class="nav-number">1.6.</span> <span class="nav-text">标签资源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E9%85%8D%E7%BD%AE"><span class="nav-number">1.7.</span> <span class="nav-text">日志配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pod%E6%89%A9%E7%BC%A9%E5%AE%B9"><span class="nav-number">1.8.</span> <span class="nav-text">Pod扩缩容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8E%9F%E5%88%99"><span class="nav-number">1.9.</span> <span class="nav-text">配置原则</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Part2-%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">Part2 集群管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E9%99%90%E5%88%B6"><span class="nav-number">2.1.</span> <span class="nav-text">命名空间限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pod%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5"><span class="nav-number">2.2.</span> <span class="nav-text">Pod安全策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5"><span class="nav-number">2.3.</span> <span class="nav-text">网络策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RBAC%E7%AD%96%E7%95%A5"><span class="nav-number">2.4.</span> <span class="nav-text">RBAC策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%AD%96%E7%95%A5"><span class="nav-number">2.5.</span> <span class="nav-text">自定义策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Part3-%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">Part3 集群配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E8%A6%81%E6%B1%82"><span class="nav-number">3.1.</span> <span class="nav-text">集群要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="nav-number">3.2.</span> <span class="nav-text">身份认证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E8%AE%BE%E7%BD%AE"><span class="nav-number">3.3.</span> <span class="nav-text">日志设置</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LuckYao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuckYao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

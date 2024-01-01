@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyyao09.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="问题描述Docker守护进程在异常断电后卡在activating状态，并且内存占用在无限增加。 123456789101112[root@node01 docker]# service docker statusRedirecting to &#x2F;bin&#x2F;systemctl status docker.service● docker.service - Docker Application Conta">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker问题排查-异常断电导致Docker启动卡住">
+<meta property="og:url" content="https://lyyao09.github.io/2022/02/26/docker/Docker%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%BC%82%E5%B8%B8%E6%96%AD%E7%94%B5%E5%AF%BC%E8%87%B4Docker%E5%90%AF%E5%8A%A8%E5%8D%A1%E4%BD%8F/index.html">
+<meta property="og:site_name" content="云原生知识星球">
+<meta property="og:description" content="问题描述Docker守护进程在异常断电后卡在activating状态，并且内存占用在无限增加。 123456789101112[root@node01 docker]# service docker statusRedirecting to &#x2F;bin&#x2F;systemctl status docker.service● docker.service - Docker Application Conta">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-26T18:13:11.000Z">
+<meta property="article:modified_time" content="2024-01-01T05:51:41.536Z">
+<meta property="article:author" content="LuckYao">
+<meta property="article:tag" content="docker">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://lyyao09.github.io/2022/02/26/docker/Docker%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%BC%82%E5%B8%B8%E6%96%AD%E7%94%B5%E5%AF%BC%E8%87%B4Docker%E5%90%AF%E5%8A%A8%E5%8D%A1%E4%BD%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Docker问题排查-异常断电导致Docker启动卡住 | 云原生知识星球</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">云原生知识星球</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2022/02/26/docker/Docker%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%BC%82%E5%B8%B8%E6%96%AD%E7%94%B5%E5%AF%BC%E8%87%B4Docker%E5%90%AF%E5%8A%A8%E5%8D%A1%E4%BD%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Docker问题排查-异常断电导致Docker启动卡住
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-02-26 18:13:11" itemprop="dateCreated datePublished" datetime="2022-02-26T18:13:11+00:00">2022-02-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 05:51:41" itemprop="dateModified" datetime="2024-01-01T05:51:41+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>Docker守护进程在异常断电后卡在<code>activating</code>状态，并且内存占用在无限增加。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 docker]# service docker status</span><br><span class="line">Redirecting to /bin/systemctl status docker.service</span><br><span class="line">● docker.service - Docker Application Container Engine</span><br><span class="line">   Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)</span><br><span class="line">  Drop-In: /etc/systemd/system/docker.service.d</span><br><span class="line">           └─restart.conf</span><br><span class="line">   Active: activating (start) since Tue 2021-12-07 15:44:32 CST; 1min 18s ago</span><br><span class="line">     Docs: https:/docs.docker.com</span><br><span class="line"> Main PID: 274797 (dockerd)</span><br><span class="line">    Tasks: 481</span><br><span class="line">   Memory: 15.4G  -- 占用不正常</span><br><span class="line">   CGroup: /system</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 docker]# service docker status</span><br><span class="line">Redirecting to /bin/systemctl status docker.service</span><br><span class="line">● docker.service - Docker Application Container Engine</span><br><span class="line">   Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)</span><br><span class="line">  Drop-In: /etc/systemd/system/docker.service.d</span><br><span class="line">           └─restart.conf</span><br><span class="line">   Active: deactivating (stop-sigterm)</span><br><span class="line">     Docs: https:/docs.docker.com</span><br><span class="line"> Main PID: 274797 (dockerd)</span><br><span class="line">    Tasks: 481</span><br><span class="line">   Memory: 247.3G   -- 一直在疯狂增加</span><br><span class="line">   CGroup: /system.slice/docker.service</span><br><span class="line">           └─274</span><br></pre></td></tr></table></figure>
+
+<h2 id="定位过程"><a href="#定位过程" class="headerlink" title="定位过程"></a>定位过程</h2><p>首先，查看<code>docker</code>版本和<code>docker info</code>信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">[root@node01files]# </span><span class="language-bash">docker version</span></span><br><span class="line">Client: Docker Engine - Community</span><br><span class="line"> Version:           20.10.7</span><br><span class="line"> API version:       1.41</span><br><span class="line"> Go version:        go1.13.15</span><br><span class="line"> Git commit:        f0df350</span><br><span class="line"> Built:             Wed Jun  2 11:58:10 2021</span><br><span class="line"> OS/Arch:           linux/amd64</span><br><span class="line"> Context:           default</span><br><span class="line"> Experimental:      true</span><br><span class="line"></span><br><span class="line">Server: Docker Engine - Community</span><br><span class="line"> Engine:</span><br><span class="line">  Version:          20.10.7</span><br><span class="line">  API version:      1.41 (minimum version 1.12)</span><br><span class="line">  Go version:       go1.13.15</span><br><span class="line">  Git commit:       b0f5bc3</span><br><span class="line">runc:</span><br><span class="line">  Version:          1.0.0-rc95</span><br><span class="line">  GitCommit:        b9ee9c6314599f1b4a7f497e1f1f856fe433d3b7</span><br><span class="line"> docker-init:</span><br><span class="line">  Version:          0.19.0</span><br><span class="line">  GitCommit:        de40ad0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 files]# docker info</span><br><span class="line">Client:</span><br><span class="line"> Context:    default</span><br><span class="line"> Debug Mode: false</span><br><span class="line"> Plugins:</span><br><span class="line">  app: Docker App (Docker Inc., v0.9.1-beta3)</span><br><span class="line">  buildx: Build with BuildKit (Docker Inc., v0.5.1-docker)</span><br><span class="line">  scan: Docker Scan (Docker Inc., v0.8.0)</span><br><span class="line"></span><br><span class="line">Server:</span><br><span class="line"> Server Version: 20.10.7</span><br><span class="line"> Storage Driver: overlay2</span><br><span class="line">  Backing Filesystem: xfs</span><br><span class="line">  Supports d_type: true</span><br><span class="line">  Native Overlay Diff: true</span><br><span class="line">  userxattr: false</span><br><span class="line"> Logging Driver: json-file</span><br><span class="line"> Cgroup Driver: systemd</span><br><span class="line"> Cgroup Version: 1</span><br><span class="line"> Plugins:</span><br><span class="line">  Volume: local</span><br><span class="line">  Network: bridge host ipvlan macvlan null overlay</span><br><span class="line">  Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog</span><br><span class="line"> Swarm: inactive</span><br><span class="line"> Runtimes: io.containerd.runc.v2 io.containerd.runtime.v1.linux runc</span><br><span class="line"> Default Runtime: runc</span><br><span class="line"> Init Binary: docker-init</span><br><span class="line"> containerd version: d71fcd7d8303cbf684402823e425e9dd2e99285d</span><br><span class="line"> runc version: b9ee9c6314599f1b4a7f497e1f1f856fe433d3b7</span><br><span class="line"> init version: de40ad0</span><br><span class="line"> Security Options:</span><br><span class="line">   seccomp</span><br><span class="line">   Profile: default</span><br><span class="line"> Kernel Version: 3.10.0-957.21.3.el7.x86_64</span><br><span class="line"> Operating System: CentOS 7.6</span><br><span class="line"> OSType: linux</span><br><span class="line"> Architecture: x86_64</span><br><span class="line"> Total Memory: 256GiB</span><br><span class="line"> Name: node01</span><br><span class="line"> Docker Root Dir: /var/lib/docker</span><br><span class="line"> Debug Mode: false</span><br><span class="line">  File Descriptors: 366</span><br><span class="line">  Goroutines: 290</span><br><span class="line">  EventsListeners: 0</span><br><span class="line"> Registry: https:/index.docker.io/v1/</span><br><span class="line"> Labels:</span><br><span class="line"> Experimental: false</span><br><span class="line"> Insecure Registries:</span><br><span class="line">  127.0.0.0/8</span><br><span class="line"> Live Restore Enabled: true</span><br></pre></td></tr></table></figure>
+
+<p>版本还算比较新，查看<code>docker</code>日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">Dec 07 14:57:57 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:57.831370861+08:00&quot; level=info msg=&quot;Starting up&quot;</span><br><span class="line">Dec 07 14:57:57 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:57.950367668+08:00&quot; level=info msg=&quot;parsed scheme: \&quot;unix\&quot;&quot; module=grpc</span><br><span class="line">Dec 07 14:57:57 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:57.950430356+08:00&quot; level=info msg=&quot;scheme \&quot;unix\&quot; not registered, fallback to default scheme&quot; module=grpc</span><br><span class="line">Dec 07 14:57:57 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:57.950486773+08:00&quot; level=info msg=&quot;ccResolverWrapper: sending update to cc: &#123;[&#123;unix://run/containerd/containerd.sock  &lt;nil&gt; 0 &lt;nil&gt;&#125;] &lt;nil&gt; &lt;nil&gt;&#125;&quot; module=grpc</span><br><span class="line">Dec 07 14:57:57 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:57.950524941+08:00&quot; level=info msg=&quot;ClientConn switching balancer to \&quot;pick_first\&quot;&quot; module=grpc</span><br><span class="line">Dec 07 14:57:58 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:58.004622322+08:00&quot; level=info msg=&quot;parsed scheme: \&quot;unix\&quot;&quot; module=grpc</span><br><span class="line">Dec 07 14:57:58 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:58.004663918+08:00&quot; level=info msg=&quot;scheme \&quot;unix\&quot; not registered, fallback to default scheme&quot; module=grpc</span><br><span class="line">Dec 07 14:57:58 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:58.004697382+08:00&quot; level=info msg=&quot;ccResolverWrapper: sending update to cc: &#123;[&#123;unix://run/containerd/containerd.sock  &lt;nil&gt; 0 &lt;nil&gt;&#125;] &lt;nil&gt; &lt;nil&gt;&#125;&quot; module=grpc</span><br><span class="line">Dec 07 14:57:58 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:58.004726533+08:00&quot; level=info msg=&quot;ClientConn switching balancer to \&quot;pick_first\&quot;&quot; module=grpc</span><br><span class="line">Dec 07 14:58:14 node01 dockerd[239420]: time=&quot;2021-12-07T14:58:14.832862519+08:00&quot; level=info msg=&quot;[graphdriver] using prior storage driver: overlay2&quot;</span><br><span class="line">Dec 07 14:59:00 node01 dockerd[239420]: time=&quot;2021-12-07T14:59:00.039554832+08:00&quot; level=info msg=&quot;Loading containers: start.&quot;</span><br><span class="line">Dec 07 15:02:27 node01 dockerd[239420]: fatal error: runtime: out of memory</span><br><span class="line">Dec 07 15:02:27 node01 dockerd[239420]: runtime stack:</span><br><span class="line">Dec 07 15:02:27 node01 dockerd[239420]: runtime.throw(0x5604d0deee9d, 0x16)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/panic.go:774 +0x74</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.sysMap(0xfb6c000000, 0x5c000000, 0x5604d35dab58)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/mem_linux.go:169 +0xc7</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.(*mheap).sysAlloc(0x5604d35be240, 0x5beee000, 0x7f6fd1fbab88, 0x5604cf22bf6b)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/malloc.go:701 +0x1cf</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.(*mheap).grow(0x5604d35be240, 0x2df77, 0xffffffff)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/mheap.go:1255 +0xa5</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.(*mheap).allocSpanLocked(0x5604d35be240, 0x2df77, 0x5604d35dab68, 0x5604cf212927)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/mheap.go:1170 +0x268</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.(*mheap).alloc_m(0x5604d35be240, 0x2df77, 0x7f6c01180100, 0x7f6c01184350)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/mheap.go:1022 +0xc6</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.(*mheap).alloc.func1()</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/mheap.go:1093 +0x4e</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.(*mheap).alloc(0x5604d35be240, 0x2df77, 0x7f6fd1010100, 0x7f6c01184350)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/mheap.go:1092 +0x8c</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.largeAlloc(0x5beee000, 0x5604cf250001, 0x7f6c01184350)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/malloc.go:1138 +0x99</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.mallocgc.func1()</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/malloc.go:1033 +0x48</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.systemstack(0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/asm_amd64.s:370 +0x63</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.mstart()</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/proc.go:1146</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: goroutine 1 [running]:</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.systemstack_switch()</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/asm_amd64.s:330 fp=0xc0008bff70 sp=0xc0008bff68 pc=0x5604cf2528e0</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.mallocgc(0x5beee000, 0x5604d1e8fde0, 0x1, 0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/malloc.go:1032 +0x8a7 fp=0xc0008c0010 sp=0xc0008bff70 pc=0x5604cf200ef7</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.growslice(0x5604d1e8fde0, 0xef119e4000, 0x3107eaa, 0x3107eaa, 0x3107eab, 0x5604cf20146b, 0xfb6bbbfb80, 0x7f6c01184350)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/slice.go:181 +0x1e4 fp=0xc0008c0078 sp=0xc0008c0010 pc=0x5604cf23b0b4</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/go.etcd.io/bbolt.(*Cursor).first(0xc0008c0288)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: docker/vendor/go.etcd.io/bbolt/cursor.go:182 +0x138 fp=0xc0008c00d8 sp=0xc0008c0078 pc=0x5604d012d348</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/go.etcd.io/bbolt.(*Cursor).next(0xc0008c0288, 0x0, 0x9f, 0x9f, 0x7f7150506429, 0x2b8, 0xc0008c0188, 0x5604cf23ee10)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/go.etcd.io/bbolt/cursor.go:234 +0x84 fp=0xc0008c0128 sp=0xc0008c00d8 pc=0x5604d012d684</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/go.etcd.io/bbolt.(*Cursor).Next(0xc0008c0288, 0x7f715050638a, 0x9f, 0x9f, 0xfb6bbcf720, 0x9f, 0x2b8)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/go.etcd.io/bbolt/cursor.go:75 +0x43 fp=0xc0008c0198 sp=0xc0008c0128 pc=0x5604d012ca43</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libkv/store/boltdb.(*BoltDB).List.func1(0xc0034350a0, 0xc0008c0200, 0xc0034350a0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libkv/store/boltdb/boltdb.go:288 +0x19a fp=0xc0008c02b8 sp=0xc0008c0198 pc=0x5604d0142a4a</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/go.etcd.io/bbolt.(*DB).View(0xc0001dc200, 0xc0008c03f8, 0x0, 0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/go.etcd.io/bbolt/db.go:725 +0xaa fp=0xc0008c0340 sp=0xc0008c02b8 pc=0x5604d0130a3a</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libkv/store/boltdb.(*BoltDB).List(0xc00482f2c0, 0xc001a7af00, 0x5e, 0x0, 0x0, 0x0, 0x0, 0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libkv/store/boltdb/boltdb.go:279 +0x1b3 fp=0xc0008c0430 sp=0xc0008c0340 pc=0x5604d0141583</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/datastore.(*cache).kmap(0xc003bf5900, 0x5604d220c1a0, 0xc001e7c160, 0x0, 0x5e, 0xc001a7ae40)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/datastore/cache.go:43 +0x286 fp=0xc0008c0560 sp=0xc0008c0430 pc=0x5604cfcc81a6</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/datastore.(*cache).list(0xc003bf5900, 0x5604d220c1a0, 0xc001e7c160, 0x0, 0x0, 0x0, 0x0, 0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/datastore/cache.go:164 +0x7e fp=0xc0008c0678 sp=0xc0008c0560 pc=0x5604cfcc988e</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/datastore.(*datastore).List(0xc0079ff680, 0xc001a7ae40, 0x5e, 0x5604d220c1a0, 0xc001e7c160, 0x0, 0x0, 0x0, 0x0, 0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/datastore/datastore.go:517 +0x205 fp=0xc0008c0730 sp=0xc0008c0678 pc=0x5604cfccc745</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork.(*network).getEndpointsFromStore(0xc00289a380, 0xc004a99258, 0x7, 0x5604d2206920, 0xc001a515f0, 0xc002f3ff48)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/store.go:190 +0x343 fp=0xc0008c09f8 sp=0xc0008c0730 pc=0x5604d01acaf3</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork.(*controller).reservePools(0xc0004b7400)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/controller.go:977 +0x4c1 fp=0xc0008c0c28 sp=0xc0008c09f8 pc=0x5604d0159701</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork.New(0xc001055d00, 0x9, 0x10, 0xc0007ac870, 0xc001387fb0, 0xc001055d00, 0x9)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/controller.go:245 +0x615 fp=0xc0008c0dd8 sp=0xc0008c0c28 pc=0x5604d0154815</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/daemon.(*Daemon).initNetworkController(0xc00000c1e0, 0xc000207080, 0xc001387fb0, 0xc000236f50, 0xc00000c1e0, 0xc0007170c8, 0xc001387fb0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/daemon/daemon_unix.go:855 +0xa9 fp=0xc0008c0e90 sp=0xc0008c0dd8 pc=0x5604d0a49429</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/daemon.(*Daemon).restore(0xc00000c1e0, 0xc00004e5c0, 0xc000220000)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/daemon/daemon.go:490 +0x50b fp=0xc0008c1088 sp=0xc0008c0e90 pc=0x5604d0a3898b</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/daemon.NewDaemon(0x5604d21de4c0, 0xc00004e5c0, 0xc000207080, 0xc0007ac870, 0x0, 0x0, 0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/daemon/daemon.go:1147 +0x2be8 fp=0xc0008c19c8 sp=0xc0008c1088 pc=0x5604d0a3c938</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: main.(*DaemonCli).start(0xc0007ab410, 0xc000218600, 0x0, 0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/cmd/dockerd/daemon.go:195 +0x743 fp=0xc0008c1d00 sp=0xc0008c19c8 pc=0x5604d0dbb3c3</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: main.runDaemon(...)</span><br></pre></td></tr></table></figure>
+
+<p>日志中存在明显的异常堆栈打印，分析可知，启动过程中走到<code>Loading containers: start.</code>之后卡住，然后打印<code>fatal error: runtime: out of memory</code>，也就是内存爆了。根据堆栈信息，可以看出异常的调用路径如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NewDaemon —&gt; restore() —&gt; initNetworkController —&gt; libnetwork.New() —&gt; reservePools() —&gt;  getEndpointsFromStore() —&gt; List —&gt; cache.list(kvObject) —&gt; cache.kmap(kvObject) —&gt; List(keyPrefix) —&gt; Next —&gt; next —&gt; first</span><br></pre></td></tr></table></figure>
+
+<p>拉取对应版本的代码，根据上述调用过程，找到指定的代码位置：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// List returns the range of keys starting with the passed in prefix</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *BoltDB)</span></span> List(keyPrefix <span class="type">string</span>) ([]*store.KVPair, <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> (</span><br><span class="line">        db  *bolt.DB</span><br><span class="line">        err <span class="type">error</span></span><br><span class="line">    )</span><br><span class="line">    b.Lock()</span><br><span class="line">    <span class="keyword">defer</span> b.Unlock()</span><br><span class="line"></span><br><span class="line">    kv := []*store.KVPair&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> db, err = b.getDBhandle(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> b.releaseDBhandle()</span><br><span class="line"></span><br><span class="line">    err = db.View(<span class="function"><span class="keyword">func</span><span class="params">(tx *bolt.Tx)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">        bucket := tx.Bucket(b.boltBucket)</span><br><span class="line">        <span class="keyword">if</span> bucket == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> store.ErrKeyNotFound</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        cursor := bucket.Cursor()</span><br><span class="line">        prefix := []<span class="type">byte</span>(keyPrefix)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> key, v := cursor.Seek(prefix); bytes.HasPrefix(key, prefix); key, v = cursor.Next() &#123;</span><br><span class="line"></span><br><span class="line">            dbIndex := binary.LittleEndian.Uint64(v[:libkvmetadatalen])</span><br><span class="line">            v = v[libkvmetadatalen:]</span><br><span class="line">            val := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="built_in">len</span>(v))</span><br><span class="line">            <span class="built_in">copy</span>(val, v)</span><br><span class="line"></span><br><span class="line">            kv = <span class="built_in">append</span>(kv, &amp;store.KVPair&#123;</span><br><span class="line">                Key:       <span class="type">string</span>(key),</span><br><span class="line">                Value:     val,</span><br><span class="line">                LastIndex: dbIndex,</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(kv) == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, store.ErrKeyNotFound</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> kv, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，这段是读取<code>boltdb</code>数据库（用于缓存网络配置），从之前了解看，这个数据库在异常断电时很容易损坏，所以怀疑是数据库损坏了，导致此处的遍历读取超出了预期的循环次数，而每次循环都会创建变量，分配内存，最终被内核<code>OOM</code>。</p>
+<p>在<code>docker</code>社区查找相关<code>issue</code>[1] [2]，发现确实存在<code>boltdb</code>数据库损坏的现象，不过最终报错的现象不太一样。最后，在<code>docker</code>社区也提了个<code>issue</code>[3]，社区反馈也是怀疑<code>boltdb</code>数据库损坏，并建议可以把<code>local-kv.db</code>文件删除再重启来恢复。</p>
+<p>个人觉得，上面报错的地方可以优化一下，对<code>db</code>文件做一次检查，如果检查到异常，提前抛异常，而不是不停地吃内存（由于异常的环境被破坏了，这个想法需要等复现后再考虑优化）。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
+<li>临时解决：删除<code>local-kv.db</code>文件再重启<code>docker</code>服务。</li>
+<li>永久解决：优化异常代码。</li>
+</ol>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/moby/moby/issues/37238">https://github.com/moby/moby/issues/37238</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/moby/moby/issues/42099">https://github.com/moby/moby/issues/42099</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/moby/moby/issues/43072">https://github.com/moby/moby/issues/43072</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/docker/" rel="tag"># docker</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/12/25/java/Karaf%E6%A1%86%E6%9E%B6%E5%8D%87%E7%BA%A7Lg4j%E5%8E%86%E7%A8%8B/" rel="prev" title="Karaf框架升级Lg4j历程">
+      <i class="fa fa-chevron-left"></i> Karaf框架升级Lg4j历程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/19/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Calico%E7%9A%84Vxlan%E6%A8%A1%E5%BC%8F%E4%B8%8B%E8%8A%82%E7%82%B9%E5%8F%91%E8%B5%B7K8s%20Service%E8%AF%B7%E6%B1%82%E5%BB%B6%E8%BF%9F/" rel="next" title="K8S问题排查-Calico的Vxlan模式下节点发起K8s Service请求延迟">
+      K8S问题排查-Calico的Vxlan模式下节点发起K8s Service请求延迟 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%BD%8D%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">定位过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">3.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LuckYao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuckYao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

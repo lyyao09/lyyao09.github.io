@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyyao09.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="访问Kubernetes集群中托管的服务的两种最常见方法是通过Ingress或Load Balancer。对于公有云用户来说，这些是访问服务的简单有效方法。云托管的控制器可以完成分配公共IP，设置负载平衡和管理SSL的繁重工作。 在本地运行私有托管的Kubernetes集群的运营商将很快意识到，将服务公开提供比在公有云上更为复杂。服务将在公共互联网上还是仅对本地用户公开？应该如何设置Ingress">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Calico的BGP发布Kubernetes Service IP路由">
+<meta property="og:url" content="https://lyyao09.github.io/2020/06/22/k8s/Advertising-Kubernetes-Service-IPs-with-Calico-and-BGP/index.html">
+<meta property="og:site_name" content="云原生知识星球">
+<meta property="og:description" content="访问Kubernetes集群中托管的服务的两种最常见方法是通过Ingress或Load Balancer。对于公有云用户来说，这些是访问服务的简单有效方法。云托管的控制器可以完成分配公共IP，设置负载平衡和管理SSL的繁重工作。 在本地运行私有托管的Kubernetes集群的运营商将很快意识到，将服务公开提供比在公有云上更为复杂。服务将在公共互联网上还是仅对本地用户公开？应该如何设置Ingress">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/lyyao09/cdn/raw/master/k8s/Advertising-Kubernetes-Service-IPs-with-Calico-and-BGP/Screen-Shot-2020-04-01-at-12.01.48-PM-1024x794.png">
+<meta property="article:published_time" content="2020-06-22T21:58:22.000Z">
+<meta property="article:modified_time" content="2024-01-01T05:51:41.536Z">
+<meta property="article:author" content="LuckYao">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/lyyao09/cdn/raw/master/k8s/Advertising-Kubernetes-Service-IPs-with-Calico-and-BGP/Screen-Shot-2020-04-01-at-12.01.48-PM-1024x794.png">
+
+<link rel="canonical" href="https://lyyao09.github.io/2020/06/22/k8s/Advertising-Kubernetes-Service-IPs-with-Calico-and-BGP/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>使用Calico的BGP发布Kubernetes Service IP路由 | 云原生知识星球</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">云原生知识星球</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/06/22/k8s/Advertising-Kubernetes-Service-IPs-with-Calico-and-BGP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用Calico的BGP发布Kubernetes Service IP路由
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-22 21:58:22" itemprop="dateCreated datePublished" datetime="2020-06-22T21:58:22+00:00">2020-06-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 05:51:41" itemprop="dateModified" datetime="2024-01-01T05:51:41+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>访问Kubernetes集群中托管的服务的两种最常见方法是通过<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/services-networking/ingress/">Ingress</a>或<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer">Load Balancer</a>。对于公有云用户来说，这些是访问服务的简单有效方法。云托管的控制器可以完成分配公共IP，设置负载平衡和管理SSL的繁重工作。</p>
+<p>在本地运行私有托管的Kubernetes集群的运营商将很快意识到，将服务公开提供比在公有云上更为复杂。服务将在公共互联网上还是仅对本地用户公开？应该如何设置Ingress，负载平衡，IP分配和SSL管理？在维护安全性的同时将服务公开发布的最有效方法是什么？</p>
+<p>Calico项目通过其服务IP发布功能为某些问题提供了答案，该功能与现有的机架（ToR）基础架构集成在一起，可以提供Kubernetes服务IP或Kubernetes外部服务IP的路由。在以下情况下，服务IP发布是一个很好的解决方案：</p>
+<ul>
+<li>您的ToR解决方案能够运行边界网关协议（BGP）</li>
+<li>您希望将服务从群集共享到网络基础结构的其余部分</li>
+<li>您想利用网络负载均衡</li>
+</ul>
+<p>为了启用服务IP发布功能，Calico需要与BGP路由器建立对等关系，该路由器在Calico的内部路由器之外，但在网络本地。BGP是网络中使用的最基本的路由协议之一。在较高级别，BGP通过在信任对等方之间共享路由来工作。与ToR对等时，Calico共享Kubernetes服务的路由，这使它们可用于整个网络。</p>
+<p>为了帮助讨论此功能，假定我们安装以下方式配置了网络和群集：</p>
+<ul>
+<li>托管Kubernetes节点的服务器机架通过顶部机架式路由器连接到物理网络</li>
+<li>Calico作为CNI和网络策略插件运行</li>
+<li>Calico和Rack顶部路由器配置为使用BGP对等</li>
+</ul>
+<p>在此设置中，我们具有以下网络配置：</p>
+<ul>
+<li>机架顶部路由器的IP地址是192.168.1.1，服务器的IP地址是从192.168.1.0&#x2F;24分配的</li>
+<li>Kubernetes Pod网络配置了CIDR 10.48.0.0&#x2F;16</li>
+<li>Kubernetes服务集群IP范围配置为10.49.0.0&#x2F;16</li>
+<li>外部服务IP范围配置为192.168.3.0&#x2F;24</li>
+</ul>
+<p>您的ToR BGP路由器的确切配置超出了本文的范围，并且会因您使用的供应商或软件包而异。如果您没有可用的服务器机架，但仍然想尝试该功能，那么在单独的服务器上运行的<a target="_blank" rel="noopener" href="https://bird.network.cz/">Bird Internet Routing Daemon（BIRD）</a>是尝试进行操作的不错选择。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Advertising-Kubernetes-Service-IPs-with-Calico-and-BGP/Screen-Shot-2020-04-01-at-12.01.48-PM-1024x794.png"></p>
+<p>第一步是启用ToR和Calico网络之间的对等连接。其工作方式将根据您的ToR实现而有所不同，但是要牢记一些关键事项：</p>
+<ul>
+<li>必须将ToR路由器配置为与在每个节点上运行的Calico对等</li>
+<li>ToR需要接受来自外部网络，外部服务网络和Pod服务网络的路由和流量</li>
+<li>如果可以选择，ToR应该启用正常重启，以防止网络服务中断</li>
+</ul>
+<p>将ToR配置为接受路由后，下一步是在Calico端启用对等。首先通过以下清单告诉Calico有关外部BGP路由器的信息：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">calicoctl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="bullet">-</span> <span class="string">&lt;&lt;</span> <span class="string">EOF</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">projectcalico.org/v3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">BGPPeer</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">bgppeer-global-64512</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">peerIP:</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.1</span></span><br><span class="line">  <span class="attr">asNumber:</span> <span class="number">64512</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>启用对等功能后，Calico可以使Pod成为网络中的头等公民，而无需覆盖网络，并使他们可以直接在群集外部访问。</p>
+<p>尽管启用了对等连接，但是Calico仍需要进一步配置以公开Kubernetes服务IP范围。这可以通过创建新的Calico BGPConfiguration资源来完成：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">calicoctl</span> <span class="string">create</span> <span class="string">-f</span> <span class="bullet">-</span> <span class="string">&lt;&lt;EOF</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">projectcalico.org/v3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">BGPConfiguration</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">serviceClusterIPs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">cidr:</span> <span class="number">10.49</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>启用服务群集IP范围的发布后，ToR上的路由表将如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ip r</span></span><br><span class="line">...</span><br><span class="line">10.49.0.0/16</span><br><span class="line">nexthop via 192.168.1.10 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.1.11 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.1.12 dev eth2 weight 1 </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>注意到10.49.0.0&#x2F;16网络的路由如何在节点之间实现ECMP负载平衡。您公开的所有服务将由ToR在所有节点上进行负载平衡。为了说明这一点，我们可以创建一个基本的Nginx服务。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">control:~$ kubectl apply -f - &lt;&lt;EOF</span><br><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: nginx</span><br><span class="line">  replicas: 2</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: nginx</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 80</span><br><span class="line">EOF</span><br><span class="line">control:~$ kubectl expose nginx</span><br><span class="line">control:~$ kubectl get services</span><br><span class="line">NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">kubernetes   ClusterIP   10.49.0.1      &lt;none&gt;        443/TCP   19m</span><br><span class="line">nginx        ClusterIP   10.49.62.131   &lt;none&gt;        80/TCP    4m43s</span><br></pre></td></tr></table></figure>
+
+<p>现在，您可以从外部网络通过其内部群集IP地址访问Kubernetes托管服务。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">external:~$ curl 10.49.62.131</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;title&gt;Welcome to nginx!&lt;/title&gt;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>这里有两个阶段的负载平衡。首先，ToR通过将其路由到节点来对与群集IP的连接进行负载平衡。然后，使用NAT（网络地址转换）在该节点上运行的kube-proxy负载均衡到特定的Pod，以将目标IP从群集IP更改为后备Pod之一的IP地址。后备Pod可能在本地节点上，也可能在其他节点之一上，从而导致了另一个网络跃点。</p>
+<p>如果我们想避免额外的潜在网络跳数，可以通过将服务上的外部流量策略设置为本地来实现。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">control:~$ kubectl patch service nginx \</span><br><span class="line">  -p &#x27;&#123;&quot;spec&quot;:&#123;&quot;type&quot;: &quot;NodePort&quot;, &quot;externalTrafficPolicy&quot;:&quot;Local&quot;&#125;&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>现在，在ToR上，您将看到路由表的新增内容，包括Nginx服务到正在运行Nginx的特定节点的ECMP负载平衡：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ip r</span></span><br><span class="line">...</span><br><span class="line">10.49.0.0/16 </span><br><span class="line">nexthop via 192.168.2.10 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.2.11 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.2.12 dev eth2 weight 1 </span><br><span class="line">...</span><br><span class="line">10.49.62.131</span><br><span class="line">nexthop via 192.168.2.11 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.2.12 dev eth2 weight 1 </span><br></pre></td></tr></table></figure>
+
+<p>这是公开Kubernetes网络服务的简便方法，但是在操作上，它具有将Kubernetes群集中该IP范围内的每个服务都暴露给网络其余部分的缺点。如果您想更精细地控制提供哪些服务，或者想要分配真正面向公众的IP地址，Calico可以通过发布外部服务IP来解决这个问题。该方法类似，主要区别在于外部IP不由Kubernetes集群管理，必须手动分配给服务。</p>
+<p>下一个示例将说明这一点。首先重新配置BGPConfiguration，以发布外部IP而不是内部IP（值得注意的是，您可以一次公开这两个集合，但是在此示例中，我们要关闭对内部网络的公共访问，同时仍提供对应用程序的访问）。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">control</span> <span class="string">:~$calicoctl</span> <span class="string">create</span> <span class="string">-f</span> <span class="bullet">-</span> <span class="string">&lt;&lt;EOF</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">projectcalico.org/v3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">BGPConfiguration</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">serviceClusterIPs:</span></span><br><span class="line">  <span class="attr">serviceExternalIPs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">cidr:</span> <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span><span class="string">/24</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>检查路由时，请注意已删除到群集IP范围的路由，并已添加到外部服务网络的路由。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ip r</span></span><br><span class="line">...</span><br><span class="line">192.168.3.0/24</span><br><span class="line">nexthop via 192.168.1.10 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.1.11 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.1.12 dev eth2 weight 1 </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>该服务的群集IP不再公开可见。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">external :~$ curl -m 10 10.49.62.131</span><br><span class="line">curl: (28) Connection timed out after 10001 milliseconds</span><br></pre></td></tr></table></figure>
+
+<p>我们现在在发布外部IP范围，但我们还需要为服务分配一个外部IP：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">control:~$ kubectl patch svc nginx \</span><br><span class="line">-p  &#x27;&#123;&quot;spec&quot;: &#123;&quot;externalIPs&quot;: [&quot;192.168.3.180&quot;]&#125;&#125;&#x27;</span><br><span class="line">control:~$ kubectl get services</span><br><span class="line">NAME       TYPE       CLUSTER-IP     EXTERNAL-IP     PORT(S)        AGE</span><br><span class="line">kubernetes ClusterIP  10.49.0.1      &lt;none&gt;          443/TCP        152m</span><br><span class="line">nginx      NodePort   10.49.62.131   192.168.3.180   80:31890/TCP   109m</span><br></pre></td></tr></table></figure>
+
+<p>检查连接性：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">external:~$ curl 192.168.3.180</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;title&gt;Welcome to nginx!&lt;/title&gt;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>到此为止，我们快速完成了Calico如何在Kuberentes群集之外发布服务和外部服务IP的快速浏览。对于具有启用BGP路由的本地云，这是一种简单的解决方案，无需提供安装和维护自定义Kubernetes负载均衡器或Ingress控制器的额外工作即可访问Kubernetes服务。如果您想了解更多有关此功能的信息，请查阅官方的Calico项目”<a target="_blank" rel="noopener" href="https://docs.projectcalico.org/networking/advertise-service-ips">Advertise Kubernetes Service IPs</a>“。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/13/linux/An-introduction-to-linux-interfaces-for-virtual-networking/" rel="prev" title="Linux接口之虚拟网络接口介绍">
+      <i class="fa fa-chevron-left"></i> Linux接口之虚拟网络接口介绍
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/06/30/k8s/Kubernetes-External-IP-service-type/" rel="next" title="Kubernetes External IP服务类型">
+      Kubernetes External IP服务类型 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LuckYao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuckYao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
