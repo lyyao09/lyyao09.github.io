@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lyyao09.github.io/tags/index.html</loc>
+    
+    <lastmod>2024-01-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://lyyao09.github.io/google704cf0254066df0d.html</loc>
     
     <lastmod>2024-01-01</lastmod>
@@ -12,24 +21,6 @@
   
   <url>
     <loc>https://lyyao09.github.io/categories/index.html</loc>
-    
-    <lastmod>2024-01-01</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/tags/index.html</loc>
-    
-    <lastmod>2024-01-01</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2021/04/17/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/</loc>
     
     <lastmod>2024-01-01</lastmod>
     
@@ -398,25 +389,16 @@
   </url>
   
   <url>
+    <loc>https://lyyao09.github.io/2021/04/17/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/</loc>
+    
+    <lastmod>2024-01-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://lyyao09.github.io/2020/06/13/linux/An-introduction-to-linux-interfaces-for-virtual-networking/</loc>
-    
-    <lastmod>2024-01-01</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2020/04/01/k8s/Okteto-Push-Your-Code-to-Kubernetes-in-Seconds/</loc>
-    
-    <lastmod>2024-01-01</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/07/22/k8s/Renewing-Kubernetes-cluster-certificates/</loc>
     
     <lastmod>2024-01-01</lastmod>
     
@@ -444,15 +426,6 @@
   
   <url>
     <loc>https://lyyao09.github.io/2020/12/25/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/</loc>
-    
-    <lastmod>2024-01-01</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2020/11/12/k8s/Kubernetes-Production-Best-Practices/</loc>
     
     <lastmod>2024-01-01</lastmod>
     
@@ -579,6 +552,33 @@
   
   <url>
     <loc>https://lyyao09.github.io/2020/12/28/k8s/Kubernetes-Patterns-The-Init-Container-Pattern/</loc>
+    
+    <lastmod>2024-01-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2020/04/01/k8s/Okteto-Push-Your-Code-to-Kubernetes-in-Seconds/</loc>
+    
+    <lastmod>2024-01-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/22/k8s/Renewing-Kubernetes-cluster-certificates/</loc>
+    
+    <lastmod>2024-01-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2020/11/12/k8s/Kubernetes-Production-Best-Practices/</loc>
     
     <lastmod>2024-01-01</lastmod>
     
@@ -749,15 +749,6 @@
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2020/10/21/docker/Create-Tag-Retention-Rules/</loc>
-    
-    <lastmod>2024-01-01</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://lyyao09.github.io/2020/04/08/docker/Deploy-free-docker-container-on-okteto/</loc>
     
     <lastmod>2024-01-01</lastmod>
@@ -795,6 +786,15 @@
   
   <url>
     <loc>https://lyyao09.github.io/2019/07/31/db/Set-environment-variable-values-in-persistence-xml-from-Eclipse/</loc>
+    
+    <lastmod>2024-01-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2020/10/21/docker/Create-Tag-Retention-Rules/</loc>
     
     <lastmod>2024-01-01</lastmod>
     

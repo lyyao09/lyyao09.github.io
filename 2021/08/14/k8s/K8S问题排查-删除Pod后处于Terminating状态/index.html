@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyyao09.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="问题背景通过kubectl delete命令删除某个业务Pod后，该Pod一直处于Terminating状态。 原因分析根据现象看，应该是删除过程中有哪个流程异常，导致最终的删除卡在了Terminating状态。先describe看一下： 12[root@node1 ~]# kubectl describe pod -n xxx cam1-78b6fc6bc8-cjsw5&#x2F;&#x2F; 没有发现什么异常信息">
+<meta property="og:type" content="article">
+<meta property="og:title" content="K8S问题排查-删除Pod后处于Terminating状态">
+<meta property="og:url" content="https://lyyao09.github.io/2021/08/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%88%A0%E9%99%A4Pod%E5%90%8E%E5%A4%84%E4%BA%8ETerminating%E7%8A%B6%E6%80%81/index.html">
+<meta property="og:site_name" content="云原生知识星球">
+<meta property="og:description" content="问题背景通过kubectl delete命令删除某个业务Pod后，该Pod一直处于Terminating状态。 原因分析根据现象看，应该是删除过程中有哪个流程异常，导致最终的删除卡在了Terminating状态。先describe看一下： 12[root@node1 ~]# kubectl describe pod -n xxx cam1-78b6fc6bc8-cjsw5&#x2F;&#x2F; 没有发现什么异常信息">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-08-14T17:20:51.000Z">
+<meta property="article:modified_time" content="2024-01-01T06:08:23.102Z">
+<meta property="article:author" content="LuckYao">
+<meta property="article:tag" content="kubernetes">
+<meta property="article:tag" content="kubernetes问题排查">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://lyyao09.github.io/2021/08/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%88%A0%E9%99%A4Pod%E5%90%8E%E5%A4%84%E4%BA%8ETerminating%E7%8A%B6%E6%80%81/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>K8S问题排查-删除Pod后处于Terminating状态 | 云原生知识星球</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">云原生知识星球</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/08/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%88%A0%E9%99%A4Pod%E5%90%8E%E5%A4%84%E4%BA%8ETerminating%E7%8A%B6%E6%80%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          K8S问题排查-删除Pod后处于Terminating状态
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-14 17:20:51" itemprop="dateCreated datePublished" datetime="2021-08-14T17:20:51+00:00">2021-08-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 06:08:23" itemprop="dateModified" datetime="2024-01-01T06:08:23+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>通过<code>kubectl delete</code>命令删除某个业务Pod后，该Pod一直处于<code>Terminating</code>状态。</p>
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>根据现象看，应该是删除过程中有哪个流程异常，导致最终的删除卡在了<code>Terminating</code>状态。先<code>describe</code>看一下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# kubectl describe pod -n xxx cam1-78b6fc6bc8-cjsw5</span><br><span class="line">// 没有发现什么异常信息，这里就不贴日志了</span><br></pre></td></tr></table></figure>
+
+<p><code>Event</code>事件中未见明显异常，那就看负责删除Pod的<code>kubelet</code>组件日志（已过滤出关键性日志）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">I0728 16:24:57.339295    9744 kubelet.go:1904] SyncLoop (DELETE, &quot;api&quot;): &quot;cam1-78b6fc6bc8-cjsw5_cam(5c948341-c030-4996-b888-f032577d97b0)&quot;</span><br><span class="line">I0728 16:24:57.339720    9744 kuberuntime_container.go:581] Killing container &quot;docker://a73082a4a9a4cec174bb0d1c256cc11d804d93137551b9bfd3e6fa1522e98589&quot; with 60 second grace period</span><br><span class="line">I0728 16:25:18.259418    9744 kubelet.go:1904] SyncLoop (DELETE, &quot;api&quot;): &quot;cam1-78b6fc6bc8-cjsw5_cam(5c948341-c030-4996-b888-f032577d97b0)&quot;</span><br><span class="line">2021-07-28 16:25:19.247 [INFO][394011] ipam.go 1173: Releasing all IPs with handle &#x27;cam.cam1-78b6fc6bc8-cjsw5&#x27;</span><br><span class="line">2021-07-28 16:25:19.254 [INFO][393585] k8s.go 498: Teardown processing complete.</span><br><span class="line"></span><br><span class="line">// 可疑点1：没有获取到pod IP</span><br><span class="line">W0728 16:25:19.303513    9744 docker_sandbox.go:384] failed to read pod IP from plugin/docker: NetworkPlugin cni failed on the status hook for pod &quot;cam1-78b6fc6bc8-cjsw5_cam&quot;: Unexpected command output Device &quot;eth0&quot; does not exist.</span><br><span class="line"> with error: exit status 1</span><br><span class="line"> </span><br><span class="line">I0728 16:25:19.341068    9744 kubelet.go:1933] SyncLoop (PLEG): &quot;cam1-78b6fc6bc8-cjsw5_cam(5c948341-c030-4996-b888-f032577d97b0)&quot;, event: &amp;pleg.PodLifecycleEvent&#123;ID:&quot;5c948341-c030-4996-b888-f032577d97b0&quot;, Type:&quot;ContainerDied&quot;, Data:&quot;a73082a4a9a4cec174bb0d1c256cc11d804d93137551b9bfd3e6fa1522e98589&quot;&#125;</span><br><span class="line">I0728 16:25:20.578095    9744 kubelet.go:1933] SyncLoop (PLEG): &quot;cam1-78b6fc6bc8-cjsw5_cam(5c948341-c030-4996-b888-f032577d97b0)&quot;, event: &amp;pleg.PodLifecycleEvent&#123;ID:&quot;5c948341-c030-4996-b888-f032577d97b0&quot;, Type:&quot;ContainerDied&quot;, Data:&quot;c3b992465cd2085300995066526a36665664558446ff6e1756135c3a5b6df2e6&quot;&#125;</span><br><span class="line"></span><br><span class="line">I0728 16:25:20.711967    9744 kubelet_pods.go:1090] Killing unwanted pod &quot;cam1-78b6fc6bc8-cjsw5&quot;</span><br><span class="line"></span><br><span class="line">// 可疑点2：Unmount失败</span><br><span class="line">E0728 16:25:20.939400    9744 nestedpendingoperations.go:301] Operation for &quot;&#123;volumeName:kubernetes.io/glusterfs/5c948341-c030-4996-b888-f032577d97b0-cam-pv-50g podName:5c948341-c030-4996-b888-f032577d97b0 nodeName:&#125;&quot; failed. No retries permitted until 2021-07-28 16:25:21.439325811 +0800 CST m=+199182.605079651 (durationBeforeRetry 500ms). Error: &quot;UnmountVolume.TearDown failed for volume \&quot;diag-log\&quot; (UniqueName: \&quot;kubernetes.io/glusterfs/5c948341-c030-4996-b888-f032577d97b0-cam-pv-50g\&quot;) pod \&quot;5c948341-c030-4996-b888-f032577d97b0\&quot; (UID: \&quot;5c948341-c030-4996-b888-f032577d97b0\&quot;) : Unmount failed: exit status 32\nUnmounting arguments: /var/lib/kubelet/pods/5c948341-c030-4996-b888-f032577d97b0/volumes/kubernetes.io~glusterfs/cam-pv-50g\nOutput: umount: /var/lib/kubelet/pods/5c948341-c030-4996-b888-f032577d97b0/volumes/kubernetes.io~glusterfs/cam-pv-50g：目标忙。\n        (有些情况下通过 lsof(8) 或 fuser(1) 可以\n         找到有关使用该设备的进程的有用信息。)\n\n&quot;</span><br></pre></td></tr></table></figure>
+
+<p>从删除Pod的日志看，有2个可疑点：</p>
+<ol>
+<li><code>docker_sandbox.go:384</code>打印的获取<code>pod IP</code>错误；</li>
+<li><code>nestedpendingoperations.go:301</code>打印的<code>Unmount</code>失败错误；</li>
+</ol>
+<p>先看第1点，根据日志定位到代码[1]位置如下，<code>IP</code>没有拿到所以打印了个告警并返回空<code>IP</code>地址；</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">pkg/kubelet/dockershim/docker_sandbox.<span class="keyword">go</span>:<span class="number">348</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ds *dockerService)</span></span> getIP(podSandboxID <span class="type">string</span>, sandbox *dockertypes.ContainerJSON) <span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> sandbox.NetworkSettings == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> networkNamespaceMode(sandbox) == runtimeapi.NamespaceMode_NODE &#123;</span><br><span class="line">		<span class="comment">// For sandboxes using host network, the shim is not responsible for</span></span><br><span class="line">		<span class="comment">// reporting the IP.</span></span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Don&#x27;t bother getting IP if the pod is known and networking isn&#x27;t ready</span></span><br><span class="line">	ready, ok := ds.getNetworkReady(podSandboxID)</span><br><span class="line">	<span class="keyword">if</span> ok &amp;&amp; !ready &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ip, err := ds.getIPFromPlugin(sandbox)</span><br><span class="line">	<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> ip</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">if</span> sandbox.NetworkSettings.IPAddress != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> sandbox.NetworkSettings.IPAddress</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> sandbox.NetworkSettings.GlobalIPv6Address != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> sandbox.NetworkSettings.GlobalIPv6Address</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 错误日志在这里</span></span><br><span class="line">	klog.Warningf(<span class="string">&quot;failed to read pod IP from plugin/docker: %v&quot;</span>, err)</span><br><span class="line">	<span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>继续看<code>getIP</code>方法的调用处代码，这里如果没有拿到<code>IP</code>，也没有什么异常，直接把空值放到<code>PodSandboxStatusResponse</code>中并返回；</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">pkg/kubelet/dockershim/docker_sandbox.<span class="keyword">go</span>:<span class="number">404</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ds *dockerService)</span></span> PodSandboxStatus(ctx context.Context, req *runtimeapi.PodSandboxStatusRequest) (*runtimeapi.PodSandboxStatusResponse, <span class="type">error</span>) &#123;</span><br><span class="line">	podSandboxID := req.PodSandboxId</span><br><span class="line"></span><br><span class="line">	r, metadata, err := ds.getPodSandboxDetails(podSandboxID)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Parse the timestamps.</span></span><br><span class="line">	createdAt, _, _, err := getContainerTimestamps(r)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">&quot;failed to parse timestamp for container %q: %v&quot;</span>, podSandboxID, err)</span><br><span class="line">	&#125;</span><br><span class="line">	ct := createdAt.UnixNano()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Translate container to sandbox state.</span></span><br><span class="line">	state := runtimeapi.PodSandboxState_SANDBOX_NOTREADY</span><br><span class="line">	<span class="keyword">if</span> r.State.Running &#123;</span><br><span class="line">		state = runtimeapi.PodSandboxState_SANDBOX_READY</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 调用getIP方法的位置</span></span><br><span class="line">	<span class="keyword">var</span> IP <span class="type">string</span></span><br><span class="line">	<span class="keyword">if</span> IP = ds.determinePodIPBySandboxID(podSandboxID); IP == <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">		IP = ds.getIP(podSandboxID, r)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    labels, annotations := extractLabels(r.Config.Labels)</span><br><span class="line">	status := &amp;runtimeapi.PodSandboxStatus&#123;</span><br><span class="line">		Id:          r.ID,</span><br><span class="line">		State:       state,</span><br><span class="line">		CreatedAt:   ct,</span><br><span class="line">		Metadata:    metadata,</span><br><span class="line">		Labels:      labels,</span><br><span class="line">		Annotations: annotations,</span><br><span class="line">		Network: &amp;runtimeapi.PodSandboxNetworkStatus&#123;</span><br><span class="line">			Ip: IP,</span><br><span class="line">		&#125;,</span><br><span class="line">		Linux: &amp;runtimeapi.LinuxPodSandboxStatus&#123;</span><br><span class="line">			Namespaces: &amp;runtimeapi.Namespace&#123;</span><br><span class="line">				Options: &amp;runtimeapi.NamespaceOption&#123;</span><br><span class="line">					Network: networkNamespaceMode(r),</span><br><span class="line">					Pid:     pidNamespaceMode(r),</span><br><span class="line">					Ipc:     ipcNamespaceMode(r),</span><br><span class="line">				&#125;,</span><br><span class="line">			&#125;,</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> &amp;runtimeapi.PodSandboxStatusResponse&#123;Status: status&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>到此看不出这个错误会不会中断删除流程，那就本地构造一下试试。修改上面的代码，在调用<code>getIP</code>方法的位置后面增加调试日志（从本地验证结果看，Pod正常删除，说明异常问题与此处无关）；</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 调用getIP方法的位置</span></span><br><span class="line"><span class="keyword">var</span> IP <span class="type">string</span></span><br><span class="line"><span class="keyword">if</span> IP = ds.determinePodIPBySandboxID(podSandboxID); IP == <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">	IP = ds.getIP(podSandboxID, r)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 新加调试日志，如果是指定的Pod，强制将IP置空</span></span><br><span class="line">isTestPod := strings.Contains(metadata.GetName(), <span class="string">&quot;testpod&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> isTestPod &#123;</span><br><span class="line">	IP = <span class="string">&quot;&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再看第2点，这个是<code>ERROR</code>级别的错误，问题出在<code>Unmount</code>挂载点时失败。那么卸载挂载点失败会导致卸载流程提前终止吗？网上关于Pod删除流程的源码分析文章很多，我们就直接找几篇[2,3,4]看看能不能解答上面的问题。</p>
+<p><strong>简单总结来说，删除一个Pod的流程如下：</strong></p>
+<ol>
+<li>调用<code>kube-apiserver</code>的<code>DELETE</code>接口（默认带<code>grace-period=30s</code>）；</li>
+<li>第一次的删除只是更新Pod对象的元信息（<code>DeletionTimestamp</code>字段和<code>DeletionGracePeriodSeconds</code>字段），并没有在<code>Etcd</code>中删除记录；</li>
+<li><code>kubectl</code>命令的执行会阻塞并显示正在删除Pod；</li>
+<li><code>kubelet</code>组件监听到Pod对象的更新事件，执行<code>killPod()</code>方法；</li>
+<li><code>kubelet</code>组件监听到pod的删除事件，第二次调用<code>kube-apiserver</code>的<code>DELETE</code>接口（带<code>grace-period=0</code>）</li>
+<li><code>kube-apiserver</code>的<code>DELETE</code>接口去<code>etcd</code>中删除Pod对象；</li>
+<li><code>kubectl</code>命令的执行返回，删除Pod成功；</li>
+</ol>
+<p>从前面<code>kubelet</code>删除异常的日志看，确实有两次<code>DELETE</code>操作，并且中间有个<code>Killing container</code>的日志，但从上面的删除流程看，两次<code>DELETE</code>操作之间应该是调用<code>killPod()</code>方法，通过查看源码，对应的日志应该是<code>Killing unwanted pod</code>，所以，实际上第二次的<code>DELETE</code>操作并没有触发。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">pkg/kubelet/kubelet_pods.<span class="keyword">go</span>:<span class="number">1073</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *Kubelet)</span></span> podKiller() &#123;</span><br><span class="line">	killing := sets.NewString()</span><br><span class="line">	<span class="comment">// guard for the killing set</span></span><br><span class="line">	lock := sync.Mutex&#123;&#125;</span><br><span class="line">	<span class="keyword">for</span> podPair := <span class="keyword">range</span> kl.podKillingCh &#123;</span><br><span class="line">		runningPod := podPair.RunningPod</span><br><span class="line">		apiPod := podPair.APIPod</span><br><span class="line"></span><br><span class="line">		lock.Lock()</span><br><span class="line">		exists := killing.Has(<span class="type">string</span>(runningPod.ID))</span><br><span class="line">		<span class="keyword">if</span> !exists &#123;</span><br><span class="line">			killing.Insert(<span class="type">string</span>(runningPod.ID))</span><br><span class="line">		&#125;</span><br><span class="line">		lock.Unlock()</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 这里在调用killPod方法前会打印v2级别的日志</span></span><br><span class="line">		<span class="keyword">if</span> !exists &#123;</span><br><span class="line">			<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(apiPod *v1.Pod, runningPod *kubecontainer.Pod)</span></span> &#123;</span><br><span class="line">				klog.V(<span class="number">2</span>).Infof(<span class="string">&quot;Killing unwanted pod %q&quot;</span>, runningPod.Name)</span><br><span class="line">				err := kl.killPod(apiPod, runningPod, <span class="literal">nil</span>, <span class="literal">nil</span>)</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					klog.Errorf(<span class="string">&quot;Failed killing the pod %q: %v&quot;</span>, runningPod.Name, err)</span><br><span class="line">				&#125;</span><br><span class="line">				lock.Lock()</span><br><span class="line">				killing.Delete(<span class="type">string</span>(runningPod.ID))</span><br><span class="line">				lock.Unlock()</span><br><span class="line">			&#125;(apiPod, runningPod)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>怎么确认第二次的<code>DELETE</code>操作有没有触发呢？很简单，看代码或者实际验证都可以。这里我就在测试环境删除个Pod看下相关日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@node2 ~]# kubectl delete pod -n xxx  testpodrc2-7b749f6c9c-qh68l</span><br><span class="line">pod &quot;testpodrc2-7b749f6c9c-qh68l&quot; deleted</span><br><span class="line"></span><br><span class="line">// 已过滤出关键性日志</span><br><span class="line">[root@node2 ~]# tailf kubelet.log</span><br><span class="line">I0730 13:27:31.854178   24588 kubelet.go:1904] SyncLoop (DELETE, &quot;api&quot;): &quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;</span><br><span class="line">I0730 13:27:31.854511   24588 kuberuntime_container.go:581] Killing container &quot;docker://e2a1cd5f2165e12cf0b46e12f9cd4d656d593f75e85c0de058e0a2f376a5557e&quot; with 30 second grace period</span><br><span class="line">I0730 13:27:32.203167   24588 kubelet.go:1904] SyncLoop (DELETE, &quot;api&quot;): &quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;</span><br><span class="line"></span><br><span class="line">I0730 13:27:32.993294   24588 kubelet.go:1933] SyncLoop (PLEG): &quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;, event: &amp;pleg.PodLifecycleEvent&#123;ID:&quot;85ee282f-a843-4f10-a99c-79d447f83f2a&quot;, Type:&quot;ContainerDied&quot;, Data:&quot;e2a1cd5f2165e12cf0b46e12f9cd4d656d593f75e85c0de058e0a2f376a5557e&quot;&#125;</span><br><span class="line">I0730 13:27:32.993428   24588 kubelet.go:1933] SyncLoop (PLEG): &quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;, event: &amp;pleg.PodLifecycleEvent&#123;ID:&quot;85ee282f-a843-4f10-a99c-79d447f83f2a&quot;, Type:&quot;ContainerDied&quot;, Data:&quot;c6a587614976beed0cbb6e5fabf70a2d039eec6c160154fce007fe2bb1ba3b4f&quot;&#125;</span><br><span class="line"></span><br><span class="line">I0730 13:27:34.072494   24588 kubelet_pods.go:1090] Killing unwanted pod &quot;testpodrc2-7b749f6c9c-qh68l&quot;</span><br><span class="line"></span><br><span class="line">I0730 13:27:40.084182   24588 kubelet.go:1904] SyncLoop (DELETE, &quot;api&quot;): &quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;</span><br><span class="line">I0730 13:27:40.085735   24588 kubelet.go:1898] SyncLoop (REMOVE, &quot;api&quot;): &quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;</span><br></pre></td></tr></table></figure>
+
+<p>对比正常和异常场景下的日志可以看出，正常的删除操作下，<code>Killing unwanted pod</code>日志之后会有<code>DELETE</code>和<code>REMOVE</code>的操作，这也就说明问题出在第二次<code>DELETE</code>操作没有触发。查看相关代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">pkg/kubelet/status/status_manager.<span class="keyword">go</span>:<span class="number">470</span></span><br><span class="line"><span class="comment">//kubelet组件有一个statusManager模块，它会for循环调用syncPod()方法</span></span><br><span class="line"><span class="comment">//方法内部有机会调用kube-apiserver的DELETE接口(强制删除，非平滑)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *manager)</span></span> syncPod(uid types.UID, status versionedPodStatus) &#123;</span><br><span class="line">	...</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//当pod带有DeletionTimestamp字段，并且其内容器已被删除、持久卷已被删除等的多条件下，才会进入if语句内部</span></span><br><span class="line">    <span class="keyword">if</span> m.canBeDeleted(pod, status.status) &#123;</span><br><span class="line">        deleteOptions := metav1.NewDeleteOptions(<span class="number">0</span>)</span><br><span class="line">        deleteOptions.Preconditions = metav1.NewUIDPreconditions(<span class="type">string</span>(pod.UID))</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//强制删除pod对象：kubectl delete pod podA --grace-period=0</span></span><br><span class="line">        err = m.kubeClient.CoreV1().Pods(pod.Namespace).Delete(pod.Name, deleteOptions) </span><br><span class="line">	...</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从源码可以看出，第二次<code>DELETE</code>操作是否触发依赖于<code>canBeDeleted</code>方法的校验结果，而这个方法内会检查持久卷是否已经被删除：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">pkg/kubelet/status/status_manager.<span class="keyword">go</span>:<span class="number">538</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *manager)</span></span> canBeDeleted(pod *v1.Pod, status v1.PodStatus) <span class="type">bool</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> pod.DeletionTimestamp == <span class="literal">nil</span> || kubepod.IsMirrorPod(pod) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> m.podDeletionSafety.PodResourcesAreReclaimed(pod, status)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pkg/kubelet/kubelet_pods.<span class="keyword">go</span>:<span class="number">900</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *Kubelet)</span></span> PodResourcesAreReclaimed(pod *v1.Pod, status v1.PodStatus) <span class="type">bool</span> &#123;</span><br><span class="line">	...</span><br><span class="line">    </span><br><span class="line">	<span class="comment">// 这里会判断挂载卷是否已卸载</span></span><br><span class="line">	<span class="keyword">if</span> kl.podVolumesExist(pod.UID) &amp;&amp; !kl.keepTerminatedPodVolumes &#123;</span><br><span class="line">		<span class="comment">// We shouldnt delete pods whose volumes have not been cleaned up if we are not keeping terminated pod volumes</span></span><br><span class="line">		klog.V(<span class="number">3</span>).Infof(<span class="string">&quot;Pod %q is terminated, but some volumes have not been cleaned up&quot;</span>, format.Pod(pod))</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> kl.kubeletConfiguration.CgroupsPerQOS &#123;</span><br><span class="line">		pcm := kl.containerManager.NewPodContainerManager()</span><br><span class="line">		<span class="keyword">if</span> pcm.Exists(pod) &#123;</span><br><span class="line">			klog.V(<span class="number">3</span>).Infof(<span class="string">&quot;Pod %q is terminated, but pod cgroup sandbox has not been cleaned up&quot;</span>, format.Pod(pod))</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结合出问题的日志，基本能确认是<code>Unmount</code>挂载点失败导致的异常。那么，挂载点为啥会<code>Unmount</code>失败？</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// umount失败关键日志</span><br><span class="line">Unmount failed: exit status 32\nUnmounting arguments: /var/lib/kubelet/pods/xxx/volumes/kubernetes.io~glusterfs/cam-pv-50g\nOutput: umount: /var/lib/kubelet/pods/xxx/volumes/kubernetes.io~glusterfs/cam-pv-50g：目标忙。\n        (有些情况下通过 lsof(8) 或 fuser(1) 可以\n         找到有关使用该设备的进程的有用信息。)\n\n&quot;</span><br></pre></td></tr></table></figure>
+
+<p>仔细看卸载失败的日志，可以看到这个挂载点的后端存储是<code>glusterfs</code>，而<code>目标忙</code>一般来说是存储设备侧在使用，所以无法卸载。那就找找看是不是哪个进程使用了这个挂载目录（以下定位由负责<code>glusterfs</code>的同事提供）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# fuser -mv /var/lib/kubelet/pods/xxx/volumes/kubernetes.io~glusterfs/cam-pv-50g</span><br><span class="line">用户  进程号  权限  命令</span><br><span class="line">root  kernel mount /var/lib/kubelet/pods/xxx/volumes/kubernetes.io~glusterfs/cam-dialog-gl.uster-pv-50g</span><br><span class="line">root  94549  f.... glusterfs</span><br></pre></td></tr></table></figure>
+
+<p>除了内核的<code>mount</code>，还有个<code>pid=94549</code>的<code>glusterfs</code>进程在占用挂载点所在目录，看看是什么进程：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# ps -ef| grep 94549</span><br><span class="line">root 94549 1 0 7月26 ? 00:01:13 /usr/sbin/glusterfs --log-level=ERR0R --log-file=/var/lib/kubelet/plugins/kubernetes.io/glusterfs/global-diaglog-pv/web-fddf96444-stxpf-glusterfs.log --fuse-mountopts=auto_unmount --process-name fuse --volfile-server=xxx --volfile-server=xxx --tfolfile-server=xxx --volfile-id=global-diaglog --fuse-mountopts=auto_unmount /var/lib/kubelet/pods/xxx/volumes/kubernetef.io-glusterfs/global-diaglog-pv</span><br></pre></td></tr></table></figure>
+
+<p>发现这个进程维护的是<code>web-xxx</code>的挂载信息，而<code>web-xxx</code>和<code>cam-xxx</code>没有任何关联。由此推断出是<code>glusterfs</code>管理的挂载信息发送错乱导致，具体错乱原因就转给相关负责的同事看了。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>从分析结果看，是共享存储卷未正常卸载导致的删除Pod异常，非K8S问题。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/tree/v1.15.12">Kubernetes v1.15.12源码</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/nangonghen/article/details/109305635">kubernetes删除pod的流程的源码简析</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903842321039368">Kubernetes源码分析之Pod的删除</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/608727">kubernetes grace period 失效问题排查</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+              <a href="/tags/kubernetes%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" rel="tag"># kubernetes问题排查</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/08/07/linux/%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Web%E5%BA%94%E7%94%A8%E9%A1%B5%E9%9D%A2%E6%97%A0%E6%B3%95%E8%AE%BF%E9%97%AE/" rel="prev" title="网络问题排查-Web应用页面无法访问">
+      <i class="fa fa-chevron-left"></i> 网络问题排查-Web应用页面无法访问
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/09/25/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E9%99%84%E5%8A%A0%E7%BD%91%E7%BB%9CPod%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8/" rel="next" title="K8S问题排查-附加网络Pod无法启动">
+      K8S问题排查-附加网络Pod无法启动 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">原因分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">3.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LuckYao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuckYao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

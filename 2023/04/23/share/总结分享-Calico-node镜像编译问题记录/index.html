@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyyao09.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="编译过程参考官方资料[1]，执行编译命令： 123456789101112131415[root@node01 projectcalico]# make -C node image&quot;Build dependency versions&quot;BIRD_VERSION          &#x3D; v0.3.3-151-g767b5389&quot;Test dependency version">
+<meta property="og:type" content="article">
+<meta property="og:title" content="总结分享-Calico-node镜像编译问题记录">
+<meta property="og:url" content="https://lyyao09.github.io/2023/04/23/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Calico-node%E9%95%9C%E5%83%8F%E7%BC%96%E8%AF%91%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="云原生知识星球">
+<meta property="og:description" content="编译过程参考官方资料[1]，执行编译命令： 123456789101112131415[root@node01 projectcalico]# make -C node image&quot;Build dependency versions&quot;BIRD_VERSION          &#x3D; v0.3.3-151-g767b5389&quot;Test dependency version">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-23T20:11:12.000Z">
+<meta property="article:modified_time" content="2024-01-01T06:08:23.114Z">
+<meta property="article:author" content="LuckYao">
+<meta property="article:tag" content="总结分享">
+<meta property="article:tag" content="calico">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://lyyao09.github.io/2023/04/23/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Calico-node%E9%95%9C%E5%83%8F%E7%BC%96%E8%AF%91%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>总结分享-Calico-node镜像编译问题记录 | 云原生知识星球</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">云原生知识星球</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2023/04/23/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Calico-node%E9%95%9C%E5%83%8F%E7%BC%96%E8%AF%91%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          总结分享-Calico-node镜像编译问题记录
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-23 20:11:12" itemprop="dateCreated datePublished" datetime="2023-04-23T20:11:12+00:00">2023-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 06:08:23" itemprop="dateModified" datetime="2024-01-01T06:08:23+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/share/" itemprop="url" rel="index"><span itemprop="name">share</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="编译过程"><a href="#编译过程" class="headerlink" title="编译过程"></a>编译过程</h2><p>参考官方资料[1]，执行编译命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 projectcalico]# make -C node image</span><br><span class="line">&quot;Build dependency versions&quot;</span><br><span class="line">BIRD_VERSION          = v0.3.3-151-g767b5389</span><br><span class="line">&quot;Test dependency versions&quot;</span><br><span class="line">CNI_VER               = master</span><br><span class="line">&quot;Calico git version&quot;</span><br><span class="line">GIT_VERSION           =</span><br><span class="line">make: Entering directory `/home/go/gopath/src/github.com/projectcalico/node&#x27;</span><br><span class="line">mkdir -p .go-pkg-cache bin /home/go/gopath/pkg/mod &amp;&amp; docker run --rm --net=host --init -e GOPRIVATE=&#x27;github.com/tigera/*&#x27; -e GO111MODULE=on -v /home/go/gopath/pkg/mod:/go/pkg/mod:rw -e LOCAL_USER_ID=0 -e GOCACHE=/go-cache -e GOARCH=amd64 -e GOPATH=/go -e OS=linux -e GOOS=linux -e GOFLAGS= -v /home/go/gopath/src/github.com/projectcalico/node:/go/src/github.com/projectcalico/node:rw -v /home/go/gopath/src/github.com/projectcalico/node/.go-pkg-cache:/go-cache:rw -w /go/src/github.com/projectcalico/node calico/go-build:v0.40 sh -c &#x27; go mod download&#x27;</span><br><span class="line">...</span><br><span class="line">Starting with UID : 0</span><br><span class="line">useradd: UID 0 is not unique</span><br><span class="line">su-exec: getpwnam(user): Success</span><br><span class="line">make: *** [remote-deps] Error 1</span><br><span class="line">make: Leaving directory `/home/go/gopath/src/github.com/projectcalico/node&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>从日志看，构建在<code>remote-deps</code>阶段失败，错误是<code>useradd: UID 0 is not unique</code>。从日志中的<code>docker</code>启动容器的命令看，是有个<code>LOCAL_USER_ID=0</code>的参数，说明是想以<code>root</code>用户起容器，但这个过程执行了<code>useradd</code>命令添加用户（理论上是不应该执行到这里的）。</p>
+<p>分析<code>calico-node</code>的<code>entrypoint.sh</code>，如果是以<code>root</code>用户启动，代码走到第10行就结束了，而判断是否为<code>root</code>用户的依据是<code>RUN_AS_ROOT</code>参数。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Add <span class="built_in">local</span> user</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Either use the LOCAL_USER_ID <span class="keyword">if</span> passed <span class="keyword">in</span> at runtime or</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">fallback</span></span><br><span class="line"></span><br><span class="line">USER_ID=$&#123;LOCAL_USER_ID:-9001&#125;</span><br><span class="line"></span><br><span class="line">if [ &quot;$&#123;RUN_AS_ROOT&#125;&quot; = &quot;true&quot; ]; then</span><br><span class="line">  exec &quot;$@&quot;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">echo &quot;Starting with UID : $USER_ID&quot; 1&gt;&amp;2</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Do not create mail box.</span></span><br><span class="line">/bin/sed -i &#x27;s/^CREATE_MAIL_SPOOL=yes/CREATE_MAIL_SPOOL=no/&#x27; /etc/default/useradd</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Don<span class="string">&#x27;t pass &quot;-m&quot; to useradd if the home directory already exists (which can occur if it was volume mounted in) otherwise it will fail.</span></span></span><br><span class="line">if [[ ! -d &quot;/home/user&quot; ]]; then</span><br><span class="line">    /usr/sbin/useradd -m -U -s /bin/bash -u $USER_ID user</span><br><span class="line">else</span><br><span class="line">    /usr/sbin/useradd -U -s /bin/bash -u $USER_ID user</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">exec /sbin/su-exec user &quot;$@&quot;</span><br></pre></td></tr></table></figure>
+
+<p>从<code>make</code>的执行结果看，没有发现<code>RUN_AS_ROOT</code>变量，再查看<code>calico-node</code>的<code>Makefile</code>文件，也没有定义，<strong>猜测是缺少了RUN_AS_ROOT变量定义导致的</strong>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 projectcalico]# grep -r &quot;RUN_AS_ROOT&quot; ./node/</span><br></pre></td></tr></table></figure>
+
+<p>参考官网资料[2]，发现<code>go-build</code>的<code>Makefile</code>里有针对<code>root</code>用户的处理：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ifeq</span> (<span class="string">&quot;<span class="variable">$(LOCAL_USER_ID)</span>&quot;</span>, <span class="string">&quot;0&quot;</span>)</span><br><span class="line"><span class="comment"># The build needs to run as root.</span></span><br><span class="line">EXTRA_DOCKER_ARGS+=-e RUN_AS_ROOT=&#x27;true&#x27;</span><br><span class="line"><span class="keyword">endif</span></span><br></pre></td></tr></table></figure>
+
+<p>同步修改到<code>calico-node</code>的<code>Makefile</code>文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 projectcalico]# grep -r &quot;RUN_AS_ROOT&quot; ./node/</span><br><span class="line">./node/Makefile.common: EXTRA_DOCKER_ARGS+=-e RUN_AS_ROOT=&#x27;true&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>再次执行<code>make</code>命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 projectcalico]# make -C node image</span><br><span class="line">&quot;Build dependency versions&quot;</span><br><span class="line">BIRD_VERSION          = v0.3.3-151-g767b5389</span><br><span class="line">&quot;Test dependency versions&quot;</span><br><span class="line">CNI_VER               = master</span><br><span class="line">&quot;Calico git version&quot;</span><br><span class="line">GIT_VERSION           =</span><br><span class="line">make: Entering directory `/home/go/gopath/src/github.com/projectcalico/node&#x27;</span><br><span class="line">mkdir -p .go-pkg-cache bin /home/go/gopath/pkg/mod &amp;&amp; docker run --rm --net=host --init -e GOPRIVATE=&#x27;github.com/tigera/*&#x27; -e RUN_AS_ROOT=&#x27;true&#x27; -e GO111MODULE=on -v /home/go/gopath/pkg/mod:/go/pkg/mod:rw -e GOCACHE=/go-cache -e GOARCH=amd64 -e GOPATH=/go -e OS=linux -e GOOS=linux -e GOFLAGS= -e LOCAL_USER_ID=0 -v /home/go/gopath/src/github.com/projectcalico/node:/go/src/github.com/projectcalico/node:rw -v /home/go/gopath/src/github.com/projectcalico/node/.go-pkg-cache:/go-cache:rw -w /go/src/github.com/projectcalico/node -e CGO_ENABLED=1 calico/go-build:v0.40 sh -c &#x27; go build -v -o dist/bin//calico-node-amd64  -ldflags &quot; -X github.com/projectcalico/node/pkg/startup.VERSION= -X github.com/projectcalico/node/buildinfo.GitVersion=&lt;unknown&gt; -X github.com/projectcalico/node/buildinfo.BuildDate=2023-05-09T06:06:42+0000 -X github.com/projectcalico/node/buildinfo.GitRevision=&lt;unknown&gt;&quot; ./cmd/calico-node/main.go&#x27;</span><br><span class="line">github.com/kelseyhightower/confd/pkg/backends</span><br><span class="line">github.com/projectcalico/libcalico-go/lib/apis/v1/unversioned</span><br><span class="line">github.com/projectcalico/libcalico-go/lib/backend/encap</span><br><span class="line">...</span><br><span class="line">Starting with UID : 9001</span><br><span class="line">calico-node-amd64 -v</span><br><span class="line"></span><br><span class="line">docker build --pull -t calico/node:latest-amd64 . --build-arg BIRD_IMAGE=calico/bird:v0.3.3-151-g767b5389-amd64 --build-arg QEMU_IMAGE=calico/go-build:v0.40 --build-arg GIT_VERSION= -f ./Dockerfile.amd64</span><br><span class="line">Sending build context to Docker daemon   66.3MB</span><br><span class="line">Step 1/40 : ARG ARCH=x86_64</span><br><span class="line">Step 2/40 : ARG GIT_VERSION=unknown</span><br><span class="line">Step 3/40 : ARG IPTABLES_VER=1.8.2-16</span><br><span class="line">Step 4/40 : ARG RUNIT_VER=2.1.2</span><br><span class="line">Step 5/40 : ARG BIRD_IMAGE=calico/bird:latest</span><br><span class="line">Step 6/40 : FROM calico/bpftool:v5.3-amd64 as bpftool</span><br><span class="line">...</span><br><span class="line">Step 16/40 : RUN dnf install -y &#x27;dnf-command(config-manager)&#x27; &amp;&amp;     dnf config-manager --set-enabled PowerTools &amp;&amp;     yum install -y rpm-build yum-utils make &amp;&amp;     yum install -y wget glibc-static gcc &amp;&amp;     yum -y update-minimal --security --sec-severity=Important --sec-severity=Critical</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">Running <span class="keyword">in</span> eca2b4c5f0b4</span></span><br><span class="line">CentOS Linux 8 - AppStream                       51  B/s |  38  B     00:00</span><br><span class="line">Error: Failed to download metadata for repo &#x27;appstream&#x27;: Cannot prepare internal mirrorlist: No URLs in mirrorlist</span><br></pre></td></tr></table></figure>
+
+<p>从编译日志看，问题是<code>yum</code>安装依赖包出错了，原因是使用了默认源<code>vault.centos.org</code>，更改<code>Dockerfile.amd64</code>，替换成国内的阿里源[3]：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-ARG CENTOS_MIRROR_BASE_URL=http://vault.centos.org/8.1.1911</span><br><span class="line">+ARG CENTOS_MIRROR_BASE_URL=https://mirrors.aliyun.com/centos-vault/8.1.1911</span><br><span class="line"></span><br><span class="line">+RUN mv /etc/yum.repos.d /etc/yum.repo.d-bk &amp;&amp; \</span><br><span class="line">+   mkdir -p /etc/yum.repos.d &amp;&amp; mv /centos.repo /etc/yum.repos.d &amp;&amp; \</span><br><span class="line">+   yum clean all &amp;&amp; yum makecache &amp;&amp; \</span><br><span class="line">    dnf install -y &#x27;dnf-command(config-manager)&#x27; &amp;&amp; \</span><br><span class="line">    # Enable PowerTools repo for &#x27;-devel&#x27; packages</span><br><span class="line">-   dnf config-manager --set-enabled PowerTools &amp;&amp; \</span><br></pre></td></tr></table></figure>
+
+<p>更改<code>centos.repo</code>文件，跳过<code>gpgcheck</code>校验，增加<code>PowerTool</code>源：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[centos-8-base-os]</span><br><span class="line">name = CentOS - BaseOS</span><br><span class="line">baseurl = https://mirrors.aliyun.com/centos-vault/8.1.1911/BaseOS/x86_64/os</span><br><span class="line">enabled = 1</span><br><span class="line">gpgkey = https://mirrors.aliyun.com/keys/RPM-GPG-KEY-CentOS-Official</span><br><span class="line">gpgcheck = 0</span><br><span class="line"></span><br><span class="line">[centos-8-appstream]</span><br><span class="line">name = CentOS - AppStream</span><br><span class="line">baseurl = https://mirrors.aliyun.com/centos-vault/8.1.1911/AppStream/x86_64/os</span><br><span class="line">enabled = 1</span><br><span class="line">gpgkey = https://mirrors.aliyun.com/keys/RPM-GPG-KEY-CentOS-Official</span><br><span class="line">gpgcheck = 0</span><br><span class="line"></span><br><span class="line">[Centos8-PowerTool-local1]</span><br><span class="line">name=Centos8-PowerTool-local1</span><br><span class="line">baseurl=https://mirrors.aliyun.com/centos-vault/8.1.1911/PowerTools/x86_64/os</span><br><span class="line">enabled=1</span><br><span class="line">gpgcheck=0</span><br></pre></td></tr></table></figure>
+
+<p>继续编译：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">docker build --pull -t calico/node:latest-amd64 . --build-arg BIRD_IMAGE=calico/bird:v0.3.3-151-g767b5389-amd64 --build-arg QEMU_IMAGE=calico/go-build:v0.40 --build-arg GIT_VERSION= -f ./Dockerfile.amd64</span><br><span class="line">Sending build context to Docker daemon   66.3MB</span><br><span class="line">Step 1/41 : ARG ARCH=x86_64</span><br><span class="line">Step 2/41 : ARG GIT_VERSION=unknown</span><br><span class="line">Step 3/41 : ARG IPTABLES_VER=1.8.2-16</span><br><span class="line">Step 4/41 : ARG RUNIT_VER=2.1.2</span><br><span class="line">Step 5/41 : ARG BIRD_IMAGE=calico/bird:latest</span><br><span class="line">Step 6/41 : FROM calico/bpftool:v5.3-amd64 as bpftool</span><br><span class="line">...</span><br><span class="line">Step 12/41 : ARG CENTOS_MIRROR_BASE_URL=https://mirrors.aliyun.com/centos-vault/8.1.1911</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">Using cache</span></span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">a96f716928d7</span></span><br><span class="line">...</span><br><span class="line">Step 17/41 : RUN mv /etc/yum.repos.d /etc/yum.repo.d-bk &amp;&amp;     mkdir -p /etc/yum.repos.d &amp;&amp; mv /centos.repo /etc/yum.repos.d &amp;&amp;     yum clean all &amp;&amp; yum makecache &amp;&amp;     dnf install -y &#x27;dnf-command(config-manager)&#x27; &amp;&amp;     yum install -y rpm-build yum-utils make &amp;&amp;     yum install -y wget glibc-static gcc &amp;&amp;     yum -y update-minimal --security --sec-severity=Important --sec-severity=Critical</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">Using cache</span></span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">a9ffd418a7a4</span></span><br><span class="line">...</span><br><span class="line">Step 24/41 : FROM registry.access.redhat.com/ubi8/ubi-minimal:8.1-407</span><br><span class="line">8.1-407: Pulling from ubi8/ubi-minimal</span><br><span class="line">Digest: sha256:01b8fb7b3ad16a575651a4e007e8f4d95b68f727b3a41fc57996be9a790dc4fa</span><br><span class="line">Status: Image is up to date for registry.access.redhat.com/ubi8/ubi-minimal:8.1-407</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">6ce38bb5210c</span></span><br><span class="line">...</span><br><span class="line">Step 39/41 : COPY dist/bin/calico-node-amd64 /bin/calico-node</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">Using cache</span></span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">916fbf133fb0</span></span><br><span class="line">Step 40/41 : COPY --from=bpftool /bpftool /bin</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">Using cache</span></span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">f797db5c4eb4</span></span><br><span class="line">Step 41/41 : CMD [&quot;start_runit&quot;]</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">Using cache</span></span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">fe6496ded4a6</span></span><br><span class="line">[Warning] One or more build-args [QEMU_IMAGE] were not consumed</span><br><span class="line">Successfully built fe6496ded4a6</span><br><span class="line">Successfully tagged calico/node:latest-amd64</span><br><span class="line">touch .calico_node.created-amd64</span><br><span class="line">make: Leaving directory `/home/go/gopath/src/github.com/projectcalico/node&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>查看编译的镜像：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 github.com]# docker images</span><br><span class="line">REPOSITORY                                                  TAG                          IMAGE ID       CREATED         SIZE</span><br><span class="line">calico/node                                                 latest-amd64                 77f4ca933207   7 hours ago     264MB</span><br><span class="line">&lt;none&gt;                                                      &lt;none&gt;                       420e5252b060   7 hours ago     633MB</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/projectcalico/calico/blob/master/DEVELOPER_GUIDE.md">https://github.com/projectcalico/calico/blob/master/DEVELOPER_GUIDE.md</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/projectcalico/go-build/blob/7a75e06f7e9b39df8697ca96f6d5f42369155902/Makefile.common">https://github.com/projectcalico/go-build/blob/7a75e06f7e9b39df8697ca96f6d5f42369155902/Makefile.common</a></li>
+<li><a target="_blank" rel="noopener" href="https://mirrors.aliyun.com/centos-vault/8.1.1911/">https://mirrors.aliyun.com/centos-vault/8.1.1911/</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB/" rel="tag"># 总结分享</a>
+              <a href="/tags/calico/" rel="tag"># calico</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/04/08/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E6%B2%A1%E6%9C%89Endpoint%E7%9A%84Service%E8%AF%B7%E6%B1%82Reject%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/" rel="prev" title="K8S问题排查-没有Endpoint的Service请求Reject失效问题">
+      <i class="fa fa-chevron-left"></i> K8S问题排查-没有Endpoint的Service请求Reject失效问题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/05/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%8D%87%E7%BA%A7K8S%E5%90%8Eapiserver%E7%9A%84token%E8%B6%85%E6%9C%9F%E9%97%AE%E9%A2%98/" rel="next" title="K8S问题排查-升级K8S后apiserver的token超期问题">
+      K8S问题排查-升级K8S后apiserver的token超期问题 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">编译过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">2.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LuckYao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuckYao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

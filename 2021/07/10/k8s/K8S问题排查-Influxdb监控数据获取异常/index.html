@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyyao09.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="问题背景K8S集群内，Influxdb监控数据获取异常，最终CPU、内存和磁盘使用率都无法获取。 12345678910111213141516监控项         使用率CPU(核)        3%内存(GB)       18%磁盘空间(GB)    0%监控项         使用率CPU(核)        7%内存(GB)       18%磁盘空间(GB)    1%监控项">
+<meta property="og:type" content="article">
+<meta property="og:title" content="K8S问题排查-Influxdb监控数据获取异常">
+<meta property="og:url" content="https://lyyao09.github.io/2021/07/10/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Influxdb%E7%9B%91%E6%8E%A7%E6%95%B0%E6%8D%AE%E8%8E%B7%E5%8F%96%E5%BC%82%E5%B8%B8/index.html">
+<meta property="og:site_name" content="云原生知识星球">
+<meta property="og:description" content="问题背景K8S集群内，Influxdb监控数据获取异常，最终CPU、内存和磁盘使用率都无法获取。 12345678910111213141516监控项         使用率CPU(核)        3%内存(GB)       18%磁盘空间(GB)    0%监控项         使用率CPU(核)        7%内存(GB)       18%磁盘空间(GB)    1%监控项">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-10T11:11:46.000Z">
+<meta property="article:modified_time" content="2024-01-01T06:08:23.098Z">
+<meta property="article:author" content="LuckYao">
+<meta property="article:tag" content="kubernetes">
+<meta property="article:tag" content="kubernetes问题排查">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://lyyao09.github.io/2021/07/10/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Influxdb%E7%9B%91%E6%8E%A7%E6%95%B0%E6%8D%AE%E8%8E%B7%E5%8F%96%E5%BC%82%E5%B8%B8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>K8S问题排查-Influxdb监控数据获取异常 | 云原生知识星球</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">云原生知识星球</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/07/10/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Influxdb%E7%9B%91%E6%8E%A7%E6%95%B0%E6%8D%AE%E8%8E%B7%E5%8F%96%E5%BC%82%E5%B8%B8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          K8S问题排查-Influxdb监控数据获取异常
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-10 11:11:46" itemprop="dateCreated datePublished" datetime="2021-07-10T11:11:46+00:00">2021-07-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 06:08:23" itemprop="dateModified" datetime="2024-01-01T06:08:23+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>K8S集群内，<code>Influxdb</code>监控数据获取异常，最终CPU、内存和磁盘使用率都无法获取。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">监控项         使用率</span><br><span class="line">CPU(核)        3%</span><br><span class="line">内存(GB)       18%</span><br><span class="line">磁盘空间(GB)    0%</span><br><span class="line"></span><br><span class="line">监控项         使用率</span><br><span class="line">CPU(核)        7%</span><br><span class="line">内存(GB)       18%</span><br><span class="line">磁盘空间(GB)    1%</span><br><span class="line"></span><br><span class="line">监控项         使用率</span><br><span class="line">CPU(核)        0%</span><br><span class="line">内存(GB)       0%</span><br><span class="line">磁盘空间(GB)    0%</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p><code>Influxdb</code>监控架构图参考[1]，其中<code>Load Balancer</code>采用<code>nginx</code>实现：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">        ┌─────────────────┐                 </span><br><span class="line">        │writes &amp; queries │                 </span><br><span class="line">        └─────────────────┘                 </span><br><span class="line">                 │                          </span><br><span class="line">                 ▼                          </span><br><span class="line">         ┌───────────────┐                  </span><br><span class="line">         │               │                  </span><br><span class="line">┌────────│ Load Balancer │─────────┐        </span><br><span class="line">│        │               │         │        </span><br><span class="line">│        └──────┬─┬──────┘         │        </span><br><span class="line">│               │ │                │        </span><br><span class="line">│               │ │                │        </span><br><span class="line">│        ┌──────┘ └────────┐       │        </span><br><span class="line">│        │ ┌─────────────┐ │       │┌──────┐</span><br><span class="line">│        │ │/write or UDP│ │       ││/query│</span><br><span class="line">│        ▼ └─────────────┘ ▼       │└──────┘</span><br><span class="line">│  ┌──────────┐      ┌──────────┐  │        </span><br><span class="line">│  │ InfluxDB │      │ InfluxDB │  │        </span><br><span class="line">│  │ Relay    │      │ Relay    │  │        </span><br><span class="line">│  └──┬────┬──┘      └────┬──┬──┘  │        </span><br><span class="line">│     │    |              |  │     │        </span><br><span class="line">│     |  ┌─┼──────────────┘  |     │        </span><br><span class="line">│     │  │ └──────────────┐  │     │        </span><br><span class="line">│     ▼  ▼                ▼  ▼     │        </span><br><span class="line">│  ┌──────────┐      ┌──────────┐  │        </span><br><span class="line">│  │          │      │          │  │        </span><br><span class="line">└─▶│ InfluxDB │      │ InfluxDB │◀─┘        </span><br><span class="line">   │          │      │          │           </span><br><span class="line">   └──────────┘      └──────────┘</span><br></pre></td></tr></table></figure>
+
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>因为获取的数据来源是<code>influxdb</code>数据库，所以先搞清楚异常的原因是请求路径上的问题，还是<code>influxdb</code>数据库自身没有数据的问题：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">找到influxdb-nginx的service</span></span><br><span class="line">kubectl get svc  -n kube-system -owide</span><br><span class="line">NAME                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE   SELECTOR</span><br><span class="line">grafana-service          ClusterIP   10.96.177.245   &lt;none&gt;        3000/TCP                 21d   app=grafana</span><br><span class="line">heapster                 ClusterIP   10.96.239.225   &lt;none&gt;        80/TCP                   21d   app=heapster</span><br><span class="line">influxdb-nginx-service   ClusterIP   10.96.170.72    &lt;none&gt;        7076/TCP                 21d   app=influxdb-nginx</span><br><span class="line">influxdb-relay-service   ClusterIP   10.96.196.45    &lt;none&gt;        9096/TCP                 21d   app=influxdb-relay</span><br><span class="line">influxdb-service         ClusterIP   10.96.127.45    &lt;none&gt;        8086/TCP                 21d   app=influxdb</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在集群节点上检查访问influxdb-nginx的service是否正常</span></span><br><span class="line">curl -i 10.96.170.72:7076/query</span><br><span class="line">HTTP/1.1 401 Unauthorized</span><br><span class="line">Server: nginx/1.17.2</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，请求发送到<code>influxdb-nginx</code>的<code>service</code>是正常的，也就是请求可以正常发送到后端的<code>influxdb</code>数据库。那就继续确认<code>influxdb</code>数据库自身没有数据的问题：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">找到influxdb数据库的pod</span></span><br><span class="line">kubectl get pod -n kube-system -owide |grep influxdb</span><br><span class="line">influxdb-nginx-4x8pr                       1/1     Running   3          21d   177.177.52.201    node3</span><br><span class="line">influxdb-nginx-tpngh                       1/1     Running   6          21d   177.177.41.214    node1</span><br><span class="line">influxdb-nginx-wh6kc                       1/1     Running   5          21d   177.177.250.180   node2</span><br><span class="line">influxdb-relay-rs-65c94bbf5f-dp7s4         1/1     Running   2          21d   177.177.250.148   node2</span><br><span class="line">influxdb1-6ff9466d46-q6w5r                 1/1     Running   3          21d   177.177.41.230    node1</span><br><span class="line">influxdb2-d6d6697f5-zzcnk                  1/1     Running   3          21d   177.177.250.161   node2</span><br><span class="line">influxdb3-65ddfc7476-hxhr8                 1/1     Running   4          21d   177.177.52.217    node3</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">登录任意一个influxdb容器内并进入交互式命令</span></span><br><span class="line">kubectl exec -it -n kube-systme influxdb-rs3-65ddfc7476-hxhr8 bash</span><br><span class="line">root@influxdb-rs3-65ddfc7476-hxhr8:/# influx</span><br><span class="line">Connected to http://localhost:8086 version 1.7.7</span><br><span class="line">InfluxDB shell version: 1.7.7</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">auth</span></span><br><span class="line">username: admin</span><br><span class="line">password: xxx</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">use xxx;</span></span><br><span class="line">Using database xxx</span><br></pre></td></tr></table></figure>
+
+<p>根据业务层面的查询语句，在<code>influxdb</code>交互式命令下手工查询验证：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span> <span class="built_in">where</span> <span class="string">&quot;type&quot;</span> = <span class="string">&#x27;node&#x27;</span> and <span class="string">&quot;nodename&quot;</span> = <span class="string">&#x27;node1&#x27;</span> and time &gt; now() - 2m</span></span><br><span class="line"><span class="meta prompt_">&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>结果发现确实没有查到数据，既然<code>2min</code>内的数据没有，那把时间线拉长一些看看呢？</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">不限制时间范围的查询</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span>&gt; <span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span>;</span></span><br><span class="line">name: cpu/node_capacity</span><br><span class="line">time sum</span><br><span class="line">---- ---</span><br><span class="line">0    5301432000</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查询72min内的数据</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span> <span class="built_in">where</span> <span class="string">&quot;type&quot;</span> = <span class="string">&#x27;node&#x27;</span> and <span class="string">&quot;nodename&quot;</span> = <span class="string">&#x27;node1&#x27;</span> and time &gt; now() - 72m</span></span><br><span class="line">name: cpu/node_capacity</span><br><span class="line">time                sum</span><br><span class="line">----                ---</span><br><span class="line">1624348319900503945 72000</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">sleep</span> 1min，继续查询72min内的数据</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span> <span class="built_in">where</span> <span class="string">&quot;type&quot;</span> = <span class="string">&#x27;node&#x27;</span> and <span class="string">&quot;nodename&quot;</span> = <span class="string">&#x27;node1&#x27;</span> and time &gt; now() - 72m</span></span><br><span class="line">name: cpu/node_capacity</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"></span><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查询73min内的数据</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span> <span class="built_in">where</span> <span class="string">&quot;type&quot;</span> = <span class="string">&#x27;node&#x27;</span> and <span class="string">&quot;nodename&quot;</span> = <span class="string">&#x27;node1&#x27;</span> and time &gt; now() - 73m</span></span><br><span class="line">name: cpu/node_capacity</span><br><span class="line">time                sum</span><br><span class="line">----                ---</span><br><span class="line">1624348319900503945 72000</span><br></pre></td></tr></table></figure>
+
+<p>根据查询结果看，不添加时间范围的查询是有记录的，并且通过多次验证看，<strong>数据无法获取的原因是数据在某个时间点不再写入导致的</strong>。查看<code>influxdb</code>的日志看看有没有什么相关日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs -n kube-systme influxdb-rs3-65ddfc7476-hxhr8</span><br><span class="line">ts=2021-06-22T09:56:49.658621Z lvl=warn msg=&quot;max-values-per-tag limit may be exceeded soon&quot; log_id=0UYIcREl000 service=store perc=100% n=100000 max=100000 db_instance=xxx measurement=network/rx tag=pod_name</span><br><span class="line">ts=2021-06-22T09:56:49.658702Z lvl=warn msg=&quot;max-values-per-tag limit may be exceeded soon&quot; log_id=0UYIcREl000 service=store perc=100% n=100000 max=100000 db_instance=xxx measurement=network/rx_errors tag=pod_name</span><br><span class="line">ts=2021-06-22T09:56:49.658815Z lvl=warn msg=&quot;max-values-per-tag limit may be exceeded soon&quot; log_id=0UYIcREl000 service=store perc=100% n=100000 max=100000 db_instance=xxx measurement=network/tx tag=pod_name</span><br><span class="line">ts=2021-06-22T09:56:49.658893Z lvl=warn msg=&quot;max-values-per-tag limit may be exceeded soon&quot; log_id=0UYIcREl000 service=store perc=100% n=100000 max=100000 db_instance=xxx measurement=network/tx_errors tag=pod_name</span><br><span class="line">ts=2021-06-22T09:56:49.659062Z lvl=warn msg=&quot;max-values-per-tag limit may be exceeded soon&quot; log_id=0UYIcREl000 service=store perc=100% n=100003 max=100000 db_instance=xxx measurement=uptime tag=pod_name</span><br></pre></td></tr></table></figure>
+
+<p>果然，有大量<code>warn</code>日志，提示<code>max-values-per-tag limit may be exceeded soon</code>，从日志可以看出，这个参数的默认值为<code>100000</code>。通过搜索，找到了这个参数引入的issue[2]，引入原因大概意思是：</p>
+<blockquote>
+<p>如果不小心加载了大量的cardinality数据，那么当我们删除数据的时候，InfluxDB很容易会发生OOM。</p>
+</blockquote>
+<p>通过临时修改<code>max-values-per-tag</code>参数，验证问题是否解决</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">cat influxdb.conf</span><br><span class="line">[meta]</span><br><span class="line">  dir = &quot;/var/lib/influxdb/meta&quot;</span><br><span class="line">[data]</span><br><span class="line">  dir = &quot;/var/lib/influxdb/data&quot;</span><br><span class="line">  engine = &quot;tsm1&quot;</span><br><span class="line">  wal-dir = &quot;/var/lib/influxdb/wal&quot;</span><br><span class="line">  max-series-per-database = 0</span><br><span class="line">  max-values-per-tag = 0</span><br><span class="line">[http]</span><br><span class="line">  auth-enabled = true</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete pod -n kube-system influxdb-rs1-6ff9466d46-q6w5r</span><br><span class="line">pod &quot;influxdb-rs1-6ff9466d46-q6w5r&quot; deleted</span><br><span class="line"></span><br><span class="line">kubectl delete pod -n kube-system influxdb-rs2-d6d6697f5-zzcnk</span><br><span class="line">pod &quot;influxdb-rs2-d6d6697f5-zzcnk&quot; deleted</span><br><span class="line"></span><br><span class="line">kubectl delete pod -n kube-system influxdb-rs3-65ddfc7476-hxhr8</span><br><span class="line">pod &quot;influxdb-rs3-65ddfc7476-hxhr8&quot; deleted</span><br></pre></td></tr></table></figure>
+
+<p>再次观察业务层面获取的<code>Influxdb</code>监控数据，最终CPU、内存和磁盘使用率正常获取。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">监控项         使用率</span><br><span class="line">CPU(核)        19%</span><br><span class="line">内存(GB)       22%</span><br><span class="line">磁盘空间(GB)    2%</span><br></pre></td></tr></table></figure>
+
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>根据业务情况，将<code>influxdb</code>的<code>max-values-per-tag</code>参数调整到合适值。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/influxdata/influxdb-relay">https://github.com/influxdata/influxdb-relay</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/influxdata/influxdb/issues/7146">https://github.com/influxdata/influxdb/issues/7146</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+              <a href="/tags/kubernetes%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" rel="tag"># kubernetes问题排查</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/06/26/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Pod%E9%97%B4%E9%80%9A%E8%BF%87%E6%9C%8D%E5%8A%A1%E5%90%8D%E8%AE%BF%E9%97%AE%E5%BC%82%E5%B8%B8/" rel="prev" title="K8S问题排查-Pod间通过服务名访问异常">
+      <i class="fa fa-chevron-left"></i> K8S问题排查-Pod间通过服务名访问异常
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/07/16/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E4%B8%9A%E5%8A%A1%E9%AB%98%E5%B9%B6%E5%8F%91%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF(%E7%BB%AD)/" rel="next" title="K8S问题排查-业务高并发导致Pod反复重启(续)">
+      K8S问题排查-业务高并发导致Pod反复重启(续) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">原因分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">3.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LuckYao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuckYao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

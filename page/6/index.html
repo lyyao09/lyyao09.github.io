@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyyao09.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta property="og:type" content="website">
+<meta property="og:title" content="云原生知识星球">
+<meta property="og:url" content="https://lyyao09.github.io/page/6/index.html">
+<meta property="og:site_name" content="云原生知识星球">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="LuckYao">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://lyyao09.github.io/page/6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>云原生知识星球</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">云原生知识星球</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/09/21/stack/Service-located-in-another-namespace/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/21/stack/Service-located-in-another-namespace/" class="post-title-link" itemprop="url">Service located in another namespace</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-21 16:30:52" itemprop="dateCreated datePublished" datetime="2019-09-21T16:30:52+00:00">2019-09-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 06:08:23" itemprop="dateModified" datetime="2024-01-01T06:08:23+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/09/12/k8s/Building-Kubernetes-Official-Guidance/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/12/k8s/Building-Kubernetes-Official-Guidance/" class="post-title-link" itemprop="url">编译Kubernetes源码(官方指导)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-12 21:33:46" itemprop="dateCreated datePublished" datetime="2019-09-12T21:33:46+00:00">2019-09-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 06:08:23" itemprop="dateModified" datetime="2024-01-01T06:08:23+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>如果利用容器化的构建环境，则构建Kubernetes很容易。本文档将帮助了解构建过程。</p>
+<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><ol>
+<li>Docker，使用以下配置之一：<ul>
+<li><strong>macOS</strong>：可以使用Mac的Docker或docker-machine。请参阅<a target="_blank" rel="noopener" href="https://docs.docker.com/docker-for-mac/">此处</a>的安装说明。注意：需要将Docker VM设置为具有至少4.5GB的初始内存，否则构建可能会失败。（请参阅：<a target="_blank" rel="noopener" href="http://issue.k8s.io/11852">＃11852</a>）。</li>
+<li><strong>带有本地Docker的Linux</strong>：根据OS的<a target="_blank" rel="noopener" href="https://docs.docker.com/installation/#installation">说明</a>安装Docker。</li>
+<li><strong>远程Docker引擎</strong>：在云中使用大型计算机来加快构建速度。这有点棘手，所以请稍后再看。</li>
+</ul>
+</li>
+<li>可选的<a target="_blank" rel="noopener" href="https://developers.google.com/cloud/sdk/">Google Cloud SDK</a></li>
+</ol>
+<p>如果要将发布版本上传到Google Cloud Storage，则必须安装和配置Google Cloud SDK，否则可以放心地省略此设置。</p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>虽然可以使用本地golang来构建Kubernetes，但我们有一个在Docker容器中运行的构建过程。这简化了初始设置，并提供了非常一致的构建和测试环境。</p>
+<h2 id="关键脚本"><a href="#关键脚本" class="headerlink" title="关键脚本"></a>关键脚本</h2><p>在<code>build/</code>目录中找到以下脚本。请注意，所有脚本必须从Kubernetes根目录运行。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/master/build/run.sh"><code>build/run.sh</code></a>: 在构建docker容器中运行命令。常用调用：<ul>
+<li><code>build/run.sh make</code>: 在容器中仅构建linux二进制文件。根据需要传递选项和软件包。</li>
+<li><code>build/run.sh make cross</code>: 构建所有平台的所有二进制文件。</li>
+<li><code>build/run.sh make kubectl KUBE_BUILD_PLATFORMS=darwin/amd64</code>: 为特定平台构建特定二进制文件。</li>
+<li><code>build/run.sh make test</code>: 运行所有单元测试。</li>
+<li><code>build/run.sh make test-integration</code>: 运行集成测试。</li>
+<li><code>build/run.sh make test-cmd</code>: 运行CLI测试。</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/master/build/copy-output.sh"><code>build/copy-output.sh</code></a>: 这会将 <code>_output/dockerized/bin</code> 的内容从Docker容器拷贝到本地 <code>_output/dockerized/bin</code>目录. 它还将复制在构建过程中生成的特定文件模式。这是作为 <code>build/run.sh</code>的一部分自动运行的。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/master/build/make-clean.sh"><code>build/make-clean.sh</code></a>: 清除 <code>_output</code>的内容，删除所有本地构建的容器镜像，然后删除数据容器。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/master/build/shell.sh"><code>build/shell.sh</code></a>: 将带有当前存储库代码快照的构建容器内加入bash shell。</li>
+</ul>
+<h2 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h2><p>位于<code>build/</code>目录下的脚本直接用于构建和测试。它们将确保构建<code>kube-build</code> Docker镜像（基于build&#x2F;build-image&#x2F;Dockerfile），然后在该容器中执行适当的命令。这些脚本将确保每次运行都缓存正确的数据以进行增量构建，并将结果复制回容器。</p>
+<p>首先，通过在<code>_output/images/build-image</code>中创建一个“context”目录来构建<code>kube-build</code>容器镜像。它是在此处完成的，而不是在Kubernetes存储库的根目录进行，以最大程度地减少构建镜像时需要打包的数据量。</p>
+<p>从此，该镜像运行3个不同的容器实例。每次运行后，数据容器在运行期间都将保留，而rsync和构建容器将被删除。</p>
+<ol>
+<li><strong>数据容器</strong>：用于存储需要持久存储以支持增量构建的所有数据。</li>
+<li><strong>rsync容器</strong>：用于将数据传入和传出到数据容器。</li>
+<li><strong>构建容器</strong>：用于实际执行构建操作。</li>
+</ol>
+<p><code>rsync</code>容器在后台透明地使用，以有效地将数据移入和移出容器。这将使用Docker选择的临时端口。可以通过设置KUBE_RSYNC_PORT env变量来修改它。</p>
+<p>所有Docker名称都以从文件路径派生的哈希作为后缀（以允许在CI机器上同时使用）和版本号。当版本号更改时，所有状态都将清除，并开始全新构建。这允许更改构建基础结构，并向CI系统发出需要删除旧设施的信号。</p>
+<h2 id="代理设置"><a href="#代理设置" class="headerlink" title="代理设置"></a>代理设置</h2><p>如果使用了代理，并且让这些脚本使用<code>docker-machine</code>在macOS上设置本地VM，则需要设置Kubernetes构建的代理，应定义以下环境变量。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export KUBERNETES_HTTP_PROXY=http://username:password@proxyaddr:proxyport</span><br><span class="line">export KUBERNETES_HTTPS_PROXY=https://username:password@proxyaddr:proxyport</span><br></pre></td></tr></table></figure>
+
+<p>可以选择为Kubernetes构建指定没有代理的地址，例如</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export KUBERNETES_NO_PROXY=127.0.0.1</span><br></pre></td></tr></table></figure>
+
+<p>如果使用sudo进行Kubernetes的构建（例如make quick-release），则需要运行<code>sudo -E make quick-release</code>来传递环境变量。</p>
+<h2 id="远程Docker引擎"><a href="#远程Docker引擎" class="headerlink" title="远程Docker引擎"></a>远程Docker引擎</h2><p>可以使用远程运行的Docker引擎。必须将Docker配置为连接到该计算机，并且本地rsync端口必须从localhost转发（通过SSH或nc）到远程计算机。</p>
+<p>要使用GCP和<code>docker-machine</code>轻松做到这一点，请执行以下操作：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Create the remote docker machine on GCE.  This is a pretty beefy machine with SSD disk.</span></span><br><span class="line">KUBE_BUILD_VM=k8s-build</span><br><span class="line">KUBE_BUILD_GCE_PROJECT=&lt;project&gt;</span><br><span class="line">docker-machine create \</span><br><span class="line">  --driver=google \</span><br><span class="line">  --google-project=$&#123;KUBE_BUILD_GCE_PROJECT&#125; \</span><br><span class="line">  --google-zone=us-west1-a \</span><br><span class="line">  --google-machine-type=n1-standard-8 \</span><br><span class="line">  --google-disk-size=50 \</span><br><span class="line">  --google-disk-type=pd-ssd \</span><br><span class="line"><span class="meta prompt_">  $</span><span class="language-bash">&#123;KUBE_BUILD_VM&#125;</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Set up <span class="built_in">local</span> docker to talk to that machine</span></span><br><span class="line">eval $(docker-machine env $&#123;KUBE_BUILD_VM&#125;)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Pin down the port that rsync will be exposed on the remote machine</span></span><br><span class="line">export KUBE_RSYNC_PORT=8730</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">forward <span class="built_in">local</span> 8730 to that machine so that rsync works</span></span><br><span class="line">docker-machine ssh $&#123;KUBE_BUILD_VM&#125; -L $&#123;KUBE_RSYNC_PORT&#125;:localhost:$&#123;KUBE_RSYNC_PORT&#125; -N &amp;</span><br></pre></td></tr></table></figure>
+
+<p>通过<code>docker-machine stop</code>, <code>docker-machine start</code> 和 <code>docker-machine rm</code> 管理创建的VM。</p>
+<h2 id="发布版本"><a href="#发布版本" class="headerlink" title="发布版本"></a>发布版本</h2><p><code>build/release.sh</code>脚本将构建发行版。它将构建二进制文件，运行测试，（可选）构建运行时Docker镜像。</p>
+<p>主要输出是tar文件：<code>kubernetes.tar.gz</code>。这包括：</p>
+<ul>
+<li>交叉编译的客户端实用程序</li>
+<li>脚本（kubectl），用于基于平台选择和运行正确的客户端二进制文件</li>
+<li>例子</li>
+<li>各种云的集群部署脚本</li>
+<li>包含所有服务器二进制文件的Tar文件</li>
+</ul>
+<p>此外，还创建了其他一些tar文件：</p>
+<ul>
+<li><code>kubernetes-client-*.tar.gz</code> 特定平台的客户端二进制文件</li>
+<li><code>kubernetes-server-*.tar.gz</code> 特定平台的服务器二进制文件</li>
+</ul>
+<p>构建最终发行版tar时，首先将它们暂存为<code>_output/release-stage</code>，然后再将其放入<code>_output/release-tars</code>。</p>
+<h2 id="重现性"><a href="#重现性" class="headerlink" title="重现性"></a>重现性</h2><p><code>make release</code>，其变体<code>make quick-release</code>和Bazel都提供了一个封闭的构建环境，应该为构建提供一定程度的可重复性。<code>make</code>自身不是密封的。</p>
+<p>Kubernetes构建环境支持Reproducible Builds项目指定的<a target="_blank" rel="noopener" href="https://reproducible-builds.org/specs/source-date-epoch/">SOURCE_DATE_EPOCH</a>环境变量，可以将其设置为UNIX纪元时间戳。这将用于嵌入已编译的Go二进制文件中的构建时间戳，也许还有一天还会用于Docker镜像。</p>
+<p>这个变量的一个合理设置是使用从正在构建的树的顶端开始的提交时间戳。这就是Kubernetes CI系统使用的。例如，可以使用以下命令获取：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SOURCE_DATE_EPOCH=$(git show -s --format=format:%ct HEAD)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/31/stack/How-to-know-a-Pod-s-own-IP-address-from-inside-a-container-in-the-Pod/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/31/stack/How-to-know-a-Pod-s-own-IP-address-from-inside-a-container-in-the-Pod/" class="post-title-link" itemprop="url">如何在容器内获取Pod自己的IP地址</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-31 15:41:44" itemprop="dateCreated datePublished" datetime="2019-08-31T15:41:44+00:00">2019-08-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 06:08:23" itemprop="dateModified" datetime="2024-01-01T06:08:23+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>Kubernetes为每个容器分配一个IP地址，但是如何从Pod中的容器中获取IP地址？我无法从文档中找到方法。</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>最简单的答案是确保您的pod或rc控制器yaml&#x2F;json文件通过添加下面定义的配置块将pod IP添加为环境变量。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">env:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MY_POD_NAME</span></span><br><span class="line">  <span class="attr">valueFrom:</span></span><br><span class="line">    <span class="attr">fieldRef:</span></span><br><span class="line">      <span class="attr">fieldPath:</span> <span class="string">metadata.name</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MY_POD_NAMESPACE</span></span><br><span class="line">  <span class="attr">valueFrom:</span></span><br><span class="line">    <span class="attr">fieldRef:</span></span><br><span class="line">      <span class="attr">fieldPath:</span> <span class="string">metadata.namespace</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MY_POD_IP</span></span><br><span class="line">  <span class="attr">valueFrom:</span></span><br><span class="line">    <span class="attr">fieldRef:</span></span><br><span class="line">      <span class="attr">fieldPath:</span> <span class="string">status.podIP</span></span><br></pre></td></tr></table></figure>
+
+<p>重新创建pod&#x2F;rc，然后尝试</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo $MY_POD_IP</span><br></pre></td></tr></table></figure>
+
+<p>还可以运行env来查看kubernetes为您提供的其他内容。</p>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/30746888/how-to-know-a-pods-own-ip-address-from-inside-a-container-in-the-pod">How to know a Pod’s own IP address from inside a container in the Pod?</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/24/stack/Kubernetes-how-to-make-Deployment-to-update-image/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/24/stack/Kubernetes-how-to-make-Deployment-to-update-image/" class="post-title-link" itemprop="url">Kubernetes中如何让Deployment更新镜像</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-24 10:37:00" itemprop="dateCreated datePublished" datetime="2019-08-24T10:37:00+00:00">2019-08-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 06:08:23" itemprop="dateModified" datetime="2024-01-01T06:08:23+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我的deployment有单个pod，我的自定义docker镜像如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mycontainer</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">myimage:latest</span></span><br></pre></td></tr></table></figure>
+
+<p>在开发过程中，我想推送新的最新版本并更新Deployment。无法明确定义tag&#x2F;version并为每个构建增加它，并且无法找到如何做到这一点：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl set image deployment/my-deployment mycontainer=myimage:1.9.1</span><br></pre></td></tr></table></figure>
+
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>您可以使用grace period（例如30秒或更长时间，根据容器启动时间和镜像大小）配置您的pod，并设置“imagePullPolicy：”Always“。并使用kubectl delete pod pod_name。将创建一个新容器并且最新镜像自动下载，然后旧容器终止。</p>
+<p>例子：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">terminationGracePeriodSeconds:</span> <span class="number">30</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">my_container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">my_image:latest</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">&quot;Always&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>我目前正在使用Jenkins进行自动构建和打镜像标签，它看起来像这样：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl --user=&quot;kube-user&quot; --server=&quot;https://kubemaster.example.com&quot;  --token=$ACCESS_TOKEN set image deployment/my-deployment mycontainer=myimage:&quot;$BUILD_NUMBER-$SHORT_GIT_COMMIT&quot;</span><br></pre></td></tr></table></figure>
+
+<p>另一个技巧是最初运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl set image deployment/my-deployment mycontainer=myimage:latest</span><br></pre></td></tr></table></figure>
+
+<p>然后：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl set image deployment/my-deployment mycontainer=myimage</span><br></pre></td></tr></table></figure>
+
+<p>它实际上会触发滚动更新，但请确保您还有imagePullPolicy：“Always”设置。</p>
+<p>我发现的另一个技巧是，您不必更改镜像名称，更改将触发滚动更新的字段的值，例如terminationGracePeriodSeconds。您可以使用kubectl编辑部署your_deployment或kubectl apply -f your_deployment.yaml或使用如下补丁：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl patch deployment your_deployment -p \</span><br><span class="line">  &#x27;&#123;&quot;spec&quot;:&#123;&quot;template&quot;:&#123;&quot;spec&quot;:&#123;&quot;terminationGracePeriodSeconds&quot;:31&#125;&#125;&#125;&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>只需确保始终更改数值。</p>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40366192/kubernetes-how-to-make-deployment-to-update-image">Kubernetes how to make Deployment to update image</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/24/stack/How-to-retry-image-pull-in-a-kubernetes-Pods/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/24/stack/How-to-retry-image-pull-in-a-kubernetes-Pods/" class="post-title-link" itemprop="url">如何重新拉取kubernetes Pods镜像</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-24 10:25:23" itemprop="dateCreated datePublished" datetime="2019-08-24T10:25:23+00:00">2019-08-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 06:08:23" itemprop="dateModified" datetime="2024-01-01T06:08:23+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我是kubernetes新手。我在创建pod时有一个问题。当我运行命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods</span><br><span class="line">NAME                   READY     STATUS             RESTARTS   AGE</span><br><span class="line">mysql-apim-db-1viwg    1/1       Running            1          20h</span><br><span class="line">mysql-govdb-qioee      1/1       Running            1          20h</span><br><span class="line">mysql-userdb-l8q8c     1/1       Running            0          20h</span><br><span class="line">wso2am-default-813fy   0/1       ImagePullBackOff   0          20h</span><br></pre></td></tr></table></figure>
+
+<p>由于“wso2am-default-813fy”节点的问题，我需要重新启动它。有什么建议吗？</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>通常在“ImagePullBackOff”的情况下，它会在几秒钟&#x2F;几分钟后重试。如果您想再次手动尝试，可以删除旧pod并重新创建pod。删除并重新创建pod的命令是：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl replace --force -f &lt;yml_file_describing_pod&gt;</span><br></pre></td></tr></table></figure>
+
+<p>如果没有yaml文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod PODNAME -n NAMESPACE -o yaml | kubectl replace --force -f -</span><br></pre></td></tr></table></figure>
+
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40259178/how-to-retry-image-pull-in-a-kubernetes-pods">How to retry image pull in a kubernetes Pods?</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/20/stack/How-to-sign-in-kubernetes-dashboard/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/20/stack/How-to-sign-in-kubernetes-dashboard/" class="post-title-link" itemprop="url">如何登录kubernetes dashboard</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-20 22:43:31" itemprop="dateCreated datePublished" datetime="2019-08-20T22:43:31+00:00">2019-08-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 06:08:23" itemprop="dateModified" datetime="2024-01-01T06:08:23+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我刚刚将kubeadm和kubelet升级到v1.8.0。并按照<a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard">官方文档</a>安装Dashboard。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml</span></span><br></pre></td></tr></table></figure>
+
+<p>之后，我通过运行如下命令启动Dashboard：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl proxy --address=<span class="string">&quot;192.168.0.101&quot;</span> -p 8001 --accept-hosts=<span class="string">&#x27;^*$&#x27;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>幸运的是，我能够访问到Dashboard：</p>
+<p><a target="_blank" rel="noopener" href="http://192.168.0.101:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/">http://192.168.0.101:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/</a></p>
+<p>我被重定向选择认证方式的页面：Kubeconfig或Token。</p>
+<p>我尝试将&#x2F;etc&#x2F;kubernetes&#x2F;admin.conf作为kubeconfig上传，但失败了。然后我尝试使用我从kubeadm令牌列表中获取的令牌进行登录但又失败了。</p>
+<p>问题是我如何登录Dashboard。看起来他们添加了许多安全机制。谢谢。</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><blockquote>
+<p>从1.7版本开始，Dashboard 使用更安全的设置。这意味着，默认情况下，它具有最小的权限集，并且只能通过HTTPS访问。在执行任何进一步的步骤之前，建议阅读<a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard/wiki/Access-control">访问控制指南</a>。</p>
+<p>从版本1.7开始，Dashboard支持基于以下内容的用户身份验证：</p>
+<ul>
+<li>可以在Dashboard登录视图上使用的<a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard/wiki/Access-control#bearer-token">Bearer Token</a></li>
+<li>可以在Dashboard登录视图上使用的<a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard/wiki/Access-control#basic">Username&#x2F;password</a></li>
+</ul>
+<p>— <a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard">Dashboard on Github</a></p>
+</blockquote>
+<h3 id="Token"><a href="#Token" class="headerlink" title="Token"></a>Token</h3><p>这里Token可以是静态令牌，服务帐户令牌，来自Kubernetes Authenticating的OpenID Connect Token，但不是kubeadm Bootstrap Token。</p>
+<p>使用kubectl，我们可以获得默认情况下在kubernetes中创建的服务帐户（例如deployment）。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl -n kube-system get secret</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">All secrets with <span class="built_in">type</span> <span class="string">&#x27;kubernetes.io/service-account-token&#x27;</span> will allow to <span class="built_in">log</span> <span class="keyword">in</span>.</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Note that they have different privileges.</span></span><br><span class="line">NAME                                     TYPE                                  DATA      AGE</span><br><span class="line">deployment-controller-token-frsqj        kubernetes.io/service-account-token   3         22h</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl -n kube-system describe secret deployment-controller-token-frsqj</span></span><br><span class="line">Name:         deployment-controller-token-frsqj</span><br><span class="line">Namespace:    kube-system</span><br><span class="line">Labels:       &lt;none&gt;</span><br><span class="line">Annotations:  kubernetes.io/service-account.name=deployment-controller</span><br><span class="line">              kubernetes.io/service-account.uid=64735958-ae9f-11e7-90d5-02420ac00002</span><br><span class="line"></span><br><span class="line">Type:  kubernetes.io/service-account-token</span><br><span class="line"></span><br><span class="line">Data</span><br><span class="line">====</span><br><span class="line">ca.crt:     1025 bytes</span><br><span class="line">namespace:  11 bytes</span><br><span class="line">token:      eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZXBsb3ltZW50LWNvbnRyb2xsZXItdG9rZW4tZnJzcWoiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVwbG95bWVudC1jb250cm9sbGVyIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiNjQ3MzU5NTgtYWU5Zi0xMWU3LTkwZDUtMDI0MjBhYzAwMDAyIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRlcGxveW1lbnQtY29udHJvbGxlciJ9.OqFc4CE1Kh6T3BTCR4XxDZR8gaF1MvH4M3ZHZeCGfO-sw-D0gp826vGPHr_0M66SkGaOmlsVHmP7zmTi-SJ3NCdVO5viHaVUwPJ62hx88_JPmSfD0KJJh6G5QokKfiO0WlGN7L1GgiZj18zgXVYaJShlBSz5qGRuGf0s1jy9KOBt9slAN5xQ9_b88amym2GIXoFyBsqymt5H-iMQaGP35tbRpewKKtly9LzIdrO23bDiZ1voc5QZeAZIWrizzjPY5HPM1qOqacaY9DcGc7akh98eBJG_4vZqH2gKy76fMf0yInFTeNKr45_6fWt8gRM77DQmPwb3hbrjWXe1VvXX_g</span><br></pre></td></tr></table></figure>
+
+<h3 id="Kubeconfig"><a href="#Kubeconfig" class="headerlink" title="Kubeconfig"></a>Kubeconfig</h3><p>kubeconfig文件中的用户需要用户名和密码或令牌，而admin.conf只有客户端证书。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl config set-credentials cluster-admin --token=bearer_token</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="替代方案"><a href="#替代方案" class="headerlink" title="替代方案"></a>替代方案</h3><blockquote>
+<p>以下是绕过身份验证的两种方法，但请谨慎使用。</p>
+</blockquote>
+<h4 id="使用HTTP部署"><a href="#使用HTTP部署" class="headerlink" title="使用HTTP部署"></a>使用HTTP部署</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/alternative/kubernetes-dashboard.yaml</span></span><br></pre></td></tr></table></figure>
+
+<p>可以使用kubectl代理在<a target="_blank" rel="noopener" href="http://localhost:8001/ui%E5%8A%A0%E8%BD%BDDashboard%E3%80%82">http://localhost:8001/ui加载Dashboard。</a></p>
+<h4 id="授予Dashboard管理员权限"><a href="#授予Dashboard管理员权限" class="headerlink" title="授予Dashboard管理员权限"></a>授予Dashboard管理员权限</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | kubectl create -f -</span></span></span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1beta1</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">metadata:</span><br><span class="line">  name: kubernetes-dashboard</span><br><span class="line">  labels:</span><br><span class="line">    k8s-app: kubernetes-dashboard</span><br><span class="line">roleRef:</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: cluster-admin</span><br><span class="line">subjects:</span><br><span class="line">- kind: ServiceAccount</span><br><span class="line">  name: kubernetes-dashboard</span><br><span class="line">  namespace: kube-system</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>之后，您可以使用登录页面上的“跳过”选项来访问Dashboard。</p>
+<p>如果您使用的是Dashboard v1.10.1版本或更高版本，则还必须将–enable-skip-login添加到部署的命令行参数中。您可以通过将其添加到kubectl edit deployment&#x2F;kubernetes-dashboard –namespace&#x3D;kube-system中的args来实现。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">containers:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">args:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">--auto-generate-certificates</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">--enable-skip-login</span>            <span class="comment"># &lt;-- add this line</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.1</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/46664104/how-to-sign-in-kubernetes-dashboard">How to sign in kubernetes dashboard?</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/19/stack/Kubernetes-pod-gets-recreated-when-deleted/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/19/stack/Kubernetes-pod-gets-recreated-when-deleted/" class="post-title-link" itemprop="url">Kubernetes删除pod时会自动重新创建</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-19 22:13:07" itemprop="dateCreated datePublished" datetime="2019-08-19T22:13:07+00:00">2019-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 06:08:23" itemprop="dateModified" datetime="2024-01-01T06:08:23+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我已经用命令启动了pods：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl run busybox --image=busybox --restart=Never --<span class="built_in">tty</span> -i --generator=run-pod/v1</span></span><br></pre></td></tr></table></figure>
+
+<p>出了点问题，现在我无法删除这个pod，我尝试使用下面的方法，但它不断重建自己：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl delete pods  busybox-na3tm</span></span><br><span class="line">pod &quot;busybox-na3tm&quot; deleted</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl get pods</span></span><br><span class="line">NAME                                     READY     STATUS              RESTARTS   AGE</span><br><span class="line">busybox-vlzh3                            0/1       ContainerCreating   0          14s</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl delete pod busybox-vlzh3 --grace-period=0</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl delete pods --all</span></span><br><span class="line">pod &quot;busybox-131cq&quot; deleted</span><br><span class="line">pod &quot;busybox-136x9&quot; deleted</span><br><span class="line">pod &quot;busybox-13f8a&quot; deleted</span><br><span class="line">pod &quot;busybox-13svg&quot; deleted</span><br><span class="line">pod &quot;busybox-1465m&quot; deleted</span><br><span class="line">pod &quot;busybox-14uz1&quot; deleted</span><br><span class="line">pod &quot;busybox-15raj&quot; deleted</span><br><span class="line">pod &quot;busybox-160to&quot; deleted</span><br><span class="line">pod &quot;busybox-16191&quot; deleted</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl get pods --all-namespaces</span></span><br><span class="line">NAMESPACE   NAME            READY     STATUS              RESTARTS   AGE</span><br><span class="line">default     busybox-c9rnx   0/1       RunContainerError   0          23s</span><br></pre></td></tr></table></figure>
+
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>您需要删除deployment，而deployment会自动删除pod和replica sets</p>
+<p>列出所有deployment：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get deployments --all-namespaces</span><br></pre></td></tr></table></figure>
+
+<p>然后删除deployment：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete -n NAMESPACE deployment DEPLOYMENT</span><br></pre></td></tr></table></figure>
+
+<p>NAMESPACE是其所在的命名空间，而DEPLOYMENT是deployment资源的名称。</p>
+<p>在某些情况下，由于job或daemonset也可能正在运行。检查以下内容并运行相应的删除命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl get jobs</span><br><span class="line"></span><br><span class="line">kubectl get daemonsets.app --all-namespaces</span><br><span class="line"></span><br><span class="line">kubectl get daemonsets.extensions --all-namespaces</span><br></pre></td></tr></table></figure>
+
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40686151/kubernetes-pod-gets-recreated-when-deleted">Kubernetes pod gets recreated when deleted</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/17/stack/helm-list-cannot-list-configmaps-in-the-namespace-kube-system/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/17/stack/helm-list-cannot-list-configmaps-in-the-namespace-kube-system/" class="post-title-link" itemprop="url">Helm list命令查看不到kube-system命名空间下的configmaps资源</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-17 10:11:23" itemprop="dateCreated datePublished" datetime="2019-08-17T10:11:23+00:00">2019-08-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 06:08:23" itemprop="dateModified" datetime="2024-01-01T06:08:23+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我在kubernetes 8集群上安装了helm 2.6.2。helm init运行正常。但是当我运行helm list时它会给出这个错误。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">helm list</span><br><span class="line">Error: configmaps is forbidden: User &quot;system:serviceaccount:kube-system:default&quot; cannot list configmaps in the namespace &quot;kube-system&quot;</span><br></pre></td></tr></table></figure>
+
+<p>如何解决此RABC错误消息？</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>运行如下这些命令可以解决：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl create serviceaccount --namespace kube-system tiller</span><br><span class="line">kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller</span><br><span class="line">kubectl patch deploy --namespace kube-system tiller-deploy -p &#x27;&#123;&quot;spec&quot;:&#123;&quot;template&quot;:&#123;&quot;spec&quot;:&#123;&quot;serviceAccount&quot;:&quot;tiller&quot;&#125;&#125;&#125;&#125;&#x27;      </span><br><span class="line">helm init --service-account tiller --upgrade</span><br></pre></td></tr></table></figure>
+
+<h2 id="其他答案"><a href="#其他答案" class="headerlink" title="其他答案"></a>其他答案</h2><h3 id="更安全的做法"><a href="#更安全的做法" class="headerlink" title="更安全的做法"></a><strong>更安全的做法</strong></h3><p>高票答案提供对Helm的完全管理员访问权限，这不是最明智的安全解决方案。通过更多工作，我们可以限制Helm对特定命名空间的访问。更多细节请参考<a target="_blank" rel="noopener" href="https://docs.helm.sh/using_helm/#role-based-access-control">Helm文档</a>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create namespace tiller-world</span></span><br><span class="line">namespace &quot;tiller-world&quot; created</span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create serviceaccount tiller --namespace tiller-world</span></span><br><span class="line">serviceaccount &quot;tiller&quot; created</span><br></pre></td></tr></table></figure>
+
+<p>定义一个角色，允许Tiller管理tiller-world中的所有资源，如role-tiller.yaml：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Role</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller-manager</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">tiller-world</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span> [<span class="string">&quot;&quot;</span>, <span class="string">&quot;batch&quot;</span>, <span class="string">&quot;extensions&quot;</span>, <span class="string">&quot;apps&quot;</span>]</span><br><span class="line">  <span class="attr">resources:</span> [<span class="string">&quot;*&quot;</span>]</span><br><span class="line">  <span class="attr">verbs:</span> [<span class="string">&quot;*&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<p>然后运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f role-tiller.yaml</span></span><br><span class="line">role &quot;tiller-manager&quot; created</span><br></pre></td></tr></table></figure>
+
+<p>在rolebinding-tiller.yaml中，</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">RoleBinding</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller-binding</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">tiller-world</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">tiller-world</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">Role</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller-manager</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br></pre></td></tr></table></figure>
+
+<p>然后运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f rolebinding-tiller.yaml</span></span><br><span class="line">rolebinding &quot;tiller-binding&quot; created</span><br></pre></td></tr></table></figure>
+
+<p>之后，可以运行helm init以在tiller-world命名空间中安装Tiller。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm init --service-account tiller --tiller-namespace tiller-world</span></span><br></pre></td></tr></table></figure>
+
+<p>现在使用–tiller-namespace tiller-world为所有命令添加前缀，或者在环境变量中设置TILLER_NAMESPACE &#x3D; tiller-world。</p>
+<h3 id="更远见的做法"><a href="#更远见的做法" class="headerlink" title="更远见的做法"></a>更远见的做法</h3><p>停止使用Tiller。Helm 3彻底消除了对Tiller的需求。如果您使用的是Helm 2，则可以使用helm模板从Helm chart生成yaml，然后运行kubectl apply将对象应用于Kubernetes集群。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">helm template --name foo --namespace bar --output-dir ./output ./chart-template</span><br><span class="line">kubectl apply --namespace bar --recursive --filename ./output -o yaml</span><br></pre></td></tr></table></figure>
+
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/46672523/helm-list-cannot-list-configmaps-in-the-namespace-kube-system">helm list : cannot list configmaps in the namespace “kube-system”</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/13/stack/How-can-I-keep-a-container-running-on-Kubernetes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/13/stack/How-can-I-keep-a-container-running-on-Kubernetes/" class="post-title-link" itemprop="url">在Kubernetes集群上如何保持容器一直运行</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-13 20:52:42" itemprop="dateCreated datePublished" datetime="2019-08-13T20:52:42+00:00">2019-08-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 06:08:23" itemprop="dateModified" datetime="2024-01-01T06:08:23+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我现在正在尝试在Kubernetes集群上运行一个带shell（&#x2F;bin&#x2F;bash）的简单容器。</p>
+<p>我认为有一种方法可以通过使用伪tty和detach选项（docker run命令上的-td选项）来保持容器在Docker容器上运行。</p>
+<p>例如，</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">sudo docker run -td ubuntu:latest</span></span><br></pre></td></tr></table></figure>
+
+<p>在Kubernetes有这样的选择吗？</p>
+<p>我尝试使用kubectl run-container命令运行容器，如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl run-container test_container ubuntu:latest --replicas=1</span><br></pre></td></tr></table></figure>
+
+<p>但是容器几秒后会退出（就像使用docker run命令启动而没有上面提到的选项）。并且ReplicationController会重复启动它。</p>
+<p>有没有办法让容器在Kubernetes上运行，就像docker run命令中的-td选项一样？</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>当主进程退出时，容器退出。做类似的事情：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd debian</span><br></pre></td></tr></table></figure>
+
+<p>坦率地说，容器打开是一个只能用于快速测试和示例的黑客攻击。如果你只想要一个容器进行几分钟的测试，我会这样做：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d debian sleep 300</span><br></pre></td></tr></table></figure>
+
+<p>其优点是，如果忘记了容器，容器将自动退出。或者，可以在while循环中放置类似的内容以使其永久运行，或者只运行top等应用程序。所有这些在Kubernetes中应该很容易做到。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ubuntu</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ubuntu</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">ubuntu:latest</span></span><br><span class="line">    <span class="comment"># Just spin &amp; wait forever</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;/bin/bash&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;--&quot;</span> ]</span><br><span class="line">    <span class="attr">args:</span> [ <span class="string">&quot;while true; do sleep 30; done;&quot;</span> ]</span><br></pre></td></tr></table></figure>
+
+<p>真正的问题是你为什么要这样做？您的容器应该提供服务，其过程将使容器在后台运行。</p>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/31870222/how-can-i-keep-a-container-running-on-kubernetes">How can I keep a container running on Kubernetes?</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/10/stack/Where-does-the-convention-of-using-healthz-for-application-health-checks-come-from/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LuckYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/10/stack/Where-does-the-convention-of-using-healthz-for-application-health-checks-come-from/" class="post-title-link" itemprop="url">使用healthz进行应用健康检查的惯例来自何处</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-10 16:11:01" itemprop="dateCreated datePublished" datetime="2019-08-10T16:11:01+00:00">2019-08-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-01 06:08:23" itemprop="dateModified" datetime="2024-01-01T06:08:23+00:00">2024-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在Kubernetes &#x2F; Docker生态系统中，存在使用&#x2F; healthz作为应用程序的健康检查的约定。</p>
+<p>‘healthz’这个名字来自哪里，是否有与该名称相关的特定语义？</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>它历来源于谷歌的内部实践。他们被称为“z-pages”。</p>
+<p>它以z结尾的原因是减少与具有相同名称（如&#x2F;status）的实际应用程序冲突。有关更多信息，请参阅此演讲：<a target="_blank" rel="noopener" href="https://vimeo.com/173610242">https://vimeo.com/173610242</a></p>
+<p>类似的（至少在Google内部）有&#x2F;varz，&#x2F;statusz，&#x2F;rpcz。Google开发的服务会自动获取这些状态以导出其运行状况和指标，并且有一些工具可以从所有已部署的服务中收集公开的指标&#x2F;状态。</p>
+<p>像Prometheus这样的开源工具通过到知名接口来收集应用程序中的指标，实现了这种模式（因为Prometheus的原始作者也是前Google员工）。类似地，<a target="_blank" rel="noopener" href="http://opencensus.io/">OpenCensus</a>允许您从应用程序（最好是在不同的端口上）公开z页面来诊断问题。</p>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/43380939/where-does-the-convention-of-using-healthz-for-application-health-checks-come-f">Where does the convention of using &#x2F;healthz for application health checks come from?</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">LuckYao</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuckYao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
