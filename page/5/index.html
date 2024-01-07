@@ -145,6 +145,144 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/12/25/k8s/Decoding-A-Helm-Chart-Releases/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/25/k8s/Decoding-A-Helm-Chart-Releases/" class="post-title-link" itemprop="url">解析Helm Char Release内容</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-25 21:05:35" itemprop="dateCreated datePublished" datetime="2020-12-25T21:05:35+00:00">2020-12-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>如果我们在集群中安装了Helm Chart，可能会想知道Release的存储位置。</p>
+<h2 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h2><p>让我们从一些背景开始。安装一个简单的Nginx Helm Chart：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm install --name my-release stable/nginx-ingress</span></span><br></pre></td></tr></table></figure>
+
+<p>现在，要获取已安装Helm的详细信息，可以使用四个命令。</p>
+<p><strong>helm ls</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm <span class="built_in">ls</span></span> </span><br><span class="line">NAME        REVISION	UPDATED                 	STATUS  	</span><br><span class="line">my-release  1      	    Wed Sep 12 07:41:48 2018	DEPLOYED</span><br></pre></td></tr></table></figure>
+
+<p>通常，我们要运行的第一个命令是helm ls。执行此操作是为了了解我们的集群中当前安装了哪些Helm Chart。无论它们是否失败，<code>STATUS</code>会展示出部署结果是成功还是失败。</p>
+<p><strong>helm get</strong></p>
+<p>一旦获得安装Chart的名称。下一步通常是尝试更详细地了解安装了什么。<code>helm get</code>命令可以为我们提供帮助。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm get my-release</span></span><br><span class="line">REVISION: 1</span><br><span class="line">RELEASED: Thu Mar 23 15:59:14 2017</span><br><span class="line">CHART: nginx-1.0</span><br><span class="line">USER-SUPPLIED VALUES:</span><br><span class="line">foo: bar</span><br><span class="line"></span><br><span class="line">COMPUTED VALUES:</span><br><span class="line">foo: bar</span><br><span class="line">image: nginx</span><br><span class="line">imagePullPolicy: IfNotPresent</span><br><span class="line">ingress:</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">**....**</span>  </span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>helm status</strong></p>
+<p>如果我们遇到任何问题，并且希望获得Chart开发人员写下的一些说明。<code>helm status</code>可以通过呈现NOTES.txt文件来帮助我们。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ helm status my-release</span><br><span class="line">The nginx-ingress controller has been installed. </span><br><span class="line">Get the application URL by running these commands:</span><br><span class="line">export NODE_IP=$(kubectl --namespace &#123;&#123; .Release.Namespace &#125;&#125; get nodes -o jsonpath=&quot;&#123;.items[0].status.addresses[1].address&#125;&quot;)   </span><br><span class="line">echo &quot;Visit http://10.10.10.10:80 to access your application via HTTP.&quot;  </span><br><span class="line">echo &quot;Visit https://10.10.10.10:443 to access your application via HTTPS.&quot;</span><br></pre></td></tr></table></figure>
+
+<p>上面的Helm状态可以通过values.yaml或–set修改。这是从NOTES.txt呈现的帮助者文本。</p>
+<p><strong>helm history</strong></p>
+<p>最后，我们还可以获得Chart部署的修订历史记录。当运行<code>helm upgrade</code>命令时会更新版本。假设我们要使用override.yaml覆盖某些值。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm upgrade --install my-release --values override.yaml --<span class="built_in">set</span> foo=notbar nginx</span> </span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm <span class="built_in">history</span> my-release</span></span><br><span class="line">REVISION    UPDATED                     STATUS      CHART           DESCRIPTION</span><br><span class="line">1           Thu Mar 23 15:57:40 2020    SUPERSEDED  nginx-0.4.3 Install complete</span><br><span class="line">2           Thu Mar 23 15:59:14 2020    DEPLOYED    nginx-0.4.3 Upgrade complete</span><br></pre></td></tr></table></figure>
+
+<p>所有这些信息都存储在哪里？</p>
+<ul>
+<li><p>Helm v2版本，默认位置在<code>configmap</code>中：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get configmap -n kube-system -l <span class="string">&quot;OWNER=TILLER&quot;</span></span></span><br><span class="line">NAME                     DATA      AGE</span><br><span class="line">my-release.v1          1         7m</span><br><span class="line">my-release.v2          1         6m</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>Helm v3版本，默认位置在<code>secrets</code>中。<strong>强烈建议这样做</strong>，因为这些数据包含许多有关我们部署的信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get secrets -n kube-system</span></span><br><span class="line">NAME                     DATA      AGE</span><br><span class="line">my-release.v1          1         7m</span><br><span class="line">my-release.v2          1         6m</span><br><span class="line">default-token-43hfuds  1         1d</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="解析Configmap内容"><a href="#解析Configmap内容" class="headerlink" title="解析Configmap内容"></a>解析Configmap内容</h2><p>步骤1. 获取Configmap数据：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get configmap -n kube-system my-release.v1 -o=jsonpath=<span class="string">&#x27;&#123;.data.release&#125;&#x27;</span> &gt; release-encoded</span></span><br></pre></td></tr></table></figure>
+
+<p>步骤2. 确保编码后的Release包含如下字符串：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">H4sIAAAAAAAC/+w6TY8cS.....</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">you should see a long block of string like above</span></span><br></pre></td></tr></table></figure>
+
+<p>步骤3. 解析数据：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat release-encoded | base64 -d | gzip -cd &gt; release-decoded</span><br></pre></td></tr></table></figure>
+
+<p>步骤4. 查看数据：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat release-decoded</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">you should see a whole bunch of data <span class="keyword">for</span> the chart similar to above when you did helm get.</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">but also this data contains a lot more like. the actual template. Value rendered.. etc...</span> </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">try it :) i already gave you the commands 🤠⽕😁🏃🏼‍</span></span><br></pre></td></tr></table></figure>
+
+<p>将Chart存储在<code>configmaps</code>中的问题在于，一旦黑客进入我们的集群，它就会成为黑客的金钥匙。将其存储为<code>secrets</code>可以提供某种保护（假设我们对机密信息进行了加密）。☸️</p>
+<h2 id="解析Secrets内容"><a href="#解析Secrets内容" class="headerlink" title="解析Secrets内容"></a>解析Secrets内容</h2><p>步骤1. 解析指定版本的Release所有内容（Template内容依然是编码格式）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret sh.helm.release.v1.my-release.v1 -o jsonpath=&quot;&#123; .data.release &#125;&quot; | base64 -d | gunzip -c | jq .</span><br></pre></td></tr></table></figure>
+
+<p>步骤2. 解析指定版本的Release中的Template内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret sh.helm.release.v1.my-release.v1 -o jsonpath=&quot;&#123; .data.release &#125;&quot; | base64 -d | gunzip -c | jq &#x27;.chart.templates[].data&#x27; | tr -d &#x27;&quot;&#x27; | base64 -d</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注：该方法同样适用于解析Configmap内容。</p>
+</blockquote>
+<h2 id="一些建议"><a href="#一些建议" class="headerlink" title="一些建议"></a>一些建议</h2><p>还有一些保护<code>tiller</code>的方法，例如使用https连接。但是，按照设计，<code>tiller</code>仍然需要大量特权才能在我们的集群中运行。并且仍然违反<strong>最小特权原则</strong>。<strong>我的建议是尽快移至helm3</strong>。</p>
+<p>Helm3完全删除了tiller，而是依靠本地计算机的身份验证在群集中工作。默认情况下，它还将Chart数据作为<code>secrets</code>存储在群集中。<strong>Helm2将在2020年12月停止提供安全修复程序</strong>。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/11/12/k8s/Kubernetes-Production-Best-Practices/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +314,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -673,7 +811,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -958,7 +1096,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1382,7 +1520,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1598,7 +1736,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1751,7 +1889,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1901,7 +2039,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2163,7 +2301,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2439,7 +2577,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2499,104 +2637,6 @@
 <p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Deploy-free-docker-container-on-okteto/2020-04-08_211317.png" alt="image"></p>
 </li>
 </ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/04/01/k8s/Okteto-Push-Your-Code-to-Kubernetes-in-Seconds/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/04/01/k8s/Okteto-Push-Your-Code-to-Kubernetes-in-Seconds/" class="post-title-link" itemprop="url">Okteto Push：几秒把你的代码推送到Kubernetes</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-04-01 22:30:29" itemprop="dateCreated datePublished" datetime="2020-04-01T22:30:29+00:00">2020-04-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>自开始构建Okteto以来，我们一直在与许多开发人员进行交流。每个团队都有非常独特的挑战，但是经常出现的一个挑战是将一行代码从开发人员的IDE移植到Kubernetes需要多长时间。团队要么必须手动进行所有操作（构建，标记，推送，重新部署），要么将其更改推送到CI&#x2F;CD服务，并等待直到更改被处理为止。</p>
-<p>无论哪种方式，部署变更的时间都会打断您的流程，您的生产力因此而下降。这让我们思考：为什么开发人员需要了解整个构建部署基础结构才能验证特定于应用程序的更改？</p>
-<p>我们很高兴宣布推出<a target="_blank" rel="noopener" href="https://okteto.com/docs/reference/cli/index.html#push">Okteto Push</a>工具，这是将代码更改推送到Kubernetes的最快方法。一个直接在Kubernetes中自动构建，推送和更新应用程序的命令。</p>
-<h2 id="推送代码"><a href="#推送代码" class="headerlink" title="推送代码"></a>推送代码</h2><p><code>okteto push</code>的目标是消除开发人员在开发应用程序时需要执行的所有操作。编码，推送并实时查看更改。这样，我们所有人都可以专注于我们的应用程序，而不必担心底层的传递途径。</p>
-<p>为了使用<code>okteto push</code>，我们需要的是包含代码，Dockerfile和最新版本<a target="_blank" rel="noopener" href="https://github.com/okteto/okteto">Okteto CLI</a>的本地文件夹。</p>
-<p>首先，运行<code>okteto login</code>在Okteto Cloud中创建一个免费帐户。这将允许您使用<a target="_blank" rel="noopener" href="https://okteto.com/docs/cloud/build.html">Okteto构建服务</a>直接在云中构建镜像。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ okteto login</span><br></pre></td></tr></table></figure>
-
-<p>运行<code>okteto push</code>命令将代码推送到Kubernetes，将$IMAGE替换为自己的镜像仓库（例如pchico83&#x2F;hello-world）：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ okteto push --name hello-world -t $IMAGE</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> i  Running your build in Okteto Cloud...</span><br><span class="line">[+] Building 2.8s (16/16) FINISHED</span><br><span class="line"> =&gt; importing cache manifest from pchico83/hello-world:okteto           1.1s</span><br><span class="line"> ...</span><br><span class="line"> ...</span><br><span class="line"> ...</span><br><span class="line"> ✓  Source code pushed to the development environment &#x27;hello-world&#x27;</span><br></pre></td></tr></table></figure>
-
-<p><code>okteto push</code>将使用<a target="_blank" rel="noopener" href="https://okteto.com/docs/cloud/build.html">Okteto Build Service</a>自动构建开发镜像，生成一个开发标签，将其推送到容器仓库中并将其部署到Kubernetes。如果已经在运行一个应用程序，它将自动找到该deployment 并将镜像替换为新的。如果没有，它甚至可以创建deployment和service。</p>
-<p>一个简单的命令即可在几秒钟内将代码导入任何Kubernetes环境。无需在本地运行docker，选择容器标签或修改yaml文件即可更新应用。</p>
-<h2 id="学习更多"><a href="#学习更多" class="headerlink" title="学习更多"></a>学习更多</h2><p><code>Okteto Push</code>可与任何编程语言，框架或平台一起使用。在我们的<a target="_blank" rel="noopener" href="https://okteto.com/docs/samples/aspnetcore/index.html">ASP.NET</a>，<a target="_blank" rel="noopener" href="https://okteto.com/docs/samples/golang/index.html">Go</a>，<a target="_blank" rel="noopener" href="https://okteto.com/docs/samples/java/index.html">Java</a>，<a target="_blank" rel="noopener" href="https://okteto.com/docs/samples/node/index.html">Node.js</a>，<a target="_blank" rel="noopener" href="https://okteto.com/docs/samples/python/index.html">Python</a>，<a target="_blank" rel="noopener" href="https://okteto.com/docs/samples/php/index.html">PHP</a>或<a target="_blank" rel="noopener" href="https://okteto.com/docs/samples/ruby/index.html">Ruby</a>入门指南中了解更多信息。</p>
-<h2 id="下一步"><a href="#下一步" class="headerlink" title="下一步"></a>下一步</h2><p>在Okteto，我们致力于使每个开发人员都可以访问Kubernetes，并将内部循环开发周期减少到最小。Okteto Push仍然要求开发人员拥有Dockerfile，但是我们正在尝试使用<a target="_blank" rel="noopener" href="https://docs.cloudfoundry.org/buildpacks/">Cloud Buildpacks</a>和类似技术来完全消除这一要求。</p>
-<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>Okteto社区中的一些人在过去几周内一直在内部使用<code>okteto push</code>，到目前为止，反馈非常好。我们已经看到人们将其用作内部流程的一部分，作为提交前的验证机制，以创建预览环境，甚至用于产品部署。真的很令人兴奋！</p>
 
       
     </div>
@@ -2681,7 +2721,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-count">86</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

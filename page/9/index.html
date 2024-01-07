@@ -145,6 +145,104 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/24/stack/What's-the-difference-between-Apache's-Mesos-and-Google's-Kubernetes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/07/24/stack/What's-the-difference-between-Apache's-Mesos-and-Google's-Kubernetes/" class="post-title-link" itemprop="url">Apache的Mesos和Google的Kubernetes有什么区别</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-24 21:43:06" itemprop="dateCreated datePublished" datetime="2019-07-24T21:43:06+00:00">2019-07-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>Apache的Mesos和Google的Kubernetes有什么区别？我知道两者都是服务器集群管理软件。有没有人可以详细说明主要区别在哪里？ - 什么时候会优先采用哪种框架？</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>Kubernetes是一个开源项目，为虚拟机或“裸金属”场景带来“谷歌风格”的集群管理功能。它适用于现代操作系统环境（如CoreOS或Red Hat Atomic），可管理轻量级计算“节点”。它是用Golang编写的，具有轻量级，模块化，可移植性和可扩展性。我们（Kubernetes团队）正在与许多不同的技术公司（包括策划Mesos开源项目的Mesosphere）合作，将Kubernetes建立为与计算集群交互的标准方式。我们的想法是根据我们在Google的经验，重现我们看到人们需要构建群集应用程序的模式。其中一些概念包括：</p>
+<ul>
+<li><em>pods</em> - 将容器组合在一起的方法</li>
+<li><em>replication controllers</em> - 一种处理容器生命周期的方法</li>
+<li><em>labels</em> - 查找和查询容器的方法</li>
+<li><em>services</em> - 一组执行共同功能的容器。</li>
+</ul>
+<p>因此，仅使用Kubernetes，您就会拥有一些简单，易于启动，可移植和可扩展的功能。在群集上运行应用程序，而无需担心单个计算机。在这种情况下，群集就像VM一样是一种灵活的资源。它是一个逻辑计算单元，可以快速轻松地开启，使用，调整大小，关闭。</p>
+<p>使用Mesos，在基本视觉方面存在相当多的重叠，但产品在其生命周期中处于完全不同的点并且具有不同的优点。Mesos是一个分布式系统内核，它将许多不同的机器拼接成逻辑计算机。它诞生于一个拥有大量物理资源来创建大型静态计算集群的世界。最棒的是，许多现代可扩展的数据处理应用程序在Mesos（Hadoop，Kafka，Spark）上运行良好，这很好，因为您可以在同一个基本资源池上运行它们，以及新的容器打包应用程序。它比Kubernetes项目更重，但由于像Mesosphere这样的人的工作，它变得更容易和更容易管理。</p>
+<p>现在真正有趣的是，Mesos目前正在适配添加大量Kubernetes概念并支持Kubernetes API。因此，它将成为获取Kubernetes应用程序更多功能的门户（高可用性主，更高级的调度语义，扩展到大量节点的能力），如果您需要它们，并且非常适合运行生产工作负载（Kubernetes仍处于alpha状态）。</p>
+<p>当被问到时，我倾向于说：</p>
+<ol>
+<li>如果您不熟悉集群的世界，Kubernetes是一个很好的起点；它是最快，最简单，最轻松的方式来启动并开始尝试面向集群的开发。它提供了非常高的可移植性，因为它得到了许多不同提供商（Microsoft，IBM，Red Hat，CoreOs，MesoSphere，VMWare等）的支持。</li>
+<li>如果您有现有的工作负载（Hadoop，Spark，Kafka等），Mesos会为您提供一个框架，让您可以将这些工作负载相互交错，并混合使用包括Kubernetes应用程序在内的一些新工具。</li>
+<li>如果您需要Kubernetes框架中社区尚未实现的功能，Mesos会为您提供一个类似方案。</li>
+</ol>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/26705201/whats-the-difference-between-apaches-mesos-and-googles-kubernetes">What’s the difference between Apache’s Mesos and Google’s Kubernetes</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/23/tools/Convert-word-to-pdf-or-txt-tools/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +274,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -284,7 +382,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -373,7 +471,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -486,7 +584,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -624,7 +722,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -808,7 +906,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-count">86</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

@@ -145,6 +145,119 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/06/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-UDP%E8%AF%B7%E6%B1%82%E4%B8%8D%E9%80%9A%E5%AF%BC%E8%87%B4%E8%AE%BE%E5%A4%87%E5%A4%87%E4%BB%BD%E5%A4%B1%E8%B4%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-UDP%E8%AF%B7%E6%B1%82%E4%B8%8D%E9%80%9A%E5%AF%BC%E8%87%B4%E8%AE%BE%E5%A4%87%E5%A4%87%E4%BB%BD%E5%A4%B1%E8%B4%A5/" class="post-title-link" itemprop="url">K8S问题排查-UDP请求不通导致设备备份失败</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-14 20:07:47" itemprop="dateCreated datePublished" datetime="2021-06-14T20:07:47+00:00">2021-06-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p> K8S双栈环境下，业务Pod纳管了IPv4和IPv6的设备（Pod需要与设备通过UDP协议通信），对IPv4设备配置做备份时可以成功，对IPv6设备配置做备份时失败。</p>
+<h2 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h2><p>查看K8S集群主节点node3上的IP信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@node3 ~]# ip addr show eth0</span><br><span class="line">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000</span><br><span class="line">    link/ether 0c:da:41:1d:d2:9d brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.65.13/16 brd 192.168.255.255 scope global eth0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet 192.168.65.21/32 scope global eth0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 2000::65:21/128 scope global deprecated</span><br><span class="line">       valid_lft forever preferred_lft 0sec</span><br><span class="line">    inet6 2000::65:13/64 scope global</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+
+<p>其中各IP角色如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">192.168.65.13：IPv4节点IP</span><br><span class="line">192.168.65.21：IPv4虚IP</span><br><span class="line">2000::65:13：IPv6节点IP</span><br><span class="line">2000::65:21：IPv6虚IP</span><br></pre></td></tr></table></figure>
+
+<p>查看主节点上接收UDP报文异常的业务Pod：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# kubectl get pod -A -owide|grep tftpserver-dm</span><br><span class="line">ss    tftpserver-dm-798nv                      1/1     Running     2          13d     177.177.166.147   node1   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">ss    tftpserver-dm-drrsn                      1/1     Running     4          13d     177.177.104.10    node2   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">ss    tftpserver-dm-vmgtf                      1/1     Running     6          13d     177.177.135.16    node3   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+
+<p>找到Pod的网卡：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node3 ~]# ip route |grep 177.177.135.16</span><br><span class="line">177.177.135.16 dev cali928cc4cd898 scope link</span><br></pre></td></tr></table></figure>
+
+<p>在业务提供的页面上触发备份IPv4设备配置的操作，抓包看到数据有请求和响应：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@node3 ~]# tcpdump -n -i cali928cc4cd898 -p udp</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on cali928cc4cd898, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">07:29:48.654684 IP 192.168.101.254.58625 &gt; 177.177.135.16.tftp:  64 WRQ &quot;running_3346183882.cfg&quot; octet tsize 7304 blksize 512 timeout 5</span><br><span class="line">07:29:48.686337 IP 177.177.135.16.39873 &gt; 192.168.101.254.58625: UDP, length 35</span><br><span class="line">07:29:48.707187 IP 192.168.101.254.58625 &gt; 177.177.135.16.39873: UDP, length 516</span><br><span class="line">07:29:48.707332 IP 177.177.135.16.39873 &gt; 192.168.101.254.58625: UDP, length 4</span><br><span class="line">07:29:48.708377 IP 192.168.101.254.58625 &gt; 177.177.135.16.39873: UDP, length 516</span><br><span class="line">07:29:48.708622 IP 177.177.135.16.39873 &gt; 192.168.101.254.58625: UDP, length 4</span><br><span class="line">07:29:48.710532 IP 192.168.101.254.58625 &gt; 177.177.135.16.39873: UDP, length 516</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>在主机网卡上抓包，同样可以看到数据有请求和响应：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">12:00:02.333324 IP 192.168.101.254.58631 &gt; 192.168.65.21.tftp:  64 WRQ &quot;running_3346346022.cfg&quot; octet tsize 7304 blksize 512 timeout 5</span><br><span class="line">12:00:02.349104 ARP, Request who-has 192.168.101.254 tell 192.168.65.13, length 28</span><br><span class="line">12:00:02.350492 ARP, Reply 192.168.101.254 is-at 58:6a:b1:df:e3:d1, length 46</span><br><span class="line">12:00:02.350499 IP 192.168.65.13.56284 &gt; 192.168.101.254.58631: UDP, length 35</span><br><span class="line">12:00:02.373403 IP 192.168.101.254.58631 &gt; 192.168.65.13.56284: UDP, length 516</span><br><span class="line">12:00:02.373603 IP 192.168.65.13.56284 &gt; 192.168.101.254.58631: UDP, length 4</span><br><span class="line">12:00:02.374613 IP 192.168.101.254.58631 &gt; 192.168.65.13.56284: UDP, length 516</span><br><span class="line">12:00:02.374724 IP 192.168.65.13.56284 &gt; 192.168.101.254.58631: UDP, length 4</span><br><span class="line">12:00:02.375775 IP 192.168.101.254.58631 &gt; 192.168.65.13.56284: UDP, length 516</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>在业务提供的页面上触发备份IPv6设备配置的操作，抓包看到设备侧主动发送一个请求后，后续的数据传输请求就没有应答了：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@node3 ~]# tcpdump -n -i cali928cc4cd898 -p udp</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on cali928cc4cd898, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">08:14:31.913637 IP6 2000::65:119.41217 &gt; fd00:177:177:0:7bf3:bb28:910a:873c.tftp:  64 WRQ &quot;running_3346210712.cfg&quot; octet tsize 8757 blksize 512 timeout 5</span><br><span class="line">08:14:31.925400 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.38680 &gt; 2000::65:119.41217: UDP, length 35</span><br><span class="line">08:14:34.928820 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.38680 &gt; 2000::65:119.41217: UDP, length 35</span><br><span class="line">08:14:37.931610 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.38680 &gt; 2000::65:119.41217: UDP, length 35</span><br><span class="line">08:14:40.933541 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.38680 &gt; 2000::65:119.41217: UDP, length 35</span><br><span class="line">08:19:25.395306 IP6 2000::65:119.41218 &gt; fd00:177:177:0:7bf3:bb28:910a:873c.tftp:  64 WRQ &quot;startup_3346213742.cfg&quot; octet tsize 8757 blksize 512 timeout 5</span><br><span class="line">08:19:25.410374 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.48233 &gt; 2000::65:119.41218: UDP, length 35</span><br><span class="line">08:19:28.413797 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.48233 &gt; 2000::65:119.41218: UDP, length 35</span><br><span class="line">08:19:31.415977 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.48233 &gt; 2000::65:119.41218: UDP, length 35</span><br><span class="line">08:19:34.418414 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.48233 &gt; 2000::65:119.41218: UDP, length 35</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>主机网卡上抓包，可以看到数据有请求和响应，说明设备的响应到了主机上，但没到Pod网卡上：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">11:55:29.393598 IP6 2000::65:119.41226 &gt; 2000::65:21.tftp:  64 WRQ &quot;startup_3346343382.cfg&quot; octet tsize 8757 blksize 512 timeout 5</span><br><span class="line">11:55:29.401115 IP6 2000::65:13.32991 &gt; 2000::65:119.41226: UDP, length 35</span><br><span class="line">11:55:29.405709 IP6 2000::65:119.41226 &gt; 2000::65:21.32991: UDP, length 516</span><br><span class="line">11:55:29.405745 IP6 2000::65:21 &gt; 2000::65:119: ICMP6, destination unreachable, unreachable port, 2000::65:21 udp port 32991, length 572</span><br><span class="line">11:55:32.404514 IP6 2000::65:13.32991 &gt; 2000::65:119.41226: UDP, length 35</span><br><span class="line">11:55:32.406399 IP6 2000::65:119.41226 &gt; 2000::65:21.32991: UDP, length 516</span><br><span class="line">11:55:32.406432 IP6 2000::65:21 &gt; 2000::65:119: ICMP6, destination unreachable, unreachable port, 2000::65:21 udp port 32991, length 572</span><br><span class="line">11:55:35.407644 IP6 2000::65:13.32991 &gt; 2000::65:119.41226: UDP, length 35</span><br><span class="line">11:55:35.409423 IP6 2000::65:119.41226 &gt; 2000::65:21.32991: UDP, length 516</span><br><span class="line">11:55:35.409463 IP6 2000::65:21 &gt; 2000::65:119: ICMP6, destination unreachable, unreachable port, 2000::65:21 udp port 32991, length 572</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>那IPv6设备的请求响应和IPV4设备场景下的有什么不同呢？对比IPv4和IPv6两个场景下的主机网卡抓包结果，可以看出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IPv4设备请求时主机上抓包分析：</span><br><span class="line">1. 第一次交互时，设备侧（192.168.101.254）先发送请求给VIP（192.168.65.21）</span><br><span class="line">2. 第二次交互时，业务Pod请求以节点IP为源（192.168.65.13）发送给设备；</span><br><span class="line">3. 第三次交互时，设备侧请求以节点IP为目标地址（192.168.65.13）发送给业务Pod</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IPv6设备请求时主机上抓包分析：</span><br><span class="line">1. 第一次交互时，设备侧（2000::65:119）先发送请求给VIP（2000::65:21）</span><br><span class="line">2. 第二次交互时，业务Pod请求以节点IP为源（2000::65:13）发送给设备；</span><br><span class="line">3. 第三次交互时，设备侧请求以VIP为目标地址（2000::65:21）发送给业务Pod</span><br></pre></td></tr></table></figure>
+
+<p>从上述报文交互过程可看出，IPv6设备在报文交互时源IP和目标地址不一致，经确认是设备侧强制配置了以VIP为目的地址发送报文的配置，而正常情况下，应该以请求报文的源IP作为响应报文的目的地址。</p>
+<p>通过临时修改验证，把第三次交互的VIP目的地址改为节点IP，验证问题解决。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>业务层面修改发送报文的配置。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/06/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-UDP%E9%A2%91%E7%B9%81%E5%8F%91%E5%8C%85%E5%AF%BC%E8%87%B4Pod%E9%87%8D%E5%90%AF%E5%90%8E%E6%97%A0%E6%B3%95%E6%8E%A5%E6%94%B6%E6%95%B0%E6%8D%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +289,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -313,7 +426,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -563,7 +676,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -930,7 +1043,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1044,7 +1157,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1146,7 +1259,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1284,7 +1397,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1384,7 +1497,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1515,7 +1628,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
+                <time title="修改时间：2024-01-07 03:07:15" itemprop="dateModified" datetime="2024-01-07T03:07:15+00:00">2024-01-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1689,144 +1802,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/12/25/k8s/Decoding-A-Helm-Chart-Releases/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/25/k8s/Decoding-A-Helm-Chart-Releases/" class="post-title-link" itemprop="url">解析Helm Char Release内容</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-25 21:05:35" itemprop="dateCreated datePublished" datetime="2020-12-25T21:05:35+00:00">2020-12-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-07 03:07:10" itemprop="dateModified" datetime="2024-01-07T03:07:10+00:00">2024-01-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>如果我们在集群中安装了Helm Chart，可能会想知道Release的存储位置。</p>
-<h2 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h2><p>让我们从一些背景开始。安装一个简单的Nginx Helm Chart：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm install --name my-release stable/nginx-ingress</span></span><br></pre></td></tr></table></figure>
-
-<p>现在，要获取已安装Helm的详细信息，可以使用四个命令。</p>
-<p><strong>helm ls</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm <span class="built_in">ls</span></span> </span><br><span class="line">NAME        REVISION	UPDATED                 	STATUS  	</span><br><span class="line">my-release  1      	    Wed Sep 12 07:41:48 2018	DEPLOYED</span><br></pre></td></tr></table></figure>
-
-<p>通常，我们要运行的第一个命令是helm ls。执行此操作是为了了解我们的集群中当前安装了哪些Helm Chart。无论它们是否失败，<code>STATUS</code>会展示出部署结果是成功还是失败。</p>
-<p><strong>helm get</strong></p>
-<p>一旦获得安装Chart的名称。下一步通常是尝试更详细地了解安装了什么。<code>helm get</code>命令可以为我们提供帮助。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm get my-release</span></span><br><span class="line">REVISION: 1</span><br><span class="line">RELEASED: Thu Mar 23 15:59:14 2017</span><br><span class="line">CHART: nginx-1.0</span><br><span class="line">USER-SUPPLIED VALUES:</span><br><span class="line">foo: bar</span><br><span class="line"></span><br><span class="line">COMPUTED VALUES:</span><br><span class="line">foo: bar</span><br><span class="line">image: nginx</span><br><span class="line">imagePullPolicy: IfNotPresent</span><br><span class="line">ingress:</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">**....**</span>  </span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>helm status</strong></p>
-<p>如果我们遇到任何问题，并且希望获得Chart开发人员写下的一些说明。<code>helm status</code>可以通过呈现NOTES.txt文件来帮助我们。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ helm status my-release</span><br><span class="line">The nginx-ingress controller has been installed. </span><br><span class="line">Get the application URL by running these commands:</span><br><span class="line">export NODE_IP=$(kubectl --namespace &#123;&#123; .Release.Namespace &#125;&#125; get nodes -o jsonpath=&quot;&#123;.items[0].status.addresses[1].address&#125;&quot;)   </span><br><span class="line">echo &quot;Visit http://10.10.10.10:80 to access your application via HTTP.&quot;  </span><br><span class="line">echo &quot;Visit https://10.10.10.10:443 to access your application via HTTPS.&quot;</span><br></pre></td></tr></table></figure>
-
-<p>上面的Helm状态可以通过values.yaml或–set修改。这是从NOTES.txt呈现的帮助者文本。</p>
-<p><strong>helm history</strong></p>
-<p>最后，我们还可以获得Chart部署的修订历史记录。当运行<code>helm upgrade</code>命令时会更新版本。假设我们要使用override.yaml覆盖某些值。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm upgrade --install my-release --values override.yaml --<span class="built_in">set</span> foo=notbar nginx</span> </span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm <span class="built_in">history</span> my-release</span></span><br><span class="line">REVISION    UPDATED                     STATUS      CHART           DESCRIPTION</span><br><span class="line">1           Thu Mar 23 15:57:40 2020    SUPERSEDED  nginx-0.4.3 Install complete</span><br><span class="line">2           Thu Mar 23 15:59:14 2020    DEPLOYED    nginx-0.4.3 Upgrade complete</span><br></pre></td></tr></table></figure>
-
-<p>所有这些信息都存储在哪里？</p>
-<ul>
-<li><p>Helm v2版本，默认位置在<code>configmap</code>中：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get configmap -n kube-system -l <span class="string">&quot;OWNER=TILLER&quot;</span></span></span><br><span class="line">NAME                     DATA      AGE</span><br><span class="line">my-release.v1          1         7m</span><br><span class="line">my-release.v2          1         6m</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>Helm v3版本，默认位置在<code>secrets</code>中。<strong>强烈建议这样做</strong>，因为这些数据包含许多有关我们部署的信息：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get secrets -n kube-system</span></span><br><span class="line">NAME                     DATA      AGE</span><br><span class="line">my-release.v1          1         7m</span><br><span class="line">my-release.v2          1         6m</span><br><span class="line">default-token-43hfuds  1         1d</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h2 id="解析Configmap内容"><a href="#解析Configmap内容" class="headerlink" title="解析Configmap内容"></a>解析Configmap内容</h2><p>步骤1. 获取Configmap数据：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get configmap -n kube-system my-release.v1 -o=jsonpath=<span class="string">&#x27;&#123;.data.release&#125;&#x27;</span> &gt; release-encoded</span></span><br></pre></td></tr></table></figure>
-
-<p>步骤2. 确保编码后的Release包含如下字符串：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">H4sIAAAAAAAC/+w6TY8cS.....</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">you should see a long block of string like above</span></span><br></pre></td></tr></table></figure>
-
-<p>步骤3. 解析数据：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat release-encoded | base64 -d | gzip -cd &gt; release-decoded</span><br></pre></td></tr></table></figure>
-
-<p>步骤4. 查看数据：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat release-decoded</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">you should see a whole bunch of data <span class="keyword">for</span> the chart similar to above when you did helm get.</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">but also this data contains a lot more like. the actual template. Value rendered.. etc...</span> </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">try it :) i already gave you the commands 🤠⽕😁🏃🏼‍</span></span><br></pre></td></tr></table></figure>
-
-<p>将Chart存储在<code>configmaps</code>中的问题在于，一旦黑客进入我们的集群，它就会成为黑客的金钥匙。将其存储为<code>secrets</code>可以提供某种保护（假设我们对机密信息进行了加密）。☸️</p>
-<h2 id="解析Secrets内容"><a href="#解析Secrets内容" class="headerlink" title="解析Secrets内容"></a>解析Secrets内容</h2><p>步骤1. 解析指定版本的Release所有内容（Template内容依然是编码格式）：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret sh.helm.release.v1.my-release.v1 -o jsonpath=&quot;&#123; .data.release &#125;&quot; | base64 -d | gunzip -c | jq .</span><br></pre></td></tr></table></figure>
-
-<p>步骤2. 解析指定版本的Release中的Template内容：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret sh.helm.release.v1.my-release.v1 -o jsonpath=&quot;&#123; .data.release &#125;&quot; | base64 -d | gunzip -c | jq &#x27;.chart.templates[].data&#x27; | tr -d &#x27;&quot;&#x27; | base64 -d</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>注：该方法同样适用于解析Configmap内容。</p>
-</blockquote>
-<h2 id="一些建议"><a href="#一些建议" class="headerlink" title="一些建议"></a>一些建议</h2><p>还有一些保护<code>tiller</code>的方法，例如使用https连接。但是，按照设计，<code>tiller</code>仍然需要大量特权才能在我们的集群中运行。并且仍然违反<strong>最小特权原则</strong>。<strong>我的建议是尽快移至helm3</strong>。</p>
-<p>Helm3完全删除了tiller，而是依靠本地计算机的身份验证在群集中工作。默认情况下，它还将Chart数据作为<code>secrets</code>存储在群集中。<strong>Helm2将在2020年12月停止提供安全修复程序</strong>。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1896,7 +1871,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-count">86</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
