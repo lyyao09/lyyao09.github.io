@@ -145,6 +145,148 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2023/03/25/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E4%BD%BF%E7%94%A8Kubeasz%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2K8S%E9%9B%86%E7%BE%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/03/25/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E4%BD%BF%E7%94%A8Kubeasz%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2K8S%E9%9B%86%E7%BE%A4/" class="post-title-link" itemprop="url">工具分享-使用Kubeasz一键部署K8S集群</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-25 21:13:43" itemprop="dateCreated datePublished" datetime="2023-03-25T21:13:43+00:00">2023-03-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-07 09:05:39" itemprop="dateModified" datetime="2024-04-07T09:05:39+00:00">2024-04-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>15 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>为了验证最新版本的<code>k8s</code>是否已修复某个<code>bug</code>，需要快速搭建一个<code>k8s</code>环境，本文选取资料[1]中的<code>kubeasz</code>工具，并记录部署过程及相关问题。</p>
+<h2 id="部署过程"><a href="#部署过程" class="headerlink" title="部署过程"></a>部署过程</h2><p>先下载工具脚本、<code>kubeasz</code>代码、二进制、默认容器镜像。</p>
+<p>使用如下命令开始安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 k8s]# ./ezdown -S</span><br><span class="line">2023-03-22 13:39:40 INFO Action begin: start_kubeasz_docker</span><br><span class="line">2023-03-22 13:39:41 INFO try to run kubeasz in a container</span><br><span class="line">2023-03-22 13:39:41 DEBUG get host IP: 10.10.11.49</span><br><span class="line">2023-03-22 13:39:41 DEBUG generate ssh key pair</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">10.10.11.49 SSH-2.0-OpenSSH_6.6.1</span></span><br><span class="line">f1b442b7fdaf757c7787536b17d12d76208a2dd7884d56fbd1d35817dc2e94ca</span><br><span class="line">2023-03-22 13:39:41 INFO Action successed: start_kubeasz_docker</span><br><span class="line"></span><br><span class="line">[root@node01 k8s]# docker ps</span><br><span class="line">CONTAINER ID   IMAGE                                                       COMMAND                  CREATED          STATUS          PORTS     NAMES</span><br><span class="line">f1b442b7fdaf   easzlab/kubeasz:3.5.0                                       &quot;sleep 36000&quot;            15 seconds ago   Up 14 seconds             kubeasz</span><br></pre></td></tr></table></figure>
+
+<p>执行后看不出是成功，还是失败。根据文档说明，进入容器内手动执行命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# docker exec -it kubeasz ezctl start-aio</span><br><span class="line">2023-03-22 06:15:05 INFO get local host ipadd: 10.10.11.49</span><br><span class="line">2023-03-22 06:15:05 DEBUG generate custom cluster files in /etc/kubeasz/clusters/default</span><br><span class="line">2023-03-22 06:15:05 DEBUG set versions</span><br><span class="line">2023-03-22 06:15:05 DEBUG disable registry mirrors</span><br><span class="line">2023-03-22 06:15:05 DEBUG cluster default: files successfully created.</span><br><span class="line">2023-03-22 06:15:05 INFO next steps 1: to config &#x27;/etc/kubeasz/clusters/default/hosts&#x27;</span><br><span class="line">2023-03-22 06:15:05 INFO next steps 2: to config &#x27;/etc/kubeasz/clusters/default/config.yml&#x27;</span><br><span class="line">ansible-playbook -i clusters/default/hosts -e @clusters/default/config.yml  playbooks/90.setup.yml</span><br><span class="line">2023-03-22 06:15:05 INFO cluster:default setup step:all begins in 5s, press any key to abort:</span><br><span class="line"></span><br><span class="line">PLAY [kube_master,kube_node,etcd,ex_lb,chrony] **********************************************************************************************************************************************************</span><br><span class="line"></span><br><span class="line">TASK [Gathering Facts] **********************************************************************************************************************************************************************************</span><br><span class="line">fatal: [10.10.11.49]: UNREACHABLE! =&gt; &#123;&quot;changed&quot;: false, &quot;msg&quot;: &quot;Failed to connect to the host via ssh: root@10.10.11.49: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,password).&quot;, &quot;unreachable&quot;: true&#125;</span><br><span class="line"></span><br><span class="line">PLAY RECAP **********************************************************************************************************************************************************************************************</span><br><span class="line">10.10.11.49               : ok=0    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0</span><br></pre></td></tr></table></figure>
+
+<p>从日志看，提示权限有问题。实际测试可以正常的<code>ssh</code>免密登录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">bash-5.1# ssh-keygen</span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file in which to save the key (/root/.ssh/id_rsa):</span><br><span class="line">/root/.ssh/id_rsa already exists.</span><br><span class="line">Overwrite (y/n)?</span><br><span class="line">bash-5.1# ssh-copy-id root@10.10.11.49</span><br><span class="line">/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: &quot;/root/.ssh/id_rsa.pub&quot;</span><br><span class="line">/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed</span><br><span class="line">expr: warning: &#x27;^ERROR: &#x27;: using &#x27;^&#x27; as the first character</span><br><span class="line">of a basic regular expression is not portable; it is ignored</span><br><span class="line">/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys</span><br><span class="line">root@10.10.11.49&#x27;s password:</span><br><span class="line"></span><br><span class="line">Number of key(s) added: 1</span><br><span class="line"></span><br><span class="line">Now try logging into the machine, with:   &quot;ssh &#x27;root@10.10.11.49&#x27;&quot;</span><br><span class="line">and check to make sure that only the key(s) you wanted were added.</span><br><span class="line"></span><br><span class="line">bash-5.1# ssh root@10.10.11.49</span><br><span class="line">root@10.10.11.49&#x27;s password:</span><br></pre></td></tr></table></figure>
+
+<p>查看相关配置文件，权限正常：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 kubeasz]# ll ~/.ssh</span><br><span class="line">total 16</span><br><span class="line">-rw------- 1 root root 1752 Mar 22 14:25 authorized_keys</span><br><span class="line">-rw------- 1 root root 2602 Mar 22 14:25 id_rsa</span><br><span class="line">-rw-r--r-- 1 root root  567 Mar 22 14:25 id_rsa.pub</span><br><span class="line">-rw-r--r-- 1 root root 1295 Mar 22 13:39 known_hosts</span><br></pre></td></tr></table></figure>
+
+<p>不清楚具体哪里有问题，参考资料[2]，尝试改为用用户名密码执行。</p>
+<p>在容器内配置用户密码，检查通过：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">bash-5.1# vi /etc/ansible/hosts</span><br><span class="line">[webservers]</span><br><span class="line">10.10.11.49</span><br><span class="line"></span><br><span class="line">[webservers:vars]</span><br><span class="line">ansible_ssh_pass=&#x27;******&#x27;</span><br><span class="line">ansible_ssh_user=&#x27;root&#x27;</span><br><span class="line"></span><br><span class="line">bash-5.1# ansible webservers -m ping</span><br><span class="line">10.10.11.49 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;discovered_interpreter_python&quot;: &quot;/usr/bin/python&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;changed&quot;: false,</span><br><span class="line">    &quot;ping&quot;: &quot;pong&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改安装集群依赖的<code>clusters/default/hosts</code>文件，同样增加用户密码配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[etcd]</span><br><span class="line">10.10.11.49</span><br><span class="line"></span><br><span class="line">[etcd:vars]</span><br><span class="line">ansible_ssh_pass=&#x27;******&#x27;</span><br><span class="line">ansible_ssh_user=&#x27;root&#x27;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">master node(s)</span></span><br><span class="line">[kube_master]</span><br><span class="line">10.10.11.49</span><br><span class="line"></span><br><span class="line">[kube_master:vars]</span><br><span class="line">ansible_ssh_pass=&#x27;******&#x27;</span><br><span class="line">ansible_ssh_user=&#x27;root&#x27;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">work node(s)</span></span><br><span class="line">[kube_node]</span><br><span class="line">10.10.11.49</span><br><span class="line"></span><br><span class="line">[kube_node:vars]</span><br><span class="line">ansible_ssh_pass=&#x27;******&#x27;</span><br><span class="line">ansible_ssh_user=&#x27;root&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>执行命令，提示缺少<code>sshpass</code>工具：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 kubeasz]# docker exec -it kubeasz ezctl setup default all</span><br><span class="line">ansible-playbook -i clusters/default/hosts -e @clusters/default/config.yml  playbooks/90.setup.yml</span><br><span class="line">2023-03-22 07:35:46 INFO cluster:default setup step:all begins in 5s, press any key to abort:</span><br><span class="line"></span><br><span class="line">PLAY [kube_master,kube_node,etcd,ex_lb,chrony] **********************************************************************************************************************************************************</span><br><span class="line"></span><br><span class="line">TASK [Gathering Facts] **********************************************************************************************************************************************************************************</span><br><span class="line">fatal: [10.10.11.49]: FAILED! =&gt; &#123;&quot;msg&quot;: &quot;to use the &#x27;ssh&#x27; connection type with passwords, you must install the sshpass program&quot;&#125;</span><br><span class="line"></span><br><span class="line">PLAY RECAP **********************************************************************************************************************************************************************************************</span><br><span class="line">10.10.11.49               : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0</span><br></pre></td></tr></table></figure>
+
+<p>安装<code>sshpass</code>依赖包：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">bash-5.1# apk add sshpass</span><br><span class="line">fetch https://dl-cdn.alpinelinux.org/alpine/v3.16/main/x86_64/APKINDEX.tar.gz</span><br><span class="line">fetch https://dl-cdn.alpinelinux.org/alpine/v3.16/community/x86_64/APKINDEX.tar.gz</span><br><span class="line">(1/1) Installing sshpass (1.09-r0)</span><br><span class="line">Executing busybox-1.35.0-r17.trigger</span><br><span class="line">OK: 21 MiB in 47 packages</span><br></pre></td></tr></table></figure>
+
+<p>重复执行命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 kubeasz]# docker exec -it kubeasz ezctl setup default all</span><br><span class="line">ansible-playbook -i clusters/default/hosts -e @clusters/default/config.yml  playbooks/90.setup.yml</span><br><span class="line">2023-03-22 07:36:37 INFO cluster:default setup step:all begins in 5s, press any key to abort:</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">TASK [kube-node : 轮询等待kube-proxy启动] *********************************************************************************************************************************************************************</span><br><span class="line">changed: [10.10.11.49]</span><br><span class="line">FAILED - RETRYING: 轮询等待kubelet启动 (4 retries left).</span><br><span class="line">FAILED - RETRYING: 轮询等待kubelet启动 (3 retries left).</span><br><span class="line">FAILED - RETRYING: 轮询等待kubelet启动 (2 retries left).</span><br><span class="line">FAILED - RETRYING: 轮询等待kubelet启动 (1 retries left).</span><br><span class="line"></span><br><span class="line">TASK [kube-node : 轮询等待kubelet启动] ************************************************************************************************************************************************************************</span><br><span class="line">fatal: [10.10.11.49]: FAILED! =&gt; &#123;&quot;attempts&quot;: 4, &quot;changed&quot;: true, &quot;cmd&quot;: &quot;systemctl is-active kubelet.service&quot;, &quot;delta&quot;: &quot;0:00:00.014621&quot;, &quot;end&quot;: &quot;2023-03-22 15:42:07.230186&quot;, &quot;msg&quot;: &quot;non-zero return code&quot;, &quot;rc&quot;: 3, &quot;start&quot;: &quot;2023-03-22 15:42:07.215565&quot;, &quot;stderr&quot;: &quot;&quot;, &quot;stderr_lines&quot;: [], &quot;stdout&quot;: &quot;activating&quot;, &quot;stdout_lines&quot;: [&quot;activating&quot;]&#125;</span><br><span class="line"></span><br><span class="line">PLAY RECAP **********************************************************************************************************************************************************************************************</span><br><span class="line">10.10.11.49               : ok=85   changed=78   unreachable=0    failed=1    skipped=123  rescued=0    ignored=0</span><br><span class="line">localhost                  : ok=33   changed=30   unreachable=0    failed=0    skipped=11   rescued=0    ignored=0</span><br></pre></td></tr></table></figure>
+
+<p><code>kubelet</code>阶段失败，查看<code>kubelet</code>服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 log]# service kubelet status -l</span><br><span class="line">Redirecting to /bin/systemctl status  -l kubelet.service</span><br><span class="line">● kubelet.service - Kubernetes Kubelet</span><br><span class="line">   Loaded: loaded (/etc/systemd/system/kubelet.service; enabled; vendor preset: disabled)</span><br><span class="line">   Active: activating (auto-restart) (Result: exit-code) since Wed 2023-03-22 15:56:31 CST; 1s ago</span><br><span class="line">     Docs: https://github.com/GoogleCloudPlatform/kubernetes</span><br><span class="line">  Process: 147581 ExecStart=/opt/kube/bin/kubelet --config=/var/lib/kubelet/config.yaml --container-runtime-endpoint=unix:///run/containerd/containerd.sock --hostname-override=10.10.11.49 --kubeconfig=/etc/kubernetes/kubelet.kubeconfig --root-dir=/var/lib/kubelet --v=2 (code=exited, status=1/FAILURE)</span><br><span class="line"> Main PID: 147581 (code=exited, status=1/FAILURE)</span><br><span class="line"></span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.719832  147581 manager.go:228] Version: &#123;KernelVersion:3.10.0-862.11.6.el7.x86_64 ContainerOsVersion:CentOS Linux 7 (Core) DockerVersion: DockerAPIVersion: CadvisorVersion: CadvisorRevision:&#125;</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.720896  147581 server.go:659] &quot;--cgroups-per-qos enabled, but --cgroup-root was not specified.  defaulting to /&quot;</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.721939  147581 container_manager_linux.go:267] &quot;Container manager verified user specified cgroup-root exists&quot; cgroupRoot=[]</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.722392  147581 container_manager_linux.go:272] &quot;Creating Container Manager object based on Node Config&quot; nodeConfig=&#123;RuntimeCgroupsName: SystemCgroupsName: KubeletCgroupsName:</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.722503  147581 topology_manager.go:134] &quot;Creating topology manager with policy per scope&quot; topologyPolicyName=&quot;none&quot; topologyScopeName=&quot;container&quot;</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.722609  147581 container_manager_linux.go:308] &quot;Creating device plugin manager&quot;</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.722689  147581 manager.go:125] &quot;Creating Device Plugin manager&quot; path=&quot;/var/lib/kubelet/device-plugins/kubelet.sock&quot;</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.722763  147581 server.go:66] &quot;Creating device plugin registration server&quot; version=&quot;v1beta1&quot; socket=&quot;/var/lib/kubelet/device-plugins/kubelet.sock&quot;</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: I0322 15:56:31.722905  147581 state_mem.go:36] &quot;Initialized new in-memory state store&quot;</span><br><span class="line">Mar 22 15:56:31 node01 kubelet[147581]: E0322 15:56:31.726502  147581 run.go:74] &quot;command failed&quot; err=&quot;failed to run Kubelet: validate service connection: CRI v1 runtime API is not implemented for endpoint \&quot;unix:///run/containerd/containerd.sock\&quot;: rpc error: code = Unimplemented desc = unknown service runtime.v1.RuntimeService&quot;</span><br></pre></td></tr></table></figure>
+
+<p>根据日志报错，参考资料[3]，删除<code> /etc/containerd/config.toml</code> 文件并重启<code> containerd</code> 即可：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mv</span> /etc/containerd/config.toml /root/config.toml.bak</span><br><span class="line">systemctl restart containerd</span><br></pre></td></tr></table></figure>
+
+<p>重复执行命令，后台查看发现<code>calico-node</code>启动失败，查看日志如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Events:</span><br><span class="line">  Type     Reason     Age                From               Message</span><br><span class="line">  ----     ------     ----               ----               -------</span><br><span class="line">  Normal   Scheduled  41s                default-scheduler  Successfully assigned kube-system/calico-node-rqpjm to 10.10.11.49</span><br><span class="line">  Normal   Pulling    20s (x2 over 31s)  kubelet            Pulling image &quot;easzlab.io.local:5000/calico/cni:v3.23.5&quot;</span><br><span class="line">  Warning  Failed     19s (x2 over 31s)  kubelet            Failed to pull image &quot;easzlab.io.local:5000/calico/cni:v3.23.5&quot;: rpc error: code = Unknown desc = failed to pull and unpack image &quot;easzlab.io.local:5000/calico/cni:v3.23.5&quot;: failed to resolve reference &quot;easzlab.io.local:5000/calico/cni:v3.23.5&quot;: failed to do request: Head &quot;https://easzlab.io.local:5000/v2/calico/cni/manifests/v3.23.5&quot;: http: server gave HTTP response to HTTPS client</span><br><span class="line">  Warning  Failed     19s (x2 over 31s)  kubelet            Error: ErrImagePull</span><br><span class="line">  Normal   BackOff    5s (x2 over 30s)   kubelet            Back-off pulling image &quot;easzlab.io.local:5000/calico/cni:v3.23.5&quot;</span><br><span class="line">  Warning  Failed     5s (x2 over 30s)   kubelet            Error: ImagePullBackOff</span><br></pre></td></tr></table></figure>
+
+<p>查看<code>docker</code>层面配置，并测试拉起镜像正常：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# cat /etc/docker/daemon.json</span><br><span class="line">&#123;</span><br><span class="line">  &quot;max-concurrent-downloads&quot;: 10,</span><br><span class="line">  &quot;insecure-registries&quot;: [&quot;easzlab.io.local:5000&quot;],</span><br><span class="line">  &quot;log-driver&quot;: &quot;json-file&quot;,</span><br><span class="line">  &quot;log-level&quot;: &quot;warn&quot;,</span><br><span class="line">  &quot;log-opts&quot;: &#123;</span><br><span class="line">    &quot;max-size&quot;: &quot;10m&quot;,</span><br><span class="line">    &quot;max-file&quot;: &quot;3&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">  &quot;data-root&quot;:&quot;/var/lib/docker&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[root@node01 log]# docker pull easzlab.io.local:5000/calico/cni:v3.23.5</span><br><span class="line">v3.23.5: Pulling from calico/cni</span><br><span class="line">Digest: sha256:9c5055a2b5bc0237ab160aee058135ca9f2a8f3c3eee313747a02edcec482f29</span><br><span class="line">Status: Image is up to date for easzlab.io.local:5000/calico/cni:v3.23.5</span><br><span class="line">easzlab.io.local:5000/calico/cni:v3.23.5</span><br></pre></td></tr></table></figure>
+
+<p>查看<code>containerd</code>层面，并测试拉起镜像也正常：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 log]# ctr image pull --plain-http=true easzlab.io.local:5000/calico/cni:v3.23.5</span><br><span class="line">easzlab.io.local:5000/calico/cni:v3.23.5:                                         resolved       |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">manifest-sha256:9c5055a2b5bc0237ab160aee058135ca9f2a8f3c3eee313747a02edcec482f29: done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:cc0e45adf05a30a90384ba7024dbabdad9ae0bcd7b5a535c28dede741298fea3:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:47c5dbbec31222325790ebad8c07d270a63689bd10dc8f54115c65db7c30ad1f:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:8efc3d73e2741a93be09f68c859da466f525b9d0bddb1cd2b2b633f14f232941:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">config-sha256:1c979d623de9aef043cb4ff489da5636d61c39e30676224af0055240e1816382:   done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:4c98a4f67c5a7b1058111d463051c98b23e46b75fc943fc2535899a73fc0c9f1:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:51729c6e2acda05a05e203289f5956954814d878f67feb1a03f9941ec5b4008b:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:050b055d5078c5c6ad085d106c232561b0c705aa2173edafd5e7a94a1e908fc5:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">layer-sha256:7430548aa23e56c14da929bbe5e9a2af0f9fd0beca3bd95e8925244058b83748:    done           |++++++++++++++++++++++++++++++++++++++|</span><br><span class="line">elapsed: 3.1 s                                                                    total:  103.0  (33.2 MiB/s)</span><br><span class="line">unpacking linux/amd64 sha256:9c5055a2b5bc0237ab160aee058135ca9f2a8f3c3eee313747a02edcec482f29...</span><br><span class="line">done: 6.82968396s</span><br></pre></td></tr></table></figure>
+
+<p>根据资料[4]，查看<code>containerd</code>配置，并新增私有仓库的配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# containerd config default &gt; /etc/containerd/config.toml</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# vim  /etc/containerd/config.toml</span><br><span class="line">[plugins.&quot;io.containerd.grpc.v1.cri&quot;.registry]</span><br><span class="line">      config_path = &quot;&quot;</span><br><span class="line"></span><br><span class="line">      [plugins.&quot;io.containerd.grpc.v1.cri&quot;.registry.auths]</span><br><span class="line"></span><br><span class="line">      [plugins.&quot;io.containerd.grpc.v1.cri&quot;.registry.configs]</span><br><span class="line"></span><br><span class="line">      [plugins.&quot;io.containerd.grpc.v1.cri&quot;.registry.headers]</span><br><span class="line"></span><br><span class="line">      [plugins.&quot;io.containerd.grpc.v1.cri&quot;.registry.mirrors]</span><br><span class="line">        [plugins.&quot;io.containerd.grpc.v1.cri&quot;.registry.mirrors.&quot;easzlab.io.local:5000&quot;]</span><br><span class="line">          endpoint = [&quot;http://easzlab.io.local:5000&quot;]</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# service containerd restart</span><br></pre></td></tr></table></figure>
+
+<p>查看<code>pod</code>状态，又卡在了<code>ContainerCreating</code>状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# kubectl get pod -A</span><br><span class="line">NAMESPACE     NAME                                         READY   STATUS              RESTARTS   AGE</span><br><span class="line">kube-system   calico-kube-controllers-89b744d6c-klzwh      1/1     Running             0          5m35s</span><br><span class="line">kube-system   calico-node-wmvff                            1/1     Running             0          5m35s</span><br><span class="line">kube-system   coredns-6665999d97-mp7xc                     0/1     ContainerCreating   0          5m35s</span><br><span class="line">kube-system   dashboard-metrics-scraper-57566685b4-8q5fm   0/1     ContainerCreating   0          5m35s</span><br><span class="line">kube-system   kubernetes-dashboard-57db9bfd5b-h6jp4        0/1     ContainerCreating   0          5m35s</span><br><span class="line">kube-system   metrics-server-6bd9f986fc-njpnj              0/1     ContainerCreating   0          5m35s</span><br><span class="line">kube-system   node-local-dns-wz9bg                         1/1     Running             0          5m31s</span><br></pre></td></tr></table></figure>
+
+<p>选择一个<code>describe</code>查看：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Events:</span><br><span class="line">  Type     Reason                  Age                   From               Message</span><br><span class="line">  ----     ------                  ----                  ----               -------</span><br><span class="line">  Warning  FailedScheduling        6m7s                  default-scheduler  0/1 nodes are available: 1 node(s) had untolerated taint &#123;node.kubernetes.io/not-ready: &#125;. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling..</span><br><span class="line">  Normal   Scheduled               5m47s                 default-scheduler  Successfully assigned kube-system/coredns-6665999d97-mp7xc to 10.10.11.49</span><br><span class="line">  Warning  FailedCreatePodSandBox  5m46s                 kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = failed to setup network for sandbox &quot;072c164d79f4874a8d851d36115ea04b75a2155dae3cecdc764e923c9f38f86b&quot;: plugin type=&quot;calico&quot; failed (add): failed to find plugin &quot;calico&quot; in path [/opt/cni/bin]</span><br><span class="line">  Normal   SandboxChanged          33s (x25 over 5m46s)  kubelet            Pod sandbox changed, it will be killed and re-created.</span><br></pre></td></tr></table></figure>
+
+<p>从日志看，是<code>cni</code>插件不存在的问题，手动拷贝之后，查看<code>pod</code>状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 bin]# cd /opt/cni/bin/</span><br><span class="line">[root@node01 bin]# chmod +x *</span><br><span class="line">[root@node01 bin]# ll -h</span><br><span class="line">total 186M</span><br><span class="line">-rwxr-xr-x 1 root root 3.7M Mar 22 17:46 bandwidth</span><br><span class="line">-rwxr-xr-x 1 root root  56M Mar 22 17:46 calico</span><br><span class="line">-rwxr-xr-x 1 root root  56M Mar 22 17:46 calico-ipam</span><br><span class="line">-rwxr-xr-x 1 root root 2.4M Mar 22 17:46 flannel</span><br><span class="line">-rwxr-xr-x 1 root root 3.1M Mar 22 17:46 host-local</span><br><span class="line">-rwxr-xr-x 1 root root  56M Mar 22 17:46 install</span><br><span class="line">-rwxr-xr-x 1 root root 3.2M Mar 22 17:46 loopback</span><br><span class="line">-rwxr-xr-x 1 root root 3.6M Mar 22 17:46 portmap</span><br><span class="line">-rwxr-xr-x 1 root root 3.3M Mar 22 17:46 tuning</span><br><span class="line"></span><br><span class="line">[root@node01 bin]# kubectl get pod -A</span><br><span class="line">NAMESPACE     NAME                                         READY   STATUS    RESTARTS   AGE</span><br><span class="line">kube-system   calico-kube-controllers-89b744d6c-mpfgq      1/1     Running   0          37m</span><br><span class="line">kube-system   calico-node-h9sm2                            1/1     Running   0          37m</span><br><span class="line">kube-system   coredns-6665999d97-8pdbd                     1/1     Running   0          37m</span><br><span class="line">kube-system   dashboard-metrics-scraper-57566685b4-c2l8w   1/1     Running   0          37m</span><br><span class="line">kube-system   kubernetes-dashboard-57db9bfd5b-74lmb        1/1     Running   0          37m</span><br><span class="line">kube-system   metrics-server-6bd9f986fc-d9crl              1/1     Running   0          37m</span><br><span class="line">kube-system   node-local-dns-kvgv6                         1/1     Running   0          37m</span><br></pre></td></tr></table></figure>
+
+<p>部署完成。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://github.com/easzlab/kubeasz/blob/master/docs/setup/quickStart.md">https://github.com/easzlab/kubeasz/blob/master/docs/setup/quickStart.md</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c48b4a24c7d4">https://www.jianshu.com/p/c48b4a24c7d4</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/immaxfang/p/16721407.html">https://www.cnblogs.com/immaxfang/p/16721407.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/containerd/containerd/issues/4938">https://github.com/containerd/containerd/issues/4938</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2022/11/27/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E5%86%85%E7%BD%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AEGoland%E7%BD%91%E9%A1%B5%E7%89%88%E6%95%99%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +318,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-07 09:04:28" itemprop="dateModified" datetime="2024-04-07T09:04:28+00:00">2024-04-07</time>
+                <time title="修改时间：2024-04-07 09:05:39" itemprop="dateModified" datetime="2024-04-07T09:05:39+00:00">2024-04-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -327,7 +469,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-07 09:04:28" itemprop="dateModified" datetime="2024-04-07T09:04:28+00:00">2024-04-07</time>
+                <time title="修改时间：2024-04-07 09:05:39" itemprop="dateModified" datetime="2024-04-07T09:05:39+00:00">2024-04-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -434,7 +576,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-07 09:04:28" itemprop="dateModified" datetime="2024-04-07T09:04:28+00:00">2024-04-07</time>
+                <time title="修改时间：2024-04-07 09:05:39" itemprop="dateModified" datetime="2024-04-07T09:05:39+00:00">2024-04-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -536,7 +678,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-07 09:04:28" itemprop="dateModified" datetime="2024-04-07T09:04:28+00:00">2024-04-07</time>
+                <time title="修改时间：2024-04-07 09:05:39" itemprop="dateModified" datetime="2024-04-07T09:05:39+00:00">2024-04-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -649,7 +791,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-07 09:04:28" itemprop="dateModified" datetime="2024-04-07T09:04:28+00:00">2024-04-07</time>
+                <time title="修改时间：2024-04-07 09:05:39" itemprop="dateModified" datetime="2024-04-07T09:05:39+00:00">2024-04-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -773,7 +915,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-07 09:04:28" itemprop="dateModified" datetime="2024-04-07T09:04:28+00:00">2024-04-07</time>
+                <time title="修改时间：2024-04-07 09:05:39" itemprop="dateModified" datetime="2024-04-07T09:05:39+00:00">2024-04-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -880,7 +1022,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-07 09:04:28" itemprop="dateModified" datetime="2024-04-07T09:04:28+00:00">2024-04-07</time>
+                <time title="修改时间：2024-04-07 09:05:39" itemprop="dateModified" datetime="2024-04-07T09:05:39+00:00">2024-04-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1001,7 +1143,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-07 09:04:28" itemprop="dateModified" datetime="2024-04-07T09:04:28+00:00">2024-04-07</time>
+                <time title="修改时间：2024-04-07 09:05:39" itemprop="dateModified" datetime="2024-04-07T09:05:39+00:00">2024-04-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1112,7 +1254,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-07 09:04:28" itemprop="dateModified" datetime="2024-04-07T09:04:28+00:00">2024-04-07</time>
+                <time title="修改时间：2024-04-07 09:05:39" itemprop="dateModified" datetime="2024-04-07T09:05:39+00:00">2024-04-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1224,134 +1366,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/12/18/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E6%8C%82%E8%BD%BDSubpath%E7%9A%84%E5%AE%B9%E5%99%A8%E5%9C%A8Configmap%E5%8F%98%E6%9B%B4%E5%90%8E%E9%87%8D%E5%90%AF%E6%97%B6%E6%8C%82%E8%BD%BD%E5%A4%B1%E8%B4%A5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/12/18/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E6%8C%82%E8%BD%BDSubpath%E7%9A%84%E5%AE%B9%E5%99%A8%E5%9C%A8Configmap%E5%8F%98%E6%9B%B4%E5%90%8E%E9%87%8D%E5%90%AF%E6%97%B6%E6%8C%82%E8%BD%BD%E5%A4%B1%E8%B4%A5/" class="post-title-link" itemprop="url">K8S问题排查-挂载Subpath的容器在Configmap变更后重启时挂载失败</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-12-18 14:43:43" itemprop="dateCreated datePublished" datetime="2021-12-18T14:43:43+00:00">2021-12-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-07 09:04:28" itemprop="dateModified" datetime="2024-04-07T09:04:28+00:00">2024-04-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>本次发现的问题是踩到了老版本<code>Kubernetes</code>的坑，查找资料发现<code>fatedier</code>大佬已经做了很棒的分析，此处转载过来仅做学习记录。</p>
-<blockquote>
-<p>作者：<a target="_blank" rel="noopener" href="http://blog.fatedier.com/">fatedier</a><br>本文出处：<a target="_blank" rel="noopener" href="https://blog.fatedier.com/2020/04/17/pod-loopcrash-of-k8s-subpath/">https://blog.fatedier.com/2020/04/17/pod-loopcrash-of-k8s-subpath/</a><br>文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文链接，否则保留追究法律责任的权利。</p>
-</blockquote>
-<h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p><code>Kubernetes</code>对于挂载了 <code>subpath</code> 的容器，在<code> configmap</code> 或其他 <code>volume</code> 变更后，如果容器因为意外退出后，就会持续<code>crash</code>，无法正常启动。</p>
-<p>社区相关 issue <a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/issues/68211">#68211</a>，问题已经在<code>v1.19</code>版本解决。</p>
-<h2 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h2><h3 id="复现步骤"><a href="#复现步骤" class="headerlink" title="复现步骤"></a>复现步骤</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span> </span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">configMap:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">extra-cfg</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">extra-cfg</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">ubuntu:bionic</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;sleep&quot;</span>, <span class="string">&quot;30&quot;</span>]</span><br><span class="line">    <span class="attr">resources:</span></span><br><span class="line">      <span class="attr">requests:</span></span><br><span class="line">        <span class="attr">cpu:</span> <span class="string">100m</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">extra-cfg</span></span><br><span class="line">        <span class="attr">mountPath:</span> <span class="string">/etc/extra.ini</span></span><br><span class="line">        <span class="attr">subPath:</span> <span class="string">extra.ini</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">extra.ini:</span> <span class="string">|</span></span><br><span class="line"><span class="string">    somedata</span></span><br><span class="line"><span class="string"></span><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">extra-cfg</span></span><br></pre></td></tr></table></figure>
-
-<p><code>Apply</code> 此配置，<code>Pod</code> 启动完成后，修改 <code>configmap </code>的内容，等待 <code>30</code> 秒后容器自动退出，<code>kubelet</code> 重启容器，此时观察到容器持续 <code>mount</code> 失败。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error: failed to start container &quot;test&quot;: Error response from daemon: OCI runtime create failed: container_linux.go:345: starting container process caused &quot;process_linux.go:424: container init caused \&quot;rootfs_linux.go:58: mounting \\\&quot;/var/lib/kubelet/pods/e044883a-48da-4d28-b304-1a57dcb32203/volume-subpaths/extra-cfg/test/0\\\&quot; to rootfs \\\&quot;/var/lib/docker/overlay2/31b076d0012aad47aa938b482de24ecda8b41505489a22f63b8a3e4ce39b43ba/merged\\\&quot; at \\\&quot;/var/lib/docker/overlay2/31b076d0012aad47aa938b482de24ecda8b41505489a22f63b8a3e4ce39b43ba/merged/etc/extra.ini\\\&quot; caused \\\&quot;no such file or directory\\\&quot;\&quot;&quot;: unknown</span><br></pre></td></tr></table></figure>
-
-<h3 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h3><h4 id="Configmap-Volume-的更新"><a href="#Configmap-Volume-的更新" class="headerlink" title="Configmap Volume 的更新"></a>Configmap Volume 的更新</h4><p>当容器第一次启动前，<code>kubelet</code> 先将 <code>configmap</code> 中的内容下载到 <code>Pod</code> 对应的 <code>Volume</code> 目录下，例如 <code>/var/lib/kubelet/pods/&#123;Pod UID&#125;/volumes/kubernetes.io~configmap/extra-cfg</code>。</p>
-<p>同时为了保证对此 <code>volume</code> 下内容的更新是原子的(更新目录时)，所以会通过软链接的方式进行更新，目录中文件如下。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">drwxrwxrwx 3 root root 4.0K Mar 29 03:12 .</span><br><span class="line">drwxr-xr-x 3 root root 4.0K Mar 29 03:12 ..</span><br><span class="line">drwxr-xr-x 2 root root 4.0K Mar 29 03:12 ..2020_03_29_03_12_44.788930127</span><br><span class="line">lrwxrwxrwx 1 root root   31 Mar 29 03:12 ..data -&gt; ..2020_03_29_03_12_44.788930127</span><br><span class="line">lrwxrwxrwx 1 root root   16 Mar 29 03:12 extra.ini -&gt; ..data/extra.ini</span><br></pre></td></tr></table></figure>
-
-<p><code>extra.ini</code> 是 <code>..data/extra.ini</code> 的软链，<code>..data</code> 是 <code>..2020_03_29_03_12_44.788930127</code> 的软链，命名为时间戳的目录存放真实内容。</p>
-<p>当 <code>configmap</code> 更新后，会生成新的时间戳的目录存放更新后的内容。</p>
-<p>创建新的软链 <code>..data_tmp</code> 指向新的时间戳目录，之后重命名为 <code>..data</code>，重命名是一个原子操作。</p>
-<p>最后删除旧的时间戳目录。</p>
-<h4 id="容器挂载-subpath-Volume-的准备"><a href="#容器挂载-subpath-Volume-的准备" class="headerlink" title="容器挂载 subpath Volume 的准备"></a>容器挂载 subpath Volume 的准备</h4><p>当 <code>configmap Volume</code> 准备完成后，<code>kubelet</code> 会将 <code>configmap</code> 中 <code>subpath</code> 指定的文件 <code>bind mount</code> 到一个特殊的目录下: <code>/var/lib/kubelet/pods/&#123;Pod UID&#125;/volume-subpaths/extra-cfg/&#123;container name&#125;/0</code>。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/self/mountinfo|grep extra</span><br><span class="line">2644 219 8:1 /var/lib/kubelet/pods/&#123;Pod UID&#125;/volumes/kubernetes.io~configmap/extra-cfg/..2020_03_29_03_12_13.444136014/extra.ini /var/lib/kubelet/pods/&#123;Pod UID&#125;/volume-subpaths/extra-cfg/test/0 rw,relatime shared:99 - ext4 /dev/sda1 rw,data=ordered</span><br></pre></td></tr></table></figure>
-
-<p>可以看出，<code>bind mount</code> 的文件其实是真实文件的时间戳目录下的内容。</p>
-<p>当 <code>Configmap</code> 更新后，此时间戳目录会被删除，源文件加上了 <code>//deleted</code>。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/self/mountinfo|grep extra</span><br><span class="line">2644 219 8:1 /var/lib/kubelet/pods/&#123;Pod UID&#125;/volumes/kubernetes.io~configmap/extra-cfg/..2020_03_29_03_12_13.444136014/extra.ini//deleted /var/lib/kubelet/pods/&#123;Pod UID&#125;/volume-subpaths/extra-cfg/test/0 rw,relatime shared:99 - ext4 /dev/sda1 rw,data=ordered</span><br></pre></td></tr></table></figure>
-
-<h4 id="Bind-Mount"><a href="#Bind-Mount" class="headerlink" title="Bind Mount"></a>Bind Mount</h4><p>当容器启动时，需要将 <code>/var/lib/kubelet/pods/&#123;Pod UID&#125;/volume-subpaths/extra-cfg/test/0</code> 挂载到容器中。</p>
-<p>如果原来的时间戳目录被删除，则 <code>mount</code> 会出错: <code>mount: mount(2) failed: No such file or directory</code>。</p>
-<p>通过简单的命令模拟这个问题:</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">touch</span> a b c</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">mount --<span class="built_in">bind</span> a b</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">rm</span> -f a</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">mount --<span class="built_in">bind</span> b c</span></span><br><span class="line">mount: mount(2) failed: No such file or directory</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，当 <code>a</code> 删除后，<code>b</code> 挂载点无法再被 <code>mount</code>。所以，当容器异常退出需要重启后，如果 <code>configmap</code> 被更新，原先的时间戳文件被删除，这个 <code>subpath</code> 就无法再被 <code>mount</code> 到容器中。</p>
-<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><h4 id="Configmap-变更后-Unmount"><a href="#Configmap-变更后-Unmount" class="headerlink" title="Configmap 变更后 Unmount"></a>Configmap 变更后 Unmount</h4><p>社区相关 PR: <a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/pull/82784">https://github.com/kubernetes/kubernetes/pull/82784</a></p>
-<p>在容器重启前，检查 <code>subpath</code> 挂载点的源文件和新的目标 <code>subpath</code> 文件是否一致。</p>
-<p>当 <code>configmap</code> 被更新后，时间戳目录变更，则检查到不一致。将 <code>/var/lib/kubelet/pods/&#123;Pod UID&#125;/volume-subpaths/extra-cfg/test/0</code> <code>Unmount</code>，再重新 <code>Bind Mount</code> 当前最新的时间戳目录下的对应文件。</p>
-<p>根据社区 <code>PR</code> 中的 <code>comments</code> 来看，此方案可能存在一定风险，尚不明确(有人指出在 4.18 以下内核是不安全的 <a target="_blank" rel="noopener" href="https://github.com/es-container/kubernetes/pull/24/files#diff-f0ba2b2ac6f7b574258c97a4001460b2R829">链接</a>)，所以很长时间都没有进展。</p>
-<p>通过一段时间的测试，尚未发现明显的问题。</p>
-<h4 id="不使用-subpath"><a href="#不使用-subpath" class="headerlink" title="不使用 subpath"></a>不使用 subpath</h4><p>使用其他方式绕过这个问题。</p>
-<p>例如可以将 <code>Configmap</code> 整个 <code>Mount</code> 到容器的其他目录下，再在容器启动时通过软链的方式链接到对应的路径下。</p>
-<h3 id="为什么使用间接-Bind-Mount-而不是直接-Mount-软链接"><a href="#为什么使用间接-Bind-Mount-而不是直接-Mount-软链接" class="headerlink" title="为什么使用间接 Bind Mount 而不是直接 Mount 软链接"></a>为什么使用间接 Bind Mount 而不是直接 Mount 软链接</h3><p>参考 <a target="_blank" rel="noopener" href="https://kubernetes.io/blog/2018/04/04/fixing-subpath-volume-vulnerability/">https://kubernetes.io/blog/2018/04/04/fixing-subpath-volume-vulnerability/</a> 这篇文章。</p>
-<p>可以看出原先使用的就是直接 <code>Mount</code> 软链接的方式，但是存在安全漏洞，<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Symlink_race">symlink race</a> 。恶意程序可以通过构造一个软链接，使特权程序(<code>kubelet</code>) 将超出权限范围之外的文件内容挂载到用户容器中。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">name:</span> <span class="string">my-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">prep-symlink</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">&quot;busybox&quot;</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;bin/sh&quot;</span>, <span class="string">&quot;-ec&quot;</span>, <span class="string">&quot;ln -s / /mnt/data/symlink-door&quot;</span>]</span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">my-volume</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/mnt/data</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">my-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">&quot;busybox&quot;</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;/bin/sh&quot;</span>, <span class="string">&quot;-ec&quot;</span>, <span class="string">&quot;ls /mnt/data; sleep 999999&quot;</span>]</span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/mnt/data</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">my-volume</span></span><br><span class="line">      <span class="attr">subPath:</span> <span class="string">symlink-door</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">my-volume</span></span><br><span class="line">  <span class="attr">emptyDir:</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>使用如上的配置，通过 <code>emptyDir</code>，在 <code>initContainer</code> 中在挂载的 <code>Volume</code> 目录中创建了一个指向根目录的软链接。</p>
-<p>之后正常的容器启动，但是指定了 <code>subpath</code>，如果 <code>kubelet</code> 直接 <code>Mount</code> 软链接，会将宿主机的根目录 <code>Mount</code> 到用户容器中。</p>
-<p>为了解决这个问题，需要解析出软链接对应的真实文件路径，并且判断此路径是否是在 <code>Volume</code> 目录下，校验通过后才能挂载到容器中。但是由于校验和挂载之间存在时间差，此文件还是有可能会被篡改。</p>
-<p>社区讨论后，通过引入中间 <code>Bind Mount</code> 的机制，相当于给这个文件加锁，将原文件的路径固化，之后再 <code>Mount</code> 到容器中时，只会 <code>Mount</code> 当时创建挂载点时的源文件。</p>
-<h3 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h3><p>给社区提交的修复 <code>PR</code> 已经被合入 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/pull/89629">89629</a> 。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1421,7 +1435,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">88</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
