@@ -145,6 +145,107 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/04/07/java/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-%E4%BD%BF%E7%94%A8sshj%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/04/07/java/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-%E4%BD%BF%E7%94%A8sshj%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">总结分享-使用sshj远程调试问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-07 21:15:44" itemprop="dateCreated datePublished" datetime="2024-04-07T21:15:44+00:00">2024-04-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/share/" itemprop="url" rel="index"><span itemprop="name">share</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p><code>java</code>项目中引用了<code>sshj</code>依赖包远程执行<code>ssh</code>命令，执行<code>ssh</code>的命令在环境上可以正常运行，但通过单元测试验证<code>ssh</code>命令时提示如下错误：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">2024-03-28 17:25:22 WARN  DefaultConfig:206 - Disabling high-strength ciphers: cipher strengths apparently limited by JCE policy</span><br><span class="line">2024-03-28 17:25:22 INFO  TransportImpl:214 - Client identity string: SSH-2.0-SSHJ_0.27.0</span><br><span class="line">2024-03-28 17:25:22 INFO  TransportImpl:178 - Server identity string: SSH-2.0-OpenSSH_7.4</span><br><span class="line">2024-03-28 17:25:23 ERROR TransportImpl:593 - Dying because - Invalid signature file digest <span class="keyword">for</span> Manifest main attributes</span><br><span class="line">java.lang.SecurityException: Invalid signature file digest <span class="keyword">for</span> Manifest main attributes</span><br><span class="line">    at sun.security.util.SignatureFileVerifier.processImpl(SignatureFileVerifier.java:317)</span><br><span class="line">    at sun.security.util.SignatureFileVerifier.process(SignatureFileVerifier.java:259)</span><br><span class="line">    at java.util.jar.JarVerifier.processEntry(JarVerifier.java:323)</span><br><span class="line">    at java.util.jar.JarVerifier.update(JarVerifier.java:234)</span><br><span class="line">    at java.util.jar.JarFile.initializeVerifier(JarFile.java:394)</span><br><span class="line">    at java.util.jar.JarFile.ensureInitialization(JarFile.java:632)</span><br><span class="line">    at java.util.jar.JavaUtilJarAccessImpl.ensureInitialization(JavaUtilJarAccessImpl.java:69)</span><br><span class="line">    at sun.misc.URLClassPath$JarLoader<span class="variable">$2</span>.getManifest(URLClassPath.java:993)</span><br><span class="line">    at java.net.URLClassLoader.defineClass(URLClassLoader.java:456)</span><br><span class="line">    at java.net.URLClassLoader.access<span class="variable">$100</span>(URLClassLoader.java:74)</span><br><span class="line">    at java.net.URLClassLoader<span class="variable">$1</span>.run(URLClassLoader.java:369)</span><br><span class="line">    at java.net.URLClassLoader<span class="variable">$1</span>.run(URLClassLoader.java:363)</span><br><span class="line">    at java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">    at java.net.URLClassLoader.findClass(URLClassLoader.java:362)</span><br><span class="line">    at java.lang.ClassLoader.loadClass(ClassLoader.java:418)</span><br><span class="line">    at sun.misc.Launcher<span class="variable">$AppClassLoader</span>.loadClass(Launcher.java:352)</span><br><span class="line">    at java.lang.ClassLoader.loadClass(ClassLoader.java:351)</span><br><span class="line">    at net.schmizz.sshj.common.KeyType<span class="variable">$3</span>.isMyType(KeyType.java:124)</span><br><span class="line">    at net.schmizz.sshj.common.KeyType.fromKey(KeyType.java:288)</span><br><span class="line">    at net.schmizz.sshj.transport.kex.AbstractDHG.next(AbstractDHG.java:82)</span><br><span class="line">    at net.schmizz.sshj.transport.KeyExchanger.handle(KeyExchanger.java:364)</span><br><span class="line">    at net.schmizz.sshj.transport.TransportImpl.handle(TransportImpl.java:503)</span><br><span class="line">    at net.schmizz.sshj.transport.Decoder.decodeMte(Decoder.java:159)</span><br><span class="line">    at net.schmizz.sshj.transport.Decoder.decode(Decoder.java:79)</span><br><span class="line">    at net.schmizz.sshj.transport.Decoder.received(Decoder.java:231)</span><br><span class="line">    at net.schmizz.sshj.transport.Reader.run(Reader.java:59)</span><br><span class="line">2024-03-28 17:25:23 INFO  TransportImpl:192 - Disconnected - UNKNOWN</span><br><span class="line">2024-03-28 17:25:23 ERROR Promise:174 - &lt;&lt;<span class="string">kex done&gt;&gt; woke to: net.schmizz.sshj.transport.TransportException: Invalid signature file digest for Manifest main attributes</span></span><br><span class="line"><span class="string">2024-03-28 17:25:23 ERROR matrix:573 - failed exec command ls /root/ on node 10.10.2.8</span></span><br></pre></td></tr></table></figure>
+
+<p>根据报错信息<code>Invalid signature file digest for Manifest main attributes</code>，查找相关资料，尝试以下几种解决方法都没有效果：</p>
+<ol>
+<li>自定义<code>provider</code>：<code>Security.addProvider(new sun.security.ec.SunEC())</code>;</li>
+<li>禁用<code>JCE</code>加密限制：<code>Security.setProperty(&quot;crypto.policy&quot;, &quot;unlimited&quot;)</code>;</li>
+<li>基于<code>sshj</code>的<code>SecurityUtils</code>设置<code>provider</code>：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">将BC提供者设置为SSHJ的安全提供者</span><br><span class="line">SecurityUtils.setSecurityProvider(String.valueOf(Security.getProvider(<span class="string">&quot;BC&quot;</span>)));</span><br><span class="line"></span><br><span class="line">将JCE提供者设置为SSHJ的安全提供者</span><br><span class="line">SecurityUtils.setSecurityProvider(String.valueOf(Security.getProvider(<span class="string">&quot;SunJCE&quot;</span>)));</span><br></pre></td></tr></table></figure>
+
+<p>查<code>sshj</code>相关<code>issue</code>[1]，发现一个类似的问题，原因是<code>bcprov</code>的签名无法被验证。查看<code>bcprov</code>的签名情况：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">有问题的版本：</span><br><span class="line">[root@node1 1.0.0]<span class="comment"># /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.402.b06-1.el7_9.x86_64/bin/jarsigner -verify bcprov-jdk15on-1.60.jar</span></span><br><span class="line">jarsigner: java.lang.SecurityException: Invalid signature file digest <span class="keyword">for</span> Manifest main attributes</span><br><span class="line"></span><br><span class="line">高版本：</span><br><span class="line">[root@node1 1.0.0]<span class="comment"># /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.402.b06-1.el7_9.x86_64/bin/jarsigner -verify bcprov-jdk15on-1.69.jar</span></span><br><span class="line">jar 已验证。</span><br><span class="line">警告:</span><br><span class="line">此 jar 包含其证书链无效的条目。原因: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target</span><br><span class="line">The DSA signing key has a keysize of 1024 <span class="built_in">which</span> is considered a security risk. This key size will be disabled <span class="keyword">in</span> a future update.</span><br></pre></td></tr></table></figure>
+
+<p>看起来是版本问题，更新项目中的<code>bcprov</code>版本到<code>1.69</code>，重新测试后报错消失，显示正常的命令执行结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2024-03-29 09:00:08 INFO  BouncyCastleRandom:48 - Generating random seed from SecureRandom.</span><br><span class="line">2024-03-29 09:00:08 INFO  TransportImpl:214 - Client identity string: SSH-2.0-SSHJ_0.27.0</span><br><span class="line">2024-03-29 09:00:08 INFO  TransportImpl:178 - Server identity string: SSH-2.0-OpenSSH_7.4</span><br><span class="line">2024-03-29 09:00:08 INFO  TransportImpl:192 - Disconnected - BY_APPLICATION</span><br><span class="line">anaconda-ks.cfg</span><br></pre></td></tr></table></figure>
+
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>升级依赖包<code>bcprov</code>的版本到<code>1.69</code>。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/hierynomus/sshj/issues/701">https://github.com/hierynomus/sshj/issues/701</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/03/31/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8%EF%BC%88%E7%BB%AD2%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +277,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:44:44" itemprop="dateModified" datetime="2024-04-09T13:44:44+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -273,7 +374,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:44:44" itemprop="dateModified" datetime="2024-04-09T13:44:44+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -363,7 +464,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:44:44" itemprop="dateModified" datetime="2024-04-09T13:44:44+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -483,7 +584,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:44:44" itemprop="dateModified" datetime="2024-04-09T13:44:44+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -595,7 +696,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:44:44" itemprop="dateModified" datetime="2024-04-09T13:44:44+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -693,7 +794,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:44:44" itemprop="dateModified" datetime="2024-04-09T13:44:44+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -795,7 +896,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:44:44" itemprop="dateModified" datetime="2024-04-09T13:44:44+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -899,7 +1000,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:44:44" itemprop="dateModified" datetime="2024-04-09T13:44:44+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1015,7 +1116,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:44:44" itemprop="dateModified" datetime="2024-04-09T13:44:44+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1103,105 +1204,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2023/04/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8%EF%BC%88%E7%BB%AD%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8%EF%BC%88%E7%BB%AD%EF%BC%89/" class="post-title-link" itemprop="url">K8S问题排查-VMWare虚拟化环境下Pod跨VXLAN通信异常（续）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-04-05 21:38:44" itemprop="dateCreated datePublished" datetime="2023-04-05T21:38:44+00:00">2023-04-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:44:44" itemprop="dateModified" datetime="2024-04-09T13:44:44+00:00">2024-04-09</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>这个问题[1]定位到<code>VMWare</code>虚拟化层面后就一直搁置下来了，但考虑到测试环境存在大量虚拟机部署的情况，并且支持虚拟化部署也是早晚的事，所以后续也在一直关注<code>VMWare</code>和<code>Redhat</code>的相关资料。</p>
-<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>幸运的是，从<code>Redhat</code>的官网里还真的找到了相关问题[2]，通过官网说明了解到，该问题出现的环境是<code>Redhat 8.3</code>和<code>8.4</code>，使用<code>vmxnet3</code>的适配器，并且使用<code>UDP</code>隧道协议，比如<code>vxlan</code>或<code>GRE</code>。</p>
-<p>官方给出的解决方案是：</p>
-<ol>
-<li>升级<code>Redhat</code>到<code>8.5 (kernel-4.18.0-348.el8)</code>及以后版本。</li>
-<li>升级<code>VMware ESXi</code>到<code>6.7P07</code>，<code>7.0U3 (7.0.3)</code> 及以后版本。</li>
-</ol>
-<p>上述更新包括对<code>vmxnet3 NIC</code>不支持的隧道禁用 <code>tx-checksum-ip-generic</code> 的逻辑，因此最终结果与下面的解决方法相同。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ethtool -K DEVNAME tx-checksum-ip-generic off</span><br></pre></td></tr></table></figure>
-
-<p>但是，实测结果显示，<strong>升级<code>Redhat</code>和<code>VMware</code>均无法解决</strong>，而临时禁用的命令是可以的。考虑到临时命令还涉及到持久化的问题，还是需要另找方法。</p>
-<p>既然使用<code>vmxnet3</code>网卡不行，是不是能换网卡类型？果然，根据这个思路，继续查找资料[3]，发现使用<code>E1000</code>类型的网卡可以解决该问题，实测结果也符合预期。</p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p><strong>临时方案：</strong>在创建虚拟机时，把网络适配器的类型改为 <code>E1000</code>或<code>E1000e</code>。</p>
-<p><strong>永久方案：</strong>依然需要等待<code>VMWare</code>和<code>Redhat</code>的官方修复。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
-<li><a href="https://lyyao09.github.io/2022/06/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8/">https://lyyao09.github.io/2022/06/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8/</a></li>
-<li><a target="_blank" rel="noopener" href="https://access.redhat.com/solutions/5881451">https://access.redhat.com/solutions/5881451</a> </li>
-<li><a target="_blank" rel="noopener" href="https://zhangguanzhang.github.io/2022/07/28/redhat84-vxlan-esxi">https://zhangguanzhang.github.io/2022/07/28/redhat84-vxlan-esxi</a></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1271,7 +1273,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">88</span>
+          <span class="site-state-item-count">89</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1282,7 +1284,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
