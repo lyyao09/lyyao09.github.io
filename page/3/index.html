@@ -145,153 +145,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/12/25/java/Karaf%E6%A1%86%E6%9E%B6%E5%8D%87%E7%BA%A7Lg4j%E5%8E%86%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/12/25/java/Karaf%E6%A1%86%E6%9E%B6%E5%8D%87%E7%BA%A7Lg4j%E5%8E%86%E7%A8%8B/" class="post-title-link" itemprop="url">Karaf框架升级Lg4j历程</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-12-25 09:15:21" itemprop="dateCreated datePublished" datetime="2021-12-25T09:15:21+00:00">2021-12-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>13 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p><code>karaf</code>框架没有直接依赖<code>log4j</code>包，所以简单的升级项目中的<code>log4j</code>或实际项目中没有<code>log4j</code>，都无法解决最近发现的漏洞问题（<strong>CVE-2021-44228</strong>、<strong>CVE-2021-45046</strong>、<strong>CVE-2021-45046</strong>）。</p>
-<h2 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h2><p>分析发现，<code>karaf</code>框架实际依赖的日志包是<code>org.ops4j.pax.logging.xxx</code>，而<code>org.ops4j.pax.logging.xxx</code>依赖了<code>log4j</code>，相当于做了一层包装。所以，要解决漏洞，有三种升级方式：</p>
-<ol>
-<li><strong>升级框架</strong>：这个影响就比较大了，而且框架的版本发布周期比较慢，目前还没有编译好的框架包，要升级框架就需要自己编译出所有的框架包，风险较大；</li>
-<li><strong>升级依赖包</strong>：影响较小，如果没有配置依赖包的地方，可能无法升级；（实际确认，无法单独升级）</li>
-<li><strong>修改当前版本依赖包并重新编译</strong>：影响较小，如果与最新版本跨度较大，可能修改点会很多；</li>
-</ol>
-<p>综合比较，考虑使用第3个方案走走看，从参考资料[1]的代码提交记录看，<code>org.ops4j.pax.logging</code>为了解决<code>log4j</code>漏洞，仅涉及依赖包<code>log4j</code>的版本升级，版本跨度是从<code>1.11.9</code>升级到<code>1.11.12</code>，跨度不大，实际有哪些修改点，先编译看看有没有问题：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">pom.xml</span><br><span class="line">        &lt;version.org.apache.felix.configadmin&gt;1.9.20&lt;/version.org.apache.felix.configadmin&gt;</span><br><span class="line">        &lt;version.org.apache.felix.framework&gt;5.6.12&lt;/version.org.apache.felix.framework&gt;</span><br><span class="line">        &lt;version.org.apache.felix6.framework&gt;6.0.3&lt;/version.org.apache.felix6.framework&gt;</span><br><span class="line">-       &lt;version.org.apache.logging.log4j&gt;2.16.0&lt;/version.org.apache.logging.log4j&gt;</span><br><span class="line">+       &lt;version.org.apache.logging.log4j&gt;2.17.0&lt;/version.org.apache.logging.log4j&gt;</span><br><span class="line">        &lt;version.org.apache.servicemix.bundles.javax-inject&gt;1_3&lt;/version.org.apache.servicemix.bundles.javax-inject&gt;</span><br><span class="line">        &lt;version.org.jboss.logging&gt;3.4.1.Final&lt;/version.org.jboss.logging&gt;</span><br><span class="line">        &lt;version.org.mockito&gt;3.7.7&lt;/version.org.mockito&gt;</span><br></pre></td></tr></table></figure>
-
-<p>下载当前使用的版本，从源码的各模块看，可能需要<code>jdk9</code>：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@node org.ops4j.pax.logging-logging-1.11.9]# ll</span><br><span class="line">total 144</span><br><span class="line">-rw-r--r--  1 root root   939 Feb 23  2021 CONTRIBUTORS.txt</span><br><span class="line">-rw-r--r--  1 root root   755 Feb 23  2021 license-header.txt</span><br><span class="line">-rw-r--r--  1 root root 12525 Feb 23  2021 LICENSE.txt</span><br><span class="line">drwxr-xr-x  4 root root    99 Dec 21 17:51 pax-logging-api</span><br><span class="line">drwxr-xr-x  4 root root    46 Dec 21 17:51 pax-logging-api-java9</span><br><span class="line">drwxr-xr-x  4 root root    46 Dec 21 17:51 pax-logging-it</span><br><span class="line">drwxr-xr-x  6 root root   106 Feb 23  2021 pax-logging-it-karaf</span><br><span class="line">drwxr-xr-x  4 root root    99 Dec 21 17:51 pax-logging-log4j2</span><br><span class="line">drwxr-xr-x  4 root root    99 Dec 21 17:51 pax-logging-log4j2-extra</span><br><span class="line">drwxr-xr-x  4 root root    99 Dec 21 17:51 pax-logging-logback</span><br><span class="line">drwxr-xr-x  2 root root    21 Feb 23  2021 pax-logging-report</span><br><span class="line">drwxr-xr-x 10 root root   166 Feb 23  2021 pax-logging-samples</span><br><span class="line">drwxr-xr-x  4 root root    99 Dec 21 17:51 pax-logging-service</span><br><span class="line">-rw-r--r--  1 root root 46604 Dec 21 17:46 pom.xml</span><br><span class="line">-rw-r--r--  1 root root 67356 Feb 23  2021 readme.adoc</span><br><span class="line">drwxr-xr-x  3 root root    18 Feb 23  2021 src</span><br></pre></td></tr></table></figure>
-
-<p>先下载个<code>maven:3.3.9-jdk-9</code>编译镜像试试：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">[root@node]# </span><span class="language-bash">docker pull maven:3.3.9-jdk-9</span></span><br><span class="line">3.3.9-jdk-9: Pulling from library/maven</span><br><span class="line">...</span><br><span class="line">2ce3b259f3e2: Pull complete</span><br><span class="line">Digest: sha256:ad6b04c52e7f83c05e8840e0b1de0c39ba097c1e40efb294e740db303468cbe8</span><br><span class="line">Status: Downloaded newer image for maven:3.3.9-jdk-9</span><br><span class="line">docker.io/library/maven:3.3.9-jdk-9</span><br></pre></td></tr></table></figure>
-
-<p>启动编译，先尝试编译原始版本：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">[root@node]# </span><span class="language-bash">docker run -it -v /home:/home docker.io/library/maven:3.3.9-jdk-9 bash</span></span><br><span class="line">root@aae0956cb558:/home# cd org.ops4j.pax.logging-logging-1.11.9</span><br><span class="line">root@aae0956cb558:/home/org.ops4j.pax.logging-logging-1.11.9# mvn clean install -Dmaven.test.skip=true</span><br><span class="line">[INFO] Scanning for projects...</span><br><span class="line">[WARNING] Error injecting: org.apache.maven.wagon.providers.http.HttpWagon</span><br><span class="line">java.lang.ExceptionInInitializerError</span><br><span class="line">        at java.base/javax.crypto.JceSecurityManager.&lt;clinit&gt;(JceSecurityManager.java:66)</span><br><span class="line">        at java.base/javax.crypto.Cipher.getConfiguredPermission(Cipher.java:2610)</span><br><span class="line">        at java.base/javax.crypto.Cipher.getMaxAllowedKeyLength(Cipher.java:2634)</span><br><span class="line">        ...</span><br><span class="line">Caused by: java.lang.SecurityException: Can not initialize cryptographic mechanism</span><br><span class="line">        at java.base/javax.crypto.JceSecurity.&lt;clinit&gt;(JceSecurity.java:118)</span><br><span class="line">        ... 96 more</span><br><span class="line">Caused by: java.lang.SecurityException: Can&#x27;t read cryptographic policy directory: unlimited</span><br><span class="line">        at java.base/javax.crypto.JceSecurity.setupJurisdictionPolicies(JceSecurity.java:324)</span><br><span class="line">        at java.base/javax.crypto.JceSecurity.access$000(JceSecurity.java:73)</span><br><span class="line">        at java.base/javax.crypto.JceSecurity$1.run(JceSecurity.java:109)</span><br><span class="line">        at java.base/javax.crypto.JceSecurity$1.run(JceSecurity.java:106)</span><br><span class="line">        at java.base/java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">        at java.base/javax.crypto.JceSecurity.&lt;clinit&gt;(JceSecurity.java:105)</span><br><span class="line">        ... 96 more</span><br></pre></td></tr></table></figure>
-
-<p>参考资料[2]，问题出在编译镜像的<code>$JAVA_HOME/conf</code>命令下找不到一个安全相关的配置文件，查看一下发现<code>conf</code>文件夹都不存在，说明编译镜像有问题：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">root@aae0956cb558:/home/org.ops4j.pax.logging-logging-1.11.9# env</span><br><span class="line">JAVA_HOME=/usr/lib/jvm/java-9-openjdk-amd64</span><br><span class="line"></span><br><span class="line">root@aae0956cb558:/home/org.ops4j.pax.logging-logging-1.11.9# ls /usr/lib/jvm/java-9-openjdk-amd64</span><br><span class="line">bin  docs  include  jmods  legal  lib  man  src.zip</span><br><span class="line"></span><br><span class="line">//正常情况下$JAVA_HOME/conf目录下有以下文件</span><br><span class="line">java-9-openjdk  logging.properties  management  net.properties  security  sound.properties</span><br></pre></td></tr></table></figure>
-
-<p>那就换个新版本试试，下载<code>maven:3.6-openjdk-11</code>编译镜像：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">[root@node]# </span><span class="language-bash">docker pull maven:3.6-openjdk-11</span></span><br><span class="line">3.6-openjdk-11: Pulling from library/maven</span><br><span class="line">...s</span><br><span class="line">Digest: sha256:1d29ccf46ef2a5e64f7de3d79a63f9bcffb4dc56be0ae3daed5ca5542b38aa2d</span><br><span class="line">Status: Downloaded newer image for maven:3.6-openjdk-11</span><br><span class="line">docker.io/library/maven:3.6-openjdk-11</span><br></pre></td></tr></table></figure>
-
-<p>启动编译：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">[root@node]# </span><span class="language-bash">docker run -it -v /home:/home maven:3.6-openjdk-11 bash</span></span><br><span class="line">root@ff2407bc2d9e:/# cd /home/org.ops4j.pax.logging-logging-1.11.9</span><br><span class="line">root@ff2407bc2d9e:/home/org.ops4j.pax.logging-logging-1.11.9# mvn clean install -Dmaven.test.skip=true</span><br><span class="line">[INFO] Scanning for projects...</span><br><span class="line">Downloading from knopflerfish: http://resources.knopflerfish.org/repo/maven2/release/org/ops4j/master/4.3.0/master-4.3.0.pom</span><br><span class="line">...</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- maven-clean-plugin:3.1.0:clean (default-clean) @ pax-logging-api-java9 ---</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- maven-enforcer-plugin:3.0.0-M1:enforce (enforce-maven) @ pax-logging-api-java9 ---</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- maven-toolchains-plugin:3.0.0:toolchain (default) @ pax-logging-api-java9 ---</span><br><span class="line">[INFO] Required toolchain: jdk [ version=&#x27;[9, )&#x27; ]</span><br><span class="line">[ERROR] No toolchain found for type jdk</span><br><span class="line">[ERROR] Cannot find matching toolchain definitions for the following toolchain types:</span><br><span class="line">jdk [ version=&#x27;[9, )&#x27; ]</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Reactor Summary for OPS4J Pax Logging (Build POM) 1.11.9:</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] OPS4J Pax Logging (Build POM) ...................... SUCCESS [ 35.399 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - API (Java9) .................... FAILURE [ 10.045 s]</span><br><span class="line">...</span><br><span class="line">[ERROR] Failed to execute goal org.apache.maven.plugins:maven-toolchains-plugin:3.0.0:toolchain (default) on project pax-logging-api-java9: Cannot find matching toolchain definitions for the following toolchain types:</span><br><span class="line">[ERROR] jdk [ version=&#x27;[9, )&#x27; ]</span><br><span class="line">[ERROR] Please make sure you define the required toolchains in your ~/.m2/toolchains.xml file.</span><br></pre></td></tr></table></figure>
-
-<p>第一个问题解决了，但从报错信息看，应该是要求<code>jdk9</code>的版本，那就再换一个<code>maven:3.5-jdk-9-slim</code>镜像：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">[root@node]# </span><span class="language-bash">docker pull maven:3.5-jdk-9-slim</span></span><br><span class="line">3.5-jdk-9-slim: Pulling from library/maven</span><br><span class="line">...</span><br><span class="line">7afb9733d3e4: Pull complete</span><br><span class="line">Digest: sha256:f5d85a2b5498c0a36a6515722e108969ff2fcfec5bef6c8ef83c8ebc4b671af1</span><br><span class="line">Status: Downloaded newer image for maven:3.5-jdk-9-slim</span><br><span class="line">docker.io/library/maven:3.5-jdk-9-slim</span><br></pre></td></tr></table></figure>
-
-<p>继续编译：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">[root@node]# </span><span class="language-bash">docker run -it -v /home:/home docker.io/library/maven:3.5-jdk-9-slim  bash</span></span><br><span class="line">root@895be557c3cd:/# cd /home/org.ops4j.pax.logging-logging-1.11.9</span><br><span class="line">root@895be557c3cd:/home/org.ops4j.pax.logging-logging-1.11.9# mvn clean install -Dmaven.test.skip=true</span><br><span class="line">[INFO] Scanning for projects...</span><br><span class="line">Downloading from knopflerfish: http://resources.knopflerfish.org/repo/maven2/release/org/ops4j/master/4.3.0/master-4.3.0.pom</span><br><span class="line">...</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- maven-clean-plugin:3.1.0:clean (default-clean) @ pax-logging-api-java9 ---</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- maven-enforcer-plugin:3.0.0-M1:enforce (enforce-maven) @ pax-logging-api-java9 ---</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- maven-toolchains-plugin:3.0.0:toolchain (default) @ pax-logging-api-java9 ---</span><br><span class="line">[INFO] Required toolchain: jdk [ version=&#x27;[9, )&#x27; ]</span><br><span class="line">[ERROR] No toolchain found for type jdk</span><br><span class="line">[ERROR] Cannot find matching toolchain definitions for the following toolchain types:</span><br><span class="line">jdk [ version=&#x27;[9, )&#x27; ]</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Reactor Summary:</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] OPS4J Pax Logging (Build POM) 1.11.9 ............... SUCCESS [01:27 min]</span><br><span class="line">[INFO] OPS4J Pax Logging - API (Java9) .................... FAILURE [ 17.560 s]</span><br><span class="line">[ERROR] Failed to execute goal org.apache.maven.plugins:maven-toolchains-plugin:3.0.0:toolchain (default) on project pax-logging-api-java9: Cannot find matching toolchain definitions for the following toolchain types:</span><br><span class="line">[ERROR] jdk [ version=&#x27;[9, )&#x27; ]</span><br><span class="line">[ERROR] Please make sure you define the required toolchains in your ~/.m2/toolchains.xml file.</span><br></pre></td></tr></table></figure>
-
-<p>当前编译镜像已经符合要求了，但依然报错，参考资料[3]，需要在<code>~/.m2/</code>目录下创建<code>toolchains.xml</code>文件并做相关配置：</p>
-<p>通过<code>env</code>命令查看<code>java</code>的相关环境变量：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">root@895be557c3cd:/home/org.ops4j.pax.logging-logging-1.11.9# env</span><br><span class="line">...</span><br><span class="line">JAVA_HOME=/docker-java-home</span><br><span class="line">JAVA_VERSION=9.0.4+12</span><br><span class="line">JAVA_DEBIAN_VERSION=9.0.4+12-4</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p>修改<code>version</code>和<code>jdkHome</code>字段：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">root@895be557c3cd:/home/org.ops4j.pax.logging-logging-1.11.9# cat ~/.m2/toolchains.xml</span><br><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;toolchains xmlns=&quot;http://maven.apache.org/TOOLCHAINS/1.1.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">  xsi:schemaLocation=&quot;http://maven.apache.org/TOOLCHAINS/1.1.0 http://maven.apache.org/xsd/toolchains-1.1.0.xsd&quot;&gt;</span><br><span class="line">  &lt;toolchain&gt;</span><br><span class="line">    &lt;type&gt;jdk&lt;/type&gt;</span><br><span class="line">    &lt;provides&gt;</span><br><span class="line">      &lt;version&gt;9&lt;/version&gt;</span><br><span class="line">      &lt;vendor&gt;oracle&lt;/vendor&gt;</span><br><span class="line">    &lt;/provides&gt;</span><br><span class="line">    &lt;configuration&gt;</span><br><span class="line">      &lt;jdkHome&gt;/docker-java-home&lt;/jdkHome&gt;</span><br><span class="line">    &lt;/configuration&gt;</span><br><span class="line">  &lt;/toolchain&gt;</span><br><span class="line">&lt;/toolchains&gt;</span><br></pre></td></tr></table></figure>
-
-<p>继续编译：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">root@895be557c3cd:/home/org.ops4j.pax.logging-logging-1.11.9# mvn clean install -Dmaven.test.skip=true</span><br><span class="line">[INFO] Scanning for projects...</span><br><span class="line">[INFO] Inspecting build with total of 19 modules...</span><br><span class="line">[INFO] Installing Nexus Staging features:</span><br><span class="line">[INFO]   ... total of 19 executions of maven-deploy-plugin replaced with nexus-staging-maven-plugin</span><br><span class="line">[INFO] Reactor Summary:</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] OPS4J Pax Logging (Build POM) 1.11.9 ............... SUCCESS [  0.335 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - API (Java9) .................... SUCCESS [ 40.867 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - API ............................ SUCCESS [ 51.690 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - API tests ...................... FAILURE [02:11 min]</span><br></pre></td></tr></table></figure>
-
-<p>失败在<code>test</code>模块，测试模块不影响，修改<code>pom.xml</code>注释掉即可；</p>
-<p>再编译：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">root@895be557c3cd:/home/org.ops4j.pax.logging-logging-1.11.9# mvn clean install -Dmaven.test.skip=true</span><br><span class="line">...</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Reactor Summary:</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] OPS4J Pax Logging (Build POM) 1.11.9 ............... SUCCESS [  0.275 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - API (Java9) .................... SUCCESS [  1.873 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - API ............................ SUCCESS [  4.672 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Log4Jv1 implementation ......... SUCCESS [ 39.435 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Log4Jv2 implementation ......... SUCCESS [  8.208 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Log4j v2 Extra packages ........ SUCCESS [  0.131 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Logback implementation ......... SUCCESS [ 15.241 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Integration Tests .............. SUCCESS [01:48 min]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf .......................... SUCCESS [  0.014 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf KAR Logger ............... SUCCESS [  0.148 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf KAR ...................... SUCCESS [ 28.098 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf Distribution ............. SUCCESS [  2.002 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf Integration Tests 1.11.9 . SUCCESS [ 36.557 s]</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] BUILD SUCCESS</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Total time: 04:07 min</span><br><span class="line">[INFO] Finished at: 2021-12-21T09:45:18Z</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
-
-<p>不容易，终于成功了！开始修改<code>pod.xml</code>，把依赖的<code>log4j</code>包升级上去：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- &lt;version.org.apache.logging.log4j&gt;2.14.0&lt;/version.org.apache.logging.log4j&gt;</span><br><span class="line">+ &lt;version.org.apache.logging.log4j&gt;2.17.0&lt;/version.org.apache.logging.log4j&gt;</span><br></pre></td></tr></table></figure>
-
-<p>编译：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">root@895be557c3cd:/home/org.ops4j.pax.logging-logging-1.11.9# mvn clean install -Dmaven.test.skip=true</span><br><span class="line">[INFO] Scanning for projects...</span><br><span class="line">[INFO] Inspecting build with total of 13 modules...</span><br><span class="line">[INFO] Installing Nexus Staging features:</span><br><span class="line">[INFO]   ... total of 13 executions of maven-deploy-plugin replaced with nexus-staging-maven-plugin</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">...</span><br><span class="line">[ERROR] COMPILATION ERROR :</span><br><span class="line">[INFO] -------------------------------------------------------------</span><br><span class="line">[ERROR] /home/org.ops4j.pax.logging-logging-1.11.9/pax-logging-log4j2/src/main/java/org/apache/logging/log4j/core/impl/ThrowableProxy.java:[85,54] cannot find symbol</span><br><span class="line">  symbol:   variable EMPTY_THROWABLE_PROXY_ARRAY</span><br><span class="line">  location: class org.apache.logging.log4j.core.impl.ThrowableProxyHelper</span><br><span class="line">[INFO] 1 error</span><br><span class="line">[INFO] -------------------------------------------------------------</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Reactor Summary:</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] OPS4J Pax Logging (Build POM) 1.11.9 ............... SUCCESS [  0.302 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - API (Java9) .................... SUCCESS [  1.836 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - API ............................ SUCCESS [ 10.592 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Log4Jv1 implementation ......... SUCCESS [  2.017 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Log4Jv2 implementation ......... FAILURE [  4.279 s]</span><br></pre></td></tr></table></figure>
-
-<p>又报错了，找到官方升级过<code>log4j</code>的版本，发现<code>ThrowableProxy</code>方法的构造方法里<code>suppressedProxies</code>字段的赋值有变化，老版本是<code>ThrowableProxyHelper.EMPTY_THROWABLE_PROXY_ARRAY</code>，而新版本变成了<code>ThrowableProxy.EMPTY_ARRAY</code>。问题不大，改一下就行；</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">src/main/java/org/apache/logging/log4j/core/impl/ThrowableProxy.java</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThrowableProxy</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> ThrowableProxy[] EMPTY_ARRAY = &#123;&#125;;</span><br><span class="line">	ThrowableProxy() &#123;</span><br><span class="line">        <span class="built_in">this</span>.throwable = <span class="literal">null</span>;</span><br><span class="line">        <span class="built_in">this</span>.name = <span class="literal">null</span>;</span><br><span class="line">        <span class="built_in">this</span>.extendedStackTrace = ExtendedStackTraceElement.EMPTY_ARRAY;</span><br><span class="line">        <span class="built_in">this</span>.causeProxy = <span class="literal">null</span>;</span><br><span class="line">        <span class="built_in">this</span>.message = <span class="literal">null</span>;</span><br><span class="line">        <span class="built_in">this</span>.localizedMessage = <span class="literal">null</span>;</span><br><span class="line">        <span class="built_in">this</span>.suppressedProxies = ThrowableProxy.EMPTY_ARRAY;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>再次编译：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">root@895be557c3cd:/home/org.ops4j.pax.logging-logging-1.11.9# mvn clean install -Dmaven.test.skip=true</span><br><span class="line">[INFO] Scanning for projects...</span><br><span class="line">[INFO] Inspecting build with total of 13 modules...</span><br><span class="line">[INFO] Installing Nexus Staging features:</span><br><span class="line">[INFO]   ... total of 13 executions of maven-deploy-plugin replaced with nexus-staging-maven-plugin</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Reactor Summary:</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] OPS4J Pax Logging (Build POM) 1.11.9 ............... SUCCESS [  0.290 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - API (Java9) .................... SUCCESS [  1.819 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - API ............................ SUCCESS [  4.717 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Log4Jv1 implementation ......... SUCCESS [  2.057 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Log4Jv2 implementation ......... SUCCESS [  2.654 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Log4j v2 Extra packages ........ SUCCESS [  0.144 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Logback implementation ......... SUCCESS [  0.908 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Integration Tests .............. SUCCESS [  4.402 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf .......................... SUCCESS [  0.012 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf KAR Logger ............... SUCCESS [  0.138 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf KAR ...................... SUCCESS [  1.588 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf Distribution ............. SUCCESS [  2.114 s]</span><br><span class="line">[INFO] OPS4J Pax Logging - Karaf Integration Tests 1.11.9 . SUCCESS [  0.163 s]</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] BUILD SUCCESS</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Total time: 23.440 s</span><br><span class="line">[INFO] Finished at: 2021-12-21T09:51:37Z</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
-
-<p>升级<code>log4j</code>的版本编译成功。</p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>把新编译的<code>pax-logging-api</code>和<code>pax-logging-log4j</code>替换到依赖仓库中，重新编译交付件，验证漏洞解决，日志功能正常。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
-<li><a target="_blank" rel="noopener" href="https://github.com/ops4j/org.ops4j.pax.logging">https://github.com/ops4j/org.ops4j.pax.logging</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/docker-library/openjdk/issues/101">https://github.com/docker-library/openjdk/issues/101</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/yiqiu3812/article/details/103298980">https://blog.csdn.net/yiqiu3812/article/details/103298980</a></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/12/18/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E6%8C%82%E8%BD%BDSubpath%E7%9A%84%E5%AE%B9%E5%99%A8%E5%9C%A8Configmap%E5%8F%98%E6%9B%B4%E5%90%8E%E9%87%8D%E5%90%AF%E6%97%B6%E6%8C%82%E8%BD%BD%E5%A4%B1%E8%B4%A5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -323,7 +176,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-14 02:09:04" itemprop="dateModified" datetime="2024-04-14T02:09:04+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -451,7 +304,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-14 02:09:04" itemprop="dateModified" datetime="2024-04-14T02:09:04+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -726,7 +579,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-14 02:09:04" itemprop="dateModified" datetime="2024-04-14T02:09:04+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -831,7 +684,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-14 02:09:04" itemprop="dateModified" datetime="2024-04-14T02:09:04+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -951,7 +804,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-14 02:09:04" itemprop="dateModified" datetime="2024-04-14T02:09:04+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1092,7 +945,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-14 02:09:04" itemprop="dateModified" datetime="2024-04-14T02:09:04+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1195,7 +1048,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-14 02:09:04" itemprop="dateModified" datetime="2024-04-14T02:09:04+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1297,7 +1150,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-14 02:09:04" itemprop="dateModified" datetime="2024-04-14T02:09:04+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1420,7 +1273,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-09 13:45:29" itemprop="dateModified" datetime="2024-04-09T13:45:29+00:00">2024-04-09</time>
+                <time title="修改时间：2024-04-14 02:09:04" itemprop="dateModified" datetime="2024-04-14T02:09:04+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1487,6 +1340,133 @@
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
 <li><a target="_blank" rel="noopener" href="https://github.com/influxdata/influxdb-relay">https://github.com/influxdata/influxdb-relay</a></li>
 <li><a target="_blank" rel="noopener" href="https://github.com/influxdata/influxdb/issues/7146">https://github.com/influxdata/influxdb/issues/7146</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/06/26/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Pod%E9%97%B4%E9%80%9A%E8%BF%87%E6%9C%8D%E5%8A%A1%E5%90%8D%E8%AE%BF%E9%97%AE%E5%BC%82%E5%B8%B8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/26/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Pod%E9%97%B4%E9%80%9A%E8%BF%87%E6%9C%8D%E5%8A%A1%E5%90%8D%E8%AE%BF%E9%97%AE%E5%BC%82%E5%B8%B8/" class="post-title-link" itemprop="url">K8S问题排查-Pod间通过服务名访问异常</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-26 16:27:14" itemprop="dateCreated datePublished" datetime="2021-06-26T16:27:14+00:00">2021-06-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-14 02:09:04" itemprop="dateModified" datetime="2024-04-14T02:09:04+00:00">2024-04-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>K8S集群内，PodA使用服务名称访问PodB，请求出现异常。其中，PodA在<code>node1</code>节点上，PodB在<code>node2</code>节点上。</p>
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>先上<code>tcpdump</code>，观察请求是否有异常：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# tcpdump -n -i ens192 port 50300</span><br><span class="line">...</span><br><span class="line">13:48:17.630335 IP 177.177.176.150.distinct -&gt; 10.96.22.136.50300:  UDP, length 214</span><br><span class="line">13:48:17.630407 IP 192.168.7.21.distinct  -&gt;  10.96.22.136.50300:   UDP, length 214</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>从抓包数据可以看出，请求源地址端口号为<code>177.177.176.150:50901</code>，目标地址端口号为<code>10.96.22.136:50300 </code>，其中<code>10.96.22.136</code>是PodA使用<code>server-svc</code>这个<code>serviceName</code>请求得到的目的地址，也就是<code>server-svc</code>对应的<code>serviceIP</code>，那就确认一下这个地址有没有问题：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# kubectl get pod -A -owide|grep server</span><br><span class="line">ss  server-xxx-xxx  1/1  Running 0 20h  177.177.176.150  node1</span><br><span class="line">ss  server-xxx-xxx  1/1  Running 0 20h  177.177.254.245  node2</span><br><span class="line">ss  server-xxx-xxx  1/1  Running 0 20h  177.177.18.152   node3</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# kubectl get svc -A -owide|grep server</span><br><span class="line">ss  server-svc  ClusterIP  10.96.182.195 &lt;none&gt;  50300/UDP</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，源地址没有问题，但目标地址跟预期不符，实际查到的服务名<code>server-svc</code>对应的地址为<code>10.96.182.195</code>，这是怎么回事儿呢？我们知道，K8S从v1.13版本开始默认使用<code>CoreDNS</code>作为服务发现，PodA使用服务名<code>server-svc</code>发起请求时，需要经过<code>CoreDNS</code>的解析，将服务名解析为<code>serviceIP</code>，那就登录到PodA内，验证域名解析是不是有问题：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# kubectl exec -it -n ss server-xxx-xxx -- cat /etc/resolve.conf</span><br><span class="line">nameserver 10.96.0.10</span><br><span class="line">search ss.svc.cluster.local svc.cluster.local cluster.local</span><br><span class="line">options ndots:5</span><br><span class="line"></span><br><span class="line">[root@node1 ~]# kubectl exec -it -n ss server-xxx-xxx -- nslookup server-svc</span><br><span class="line">Server:    10.96.0.10</span><br><span class="line"></span><br><span class="line">Name:    ss</span><br><span class="line">Address: 10.96.182.195</span><br></pre></td></tr></table></figure>
+
+<p>从查看结果看，域名解析没有问题，PodA内也可以正确解析出<code>server-svc</code>对应的<code>serviceIP</code>为<code>10.96.182.195</code>，那最初使用<code>tcpdump</code>命令抓到的<code>serviceIP</code> 为<code>10.96.22.136</code>，难道这个地址是其他业务的服务，或者是残留的iptables规则，或者是有什么相关路由？分别查一下看看：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# kubectl get svc -A -owide|grep 10.96.22.136</span><br><span class="line"></span><br><span class="line">[root@node1 ~]# iptables-save|grep 10.96.22.136</span><br><span class="line"></span><br><span class="line">[root@node1 ~]# ip route|grep 10.96.22.136</span><br></pre></td></tr></table></figure>
+
+<p>结果是，集群上根本不存在<code>10.96.22.136</code>这个地址，那PodA请求的目标地址为什么是它？既然主机上抓包时，目标地址已经是<code>10.96.22.136</code>，那再确认下出PodA时目标地址是什么：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# ip route|grep 177.177.176.150</span><br><span class="line">177.177.176.150 dev cali9afa4438787 scope link</span><br><span class="line"></span><br><span class="line">[root@node1 ~]# tcpdump -n -i cali9afa4438787 port 50300</span><br><span class="line">...</span><br><span class="line">14:16:40.821511 IP 177.177.176.150.50902 -&gt;  10.96.22.136.50300:  UDP, length 214</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>原来出PodA时，目标地址已经是错误的<code>serviceIP</code>。而结合上面的域名解析的验证结果看，请求出PodA时的域名解析应该不存在问题。综合上面的定位情况，基本可以推测出，<strong>问题出在发送方</strong>。</p>
+<p>为了进一步区分出，是PodA内的所有发送请求都存在问题，还是只有业务自身的发送请求存在问题，我们使用<code>nc</code>命令在PodA内模拟发送一个<code>UDP</code>数据包，然后在主机上抓包验证（PodA内恰巧有<code>nc</code>命令，如果没有，感兴趣的同学可以使用&#x2F;dev&#x2F;{tcp|udp}模拟[1]）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# kubectl exec -it -n ss server-xxx-xxx -- echo “test” | nc -u server-svc 50300 -p 9999</span><br><span class="line"></span><br><span class="line">[root@node1 ~]# tcpdump -n -i cali9afa4438787 port 50300</span><br><span class="line">...</span><br><span class="line">15:46:45.871580 IP 177.177.176.150.50902 -&gt;  10.96.182.195.50300:  UDP, length 54</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，PodA内模拟发送的请求，目标地址是可以正确解析的，也就把问题限定在了<strong>业务自身的发送请求存在问题</strong>。因为问题是服务名没有解析为正确的IP地址，所以怀疑是业务使用了什么缓存，如果猜想正确，那么重启PodA，理论上可以解决。而考虑到业务是多副本的，我们重启其中一个，其他副本上的问题环境还可以保留，跟开发沟通后重启并验证业务的请求：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# docker ps |grep server-xxx-xxx | grep -v POD |awk &#x27;&#123;print $1&#125;&#x27; |xargs docker restart</span><br><span class="line"></span><br><span class="line">[root@node1 ~]# tcpdump -n -i ens192 port 50300</span><br><span class="line">...</span><br><span class="line">15:58:17.150535 IP 177.177.176.150.distinct -&gt; 10.96.182.195.50300:  UDP, length 214</span><br><span class="line">15:58:17.150607 IP 192.168.7.21.distinct  -&gt;  10.96.182.195.50300:   UDP, length 214</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>验证符合预期，进一步证明了业务可能是使用了什么缓存。与开发同学了解，业务的发送使用的是java原生的API发送<code>UDP</code>数据，会不会是java在使用域名建立socket时默认会做缓存呢？</p>
+<p>通过一番搜索，找了一篇相关博客[2]，关键内容附上：</p>
+<blockquote>
+<p>在通过DNS查找域名的过程中，可能会经过多台中间DNS服务器才能找到指定的域名，因此，在DNS服务器上查找域名是非常昂贵的操作。在Java中为了缓解这个问题，提供了DNS缓存。当InetAddress类第一次使用某个域名创建InetAddress对象后，JVM就会将这个域名和它从DNS上获得的信息（如IP地址）都保存在DNS缓存中。当下一次InetAddress类再使用这个域名时，就直接从DNS缓存里获得所需的信息，而无需再访问DNS服务器。</p>
+</blockquote>
+<p>还真是，继续看怎么解决：</p>
+<blockquote>
+<p>DNS缓存在默认时将永远保留曾经访问过的域名信息，但我们可以修改这个默认值。一般有两种方法可以修改这个默认值：</p>
+<ol>
+<li><p>在程序中通过java.security.Security.setProperty方法设置安全属性networkaddress.cache.ttl的值（单位：秒）</p>
+</li>
+<li><p>设置java.security文件中的networkaddress.cache.negative.ttl属性。假设JDK的安装目录是C:&#x2F;jdk1.6，那么java.security文件位于c:&#x2F;jdk1.6&#x2F;jre&#x2F;lib&#x2F;security目录中。打开这个文件，找到networkaddress.cache.ttl属性，并将这个属性值设为相应的缓存超时（单位：秒）</p>
+</li>
+</ol>
+<p> 注：如果将networkaddress.cache.ttl属性值设为-1，那么DNS缓存数据将永远不会释放。</p>
+</blockquote>
+<p>至此，问题定位结束。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>业务侧根据业务场景调整DNS缓存的设置。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/michaelwoshi/article/details/101107042">https://blog.csdn.net/michaelwoshi/article/details/101107042</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/turkeyzhou/article/details/5510960">https://blog.csdn.net/turkeyzhou/article/details/5510960</a></li>
 </ol>
 
       
@@ -1572,7 +1552,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-count">88</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1583,7 +1563,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
