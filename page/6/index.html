@@ -145,6 +145,156 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/06/22/k8s/Advertising-Kubernetes-Service-IPs-with-Calico-and-BGP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/22/k8s/Advertising-Kubernetes-Service-IPs-with-Calico-and-BGP/" class="post-title-link" itemprop="url">使用Calico的BGP发布Kubernetes Service IP路由</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-22 21:58:22" itemprop="dateCreated datePublished" datetime="2020-06-22T21:58:22+00:00">2020-06-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>访问Kubernetes集群中托管的服务的两种最常见方法是通过<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/services-networking/ingress/">Ingress</a>或<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer">Load Balancer</a>。对于公有云用户来说，这些是访问服务的简单有效方法。云托管的控制器可以完成分配公共IP，设置负载平衡和管理SSL的繁重工作。</p>
+<p>在本地运行私有托管的Kubernetes集群的运营商将很快意识到，将服务公开提供比在公有云上更为复杂。服务将在公共互联网上还是仅对本地用户公开？应该如何设置Ingress，负载平衡，IP分配和SSL管理？在维护安全性的同时将服务公开发布的最有效方法是什么？</p>
+<p>Calico项目通过其服务IP发布功能为某些问题提供了答案，该功能与现有的机架（ToR）基础架构集成在一起，可以提供Kubernetes服务IP或Kubernetes外部服务IP的路由。在以下情况下，服务IP发布是一个很好的解决方案：</p>
+<ul>
+<li>您的ToR解决方案能够运行边界网关协议（BGP）</li>
+<li>您希望将服务从群集共享到网络基础结构的其余部分</li>
+<li>您想利用网络负载均衡</li>
+</ul>
+<p>为了启用服务IP发布功能，Calico需要与BGP路由器建立对等关系，该路由器在Calico的内部路由器之外，但在网络本地。BGP是网络中使用的最基本的路由协议之一。在较高级别，BGP通过在信任对等方之间共享路由来工作。与ToR对等时，Calico共享Kubernetes服务的路由，这使它们可用于整个网络。</p>
+<p>为了帮助讨论此功能，假定我们安装以下方式配置了网络和群集：</p>
+<ul>
+<li>托管Kubernetes节点的服务器机架通过顶部机架式路由器连接到物理网络</li>
+<li>Calico作为CNI和网络策略插件运行</li>
+<li>Calico和Rack顶部路由器配置为使用BGP对等</li>
+</ul>
+<p>在此设置中，我们具有以下网络配置：</p>
+<ul>
+<li>机架顶部路由器的IP地址是192.168.1.1，服务器的IP地址是从192.168.1.0&#x2F;24分配的</li>
+<li>Kubernetes Pod网络配置了CIDR 10.48.0.0&#x2F;16</li>
+<li>Kubernetes服务集群IP范围配置为10.49.0.0&#x2F;16</li>
+<li>外部服务IP范围配置为192.168.3.0&#x2F;24</li>
+</ul>
+<p>您的ToR BGP路由器的确切配置超出了本文的范围，并且会因您使用的供应商或软件包而异。如果您没有可用的服务器机架，但仍然想尝试该功能，那么在单独的服务器上运行的<a target="_blank" rel="noopener" href="https://bird.network.cz/">Bird Internet Routing Daemon（BIRD）</a>是尝试进行操作的不错选择。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Advertising-Kubernetes-Service-IPs-with-Calico-and-BGP/Screen-Shot-2020-04-01-at-12.01.48-PM-1024x794.png"></p>
+<p>第一步是启用ToR和Calico网络之间的对等连接。其工作方式将根据您的ToR实现而有所不同，但是要牢记一些关键事项：</p>
+<ul>
+<li>必须将ToR路由器配置为与在每个节点上运行的Calico对等</li>
+<li>ToR需要接受来自外部网络，外部服务网络和Pod服务网络的路由和流量</li>
+<li>如果可以选择，ToR应该启用正常重启，以防止网络服务中断</li>
+</ul>
+<p>将ToR配置为接受路由后，下一步是在Calico端启用对等。首先通过以下清单告诉Calico有关外部BGP路由器的信息：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">calicoctl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="bullet">-</span> <span class="string">&lt;&lt;</span> <span class="string">EOF</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">projectcalico.org/v3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">BGPPeer</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">bgppeer-global-64512</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">peerIP:</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.1</span></span><br><span class="line">  <span class="attr">asNumber:</span> <span class="number">64512</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>启用对等功能后，Calico可以使Pod成为网络中的头等公民，而无需覆盖网络，并使他们可以直接在群集外部访问。</p>
+<p>尽管启用了对等连接，但是Calico仍需要进一步配置以公开Kubernetes服务IP范围。这可以通过创建新的Calico BGPConfiguration资源来完成：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">calicoctl</span> <span class="string">create</span> <span class="string">-f</span> <span class="bullet">-</span> <span class="string">&lt;&lt;EOF</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">projectcalico.org/v3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">BGPConfiguration</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">serviceClusterIPs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">cidr:</span> <span class="number">10.49</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>启用服务群集IP范围的发布后，ToR上的路由表将如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ip r</span></span><br><span class="line">...</span><br><span class="line">10.49.0.0/16</span><br><span class="line">nexthop via 192.168.1.10 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.1.11 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.1.12 dev eth2 weight 1 </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>注意到10.49.0.0&#x2F;16网络的路由如何在节点之间实现ECMP负载平衡。您公开的所有服务将由ToR在所有节点上进行负载平衡。为了说明这一点，我们可以创建一个基本的Nginx服务。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">control:~$ kubectl apply -f - &lt;&lt;EOF</span><br><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: nginx</span><br><span class="line">  replicas: 2</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: nginx</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 80</span><br><span class="line">EOF</span><br><span class="line">control:~$ kubectl expose nginx</span><br><span class="line">control:~$ kubectl get services</span><br><span class="line">NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">kubernetes   ClusterIP   10.49.0.1      &lt;none&gt;        443/TCP   19m</span><br><span class="line">nginx        ClusterIP   10.49.62.131   &lt;none&gt;        80/TCP    4m43s</span><br></pre></td></tr></table></figure>
+
+<p>现在，您可以从外部网络通过其内部群集IP地址访问Kubernetes托管服务。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">external:~$ curl 10.49.62.131</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;title&gt;Welcome to nginx!&lt;/title&gt;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>这里有两个阶段的负载平衡。首先，ToR通过将其路由到节点来对与群集IP的连接进行负载平衡。然后，使用NAT（网络地址转换）在该节点上运行的kube-proxy负载均衡到特定的Pod，以将目标IP从群集IP更改为后备Pod之一的IP地址。后备Pod可能在本地节点上，也可能在其他节点之一上，从而导致了另一个网络跃点。</p>
+<p>如果我们想避免额外的潜在网络跳数，可以通过将服务上的外部流量策略设置为本地来实现。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">control:~$ kubectl patch service nginx \</span><br><span class="line">  -p &#x27;&#123;&quot;spec&quot;:&#123;&quot;type&quot;: &quot;NodePort&quot;, &quot;externalTrafficPolicy&quot;:&quot;Local&quot;&#125;&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>现在，在ToR上，您将看到路由表的新增内容，包括Nginx服务到正在运行Nginx的特定节点的ECMP负载平衡：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ip r</span></span><br><span class="line">...</span><br><span class="line">10.49.0.0/16 </span><br><span class="line">nexthop via 192.168.2.10 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.2.11 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.2.12 dev eth2 weight 1 </span><br><span class="line">...</span><br><span class="line">10.49.62.131</span><br><span class="line">nexthop via 192.168.2.11 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.2.12 dev eth2 weight 1 </span><br></pre></td></tr></table></figure>
+
+<p>这是公开Kubernetes网络服务的简便方法，但是在操作上，它具有将Kubernetes群集中该IP范围内的每个服务都暴露给网络其余部分的缺点。如果您想更精细地控制提供哪些服务，或者想要分配真正面向公众的IP地址，Calico可以通过发布外部服务IP来解决这个问题。该方法类似，主要区别在于外部IP不由Kubernetes集群管理，必须手动分配给服务。</p>
+<p>下一个示例将说明这一点。首先重新配置BGPConfiguration，以发布外部IP而不是内部IP（值得注意的是，您可以一次公开这两个集合，但是在此示例中，我们要关闭对内部网络的公共访问，同时仍提供对应用程序的访问）。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">control</span> <span class="string">:~$calicoctl</span> <span class="string">create</span> <span class="string">-f</span> <span class="bullet">-</span> <span class="string">&lt;&lt;EOF</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">projectcalico.org/v3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">BGPConfiguration</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">serviceClusterIPs:</span></span><br><span class="line">  <span class="attr">serviceExternalIPs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">cidr:</span> <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span><span class="string">/24</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>检查路由时，请注意已删除到群集IP范围的路由，并已添加到外部服务网络的路由。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ip r</span></span><br><span class="line">...</span><br><span class="line">192.168.3.0/24</span><br><span class="line">nexthop via 192.168.1.10 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.1.11 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.1.12 dev eth2 weight 1 </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>该服务的群集IP不再公开可见。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">external :~$ curl -m 10 10.49.62.131</span><br><span class="line">curl: (28) Connection timed out after 10001 milliseconds</span><br></pre></td></tr></table></figure>
+
+<p>我们现在在发布外部IP范围，但我们还需要为服务分配一个外部IP：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">control:~$ kubectl patch svc nginx \</span><br><span class="line">-p  &#x27;&#123;&quot;spec&quot;: &#123;&quot;externalIPs&quot;: [&quot;192.168.3.180&quot;]&#125;&#125;&#x27;</span><br><span class="line">control:~$ kubectl get services</span><br><span class="line">NAME       TYPE       CLUSTER-IP     EXTERNAL-IP     PORT(S)        AGE</span><br><span class="line">kubernetes ClusterIP  10.49.0.1      &lt;none&gt;          443/TCP        152m</span><br><span class="line">nginx      NodePort   10.49.62.131   192.168.3.180   80:31890/TCP   109m</span><br></pre></td></tr></table></figure>
+
+<p>检查连接性：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">external:~$ curl 192.168.3.180</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;title&gt;Welcome to nginx!&lt;/title&gt;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>到此为止，我们快速完成了Calico如何在Kuberentes群集之外发布服务和外部服务IP的快速浏览。对于具有启用BGP路由的本地云，这是一种简单的解决方案，无需提供安装和维护自定义Kubernetes负载均衡器或Ingress控制器的额外工作即可访问Kubernetes服务。如果您想了解更多有关此功能的信息，请查阅官方的Calico项目”<a target="_blank" rel="noopener" href="https://docs.projectcalico.org/networking/advertise-service-ips">Advertise Kubernetes Service IPs</a>“。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/06/13/linux/An-introduction-to-linux-interfaces-for-virtual-networking/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +326,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -438,7 +588,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -714,7 +864,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -824,7 +974,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -922,7 +1072,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1002,7 +1152,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1149,7 +1299,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1238,7 +1388,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1343,7 +1493,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1384,126 +1534,6 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod PODNAME -n NAMESPACE -o yaml | kubectl replace --force -f -</span><br></pre></td></tr></table></figure>
 
 <h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40259178/how-to-retry-image-pull-in-a-kubernetes-pods">How to retry image pull in a kubernetes Pods?</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/20/stack/How-to-sign-in-kubernetes-dashboard/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/08/20/stack/How-to-sign-in-kubernetes-dashboard/" class="post-title-link" itemprop="url">如何登录kubernetes dashboard</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-08-20 22:43:31" itemprop="dateCreated datePublished" datetime="2019-08-20T22:43:31+00:00">2019-08-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我刚刚将kubeadm和kubelet升级到v1.8.0。并按照<a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard">官方文档</a>安装Dashboard。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml</span></span><br></pre></td></tr></table></figure>
-
-<p>之后，我通过运行如下命令启动Dashboard：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl proxy --address=<span class="string">&quot;192.168.0.101&quot;</span> -p 8001 --accept-hosts=<span class="string">&#x27;^*$&#x27;</span></span></span><br></pre></td></tr></table></figure>
-
-<p>幸运的是，我能够访问到Dashboard：</p>
-<p><a target="_blank" rel="noopener" href="http://192.168.0.101:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/">http://192.168.0.101:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/</a></p>
-<p>我被重定向选择认证方式的页面：Kubeconfig或Token。</p>
-<p>我尝试将&#x2F;etc&#x2F;kubernetes&#x2F;admin.conf作为kubeconfig上传，但失败了。然后我尝试使用我从kubeadm令牌列表中获取的令牌进行登录但又失败了。</p>
-<p>问题是我如何登录Dashboard。看起来他们添加了许多安全机制。谢谢。</p>
-<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><blockquote>
-<p>从1.7版本开始，Dashboard 使用更安全的设置。这意味着，默认情况下，它具有最小的权限集，并且只能通过HTTPS访问。在执行任何进一步的步骤之前，建议阅读<a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard/wiki/Access-control">访问控制指南</a>。</p>
-<p>从版本1.7开始，Dashboard支持基于以下内容的用户身份验证：</p>
-<ul>
-<li>可以在Dashboard登录视图上使用的<a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard/wiki/Access-control#bearer-token">Bearer Token</a></li>
-<li>可以在Dashboard登录视图上使用的<a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard/wiki/Access-control#basic">Username&#x2F;password</a></li>
-</ul>
-<p>— <a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard">Dashboard on Github</a></p>
-</blockquote>
-<h3 id="Token"><a href="#Token" class="headerlink" title="Token"></a>Token</h3><p>这里Token可以是静态令牌，服务帐户令牌，来自Kubernetes Authenticating的OpenID Connect Token，但不是kubeadm Bootstrap Token。</p>
-<p>使用kubectl，我们可以获得默认情况下在kubernetes中创建的服务帐户（例如deployment）。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl -n kube-system get secret</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">All secrets with <span class="built_in">type</span> <span class="string">&#x27;kubernetes.io/service-account-token&#x27;</span> will allow to <span class="built_in">log</span> <span class="keyword">in</span>.</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Note that they have different privileges.</span></span><br><span class="line">NAME                                     TYPE                                  DATA      AGE</span><br><span class="line">deployment-controller-token-frsqj        kubernetes.io/service-account-token   3         22h</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl -n kube-system describe secret deployment-controller-token-frsqj</span></span><br><span class="line">Name:         deployment-controller-token-frsqj</span><br><span class="line">Namespace:    kube-system</span><br><span class="line">Labels:       &lt;none&gt;</span><br><span class="line">Annotations:  kubernetes.io/service-account.name=deployment-controller</span><br><span class="line">              kubernetes.io/service-account.uid=64735958-ae9f-11e7-90d5-02420ac00002</span><br><span class="line"></span><br><span class="line">Type:  kubernetes.io/service-account-token</span><br><span class="line"></span><br><span class="line">Data</span><br><span class="line">====</span><br><span class="line">ca.crt:     1025 bytes</span><br><span class="line">namespace:  11 bytes</span><br><span class="line">token:      eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZXBsb3ltZW50LWNvbnRyb2xsZXItdG9rZW4tZnJzcWoiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVwbG95bWVudC1jb250cm9sbGVyIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiNjQ3MzU5NTgtYWU5Zi0xMWU3LTkwZDUtMDI0MjBhYzAwMDAyIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRlcGxveW1lbnQtY29udHJvbGxlciJ9.OqFc4CE1Kh6T3BTCR4XxDZR8gaF1MvH4M3ZHZeCGfO-sw-D0gp826vGPHr_0M66SkGaOmlsVHmP7zmTi-SJ3NCdVO5viHaVUwPJ62hx88_JPmSfD0KJJh6G5QokKfiO0WlGN7L1GgiZj18zgXVYaJShlBSz5qGRuGf0s1jy9KOBt9slAN5xQ9_b88amym2GIXoFyBsqymt5H-iMQaGP35tbRpewKKtly9LzIdrO23bDiZ1voc5QZeAZIWrizzjPY5HPM1qOqacaY9DcGc7akh98eBJG_4vZqH2gKy76fMf0yInFTeNKr45_6fWt8gRM77DQmPwb3hbrjWXe1VvXX_g</span><br></pre></td></tr></table></figure>
-
-<h3 id="Kubeconfig"><a href="#Kubeconfig" class="headerlink" title="Kubeconfig"></a>Kubeconfig</h3><p>kubeconfig文件中的用户需要用户名和密码或令牌，而admin.conf只有客户端证书。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl config set-credentials cluster-admin --token=bearer_token</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="替代方案"><a href="#替代方案" class="headerlink" title="替代方案"></a>替代方案</h3><blockquote>
-<p>以下是绕过身份验证的两种方法，但请谨慎使用。</p>
-</blockquote>
-<h4 id="使用HTTP部署"><a href="#使用HTTP部署" class="headerlink" title="使用HTTP部署"></a>使用HTTP部署</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/alternative/kubernetes-dashboard.yaml</span></span><br></pre></td></tr></table></figure>
-
-<p>可以使用kubectl代理在<a target="_blank" rel="noopener" href="http://localhost:8001/ui%E5%8A%A0%E8%BD%BDDashboard%E3%80%82">http://localhost:8001/ui加载Dashboard。</a></p>
-<h4 id="授予Dashboard管理员权限"><a href="#授予Dashboard管理员权限" class="headerlink" title="授予Dashboard管理员权限"></a>授予Dashboard管理员权限</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cat</span> &lt;&lt;<span class="string">EOF | kubectl create -f -</span></span></span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1beta1</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">metadata:</span><br><span class="line">  name: kubernetes-dashboard</span><br><span class="line">  labels:</span><br><span class="line">    k8s-app: kubernetes-dashboard</span><br><span class="line">roleRef:</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: cluster-admin</span><br><span class="line">subjects:</span><br><span class="line">- kind: ServiceAccount</span><br><span class="line">  name: kubernetes-dashboard</span><br><span class="line">  namespace: kube-system</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
-
-<p>之后，您可以使用登录页面上的“跳过”选项来访问Dashboard。</p>
-<p>如果您使用的是Dashboard v1.10.1版本或更高版本，则还必须将–enable-skip-login添加到部署的命令行参数中。您可以通过将其添加到kubectl edit deployment&#x2F;kubernetes-dashboard –namespace&#x3D;kube-system中的args来实现。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">containers:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">args:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">--auto-generate-certificates</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">--enable-skip-login</span>            <span class="comment"># &lt;-- add this line</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.1</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/46664104/how-to-sign-in-kubernetes-dashboard">How to sign in kubernetes dashboard?</a></p>
 
       
     </div>
@@ -1588,7 +1618,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-count">90</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1599,7 +1629,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

@@ -145,6 +145,117 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2022/02/26/docker/Docker%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%BC%82%E5%B8%B8%E6%96%AD%E7%94%B5%E5%AF%BC%E8%87%B4Docker%E5%90%AF%E5%8A%A8%E5%8D%A1%E4%BD%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/02/26/docker/Docker%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%BC%82%E5%B8%B8%E6%96%AD%E7%94%B5%E5%AF%BC%E8%87%B4Docker%E5%90%AF%E5%8A%A8%E5%8D%A1%E4%BD%8F/" class="post-title-link" itemprop="url">Docker问题排查-异常断电导致Docker启动卡住</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-02-26 18:13:11" itemprop="dateCreated datePublished" datetime="2022-02-26T18:13:11+00:00">2022-02-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>Docker守护进程在异常断电后卡在<code>activating</code>状态，并且内存占用在无限增加。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 docker]# service docker status</span><br><span class="line">Redirecting to /bin/systemctl status docker.service</span><br><span class="line">● docker.service - Docker Application Container Engine</span><br><span class="line">   Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)</span><br><span class="line">  Drop-In: /etc/systemd/system/docker.service.d</span><br><span class="line">           └─restart.conf</span><br><span class="line">   Active: activating (start) since Tue 2021-12-07 15:44:32 CST; 1min 18s ago</span><br><span class="line">     Docs: https:/docs.docker.com</span><br><span class="line"> Main PID: 274797 (dockerd)</span><br><span class="line">    Tasks: 481</span><br><span class="line">   Memory: 15.4G  -- 占用不正常</span><br><span class="line">   CGroup: /system</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 docker]# service docker status</span><br><span class="line">Redirecting to /bin/systemctl status docker.service</span><br><span class="line">● docker.service - Docker Application Container Engine</span><br><span class="line">   Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)</span><br><span class="line">  Drop-In: /etc/systemd/system/docker.service.d</span><br><span class="line">           └─restart.conf</span><br><span class="line">   Active: deactivating (stop-sigterm)</span><br><span class="line">     Docs: https:/docs.docker.com</span><br><span class="line"> Main PID: 274797 (dockerd)</span><br><span class="line">    Tasks: 481</span><br><span class="line">   Memory: 247.3G   -- 一直在疯狂增加</span><br><span class="line">   CGroup: /system.slice/docker.service</span><br><span class="line">           └─274</span><br></pre></td></tr></table></figure>
+
+<h2 id="定位过程"><a href="#定位过程" class="headerlink" title="定位过程"></a>定位过程</h2><p>首先，查看<code>docker</code>版本和<code>docker info</code>信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">[root@node01files]# </span><span class="language-bash">docker version</span></span><br><span class="line">Client: Docker Engine - Community</span><br><span class="line"> Version:           20.10.7</span><br><span class="line"> API version:       1.41</span><br><span class="line"> Go version:        go1.13.15</span><br><span class="line"> Git commit:        f0df350</span><br><span class="line"> Built:             Wed Jun  2 11:58:10 2021</span><br><span class="line"> OS/Arch:           linux/amd64</span><br><span class="line"> Context:           default</span><br><span class="line"> Experimental:      true</span><br><span class="line"></span><br><span class="line">Server: Docker Engine - Community</span><br><span class="line"> Engine:</span><br><span class="line">  Version:          20.10.7</span><br><span class="line">  API version:      1.41 (minimum version 1.12)</span><br><span class="line">  Go version:       go1.13.15</span><br><span class="line">  Git commit:       b0f5bc3</span><br><span class="line">runc:</span><br><span class="line">  Version:          1.0.0-rc95</span><br><span class="line">  GitCommit:        b9ee9c6314599f1b4a7f497e1f1f856fe433d3b7</span><br><span class="line"> docker-init:</span><br><span class="line">  Version:          0.19.0</span><br><span class="line">  GitCommit:        de40ad0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 files]# docker info</span><br><span class="line">Client:</span><br><span class="line"> Context:    default</span><br><span class="line"> Debug Mode: false</span><br><span class="line"> Plugins:</span><br><span class="line">  app: Docker App (Docker Inc., v0.9.1-beta3)</span><br><span class="line">  buildx: Build with BuildKit (Docker Inc., v0.5.1-docker)</span><br><span class="line">  scan: Docker Scan (Docker Inc., v0.8.0)</span><br><span class="line"></span><br><span class="line">Server:</span><br><span class="line"> Server Version: 20.10.7</span><br><span class="line"> Storage Driver: overlay2</span><br><span class="line">  Backing Filesystem: xfs</span><br><span class="line">  Supports d_type: true</span><br><span class="line">  Native Overlay Diff: true</span><br><span class="line">  userxattr: false</span><br><span class="line"> Logging Driver: json-file</span><br><span class="line"> Cgroup Driver: systemd</span><br><span class="line"> Cgroup Version: 1</span><br><span class="line"> Plugins:</span><br><span class="line">  Volume: local</span><br><span class="line">  Network: bridge host ipvlan macvlan null overlay</span><br><span class="line">  Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog</span><br><span class="line"> Swarm: inactive</span><br><span class="line"> Runtimes: io.containerd.runc.v2 io.containerd.runtime.v1.linux runc</span><br><span class="line"> Default Runtime: runc</span><br><span class="line"> Init Binary: docker-init</span><br><span class="line"> containerd version: d71fcd7d8303cbf684402823e425e9dd2e99285d</span><br><span class="line"> runc version: b9ee9c6314599f1b4a7f497e1f1f856fe433d3b7</span><br><span class="line"> init version: de40ad0</span><br><span class="line"> Security Options:</span><br><span class="line">   seccomp</span><br><span class="line">   Profile: default</span><br><span class="line"> Kernel Version: 3.10.0-957.21.3.el7.x86_64</span><br><span class="line"> Operating System: CentOS 7.6</span><br><span class="line"> OSType: linux</span><br><span class="line"> Architecture: x86_64</span><br><span class="line"> Total Memory: 256GiB</span><br><span class="line"> Name: node01</span><br><span class="line"> Docker Root Dir: /var/lib/docker</span><br><span class="line"> Debug Mode: false</span><br><span class="line">  File Descriptors: 366</span><br><span class="line">  Goroutines: 290</span><br><span class="line">  EventsListeners: 0</span><br><span class="line"> Registry: https:/index.docker.io/v1/</span><br><span class="line"> Labels:</span><br><span class="line"> Experimental: false</span><br><span class="line"> Insecure Registries:</span><br><span class="line">  127.0.0.0/8</span><br><span class="line"> Live Restore Enabled: true</span><br></pre></td></tr></table></figure>
+
+<p>版本还算比较新，查看<code>docker</code>日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">Dec 07 14:57:57 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:57.831370861+08:00&quot; level=info msg=&quot;Starting up&quot;</span><br><span class="line">Dec 07 14:57:57 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:57.950367668+08:00&quot; level=info msg=&quot;parsed scheme: \&quot;unix\&quot;&quot; module=grpc</span><br><span class="line">Dec 07 14:57:57 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:57.950430356+08:00&quot; level=info msg=&quot;scheme \&quot;unix\&quot; not registered, fallback to default scheme&quot; module=grpc</span><br><span class="line">Dec 07 14:57:57 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:57.950486773+08:00&quot; level=info msg=&quot;ccResolverWrapper: sending update to cc: &#123;[&#123;unix://run/containerd/containerd.sock  &lt;nil&gt; 0 &lt;nil&gt;&#125;] &lt;nil&gt; &lt;nil&gt;&#125;&quot; module=grpc</span><br><span class="line">Dec 07 14:57:57 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:57.950524941+08:00&quot; level=info msg=&quot;ClientConn switching balancer to \&quot;pick_first\&quot;&quot; module=grpc</span><br><span class="line">Dec 07 14:57:58 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:58.004622322+08:00&quot; level=info msg=&quot;parsed scheme: \&quot;unix\&quot;&quot; module=grpc</span><br><span class="line">Dec 07 14:57:58 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:58.004663918+08:00&quot; level=info msg=&quot;scheme \&quot;unix\&quot; not registered, fallback to default scheme&quot; module=grpc</span><br><span class="line">Dec 07 14:57:58 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:58.004697382+08:00&quot; level=info msg=&quot;ccResolverWrapper: sending update to cc: &#123;[&#123;unix://run/containerd/containerd.sock  &lt;nil&gt; 0 &lt;nil&gt;&#125;] &lt;nil&gt; &lt;nil&gt;&#125;&quot; module=grpc</span><br><span class="line">Dec 07 14:57:58 node01 dockerd[239420]: time=&quot;2021-12-07T14:57:58.004726533+08:00&quot; level=info msg=&quot;ClientConn switching balancer to \&quot;pick_first\&quot;&quot; module=grpc</span><br><span class="line">Dec 07 14:58:14 node01 dockerd[239420]: time=&quot;2021-12-07T14:58:14.832862519+08:00&quot; level=info msg=&quot;[graphdriver] using prior storage driver: overlay2&quot;</span><br><span class="line">Dec 07 14:59:00 node01 dockerd[239420]: time=&quot;2021-12-07T14:59:00.039554832+08:00&quot; level=info msg=&quot;Loading containers: start.&quot;</span><br><span class="line">Dec 07 15:02:27 node01 dockerd[239420]: fatal error: runtime: out of memory</span><br><span class="line">Dec 07 15:02:27 node01 dockerd[239420]: runtime stack:</span><br><span class="line">Dec 07 15:02:27 node01 dockerd[239420]: runtime.throw(0x5604d0deee9d, 0x16)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/panic.go:774 +0x74</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.sysMap(0xfb6c000000, 0x5c000000, 0x5604d35dab58)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/mem_linux.go:169 +0xc7</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.(*mheap).sysAlloc(0x5604d35be240, 0x5beee000, 0x7f6fd1fbab88, 0x5604cf22bf6b)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/malloc.go:701 +0x1cf</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.(*mheap).grow(0x5604d35be240, 0x2df77, 0xffffffff)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/mheap.go:1255 +0xa5</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.(*mheap).allocSpanLocked(0x5604d35be240, 0x2df77, 0x5604d35dab68, 0x5604cf212927)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/mheap.go:1170 +0x268</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.(*mheap).alloc_m(0x5604d35be240, 0x2df77, 0x7f6c01180100, 0x7f6c01184350)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/mheap.go:1022 +0xc6</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.(*mheap).alloc.func1()</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/mheap.go:1093 +0x4e</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.(*mheap).alloc(0x5604d35be240, 0x2df77, 0x7f6fd1010100, 0x7f6c01184350)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/mheap.go:1092 +0x8c</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.largeAlloc(0x5beee000, 0x5604cf250001, 0x7f6c01184350)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/malloc.go:1138 +0x99</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.mallocgc.func1()</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/malloc.go:1033 +0x48</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.systemstack(0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/asm_amd64.s:370 +0x63</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.mstart()</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/proc.go:1146</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: goroutine 1 [running]:</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.systemstack_switch()</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/asm_amd64.s:330 fp=0xc0008bff70 sp=0xc0008bff68 pc=0x5604cf2528e0</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.mallocgc(0x5beee000, 0x5604d1e8fde0, 0x1, 0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/malloc.go:1032 +0x8a7 fp=0xc0008c0010 sp=0xc0008bff70 pc=0x5604cf200ef7</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: runtime.growslice(0x5604d1e8fde0, 0xef119e4000, 0x3107eaa, 0x3107eaa, 0x3107eab, 0x5604cf20146b, 0xfb6bbbfb80, 0x7f6c01184350)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /usr/local/go/src/runtime/slice.go:181 +0x1e4 fp=0xc0008c0078 sp=0xc0008c0010 pc=0x5604cf23b0b4</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/go.etcd.io/bbolt.(*Cursor).first(0xc0008c0288)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: docker/vendor/go.etcd.io/bbolt/cursor.go:182 +0x138 fp=0xc0008c00d8 sp=0xc0008c0078 pc=0x5604d012d348</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/go.etcd.io/bbolt.(*Cursor).next(0xc0008c0288, 0x0, 0x9f, 0x9f, 0x7f7150506429, 0x2b8, 0xc0008c0188, 0x5604cf23ee10)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/go.etcd.io/bbolt/cursor.go:234 +0x84 fp=0xc0008c0128 sp=0xc0008c00d8 pc=0x5604d012d684</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/go.etcd.io/bbolt.(*Cursor).Next(0xc0008c0288, 0x7f715050638a, 0x9f, 0x9f, 0xfb6bbcf720, 0x9f, 0x2b8)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/go.etcd.io/bbolt/cursor.go:75 +0x43 fp=0xc0008c0198 sp=0xc0008c0128 pc=0x5604d012ca43</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libkv/store/boltdb.(*BoltDB).List.func1(0xc0034350a0, 0xc0008c0200, 0xc0034350a0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libkv/store/boltdb/boltdb.go:288 +0x19a fp=0xc0008c02b8 sp=0xc0008c0198 pc=0x5604d0142a4a</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/go.etcd.io/bbolt.(*DB).View(0xc0001dc200, 0xc0008c03f8, 0x0, 0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/go.etcd.io/bbolt/db.go:725 +0xaa fp=0xc0008c0340 sp=0xc0008c02b8 pc=0x5604d0130a3a</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libkv/store/boltdb.(*BoltDB).List(0xc00482f2c0, 0xc001a7af00, 0x5e, 0x0, 0x0, 0x0, 0x0, 0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libkv/store/boltdb/boltdb.go:279 +0x1b3 fp=0xc0008c0430 sp=0xc0008c0340 pc=0x5604d0141583</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/datastore.(*cache).kmap(0xc003bf5900, 0x5604d220c1a0, 0xc001e7c160, 0x0, 0x5e, 0xc001a7ae40)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/datastore/cache.go:43 +0x286 fp=0xc0008c0560 sp=0xc0008c0430 pc=0x5604cfcc81a6</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/datastore.(*cache).list(0xc003bf5900, 0x5604d220c1a0, 0xc001e7c160, 0x0, 0x0, 0x0, 0x0, 0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/datastore/cache.go:164 +0x7e fp=0xc0008c0678 sp=0xc0008c0560 pc=0x5604cfcc988e</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/datastore.(*datastore).List(0xc0079ff680, 0xc001a7ae40, 0x5e, 0x5604d220c1a0, 0xc001e7c160, 0x0, 0x0, 0x0, 0x0, 0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/datastore/datastore.go:517 +0x205 fp=0xc0008c0730 sp=0xc0008c0678 pc=0x5604cfccc745</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork.(*network).getEndpointsFromStore(0xc00289a380, 0xc004a99258, 0x7, 0x5604d2206920, 0xc001a515f0, 0xc002f3ff48)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/store.go:190 +0x343 fp=0xc0008c09f8 sp=0xc0008c0730 pc=0x5604d01acaf3</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork.(*controller).reservePools(0xc0004b7400)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/controller.go:977 +0x4c1 fp=0xc0008c0c28 sp=0xc0008c09f8 pc=0x5604d0159701</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork.New(0xc001055d00, 0x9, 0x10, 0xc0007ac870, 0xc001387fb0, 0xc001055d00, 0x9)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/vendor/libnetwork/controller.go:245 +0x615 fp=0xc0008c0dd8 sp=0xc0008c0c28 pc=0x5604d0154815</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/daemon.(*Daemon).initNetworkController(0xc00000c1e0, 0xc000207080, 0xc001387fb0, 0xc000236f50, 0xc00000c1e0, 0xc0007170c8, 0xc001387fb0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/daemon/daemon_unix.go:855 +0xa9 fp=0xc0008c0e90 sp=0xc0008c0dd8 pc=0x5604d0a49429</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/daemon.(*Daemon).restore(0xc00000c1e0, 0xc00004e5c0, 0xc000220000)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/daemon/daemon.go:490 +0x50b fp=0xc0008c1088 sp=0xc0008c0e90 pc=0x5604d0a3898b</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/daemon.NewDaemon(0x5604d21de4c0, 0xc00004e5c0, 0xc000207080, 0xc0007ac870, 0x0, 0x0, 0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/daemon/daemon.go:1147 +0x2be8 fp=0xc0008c19c8 sp=0xc0008c1088 pc=0x5604d0a3c938</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: main.(*DaemonCli).start(0xc0007ab410, 0xc000218600, 0x0, 0x0)</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: /docker/cmd/dockerd/daemon.go:195 +0x743 fp=0xc0008c1d00 sp=0xc0008c19c8 pc=0x5604d0dbb3c3</span><br><span class="line">Dec 07 15:02:28 node01 dockerd[239420]: main.runDaemon(...)</span><br></pre></td></tr></table></figure>
+
+<p>日志中存在明显的异常堆栈打印，分析可知，启动过程中走到<code>Loading containers: start.</code>之后卡住，然后打印<code>fatal error: runtime: out of memory</code>，也就是内存爆了。根据堆栈信息，可以看出异常的调用路径如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NewDaemon —&gt; restore() —&gt; initNetworkController —&gt; libnetwork.New() —&gt; reservePools() —&gt;  getEndpointsFromStore() —&gt; List —&gt; cache.list(kvObject) —&gt; cache.kmap(kvObject) —&gt; List(keyPrefix) —&gt; Next —&gt; next —&gt; first</span><br></pre></td></tr></table></figure>
+
+<p>拉取对应版本的代码，根据上述调用过程，找到指定的代码位置：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// List returns the range of keys starting with the passed in prefix</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *BoltDB)</span></span> List(keyPrefix <span class="type">string</span>) ([]*store.KVPair, <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> (</span><br><span class="line">        db  *bolt.DB</span><br><span class="line">        err <span class="type">error</span></span><br><span class="line">    )</span><br><span class="line">    b.Lock()</span><br><span class="line">    <span class="keyword">defer</span> b.Unlock()</span><br><span class="line"></span><br><span class="line">    kv := []*store.KVPair&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> db, err = b.getDBhandle(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> b.releaseDBhandle()</span><br><span class="line"></span><br><span class="line">    err = db.View(<span class="function"><span class="keyword">func</span><span class="params">(tx *bolt.Tx)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">        bucket := tx.Bucket(b.boltBucket)</span><br><span class="line">        <span class="keyword">if</span> bucket == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> store.ErrKeyNotFound</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        cursor := bucket.Cursor()</span><br><span class="line">        prefix := []<span class="type">byte</span>(keyPrefix)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> key, v := cursor.Seek(prefix); bytes.HasPrefix(key, prefix); key, v = cursor.Next() &#123;</span><br><span class="line"></span><br><span class="line">            dbIndex := binary.LittleEndian.Uint64(v[:libkvmetadatalen])</span><br><span class="line">            v = v[libkvmetadatalen:]</span><br><span class="line">            val := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="built_in">len</span>(v))</span><br><span class="line">            <span class="built_in">copy</span>(val, v)</span><br><span class="line"></span><br><span class="line">            kv = <span class="built_in">append</span>(kv, &amp;store.KVPair&#123;</span><br><span class="line">                Key:       <span class="type">string</span>(key),</span><br><span class="line">                Value:     val,</span><br><span class="line">                LastIndex: dbIndex,</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(kv) == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, store.ErrKeyNotFound</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> kv, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，这段是读取<code>boltdb</code>数据库（用于缓存网络配置），从之前了解看，这个数据库在异常断电时很容易损坏，所以怀疑是数据库损坏了，导致此处的遍历读取超出了预期的循环次数，而每次循环都会创建变量，分配内存，最终被内核<code>OOM</code>。</p>
+<p>在<code>docker</code>社区查找相关<code>issue</code>[1] [2]，发现确实存在<code>boltdb</code>数据库损坏的现象，不过最终报错的现象不太一样。最后，在<code>docker</code>社区也提了个<code>issue</code>[3]，社区反馈也是怀疑<code>boltdb</code>数据库损坏，并建议可以把<code>local-kv.db</code>文件删除再重启来恢复。</p>
+<p>个人觉得，上面报错的地方可以优化一下，对<code>db</code>文件做一次检查，如果检查到异常，提前抛异常，而不是不停地吃内存（由于异常的环境被破坏了，这个想法需要等复现后再考虑优化）。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
+<li>临时解决：删除<code>local-kv.db</code>文件再重启<code>docker</code>服务。</li>
+<li>永久解决：优化异常代码。</li>
+</ol>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/moby/moby/issues/37238">https://github.com/moby/moby/issues/37238</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/moby/moby/issues/42099">https://github.com/moby/moby/issues/42099</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/moby/moby/issues/43072">https://github.com/moby/moby/issues/43072</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/12/25/java/Karaf%E6%A1%86%E6%9E%B6%E5%8D%87%E7%BA%A7Lg4j%E5%8E%86%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +287,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -323,7 +434,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -451,7 +562,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -726,7 +837,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -831,7 +942,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -951,7 +1062,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1092,7 +1203,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1195,7 +1306,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1297,7 +1408,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1385,124 +1496,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/07/10/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Influxdb%E7%9B%91%E6%8E%A7%E6%95%B0%E6%8D%AE%E8%8E%B7%E5%8F%96%E5%BC%82%E5%B8%B8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/10/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Influxdb%E7%9B%91%E6%8E%A7%E6%95%B0%E6%8D%AE%E8%8E%B7%E5%8F%96%E5%BC%82%E5%B8%B8/" class="post-title-link" itemprop="url">K8S问题排查-Influxdb监控数据获取异常</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-07-10 11:11:46" itemprop="dateCreated datePublished" datetime="2021-07-10T11:11:46+00:00">2021-07-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>K8S集群内，<code>Influxdb</code>监控数据获取异常，最终CPU、内存和磁盘使用率都无法获取。</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">监控项         使用率</span><br><span class="line">CPU(核)        3%</span><br><span class="line">内存(GB)       18%</span><br><span class="line">磁盘空间(GB)    0%</span><br><span class="line"></span><br><span class="line">监控项         使用率</span><br><span class="line">CPU(核)        7%</span><br><span class="line">内存(GB)       18%</span><br><span class="line">磁盘空间(GB)    1%</span><br><span class="line"></span><br><span class="line">监控项         使用率</span><br><span class="line">CPU(核)        0%</span><br><span class="line">内存(GB)       0%</span><br><span class="line">磁盘空间(GB)    0%</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p><code>Influxdb</code>监控架构图参考[1]，其中<code>Load Balancer</code>采用<code>nginx</code>实现：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">        ┌─────────────────┐                 </span><br><span class="line">        │writes &amp; queries │                 </span><br><span class="line">        └─────────────────┘                 </span><br><span class="line">                 │                          </span><br><span class="line">                 ▼                          </span><br><span class="line">         ┌───────────────┐                  </span><br><span class="line">         │               │                  </span><br><span class="line">┌────────│ Load Balancer │─────────┐        </span><br><span class="line">│        │               │         │        </span><br><span class="line">│        └──────┬─┬──────┘         │        </span><br><span class="line">│               │ │                │        </span><br><span class="line">│               │ │                │        </span><br><span class="line">│        ┌──────┘ └────────┐       │        </span><br><span class="line">│        │ ┌─────────────┐ │       │┌──────┐</span><br><span class="line">│        │ │/write or UDP│ │       ││/query│</span><br><span class="line">│        ▼ └─────────────┘ ▼       │└──────┘</span><br><span class="line">│  ┌──────────┐      ┌──────────┐  │        </span><br><span class="line">│  │ InfluxDB │      │ InfluxDB │  │        </span><br><span class="line">│  │ Relay    │      │ Relay    │  │        </span><br><span class="line">│  └──┬────┬──┘      └────┬──┬──┘  │        </span><br><span class="line">│     │    |              |  │     │        </span><br><span class="line">│     |  ┌─┼──────────────┘  |     │        </span><br><span class="line">│     │  │ └──────────────┐  │     │        </span><br><span class="line">│     ▼  ▼                ▼  ▼     │        </span><br><span class="line">│  ┌──────────┐      ┌──────────┐  │        </span><br><span class="line">│  │          │      │          │  │        </span><br><span class="line">└─▶│ InfluxDB │      │ InfluxDB │◀─┘        </span><br><span class="line">   │          │      │          │           </span><br><span class="line">   └──────────┘      └──────────┘</span><br></pre></td></tr></table></figure>
-
-<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>因为获取的数据来源是<code>influxdb</code>数据库，所以先搞清楚异常的原因是请求路径上的问题，还是<code>influxdb</code>数据库自身没有数据的问题：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">找到influxdb-nginx的service</span></span><br><span class="line">kubectl get svc  -n kube-system -owide</span><br><span class="line">NAME                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE   SELECTOR</span><br><span class="line">grafana-service          ClusterIP   10.96.177.245   &lt;none&gt;        3000/TCP                 21d   app=grafana</span><br><span class="line">heapster                 ClusterIP   10.96.239.225   &lt;none&gt;        80/TCP                   21d   app=heapster</span><br><span class="line">influxdb-nginx-service   ClusterIP   10.96.170.72    &lt;none&gt;        7076/TCP                 21d   app=influxdb-nginx</span><br><span class="line">influxdb-relay-service   ClusterIP   10.96.196.45    &lt;none&gt;        9096/TCP                 21d   app=influxdb-relay</span><br><span class="line">influxdb-service         ClusterIP   10.96.127.45    &lt;none&gt;        8086/TCP                 21d   app=influxdb</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在集群节点上检查访问influxdb-nginx的service是否正常</span></span><br><span class="line">curl -i 10.96.170.72:7076/query</span><br><span class="line">HTTP/1.1 401 Unauthorized</span><br><span class="line">Server: nginx/1.17.2</span><br></pre></td></tr></table></figure>
-
-<p>可以看出，请求发送到<code>influxdb-nginx</code>的<code>service</code>是正常的，也就是请求可以正常发送到后端的<code>influxdb</code>数据库。那就继续确认<code>influxdb</code>数据库自身没有数据的问题：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">找到influxdb数据库的pod</span></span><br><span class="line">kubectl get pod -n kube-system -owide |grep influxdb</span><br><span class="line">influxdb-nginx-4x8pr                       1/1     Running   3          21d   177.177.52.201    node3</span><br><span class="line">influxdb-nginx-tpngh                       1/1     Running   6          21d   177.177.41.214    node1</span><br><span class="line">influxdb-nginx-wh6kc                       1/1     Running   5          21d   177.177.250.180   node2</span><br><span class="line">influxdb-relay-rs-65c94bbf5f-dp7s4         1/1     Running   2          21d   177.177.250.148   node2</span><br><span class="line">influxdb1-6ff9466d46-q6w5r                 1/1     Running   3          21d   177.177.41.230    node1</span><br><span class="line">influxdb2-d6d6697f5-zzcnk                  1/1     Running   3          21d   177.177.250.161   node2</span><br><span class="line">influxdb3-65ddfc7476-hxhr8                 1/1     Running   4          21d   177.177.52.217    node3</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">登录任意一个influxdb容器内并进入交互式命令</span></span><br><span class="line">kubectl exec -it -n kube-systme influxdb-rs3-65ddfc7476-hxhr8 bash</span><br><span class="line">root@influxdb-rs3-65ddfc7476-hxhr8:/# influx</span><br><span class="line">Connected to http://localhost:8086 version 1.7.7</span><br><span class="line">InfluxDB shell version: 1.7.7</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">auth</span></span><br><span class="line">username: admin</span><br><span class="line">password: xxx</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">use xxx;</span></span><br><span class="line">Using database xxx</span><br></pre></td></tr></table></figure>
-
-<p>根据业务层面的查询语句，在<code>influxdb</code>交互式命令下手工查询验证：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span> <span class="built_in">where</span> <span class="string">&quot;type&quot;</span> = <span class="string">&#x27;node&#x27;</span> and <span class="string">&quot;nodename&quot;</span> = <span class="string">&#x27;node1&#x27;</span> and time &gt; now() - 2m</span></span><br><span class="line"><span class="meta prompt_">&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>结果发现确实没有查到数据，既然<code>2min</code>内的数据没有，那把时间线拉长一些看看呢？</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">不限制时间范围的查询</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span>&gt; <span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span>;</span></span><br><span class="line">name: cpu/node_capacity</span><br><span class="line">time sum</span><br><span class="line">---- ---</span><br><span class="line">0    5301432000</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查询72min内的数据</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span> <span class="built_in">where</span> <span class="string">&quot;type&quot;</span> = <span class="string">&#x27;node&#x27;</span> and <span class="string">&quot;nodename&quot;</span> = <span class="string">&#x27;node1&#x27;</span> and time &gt; now() - 72m</span></span><br><span class="line">name: cpu/node_capacity</span><br><span class="line">time                sum</span><br><span class="line">----                ---</span><br><span class="line">1624348319900503945 72000</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">sleep</span> 1min，继续查询72min内的数据</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span> <span class="built_in">where</span> <span class="string">&quot;type&quot;</span> = <span class="string">&#x27;node&#x27;</span> and <span class="string">&quot;nodename&quot;</span> = <span class="string">&#x27;node1&#x27;</span> and time &gt; now() - 72m</span></span><br><span class="line">name: cpu/node_capacity</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"></span><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查询73min内的数据</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span> <span class="built_in">where</span> <span class="string">&quot;type&quot;</span> = <span class="string">&#x27;node&#x27;</span> and <span class="string">&quot;nodename&quot;</span> = <span class="string">&#x27;node1&#x27;</span> and time &gt; now() - 73m</span></span><br><span class="line">name: cpu/node_capacity</span><br><span class="line">time                sum</span><br><span class="line">----                ---</span><br><span class="line">1624348319900503945 72000</span><br></pre></td></tr></table></figure>
-
-<p>根据查询结果看，不添加时间范围的查询是有记录的，并且通过多次验证看，<strong>数据无法获取的原因是数据在某个时间点不再写入导致的</strong>。查看<code>influxdb</code>的日志看看有没有什么相关日志：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs -n kube-systme influxdb-rs3-65ddfc7476-hxhr8</span><br><span class="line">ts=2021-06-22T09:56:49.658621Z lvl=warn msg=&quot;max-values-per-tag limit may be exceeded soon&quot; log_id=0UYIcREl000 service=store perc=100% n=100000 max=100000 db_instance=xxx measurement=network/rx tag=pod_name</span><br><span class="line">ts=2021-06-22T09:56:49.658702Z lvl=warn msg=&quot;max-values-per-tag limit may be exceeded soon&quot; log_id=0UYIcREl000 service=store perc=100% n=100000 max=100000 db_instance=xxx measurement=network/rx_errors tag=pod_name</span><br><span class="line">ts=2021-06-22T09:56:49.658815Z lvl=warn msg=&quot;max-values-per-tag limit may be exceeded soon&quot; log_id=0UYIcREl000 service=store perc=100% n=100000 max=100000 db_instance=xxx measurement=network/tx tag=pod_name</span><br><span class="line">ts=2021-06-22T09:56:49.658893Z lvl=warn msg=&quot;max-values-per-tag limit may be exceeded soon&quot; log_id=0UYIcREl000 service=store perc=100% n=100000 max=100000 db_instance=xxx measurement=network/tx_errors tag=pod_name</span><br><span class="line">ts=2021-06-22T09:56:49.659062Z lvl=warn msg=&quot;max-values-per-tag limit may be exceeded soon&quot; log_id=0UYIcREl000 service=store perc=100% n=100003 max=100000 db_instance=xxx measurement=uptime tag=pod_name</span><br></pre></td></tr></table></figure>
-
-<p>果然，有大量<code>warn</code>日志，提示<code>max-values-per-tag limit may be exceeded soon</code>，从日志可以看出，这个参数的默认值为<code>100000</code>。通过搜索，找到了这个参数引入的issue[2]，引入原因大概意思是：</p>
-<blockquote>
-<p>如果不小心加载了大量的cardinality数据，那么当我们删除数据的时候，InfluxDB很容易会发生OOM。</p>
-</blockquote>
-<p>通过临时修改<code>max-values-per-tag</code>参数，验证问题是否解决</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">cat influxdb.conf</span><br><span class="line">[meta]</span><br><span class="line">  dir = &quot;/var/lib/influxdb/meta&quot;</span><br><span class="line">[data]</span><br><span class="line">  dir = &quot;/var/lib/influxdb/data&quot;</span><br><span class="line">  engine = &quot;tsm1&quot;</span><br><span class="line">  wal-dir = &quot;/var/lib/influxdb/wal&quot;</span><br><span class="line">  max-series-per-database = 0</span><br><span class="line">  max-values-per-tag = 0</span><br><span class="line">[http]</span><br><span class="line">  auth-enabled = true</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete pod -n kube-system influxdb-rs1-6ff9466d46-q6w5r</span><br><span class="line">pod &quot;influxdb-rs1-6ff9466d46-q6w5r&quot; deleted</span><br><span class="line"></span><br><span class="line">kubectl delete pod -n kube-system influxdb-rs2-d6d6697f5-zzcnk</span><br><span class="line">pod &quot;influxdb-rs2-d6d6697f5-zzcnk&quot; deleted</span><br><span class="line"></span><br><span class="line">kubectl delete pod -n kube-system influxdb-rs3-65ddfc7476-hxhr8</span><br><span class="line">pod &quot;influxdb-rs3-65ddfc7476-hxhr8&quot; deleted</span><br></pre></td></tr></table></figure>
-
-<p>再次观察业务层面获取的<code>Influxdb</code>监控数据，最终CPU、内存和磁盘使用率正常获取。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">监控项         使用率</span><br><span class="line">CPU(核)        19%</span><br><span class="line">内存(GB)       22%</span><br><span class="line">磁盘空间(GB)    2%</span><br></pre></td></tr></table></figure>
-
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>根据业务情况，将<code>influxdb</code>的<code>max-values-per-tag</code>参数调整到合适值。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
-<li><a target="_blank" rel="noopener" href="https://github.com/influxdata/influxdb-relay">https://github.com/influxdata/influxdb-relay</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/influxdata/influxdb/issues/7146">https://github.com/influxdata/influxdb/issues/7146</a></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1572,7 +1565,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-count">90</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1583,7 +1576,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

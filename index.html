@@ -170,7 +170,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2024-04-14 10:05:40 / 修改时间：02:10:03" itemprop="dateCreated datePublished" datetime="2024-04-14T10:05:40+00:00">2024-04-14</time>
+              <time title="创建时间：2024-04-14 10:05:40 / 修改时间：02:11:35" itemprop="dateCreated datePublished" datetime="2024-04-14T10:05:40+00:00">2024-04-14</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -250,6 +250,107 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/04/07/java/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-%E4%BD%BF%E7%94%A8sshj%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/04/07/java/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-%E4%BD%BF%E7%94%A8sshj%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">总结分享-使用sshj远程调试问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-07 21:15:44" itemprop="dateCreated datePublished" datetime="2024-04-07T21:15:44+00:00">2024-04-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/share/" itemprop="url" rel="index"><span itemprop="name">share</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p><code>java</code>项目中引用了<code>sshj</code>依赖包远程执行<code>ssh</code>命令，执行<code>ssh</code>的命令在环境上可以正常运行，但通过单元测试验证<code>ssh</code>命令时提示如下错误：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">2024-03-28 17:25:22 WARN  DefaultConfig:206 - Disabling high-strength ciphers: cipher strengths apparently limited by JCE policy</span><br><span class="line">2024-03-28 17:25:22 INFO  TransportImpl:214 - Client identity string: SSH-2.0-SSHJ_0.27.0</span><br><span class="line">2024-03-28 17:25:22 INFO  TransportImpl:178 - Server identity string: SSH-2.0-OpenSSH_7.4</span><br><span class="line">2024-03-28 17:25:23 ERROR TransportImpl:593 - Dying because - Invalid signature file digest <span class="keyword">for</span> Manifest main attributes</span><br><span class="line">java.lang.SecurityException: Invalid signature file digest <span class="keyword">for</span> Manifest main attributes</span><br><span class="line">    at sun.security.util.SignatureFileVerifier.processImpl(SignatureFileVerifier.java:317)</span><br><span class="line">    at sun.security.util.SignatureFileVerifier.process(SignatureFileVerifier.java:259)</span><br><span class="line">    at java.util.jar.JarVerifier.processEntry(JarVerifier.java:323)</span><br><span class="line">    at java.util.jar.JarVerifier.update(JarVerifier.java:234)</span><br><span class="line">    at java.util.jar.JarFile.initializeVerifier(JarFile.java:394)</span><br><span class="line">    at java.util.jar.JarFile.ensureInitialization(JarFile.java:632)</span><br><span class="line">    at java.util.jar.JavaUtilJarAccessImpl.ensureInitialization(JavaUtilJarAccessImpl.java:69)</span><br><span class="line">    at sun.misc.URLClassPath$JarLoader<span class="variable">$2</span>.getManifest(URLClassPath.java:993)</span><br><span class="line">    at java.net.URLClassLoader.defineClass(URLClassLoader.java:456)</span><br><span class="line">    at java.net.URLClassLoader.access<span class="variable">$100</span>(URLClassLoader.java:74)</span><br><span class="line">    at java.net.URLClassLoader<span class="variable">$1</span>.run(URLClassLoader.java:369)</span><br><span class="line">    at java.net.URLClassLoader<span class="variable">$1</span>.run(URLClassLoader.java:363)</span><br><span class="line">    at java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">    at java.net.URLClassLoader.findClass(URLClassLoader.java:362)</span><br><span class="line">    at java.lang.ClassLoader.loadClass(ClassLoader.java:418)</span><br><span class="line">    at sun.misc.Launcher<span class="variable">$AppClassLoader</span>.loadClass(Launcher.java:352)</span><br><span class="line">    at java.lang.ClassLoader.loadClass(ClassLoader.java:351)</span><br><span class="line">    at net.schmizz.sshj.common.KeyType<span class="variable">$3</span>.isMyType(KeyType.java:124)</span><br><span class="line">    at net.schmizz.sshj.common.KeyType.fromKey(KeyType.java:288)</span><br><span class="line">    at net.schmizz.sshj.transport.kex.AbstractDHG.next(AbstractDHG.java:82)</span><br><span class="line">    at net.schmizz.sshj.transport.KeyExchanger.handle(KeyExchanger.java:364)</span><br><span class="line">    at net.schmizz.sshj.transport.TransportImpl.handle(TransportImpl.java:503)</span><br><span class="line">    at net.schmizz.sshj.transport.Decoder.decodeMte(Decoder.java:159)</span><br><span class="line">    at net.schmizz.sshj.transport.Decoder.decode(Decoder.java:79)</span><br><span class="line">    at net.schmizz.sshj.transport.Decoder.received(Decoder.java:231)</span><br><span class="line">    at net.schmizz.sshj.transport.Reader.run(Reader.java:59)</span><br><span class="line">2024-03-28 17:25:23 INFO  TransportImpl:192 - Disconnected - UNKNOWN</span><br><span class="line">2024-03-28 17:25:23 ERROR Promise:174 - &lt;&lt;<span class="string">kex done&gt;&gt; woke to: net.schmizz.sshj.transport.TransportException: Invalid signature file digest for Manifest main attributes</span></span><br><span class="line"><span class="string">2024-03-28 17:25:23 ERROR matrix:573 - failed exec command ls /root/ on node 10.10.2.8</span></span><br></pre></td></tr></table></figure>
+
+<p>根据报错信息<code>Invalid signature file digest for Manifest main attributes</code>，查找相关资料，尝试以下几种解决方法都没有效果：</p>
+<ol>
+<li>自定义<code>provider</code>：<code>Security.addProvider(new sun.security.ec.SunEC())</code>;</li>
+<li>禁用<code>JCE</code>加密限制：<code>Security.setProperty(&quot;crypto.policy&quot;, &quot;unlimited&quot;)</code>;</li>
+<li>基于<code>sshj</code>的<code>SecurityUtils</code>设置<code>provider</code>：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">将BC提供者设置为SSHJ的安全提供者</span><br><span class="line">SecurityUtils.setSecurityProvider(String.valueOf(Security.getProvider(<span class="string">&quot;BC&quot;</span>)));</span><br><span class="line"></span><br><span class="line">将JCE提供者设置为SSHJ的安全提供者</span><br><span class="line">SecurityUtils.setSecurityProvider(String.valueOf(Security.getProvider(<span class="string">&quot;SunJCE&quot;</span>)));</span><br></pre></td></tr></table></figure>
+
+<p>查<code>sshj</code>相关<code>issue</code>[1]，发现一个类似的问题，原因是<code>bcprov</code>的签名无法被验证。查看<code>bcprov</code>的签名情况：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">有问题的版本：</span><br><span class="line">[root@node1 1.0.0]<span class="comment"># /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.402.b06-1.el7_9.x86_64/bin/jarsigner -verify bcprov-jdk15on-1.60.jar</span></span><br><span class="line">jarsigner: java.lang.SecurityException: Invalid signature file digest <span class="keyword">for</span> Manifest main attributes</span><br><span class="line"></span><br><span class="line">高版本：</span><br><span class="line">[root@node1 1.0.0]<span class="comment"># /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.402.b06-1.el7_9.x86_64/bin/jarsigner -verify bcprov-jdk15on-1.69.jar</span></span><br><span class="line">jar 已验证。</span><br><span class="line">警告:</span><br><span class="line">此 jar 包含其证书链无效的条目。原因: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target</span><br><span class="line">The DSA signing key has a keysize of 1024 <span class="built_in">which</span> is considered a security risk. This key size will be disabled <span class="keyword">in</span> a future update.</span><br></pre></td></tr></table></figure>
+
+<p>看起来是版本问题，更新项目中的<code>bcprov</code>版本到<code>1.69</code>，重新测试后报错消失，显示正常的命令执行结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2024-03-29 09:00:08 INFO  BouncyCastleRandom:48 - Generating random seed from SecureRandom.</span><br><span class="line">2024-03-29 09:00:08 INFO  TransportImpl:214 - Client identity string: SSH-2.0-SSHJ_0.27.0</span><br><span class="line">2024-03-29 09:00:08 INFO  TransportImpl:178 - Server identity string: SSH-2.0-OpenSSH_7.4</span><br><span class="line">2024-03-29 09:00:08 INFO  TransportImpl:192 - Disconnected - BY_APPLICATION</span><br><span class="line">anaconda-ks.cfg</span><br></pre></td></tr></table></figure>
+
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>升级依赖包<code>bcprov</code>的版本到<code>1.69</code>。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/hierynomus/sshj/issues/701">https://github.com/hierynomus/sshj/issues/701</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/03/31/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8%EF%BC%88%E7%BB%AD2%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -281,7 +382,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -378,7 +479,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -468,7 +569,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -588,7 +689,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -700,7 +801,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -798,7 +899,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -900,7 +1001,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1004,7 +1105,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
+                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1070,129 +1171,6 @@
 <li><a target="_blank" rel="noopener" href="https://github.com/projectcalico/go-build/blob/7a75e06f7e9b39df8697ca96f6d5f42369155902/Makefile.common">https://github.com/projectcalico/go-build/blob/7a75e06f7e9b39df8697ca96f6d5f42369155902/Makefile.common</a></li>
 <li><a target="_blank" rel="noopener" href="https://mirrors.aliyun.com/centos-vault/8.1.1911/">https://mirrors.aliyun.com/centos-vault/8.1.1911/</a></li>
 </ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2023/04/08/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E6%B2%A1%E6%9C%89Endpoint%E7%9A%84Service%E8%AF%B7%E6%B1%82Reject%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/08/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E6%B2%A1%E6%9C%89Endpoint%E7%9A%84Service%E8%AF%B7%E6%B1%82Reject%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">K8S问题排查-没有Endpoint的Service请求Reject失效问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-04-08 20:11:32" itemprop="dateCreated datePublished" datetime="2023-04-08T20:11:32+00:00">2023-04-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:10:03" itemprop="dateModified" datetime="2024-04-14T02:10:03+00:00">2024-04-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>客户的防火墙抓到了没有<code>Endpoint</code>的<code>Service</code>请求，从<code>K8S</code>角度来说，正常情况下不应该存在这种现象的，因为没有<code>Endpoint</code>的<code>Service</code>请求会被<code>iptables</code>规则<code>reject</code>掉才对。</p>
-<h2 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h2><p>先本地环境复现，创建一个没有后端的服务，例如<code>grafana-service111</code>：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> [root@node01 ~]# kubectl get svc -A</span><br><span class="line">NAMESPACE     NAME                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE</span><br><span class="line">default       kubernetes               ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP                  2d</span><br><span class="line">kube-system   grafana-service          ClusterIP   10.96.78.163    &lt;none&gt;        3000/TCP                 2d</span><br><span class="line">kube-system   grafana-service111       ClusterIP   10.96.52.101    &lt;none&gt;        3000/TCP                 13s</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# kubectl get ep -A</span><br><span class="line">NAMESPACE     NAME                      ENDPOINTS                                                       AGE</span><br><span class="line">default       kubernetes                10.10.72.15:6443                                                2d</span><br><span class="line">kube-system   grafana-service           10.78.104.6:3000,10.78.135.5:3000                               2d</span><br><span class="line">kube-system   grafana-service111        &lt;none&gt;                                                          18s</span><br></pre></td></tr></table></figure>
-
-<p>进入一个业务<code>Pod</code>，并请求<code>grafana-service111</code>，结果请求卡住并超时终止：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# kubectl exec -it -n kube-system   influxdb-rs1-5bdc67f4cb-lnfgt bash</span><br><span class="line">root@influxdb-rs1-5bdc67f4cb-lnfgt:/# time curl http://10.96.52.101:3000</span><br><span class="line">curl: (7) Failed to connect to 10.96.52.101 port 3000: Connection timed out</span><br><span class="line"></span><br><span class="line">real    2m7.307s</span><br><span class="line">user    0m0.006s</span><br><span class="line">sys     0m0.008s</span><br></pre></td></tr></table></figure>
-
-<p>查看<code>grafana-service111</code>的<code>iptables</code>规则，发现有<code>reject</code>规则，但从上面的实测现象看，应该是没有生效：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]<span class="comment"># iptables-save |grep 10.96.52.101</span></span><br><span class="line">-A KUBE-SERVICES -d 10.96.52.101/32 -p tcp -m comment --comment <span class="string">&quot;kube-system/grafana-service111: has no endpoints&quot;</span> -m tcp --dport 3000 -j REJECT --reject-with icmp-port-unreachable</span><br></pre></td></tr></table></figure>
-
-<p>在业务<code>Pod</code>容器网卡上抓包，没有发现响应报文（<strong>不符合预期</strong>）：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# tcpdump -n -i calie2568ca85e4 host 10.96.52.101</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on calie2568ca85e4, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">20:31:34.647286 IP 10.78.166.136.39230 &gt; 10.96.52.101.hbci: Flags [S], seq 1890821953, win 29200, options [mss 1460,sackOK,TS val 792301056 ecr 0,nop,wscale 7], length 0</span><br></pre></td></tr></table></figure>
-
-<p>在节点网卡上抓包，存在服务请求包（<strong>不符合预期</strong>）：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# tcpdump -n -i eth0 host 10.96.52.101</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">20:33:36.994881 IP 10.10.72.10.41234 &gt; 10.96.52.101.hbci: Flags [S], seq 3530065013, win 29200, options [mss 1460,sackOK,TS val 792423403 ecr 0,nop,wscale 7], length 0</span><br><span class="line">20:33:37.995298 IP 10.10.72.10.41234 &gt; 10.96.52.101.hbci: Flags [S], seq 3530065013, win 29200, options [mss 1460,sackOK,TS val 792424404 ecr 0,nop,wscale 7], length 0</span><br><span class="line">20:33:39.999285 IP 10.10.72.10.41234 &gt; 10.96.52.101.hbci: Flags [S], seq 3530065013, win 29200, options [mss 1460,sackOK,TS val 792426408 ecr 0,nop,wscale 7], length 0</span><br></pre></td></tr></table></figure>
-
-<p>既然<code>reject</code>规则存在，初步怀疑可能影响该规则的组件有两个：</p>
-<ol>
-<li><code>kube-proxy</code></li>
-<li><code>calico-node</code></li>
-</ol>
-<p>基于上一篇《<a href="https://lyyao09.github.io/2023/03/25/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E4%BD%BF%E7%94%A8Kubeasz%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2K8S%E9%9B%86%E7%BE%A4/">使用Kubeasz一键部署K8S集群</a>》，<strong>在最新的<code>K8S</code>集群上做相同的测试，发现不存在该问题，说明该问题在新版本已经修复了</strong>。分别在<code>K8S</code>和<code>Calico</code>的<code>issue</code>上查询相关问题，最后发现是<code>Calico</code>的<code>bug</code>，相关<code>issue</code>见参考资料[1, 2]，修复记录见参考资料[3]。</p>
-<p>下面是新老版本的<code>Calico</code>处理<code>cali-FORWARD</code>链的差异点：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">有问题的环境：</span><br><span class="line">[root@node4 ~]<span class="comment"># iptables -t filter -S  cali-FORWARD</span></span><br><span class="line">-N cali-FORWARD</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:vjrMJCRpqwy5oRoX&quot;</span> -j MARK --set-xmark 0x0/0xe0000</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:A_sPAO0mcxbT9mOV&quot;</span> -m mark --mark 0x0/0x10000 -j cali-from-hep-forward</span><br><span class="line">-A cali-FORWARD -i cali+ -m comment --comment <span class="string">&quot;cali:8ZoYfO5HKXWbB3pk&quot;</span> -j cali-from-wl-dispatch</span><br><span class="line">-A cali-FORWARD -o cali+ -m comment --comment <span class="string">&quot;cali:jdEuaPBe14V2hutn&quot;</span> -j cali-to-wl-dispatch</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:12bc6HljsMKsmfr-&quot;</span> -j cali-to-hep-forward</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:MH9kMp5aNICL-Olv&quot;</span> -m comment --comment <span class="string">&quot;Policy explicitly accepted packet.&quot;</span> -m mark --mark 0x10000/0x10000 -j ACCEPT</span><br><span class="line">//问题在这最后这一条规则，新版本的calico把这条规则移到了FORWARD链</span><br><span class="line"></span><br><span class="line">正常的环境：</span><br><span class="line">[root@node01 ~]<span class="comment"># iptables -t filter -S cali-FORWARD</span></span><br><span class="line">-N cali-FORWARD</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:vjrMJCRpqwy5oRoX&quot;</span> -j MARK --set-xmark 0x0/0xe0000</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:A_sPAO0mcxbT9mOV&quot;</span> -m mark --mark 0x0/0x10000 -j cali-from-hep-forward</span><br><span class="line">-A cali-FORWARD -i cali+ -m comment --comment <span class="string">&quot;cali:8ZoYfO5HKXWbB3pk&quot;</span> -j cali-from-wl-dispatch</span><br><span class="line">-A cali-FORWARD -o cali+ -m comment --comment <span class="string">&quot;cali:jdEuaPBe14V2hutn&quot;</span> -j cali-to-wl-dispatch</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:12bc6HljsMKsmfr-&quot;</span> -j cali-to-hep-forward</span><br><span class="line">-A cali-FORWARD -m comment --comment <span class="string">&quot;cali:NOSxoaGx8OIstr1z&quot;</span> -j cali-cidr-block</span><br></pre></td></tr></table></figure>
-
-<p>下面是在最新的<code>K8S</code>集群上做相同的测试记录，可以跟异常环境做对比。</p>
-<p>模拟一个业务请求<code>pod</code>：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 home]<span class="comment"># kubectl run busybox --image=busybox-curl:v1.0 --image-pull-policy=IfNotPresent -- sleep 300000</span></span><br><span class="line">pod/busybox created</span><br><span class="line"></span><br><span class="line">[root@node01 home]<span class="comment"># kubectl get pod -A -owide</span></span><br><span class="line">NAMESPACE     NAME                                         READY   STATUS    RESTARTS   AGE   IP             NODE           default       busybox                                      1/1     Running   0          14h   10.78.153.73   10.10.11.49 </span><br></pre></td></tr></table></figure>
-
-<p>模拟一个业务响应服务<code>metrics-server111</code>，并且该服务无后端<code>endpoint</code>：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 home]# kubectl get svc -A</span><br><span class="line">NAMESPACE     NAME                        TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                  AGE</span><br><span class="line">default       kubernetes                  ClusterIP   10.68.0.1      &lt;none&gt;        443/TCP                  18h</span><br><span class="line">kube-system   dashboard-metrics-scraper   ClusterIP   10.68.174.38   &lt;none&gt;        8000/TCP                 17h</span><br><span class="line">kube-system   kube-dns                    ClusterIP   10.68.0.2      &lt;none&gt;        53/UDP,53/TCP,9153/TCP   17h</span><br><span class="line">kube-system   kube-dns-upstream           ClusterIP   10.68.41.41    &lt;none&gt;        53/UDP,53/TCP            17h</span><br><span class="line">kube-system   kubernetes-dashboard        NodePort    10.68.160.45   &lt;none&gt;        443:30861/TCP            17h</span><br><span class="line">kube-system   metrics-server              ClusterIP   10.68.65.249   &lt;none&gt;        443/TCP                  17h</span><br><span class="line">kube-system   metrics-server111           ClusterIP   10.68.224.53   &lt;none&gt;        443/TCP                  14h</span><br><span class="line">kube-system   node-local-dns              ClusterIP   None           &lt;none&gt;        9253/TCP                 17h</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# kubectl get ep -A</span><br><span class="line">NAMESPACE     NAME                        ENDPOINTS                                           AGE</span><br><span class="line">default       kubernetes                  172.28.11.49:6443                                   18h</span><br><span class="line">kube-system   dashboard-metrics-scraper   10.78.153.68:8000                                   18h</span><br><span class="line">kube-system   kube-dns                    10.78.153.67:53,10.78.153.67:53,10.78.153.67:9153   18h</span><br><span class="line">kube-system   kube-dns-upstream           10.78.153.67:53,10.78.153.67:53                     18h</span><br><span class="line">kube-system   kubernetes-dashboard        10.78.153.66:8443                                   18h</span><br><span class="line">kube-system   metrics-server              10.78.153.65:4443                                   18h</span><br><span class="line">kube-system   metrics-server111           &lt;none&gt;                                              15h</span><br><span class="line">kube-system   node-local-dns              172.28.11.49:9253                                   18h</span><br></pre></td></tr></table></figure>
-
-<p>进入业务请求<code>pod</code>，做<code>curl</code>测试，请求立刻被拒绝（<strong>符合预期</strong>）：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 02-k8s]# kubectl exec -it busybox bash</span><br><span class="line">/ # curl -i -k https://10.68.224.53:443</span><br><span class="line">curl: (7) Failed to connect to 10.68.224.53 port 443 after 2 ms: Connection refused</span><br></pre></td></tr></table></figure>
-
-<p><code>tcpdump</code>抓取容器网卡报文，出现<code>tcp port https unreachable</code>（<strong>符合预期</strong>）：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -n -i cali12d4a061371</span><br><span class="line">21:54:42.697437 IP 10.78.153.73.41606 &gt; 10.68.224.53.https: Flags [S], seq 3510100476, win 29200, options [mss 1460,sackOK,TS val 2134372616 ecr 0,nop,wscale 7], length 0</span><br><span class="line">21:54:42.698804 IP 10.10.11.49&gt; 10.78.153.73: ICMP 10.68.224.53 tcp port https unreachable, length 68</span><br></pre></td></tr></table></figure>
-
-<p><code>tcpdump</code>抓取节点网卡报文，无请求从测试容器内发出集群（<strong>符合预期</strong>）；</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 bin]# tcpdump -n -i eth0 host 10.68.224.53</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">^C</span><br><span class="line">0 packets captured</span><br><span class="line">2 packets received by filter</span><br><span class="line">0 packets dropped by kernel</span><br></pre></td></tr></table></figure>
-
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>升级<code>Calico</code>，要求版本<code>&gt;=v3.16.0</code>。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://github.com/projectcalico/calico/issues/1055">https://github.com/projectcalico/calico/issues/1055</a><br><a target="_blank" rel="noopener" href="https://github.com/projectcalico/calico/issues/3901">https://github.com/projectcalico/calico/issues/3901</a><br><a target="_blank" rel="noopener" href="https://github.com/projectcalico/felix/pull/2424">https://github.com/projectcalico/felix/pull/2424</a> </p>
 
       
     </div>
@@ -1277,7 +1255,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-count">90</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1288,7 +1266,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
