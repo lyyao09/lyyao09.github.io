@@ -145,6 +145,100 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/05/18/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-%E6%B3%A8%E5%86%8C%E5%85%8D%E8%B4%B9%E7%9A%84Redhat%E8%AE%A2%E9%98%85%E6%9C%8D%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/18/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-%E6%B3%A8%E5%86%8C%E5%85%8D%E8%B4%B9%E7%9A%84Redhat%E8%AE%A2%E9%98%85%E6%9C%8D%E5%8A%A1/" class="post-title-link" itemprop="url">总结分享-注册免费的Redhat订阅服务</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-18 20:15:00" itemprop="dateCreated datePublished" datetime="2024-05-18T20:15:00+00:00">2024-05-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/share/" itemprop="url" rel="index"><span itemprop="name">share</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>由于工作需要，定位问题时可能需要访问<code>redhat</code>的知识库，参考资料[1]，执行以下几步即可搞定：</p>
+<h2 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h2><p><strong>第一步：</strong>登录 <code>https://access.redhat.com/</code> 创建一个账号；</p>
+<p><strong>第二步：</strong>访问 <code>https://developers.redhat.com/products/rhel/download</code> 激活订阅（收到邮件并激活）；</p>
+<p><strong>第三步：</strong>访问 <code>https://access.redhat.com/management</code> 确认一下我们的账号是否有 <code>developer subscription</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">14904535	Red Hat Developer Subscription <span class="keyword">for</span> Individuals</span><br><span class="line">14904536	Red Hat Beta Access</span><br></pre></td></tr></table></figure>
+
+<p><strong>第四步：</strong>用注册的用户名密码，激活一个<code>rhel</code>系统：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">subscription-manager register --auto-attach --username ******** --password ********</span><br></pre></td></tr></table></figure>
+
+<p><strong>第五步：</strong>访问<code>https://access.redhat.com/solutions/6178422</code>测试知识库是否能访问；</p>
+<p><strong>关于激活一个<code>rhel</code>系统的操作，为了快速方便，这里使用<code>vagrant</code>软件快速部署一个<code>redhat8</code>的操作系统。这个流程也仅需要以下几步：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 初始化Vagrantfile文件</span></span><br><span class="line">$ vagrant init generic/rhel8</span><br><span class="line">A `Vagrantfile` has been placed <span class="keyword">in</span> this directory. You are now</span><br><span class="line">ready to `vagrant up` your first virtual environment! Please <span class="built_in">read</span></span><br><span class="line">the comments <span class="keyword">in</span> the Vagrantfile as well as documentation on</span><br><span class="line">`vagrantup.com` <span class="keyword">for</span> more information on using Vagrant.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动redhat8系统</span></span><br><span class="line">$ vagrant up</span><br><span class="line">Bringing machine <span class="string">&#x27;default&#x27;</span> up with <span class="string">&#x27;virtualbox&#x27;</span> provider...</span><br><span class="line">==&gt; default: Box <span class="string">&#x27;generic/rhel8&#x27;</span> could not be found. Attempting to find and install...</span><br><span class="line">    default: Box Provider: virtualbox</span><br><span class="line">    default: Box Version: &gt;= 0</span><br><span class="line">==&gt; default: Loading metadata <span class="keyword">for</span> box <span class="string">&#x27;generic/rhel8&#x27;</span></span><br><span class="line">    default: URL: https://vagrantcloud.com/generic/rhel8</span><br><span class="line">==&gt; default: Adding box <span class="string">&#x27;generic/rhel8&#x27;</span> (v4.3.12) <span class="keyword">for</span> provider: virtualbox</span><br><span class="line">    default: Downloading: https://vagrantcloud.com/generic/boxes/rhel8/versions/4.3.12/providers/virtualbox/amd64/vagrant.box</span><br><span class="line">    default:</span><br><span class="line">    default: Calculating and comparing box checksum...</span><br><span class="line">==&gt; default: Successfully added box <span class="string">&#x27;generic/rhel8&#x27;</span> (v4.3.12) <span class="keyword">for</span> <span class="string">&#x27;virtualbox&#x27;</span>!</span><br><span class="line">==&gt; default: Importing base box <span class="string">&#x27;generic/rhel8&#x27;</span>...</span><br><span class="line">==&gt; default: Matching MAC address <span class="keyword">for</span> NAT networking...</span><br><span class="line">==&gt; default: Checking <span class="keyword">if</span> box <span class="string">&#x27;generic/rhel8&#x27;</span> version <span class="string">&#x27;4.3.12&#x27;</span> is up to <span class="built_in">date</span>...</span><br><span class="line">==&gt; default: Setting the name of the VM: Redhat8_default_1715673627487_1933</span><br><span class="line">==&gt; default: Vagrant has detected a configuration issue <span class="built_in">which</span> exposes a</span><br><span class="line">==&gt; default: vulnerability with the installed version of VirtualBox. The</span><br><span class="line">==&gt; default: current guest is configured to use an E1000 NIC <span class="built_in">type</span> <span class="keyword">for</span> a</span><br><span class="line">==&gt; default: network adapter <span class="built_in">which</span> is vulnerable <span class="keyword">in</span> this version of VirtualBox.</span><br><span class="line">==&gt; default: Ensure the guest is trusted to use this configuration or update</span><br><span class="line">==&gt; default: the NIC <span class="built_in">type</span> using one of the methods below:</span><br><span class="line">==&gt; default:</span><br><span class="line">==&gt; default:   https://www.vagrantup.com/docs/virtualbox/configuration.html<span class="comment">#default-nic-type</span></span><br><span class="line">==&gt; default:   https://www.vagrantup.com/docs/virtualbox/networking.html<span class="comment">#virtualbox-nic-type</span></span><br><span class="line">==&gt; default: Clearing any previously <span class="built_in">set</span> network interfaces...</span><br><span class="line">==&gt; default: Preparing network interfaces based on configuration...</span><br><span class="line">    default: Adapter 1: nat</span><br><span class="line">==&gt; default: Forwarding ports...</span><br><span class="line">    default: 22 (guest) =&gt; 2222 (host) (adapter 1)</span><br><span class="line">==&gt; default: Running <span class="string">&#x27;pre-boot&#x27;</span> VM customizations...</span><br><span class="line">==&gt; default: Booting VM...</span><br><span class="line">==&gt; default: Waiting <span class="keyword">for</span> machine to boot. This may take a few minutes...</span><br><span class="line">    default: SSH address: 127.0.0.1:2222</span><br><span class="line">    default: SSH username: vagrant</span><br><span class="line">    default: SSH auth method: private key</span><br><span class="line">The guest machine entered an invalid state <span class="keyword">while</span> waiting <span class="keyword">for</span> it</span><br><span class="line">to boot. Valid states are <span class="string">&#x27;starting, running&#x27;</span>. The machine is <span class="keyword">in</span> the</span><br><span class="line"><span class="string">&#x27;paused&#x27;</span> state. Please verify everything is configured</span><br><span class="line">properly and try again.</span><br><span class="line"></span><br><span class="line">If the provider you<span class="string">&#x27;re using has a GUI that comes with it,</span></span><br><span class="line"><span class="string">it is often helpful to open that and watch the machine, since the</span></span><br><span class="line"><span class="string">GUI often has more helpful error messages than Vagrant can retrieve.</span></span><br><span class="line"><span class="string">For example, if you&#x27;</span>re using VirtualBox, run `vagrant up` <span class="keyword">while</span> the</span><br><span class="line">VirtualBox GUI is open.</span><br><span class="line"></span><br><span class="line">The primary issue <span class="keyword">for</span> this error is that the provider you<span class="string">&#x27;re using</span></span><br><span class="line"><span class="string">is not properly configured. This is very rarely a Vagrant issue.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># 上面的命令执行后系统处于paused状态，再启动一下</span></span><br><span class="line"><span class="string">$ vagrant up</span></span><br><span class="line"><span class="string">Bringing machine &#x27;</span>default<span class="string">&#x27; up with &#x27;</span>virtualbox<span class="string">&#x27; provider...</span></span><br><span class="line"><span class="string">==&gt; default: Checking if box &#x27;</span>generic/rhel8<span class="string">&#x27; version &#x27;</span>4.3.12<span class="string">&#x27; is up to date...</span></span><br><span class="line"><span class="string">==&gt; default: Unpausing the VM...</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># ssh到新安装的redhat系统</span></span><br><span class="line"><span class="string">$ vagrant ssh</span></span><br><span class="line"><span class="string">Register this system with Red Hat Insights: insights-client --register</span></span><br><span class="line"><span class="string">Create an account or view all your systems at https://red.ht/insights-dashboard</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># 在redhat系统中执行注册</span></span><br><span class="line"><span class="string">[root@rhel8 ~]# subscription-manager register --auto-attach --username ******** --password ********</span></span><br><span class="line"><span class="string">Registering to: subscription.rhsm.redhat.com:443/subscription</span></span><br><span class="line"><span class="string">The system has been registered with ID: xxxx-xxxx-xxxx-xxxx-xxxx</span></span><br><span class="line"><span class="string">The registered system name is: rhel8.localdomain</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># 系统使用完，关机即可</span></span><br><span class="line"><span class="string">$ vagrant halt</span></span><br><span class="line"><span class="string">==&gt; default: Attempting graceful shutdown of VM...</span></span><br><span class="line"><span class="string">    default:</span></span><br><span class="line"><span class="string">    default: Vagrant insecure key detected. Vagrant will automatically replace</span></span><br><span class="line"><span class="string">    default: this with a newly generated keypair for better security.</span></span><br><span class="line"><span class="string">    default:</span></span><br><span class="line"><span class="string">    default: Inserting generated public key within guest...</span></span><br><span class="line"><span class="string">    default: Removing insecure key from the guest if it&#x27;</span>s present...</span><br><span class="line">    default: Key inserted! Disconnecting and reconnecting using new SSH key...</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://wangzheng422.github.io/docker_env/notes/2022/2022.04.no-cost.rhel.sub.html">https://wangzheng422.github.io/docker_env/notes/2022/2022.04.no-cost.rhel.sub.html</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/05/12/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E9%87%8D%E5%90%AFDbus%E6%9C%8D%E5%8A%A1%E5%AF%BC%E8%87%B4%E5%AE%B9%E5%99%A8%E5%88%9B%E5%BB%BA%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +270,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -274,7 +368,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -380,7 +474,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -470,7 +564,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -581,7 +675,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -682,7 +776,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -779,7 +873,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -869,7 +963,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -989,7 +1083,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1051,104 +1145,6 @@
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1543689">https://cloud.tencent.com/developer/article/1543689</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/frankming/p/16870285.html">https://www.cnblogs.com/frankming/p/16870285.html</a></p>
 <p><a target="_blank" rel="noopener" href="http://ftp.usf.edu/pub/centos/7/virt/x86_64/xen-414/Packages/k/">http://ftp.usf.edu/pub/centos/7/virt/x86_64/xen-414/Packages/k/</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2023/06/18/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-BC-Linux-for-Eular%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%80%82%E9%85%8D%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/06/18/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-BC-Linux-for-Eular%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%80%82%E9%85%8D%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">K8S问题排查-BC-Linux-for-Eular操作系统适配问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-06-18 20:18:01" itemprop="dateCreated datePublished" datetime="2023-06-18T20:18:01+00:00">2023-06-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>在<code>bclinux-for-eular</code>操作系统上部署<code>K8S</code>集群后，安装上层的业务组件时，突然从某个组件开始，<code>Pod</code>无法正常启动。</p>
-<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>查看<code>description</code>日志，出现了明显的<code>too many open files</code>错误：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Normal   Scheduled               41m                  default-scheduler  Successfully assigned xx/xxx-v3falue7-6f59dd5766-npd2x to node1</span><br><span class="line">  Warning  FailedCreatePodSandBox  26m (x301 over 41m)  kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = failed to start sandbox container <span class="keyword">for</span> pod <span class="string">&quot;xxx-v3falue7-6f59dd5766-npd2x&quot;</span>: Error response from daemon: start failed: : pipe2: too many open files: unknown</span><br><span class="line">  Normal   SandboxChanged          66s (x808 over 41m)  kubelet            Pod sandbox changed, it will be killed and re-created.  </span><br></pre></td></tr></table></figure>
-
-<p>因为使用的是<code>docker</code>作为<code>CRI</code>，所以先查看<code>docker</code>日志：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">time=<span class="string">&quot;2023-11-13T14:56:05.734166795+08:00&quot;</span> level=info msg=<span class="string">&quot;/etc/resolv.conf does not exist&quot;</span></span><br><span class="line">time=<span class="string">&quot;2023-11-13T14:56:05.734193544+08:00&quot;</span> level=info msg=<span class="string">&quot;No non-localhost DNS nameservers are left in resolv.conf. Using default external servers: [nameserver 8.8.8.8 nameserver 8.8.4.4]&quot;</span></span><br><span class="line">time=<span class="string">&quot;2023-11-13T14:56:05.734202079+08:00&quot;</span> level=info msg=<span class="string">&quot;IPv6 enabled; Adding default IPv6 external servers: [nameserver 2001:4860:4860::8888 nameserver 2001:4860:4860::8844]&quot;</span></span><br><span class="line">time=<span class="string">&quot;2023-11-13T14:56:05.740830618+08:00&quot;</span> level=error msg=<span class="string">&quot;stream copy error: reading from a closed fifo&quot;</span></span><br><span class="line">time=<span class="string">&quot;2023-11-13T14:56:05.740850537+08:00&quot;</span> level=error msg=<span class="string">&quot;stream copy error: reading from a closed fifo&quot;</span></span><br><span class="line">time=<span class="string">&quot;2023-11-13T14:56:05.751993232+08:00&quot;</span> level=error msg=<span class="string">&quot;1622cfb1c90d926b867db7bcb0a86498ccad59db81223e861ac515ec75ed7c27 cleanup: failed to delete container from containerd: no such container&quot;</span></span><br><span class="line">time=<span class="string">&quot;2023-11-13T14:56:05.752024358+08:00&quot;</span> level=error msg=<span class="string">&quot;Handler for POST /v1.41/containers/1622cfb1c90d926b867db7bcb0a86498ccad59db81223e861ac515ec75ed7c27/start returned error: start failed: : fork/exec /usr/bin/containerd-shim-runc-v2: too many open files: unknown&quot;</span> </span><br></pre></td></tr></table></figure>
-
-<p>从<code>docker</code>日志看，错误原因是：<code>fork/exec /usr/bin/containerd-shim-runc-v2: too many open files: unknown</code>，基本确认是**<code>containerd</code>的文件句柄打开数量过多**。</p>
-<p>如下所示，查询到<code>containerd</code>运行时的文件句柄数限制为默认的<code>1024</code>，默认配置偏低。当节点容器过多时，就会出现容器无法启动的现象。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># systemctl status containerd.service</span></span><br><span class="line">● containerd.service - containerd container runtime</span><br><span class="line">   Loaded: loaded (/usr/lib/systemd/system/containerd.service; disabled; vendor preset: disabled)</span><br><span class="line">  Active: active (running) since Sat 2023-11-01 11:02:14 CST; 1 weeks 10 days ago</span><br><span class="line">     Docs: https://containerd.io</span><br><span class="line">Main PID: 1999 (containerd)</span><br><span class="line">    Tasks: 1622</span><br><span class="line">   Memory: 3.5G</span><br><span class="line">   CGroup: /system.slice/containerd.service</span><br><span class="line">           ├─    999 /usr/bin/containerd </span><br><span class="line">           </span><br><span class="line"><span class="built_in">cat</span> /proc/999/limits</span><br><span class="line">Limit                     Soft Limit           Hard Limit           Units</span><br><span class="line">Max cpu time              unlimited            unlimited            seconds</span><br><span class="line">Max file size             unlimited            unlimited            bytes</span><br><span class="line">Max data size             unlimited            unlimited            bytes</span><br><span class="line">Max stack size            8388608              unlimited            bytes</span><br><span class="line">Max core file size        unlimited            unlimited            bytes</span><br><span class="line">Max resident <span class="built_in">set</span>          unlimited            unlimited            bytes</span><br><span class="line">Max processes             319973               319973               processes</span><br><span class="line">Max open files            1024                 524288               files </span><br></pre></td></tr></table></figure>
-
-<p>查看<code>containerd.service</code>文件，没有对文件句柄数做显示配置（对比其他正常环境，操作系统安装完成后，<code>containerd.service</code>文件中存在<code>LimitNOFILE</code>配置）：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># cat /usr/lib/systemd/system/containerd.service</span></span><br><span class="line">[Unit]</span><br><span class="line">Description=containerd container runtime</span><br><span class="line">Documentation=https://containerd.io</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">ExecStartPre=-/sbin/modprobe overlay</span><br><span class="line">ExecStart=/usr/bin/containerd</span><br><span class="line">KillMode=process</span><br><span class="line">Delegate=<span class="built_in">yes</span></span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
-
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>修改<code>containerd.service</code>文件，显示配置文件句柄数，具体大小值根据实际需要：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># cat /usr/lib/systemd/system/containerd.service</span></span><br><span class="line">[Unit]</span><br><span class="line">Description=containerd container runtime</span><br><span class="line">Documentation=https://containerd.io</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">ExecStartPre=-/sbin/modprobe overlay</span><br><span class="line">ExecStart=/usr/bin/containerd</span><br><span class="line">KillMode=process</span><br><span class="line">Delegate=<span class="built_in">yes</span></span><br><span class="line">LimitNOFILE=1048576</span><br><span class="line"><span class="comment"># Having non-zero Limit*s causes performance problems due to accounting overhead</span></span><br><span class="line"><span class="comment"># in the kernel. We recommend using cgroups to do container-local accounting.</span></span><br><span class="line">LimitNPROC=infinity</span><br><span class="line">LimitCORE=infinity</span><br><span class="line">TasksMax=infinity</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
-
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42072280/article/details/126513751">https://blog.csdn.net/weixin_42072280/article/details/126513751</a></p>
 
       
     </div>
@@ -1233,7 +1229,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

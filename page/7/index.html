@@ -145,6 +145,153 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/09/12/k8s/Building-Kubernetes-Official-Guidance/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/12/k8s/Building-Kubernetes-Official-Guidance/" class="post-title-link" itemprop="url">编译Kubernetes源码(官方指导)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-12 21:33:46" itemprop="dateCreated datePublished" datetime="2019-09-12T21:33:46+00:00">2019-09-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>如果利用容器化的构建环境，则构建Kubernetes很容易。本文档将帮助了解构建过程。</p>
+<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><ol>
+<li>Docker，使用以下配置之一：<ul>
+<li><strong>macOS</strong>：可以使用Mac的Docker或docker-machine。请参阅<a target="_blank" rel="noopener" href="https://docs.docker.com/docker-for-mac/">此处</a>的安装说明。注意：需要将Docker VM设置为具有至少4.5GB的初始内存，否则构建可能会失败。（请参阅：<a target="_blank" rel="noopener" href="http://issue.k8s.io/11852">＃11852</a>）。</li>
+<li><strong>带有本地Docker的Linux</strong>：根据OS的<a target="_blank" rel="noopener" href="https://docs.docker.com/installation/#installation">说明</a>安装Docker。</li>
+<li><strong>远程Docker引擎</strong>：在云中使用大型计算机来加快构建速度。这有点棘手，所以请稍后再看。</li>
+</ul>
+</li>
+<li>可选的<a target="_blank" rel="noopener" href="https://developers.google.com/cloud/sdk/">Google Cloud SDK</a></li>
+</ol>
+<p>如果要将发布版本上传到Google Cloud Storage，则必须安装和配置Google Cloud SDK，否则可以放心地省略此设置。</p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>虽然可以使用本地golang来构建Kubernetes，但我们有一个在Docker容器中运行的构建过程。这简化了初始设置，并提供了非常一致的构建和测试环境。</p>
+<h2 id="关键脚本"><a href="#关键脚本" class="headerlink" title="关键脚本"></a>关键脚本</h2><p>在<code>build/</code>目录中找到以下脚本。请注意，所有脚本必须从Kubernetes根目录运行。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/master/build/run.sh"><code>build/run.sh</code></a>: 在构建docker容器中运行命令。常用调用：<ul>
+<li><code>build/run.sh make</code>: 在容器中仅构建linux二进制文件。根据需要传递选项和软件包。</li>
+<li><code>build/run.sh make cross</code>: 构建所有平台的所有二进制文件。</li>
+<li><code>build/run.sh make kubectl KUBE_BUILD_PLATFORMS=darwin/amd64</code>: 为特定平台构建特定二进制文件。</li>
+<li><code>build/run.sh make test</code>: 运行所有单元测试。</li>
+<li><code>build/run.sh make test-integration</code>: 运行集成测试。</li>
+<li><code>build/run.sh make test-cmd</code>: 运行CLI测试。</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/master/build/copy-output.sh"><code>build/copy-output.sh</code></a>: 这会将 <code>_output/dockerized/bin</code> 的内容从Docker容器拷贝到本地 <code>_output/dockerized/bin</code>目录. 它还将复制在构建过程中生成的特定文件模式。这是作为 <code>build/run.sh</code>的一部分自动运行的。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/master/build/make-clean.sh"><code>build/make-clean.sh</code></a>: 清除 <code>_output</code>的内容，删除所有本地构建的容器镜像，然后删除数据容器。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/master/build/shell.sh"><code>build/shell.sh</code></a>: 将带有当前存储库代码快照的构建容器内加入bash shell。</li>
+</ul>
+<h2 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h2><p>位于<code>build/</code>目录下的脚本直接用于构建和测试。它们将确保构建<code>kube-build</code> Docker镜像（基于build&#x2F;build-image&#x2F;Dockerfile），然后在该容器中执行适当的命令。这些脚本将确保每次运行都缓存正确的数据以进行增量构建，并将结果复制回容器。</p>
+<p>首先，通过在<code>_output/images/build-image</code>中创建一个“context”目录来构建<code>kube-build</code>容器镜像。它是在此处完成的，而不是在Kubernetes存储库的根目录进行，以最大程度地减少构建镜像时需要打包的数据量。</p>
+<p>从此，该镜像运行3个不同的容器实例。每次运行后，数据容器在运行期间都将保留，而rsync和构建容器将被删除。</p>
+<ol>
+<li><strong>数据容器</strong>：用于存储需要持久存储以支持增量构建的所有数据。</li>
+<li><strong>rsync容器</strong>：用于将数据传入和传出到数据容器。</li>
+<li><strong>构建容器</strong>：用于实际执行构建操作。</li>
+</ol>
+<p><code>rsync</code>容器在后台透明地使用，以有效地将数据移入和移出容器。这将使用Docker选择的临时端口。可以通过设置KUBE_RSYNC_PORT env变量来修改它。</p>
+<p>所有Docker名称都以从文件路径派生的哈希作为后缀（以允许在CI机器上同时使用）和版本号。当版本号更改时，所有状态都将清除，并开始全新构建。这允许更改构建基础结构，并向CI系统发出需要删除旧设施的信号。</p>
+<h2 id="代理设置"><a href="#代理设置" class="headerlink" title="代理设置"></a>代理设置</h2><p>如果使用了代理，并且让这些脚本使用<code>docker-machine</code>在macOS上设置本地VM，则需要设置Kubernetes构建的代理，应定义以下环境变量。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export KUBERNETES_HTTP_PROXY=http://username:password@proxyaddr:proxyport</span><br><span class="line">export KUBERNETES_HTTPS_PROXY=https://username:password@proxyaddr:proxyport</span><br></pre></td></tr></table></figure>
+
+<p>可以选择为Kubernetes构建指定没有代理的地址，例如</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export KUBERNETES_NO_PROXY=127.0.0.1</span><br></pre></td></tr></table></figure>
+
+<p>如果使用sudo进行Kubernetes的构建（例如make quick-release），则需要运行<code>sudo -E make quick-release</code>来传递环境变量。</p>
+<h2 id="远程Docker引擎"><a href="#远程Docker引擎" class="headerlink" title="远程Docker引擎"></a>远程Docker引擎</h2><p>可以使用远程运行的Docker引擎。必须将Docker配置为连接到该计算机，并且本地rsync端口必须从localhost转发（通过SSH或nc）到远程计算机。</p>
+<p>要使用GCP和<code>docker-machine</code>轻松做到这一点，请执行以下操作：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Create the remote docker machine on GCE.  This is a pretty beefy machine with SSD disk.</span></span><br><span class="line">KUBE_BUILD_VM=k8s-build</span><br><span class="line">KUBE_BUILD_GCE_PROJECT=&lt;project&gt;</span><br><span class="line">docker-machine create \</span><br><span class="line">  --driver=google \</span><br><span class="line">  --google-project=$&#123;KUBE_BUILD_GCE_PROJECT&#125; \</span><br><span class="line">  --google-zone=us-west1-a \</span><br><span class="line">  --google-machine-type=n1-standard-8 \</span><br><span class="line">  --google-disk-size=50 \</span><br><span class="line">  --google-disk-type=pd-ssd \</span><br><span class="line"><span class="meta prompt_">  $</span><span class="language-bash">&#123;KUBE_BUILD_VM&#125;</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Set up <span class="built_in">local</span> docker to talk to that machine</span></span><br><span class="line">eval $(docker-machine env $&#123;KUBE_BUILD_VM&#125;)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Pin down the port that rsync will be exposed on the remote machine</span></span><br><span class="line">export KUBE_RSYNC_PORT=8730</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">forward <span class="built_in">local</span> 8730 to that machine so that rsync works</span></span><br><span class="line">docker-machine ssh $&#123;KUBE_BUILD_VM&#125; -L $&#123;KUBE_RSYNC_PORT&#125;:localhost:$&#123;KUBE_RSYNC_PORT&#125; -N &amp;</span><br></pre></td></tr></table></figure>
+
+<p>通过<code>docker-machine stop</code>, <code>docker-machine start</code> 和 <code>docker-machine rm</code> 管理创建的VM。</p>
+<h2 id="发布版本"><a href="#发布版本" class="headerlink" title="发布版本"></a>发布版本</h2><p><code>build/release.sh</code>脚本将构建发行版。它将构建二进制文件，运行测试，（可选）构建运行时Docker镜像。</p>
+<p>主要输出是tar文件：<code>kubernetes.tar.gz</code>。这包括：</p>
+<ul>
+<li>交叉编译的客户端实用程序</li>
+<li>脚本（kubectl），用于基于平台选择和运行正确的客户端二进制文件</li>
+<li>例子</li>
+<li>各种云的集群部署脚本</li>
+<li>包含所有服务器二进制文件的Tar文件</li>
+</ul>
+<p>此外，还创建了其他一些tar文件：</p>
+<ul>
+<li><code>kubernetes-client-*.tar.gz</code> 特定平台的客户端二进制文件</li>
+<li><code>kubernetes-server-*.tar.gz</code> 特定平台的服务器二进制文件</li>
+</ul>
+<p>构建最终发行版tar时，首先将它们暂存为<code>_output/release-stage</code>，然后再将其放入<code>_output/release-tars</code>。</p>
+<h2 id="重现性"><a href="#重现性" class="headerlink" title="重现性"></a>重现性</h2><p><code>make release</code>，其变体<code>make quick-release</code>和Bazel都提供了一个封闭的构建环境，应该为构建提供一定程度的可重复性。<code>make</code>自身不是密封的。</p>
+<p>Kubernetes构建环境支持Reproducible Builds项目指定的<a target="_blank" rel="noopener" href="https://reproducible-builds.org/specs/source-date-epoch/">SOURCE_DATE_EPOCH</a>环境变量，可以将其设置为UNIX纪元时间戳。这将用于嵌入已编译的Go二进制文件中的构建时间戳，也许还有一天还会用于Docker镜像。</p>
+<p>这个变量的一个合理设置是使用从正在构建的树的顶端开始的提交时间戳。这就是Kubernetes CI系统使用的。例如，可以使用以下命令获取：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SOURCE_DATE_EPOCH=$(git show -s --format=format:%ct HEAD)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/31/stack/How-to-know-a-Pod-s-own-IP-address-from-inside-a-container-in-the-Pod/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +323,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -265,7 +412,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -370,7 +517,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -461,7 +608,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -581,7 +728,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -679,7 +826,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -789,7 +936,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -891,7 +1038,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -978,7 +1125,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1081,99 +1228,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/05/stack/Command-to-delete-all-pods-in-all-kubernetes-namespaces/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/08/05/stack/Command-to-delete-all-pods-in-all-kubernetes-namespaces/" class="post-title-link" itemprop="url">删除所有kubernetes名称空间中的Pod</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-08-05 21:37:34" itemprop="dateCreated datePublished" datetime="2019-08-05T21:37:34+00:00">2019-08-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在查看文档时看到，有一个api调用可以删除pod，有没有办法杀死所有命名空间中的所有pod？</p>
-<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>没有命令可以完全按照你的要求去做。</p>
-<p>可以使用以下命令删除单个命名空间中的所有pod：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">kubectl</span> <span class="string">delete</span> <span class="string">--all</span> <span class="string">pods</span> <span class="string">--namespace=foo</span></span><br></pre></td></tr></table></figure>
-
-<p>可以使用以下命令删除所有命名空间以及每个命名空间中的每个对象（但不包括非命名空间的对象，如节点和某些事件）：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">kubectl</span> <span class="string">delete</span> <span class="string">--all</span> <span class="string">namespaces</span></span><br></pre></td></tr></table></figure>
-
-<p>但是，后一个命令可能不是你想要做的事情，因为它会删除kube-system命名空间中的东西，这会使你的集群无法使用。</p>
-<p>此命令将删除除kube-system之外的所有名称空间，这可能很有用：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for each in $(kubectl get ns -o jsonpath=&quot;&#123;.items[*].metadata.name&#125;&quot; | grep -v kube-system);</span><br><span class="line">do</span><br><span class="line">  kubectl delete ns $each</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
-
-<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/33509194/command-to-delete-all-pods-in-all-kubernetes-namespaces">Command to delete all pods in all kubernetes namespaces</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1243,7 +1297,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

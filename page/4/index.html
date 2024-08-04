@@ -145,6 +145,147 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/08/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%88%A0%E9%99%A4Pod%E5%90%8E%E5%A4%84%E4%BA%8ETerminating%E7%8A%B6%E6%80%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/08/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%88%A0%E9%99%A4Pod%E5%90%8E%E5%A4%84%E4%BA%8ETerminating%E7%8A%B6%E6%80%81/" class="post-title-link" itemprop="url">K8S问题排查-删除Pod后处于Terminating状态</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-14 17:20:51" itemprop="dateCreated datePublished" datetime="2021-08-14T17:20:51+00:00">2021-08-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>通过<code>kubectl delete</code>命令删除某个业务Pod后，该Pod一直处于<code>Terminating</code>状态。</p>
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>根据现象看，应该是删除过程中有哪个流程异常，导致最终的删除卡在了<code>Terminating</code>状态。先<code>describe</code>看一下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# kubectl describe pod -n xxx cam1-78b6fc6bc8-cjsw5</span><br><span class="line">// 没有发现什么异常信息，这里就不贴日志了</span><br></pre></td></tr></table></figure>
+
+<p><code>Event</code>事件中未见明显异常，那就看负责删除Pod的<code>kubelet</code>组件日志（已过滤出关键性日志）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">I0728 16:24:57.339295    9744 kubelet.go:1904] SyncLoop (DELETE, &quot;api&quot;): &quot;cam1-78b6fc6bc8-cjsw5_cam(5c948341-c030-4996-b888-f032577d97b0)&quot;</span><br><span class="line">I0728 16:24:57.339720    9744 kuberuntime_container.go:581] Killing container &quot;docker://a73082a4a9a4cec174bb0d1c256cc11d804d93137551b9bfd3e6fa1522e98589&quot; with 60 second grace period</span><br><span class="line">I0728 16:25:18.259418    9744 kubelet.go:1904] SyncLoop (DELETE, &quot;api&quot;): &quot;cam1-78b6fc6bc8-cjsw5_cam(5c948341-c030-4996-b888-f032577d97b0)&quot;</span><br><span class="line">2021-07-28 16:25:19.247 [INFO][394011] ipam.go 1173: Releasing all IPs with handle &#x27;cam.cam1-78b6fc6bc8-cjsw5&#x27;</span><br><span class="line">2021-07-28 16:25:19.254 [INFO][393585] k8s.go 498: Teardown processing complete.</span><br><span class="line"></span><br><span class="line">// 可疑点1：没有获取到pod IP</span><br><span class="line">W0728 16:25:19.303513    9744 docker_sandbox.go:384] failed to read pod IP from plugin/docker: NetworkPlugin cni failed on the status hook for pod &quot;cam1-78b6fc6bc8-cjsw5_cam&quot;: Unexpected command output Device &quot;eth0&quot; does not exist.</span><br><span class="line"> with error: exit status 1</span><br><span class="line"> </span><br><span class="line">I0728 16:25:19.341068    9744 kubelet.go:1933] SyncLoop (PLEG): &quot;cam1-78b6fc6bc8-cjsw5_cam(5c948341-c030-4996-b888-f032577d97b0)&quot;, event: &amp;pleg.PodLifecycleEvent&#123;ID:&quot;5c948341-c030-4996-b888-f032577d97b0&quot;, Type:&quot;ContainerDied&quot;, Data:&quot;a73082a4a9a4cec174bb0d1c256cc11d804d93137551b9bfd3e6fa1522e98589&quot;&#125;</span><br><span class="line">I0728 16:25:20.578095    9744 kubelet.go:1933] SyncLoop (PLEG): &quot;cam1-78b6fc6bc8-cjsw5_cam(5c948341-c030-4996-b888-f032577d97b0)&quot;, event: &amp;pleg.PodLifecycleEvent&#123;ID:&quot;5c948341-c030-4996-b888-f032577d97b0&quot;, Type:&quot;ContainerDied&quot;, Data:&quot;c3b992465cd2085300995066526a36665664558446ff6e1756135c3a5b6df2e6&quot;&#125;</span><br><span class="line"></span><br><span class="line">I0728 16:25:20.711967    9744 kubelet_pods.go:1090] Killing unwanted pod &quot;cam1-78b6fc6bc8-cjsw5&quot;</span><br><span class="line"></span><br><span class="line">// 可疑点2：Unmount失败</span><br><span class="line">E0728 16:25:20.939400    9744 nestedpendingoperations.go:301] Operation for &quot;&#123;volumeName:kubernetes.io/glusterfs/5c948341-c030-4996-b888-f032577d97b0-cam-pv-50g podName:5c948341-c030-4996-b888-f032577d97b0 nodeName:&#125;&quot; failed. No retries permitted until 2021-07-28 16:25:21.439325811 +0800 CST m=+199182.605079651 (durationBeforeRetry 500ms). Error: &quot;UnmountVolume.TearDown failed for volume \&quot;diag-log\&quot; (UniqueName: \&quot;kubernetes.io/glusterfs/5c948341-c030-4996-b888-f032577d97b0-cam-pv-50g\&quot;) pod \&quot;5c948341-c030-4996-b888-f032577d97b0\&quot; (UID: \&quot;5c948341-c030-4996-b888-f032577d97b0\&quot;) : Unmount failed: exit status 32\nUnmounting arguments: /var/lib/kubelet/pods/5c948341-c030-4996-b888-f032577d97b0/volumes/kubernetes.io~glusterfs/cam-pv-50g\nOutput: umount: /var/lib/kubelet/pods/5c948341-c030-4996-b888-f032577d97b0/volumes/kubernetes.io~glusterfs/cam-pv-50g：目标忙。\n        (有些情况下通过 lsof(8) 或 fuser(1) 可以\n         找到有关使用该设备的进程的有用信息。)\n\n&quot;</span><br></pre></td></tr></table></figure>
+
+<p>从删除Pod的日志看，有2个可疑点：</p>
+<ol>
+<li><code>docker_sandbox.go:384</code>打印的获取<code>pod IP</code>错误；</li>
+<li><code>nestedpendingoperations.go:301</code>打印的<code>Unmount</code>失败错误；</li>
+</ol>
+<p>先看第1点，根据日志定位到代码[1]位置如下，<code>IP</code>没有拿到所以打印了个告警并返回空<code>IP</code>地址；</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">pkg/kubelet/dockershim/docker_sandbox.<span class="keyword">go</span>:<span class="number">348</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ds *dockerService)</span></span> getIP(podSandboxID <span class="type">string</span>, sandbox *dockertypes.ContainerJSON) <span class="type">string</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> sandbox.NetworkSettings == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> networkNamespaceMode(sandbox) == runtimeapi.NamespaceMode_NODE &#123;</span><br><span class="line">		<span class="comment">// For sandboxes using host network, the shim is not responsible for</span></span><br><span class="line">		<span class="comment">// reporting the IP.</span></span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Don&#x27;t bother getting IP if the pod is known and networking isn&#x27;t ready</span></span><br><span class="line">	ready, ok := ds.getNetworkReady(podSandboxID)</span><br><span class="line">	<span class="keyword">if</span> ok &amp;&amp; !ready &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ip, err := ds.getIPFromPlugin(sandbox)</span><br><span class="line">	<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> ip</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">if</span> sandbox.NetworkSettings.IPAddress != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> sandbox.NetworkSettings.IPAddress</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> sandbox.NetworkSettings.GlobalIPv6Address != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> sandbox.NetworkSettings.GlobalIPv6Address</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 错误日志在这里</span></span><br><span class="line">	klog.Warningf(<span class="string">&quot;failed to read pod IP from plugin/docker: %v&quot;</span>, err)</span><br><span class="line">	<span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>继续看<code>getIP</code>方法的调用处代码，这里如果没有拿到<code>IP</code>，也没有什么异常，直接把空值放到<code>PodSandboxStatusResponse</code>中并返回；</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">pkg/kubelet/dockershim/docker_sandbox.<span class="keyword">go</span>:<span class="number">404</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ds *dockerService)</span></span> PodSandboxStatus(ctx context.Context, req *runtimeapi.PodSandboxStatusRequest) (*runtimeapi.PodSandboxStatusResponse, <span class="type">error</span>) &#123;</span><br><span class="line">	podSandboxID := req.PodSandboxId</span><br><span class="line"></span><br><span class="line">	r, metadata, err := ds.getPodSandboxDetails(podSandboxID)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Parse the timestamps.</span></span><br><span class="line">	createdAt, _, _, err := getContainerTimestamps(r)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">&quot;failed to parse timestamp for container %q: %v&quot;</span>, podSandboxID, err)</span><br><span class="line">	&#125;</span><br><span class="line">	ct := createdAt.UnixNano()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Translate container to sandbox state.</span></span><br><span class="line">	state := runtimeapi.PodSandboxState_SANDBOX_NOTREADY</span><br><span class="line">	<span class="keyword">if</span> r.State.Running &#123;</span><br><span class="line">		state = runtimeapi.PodSandboxState_SANDBOX_READY</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 调用getIP方法的位置</span></span><br><span class="line">	<span class="keyword">var</span> IP <span class="type">string</span></span><br><span class="line">	<span class="keyword">if</span> IP = ds.determinePodIPBySandboxID(podSandboxID); IP == <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">		IP = ds.getIP(podSandboxID, r)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    labels, annotations := extractLabels(r.Config.Labels)</span><br><span class="line">	status := &amp;runtimeapi.PodSandboxStatus&#123;</span><br><span class="line">		Id:          r.ID,</span><br><span class="line">		State:       state,</span><br><span class="line">		CreatedAt:   ct,</span><br><span class="line">		Metadata:    metadata,</span><br><span class="line">		Labels:      labels,</span><br><span class="line">		Annotations: annotations,</span><br><span class="line">		Network: &amp;runtimeapi.PodSandboxNetworkStatus&#123;</span><br><span class="line">			Ip: IP,</span><br><span class="line">		&#125;,</span><br><span class="line">		Linux: &amp;runtimeapi.LinuxPodSandboxStatus&#123;</span><br><span class="line">			Namespaces: &amp;runtimeapi.Namespace&#123;</span><br><span class="line">				Options: &amp;runtimeapi.NamespaceOption&#123;</span><br><span class="line">					Network: networkNamespaceMode(r),</span><br><span class="line">					Pid:     pidNamespaceMode(r),</span><br><span class="line">					Ipc:     ipcNamespaceMode(r),</span><br><span class="line">				&#125;,</span><br><span class="line">			&#125;,</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> &amp;runtimeapi.PodSandboxStatusResponse&#123;Status: status&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>到此看不出这个错误会不会中断删除流程，那就本地构造一下试试。修改上面的代码，在调用<code>getIP</code>方法的位置后面增加调试日志（从本地验证结果看，Pod正常删除，说明异常问题与此处无关）；</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 调用getIP方法的位置</span></span><br><span class="line"><span class="keyword">var</span> IP <span class="type">string</span></span><br><span class="line"><span class="keyword">if</span> IP = ds.determinePodIPBySandboxID(podSandboxID); IP == <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">	IP = ds.getIP(podSandboxID, r)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 新加调试日志，如果是指定的Pod，强制将IP置空</span></span><br><span class="line">isTestPod := strings.Contains(metadata.GetName(), <span class="string">&quot;testpod&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> isTestPod &#123;</span><br><span class="line">	IP = <span class="string">&quot;&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再看第2点，这个是<code>ERROR</code>级别的错误，问题出在<code>Unmount</code>挂载点时失败。那么卸载挂载点失败会导致卸载流程提前终止吗？网上关于Pod删除流程的源码分析文章很多，我们就直接找几篇[2,3,4]看看能不能解答上面的问题。</p>
+<p><strong>简单总结来说，删除一个Pod的流程如下：</strong></p>
+<ol>
+<li>调用<code>kube-apiserver</code>的<code>DELETE</code>接口（默认带<code>grace-period=30s</code>）；</li>
+<li>第一次的删除只是更新Pod对象的元信息（<code>DeletionTimestamp</code>字段和<code>DeletionGracePeriodSeconds</code>字段），并没有在<code>Etcd</code>中删除记录；</li>
+<li><code>kubectl</code>命令的执行会阻塞并显示正在删除Pod；</li>
+<li><code>kubelet</code>组件监听到Pod对象的更新事件，执行<code>killPod()</code>方法；</li>
+<li><code>kubelet</code>组件监听到pod的删除事件，第二次调用<code>kube-apiserver</code>的<code>DELETE</code>接口（带<code>grace-period=0</code>）</li>
+<li><code>kube-apiserver</code>的<code>DELETE</code>接口去<code>etcd</code>中删除Pod对象；</li>
+<li><code>kubectl</code>命令的执行返回，删除Pod成功；</li>
+</ol>
+<p>从前面<code>kubelet</code>删除异常的日志看，确实有两次<code>DELETE</code>操作，并且中间有个<code>Killing container</code>的日志，但从上面的删除流程看，两次<code>DELETE</code>操作之间应该是调用<code>killPod()</code>方法，通过查看源码，对应的日志应该是<code>Killing unwanted pod</code>，所以，实际上第二次的<code>DELETE</code>操作并没有触发。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">pkg/kubelet/kubelet_pods.<span class="keyword">go</span>:<span class="number">1073</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *Kubelet)</span></span> podKiller() &#123;</span><br><span class="line">	killing := sets.NewString()</span><br><span class="line">	<span class="comment">// guard for the killing set</span></span><br><span class="line">	lock := sync.Mutex&#123;&#125;</span><br><span class="line">	<span class="keyword">for</span> podPair := <span class="keyword">range</span> kl.podKillingCh &#123;</span><br><span class="line">		runningPod := podPair.RunningPod</span><br><span class="line">		apiPod := podPair.APIPod</span><br><span class="line"></span><br><span class="line">		lock.Lock()</span><br><span class="line">		exists := killing.Has(<span class="type">string</span>(runningPod.ID))</span><br><span class="line">		<span class="keyword">if</span> !exists &#123;</span><br><span class="line">			killing.Insert(<span class="type">string</span>(runningPod.ID))</span><br><span class="line">		&#125;</span><br><span class="line">		lock.Unlock()</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 这里在调用killPod方法前会打印v2级别的日志</span></span><br><span class="line">		<span class="keyword">if</span> !exists &#123;</span><br><span class="line">			<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(apiPod *v1.Pod, runningPod *kubecontainer.Pod)</span></span> &#123;</span><br><span class="line">				klog.V(<span class="number">2</span>).Infof(<span class="string">&quot;Killing unwanted pod %q&quot;</span>, runningPod.Name)</span><br><span class="line">				err := kl.killPod(apiPod, runningPod, <span class="literal">nil</span>, <span class="literal">nil</span>)</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					klog.Errorf(<span class="string">&quot;Failed killing the pod %q: %v&quot;</span>, runningPod.Name, err)</span><br><span class="line">				&#125;</span><br><span class="line">				lock.Lock()</span><br><span class="line">				killing.Delete(<span class="type">string</span>(runningPod.ID))</span><br><span class="line">				lock.Unlock()</span><br><span class="line">			&#125;(apiPod, runningPod)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>怎么确认第二次的<code>DELETE</code>操作有没有触发呢？很简单，看代码或者实际验证都可以。这里我就在测试环境删除个Pod看下相关日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@node2 ~]# kubectl delete pod -n xxx  testpodrc2-7b749f6c9c-qh68l</span><br><span class="line">pod &quot;testpodrc2-7b749f6c9c-qh68l&quot; deleted</span><br><span class="line"></span><br><span class="line">// 已过滤出关键性日志</span><br><span class="line">[root@node2 ~]# tailf kubelet.log</span><br><span class="line">I0730 13:27:31.854178   24588 kubelet.go:1904] SyncLoop (DELETE, &quot;api&quot;): &quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;</span><br><span class="line">I0730 13:27:31.854511   24588 kuberuntime_container.go:581] Killing container &quot;docker://e2a1cd5f2165e12cf0b46e12f9cd4d656d593f75e85c0de058e0a2f376a5557e&quot; with 30 second grace period</span><br><span class="line">I0730 13:27:32.203167   24588 kubelet.go:1904] SyncLoop (DELETE, &quot;api&quot;): &quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;</span><br><span class="line"></span><br><span class="line">I0730 13:27:32.993294   24588 kubelet.go:1933] SyncLoop (PLEG): &quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;, event: &amp;pleg.PodLifecycleEvent&#123;ID:&quot;85ee282f-a843-4f10-a99c-79d447f83f2a&quot;, Type:&quot;ContainerDied&quot;, Data:&quot;e2a1cd5f2165e12cf0b46e12f9cd4d656d593f75e85c0de058e0a2f376a5557e&quot;&#125;</span><br><span class="line">I0730 13:27:32.993428   24588 kubelet.go:1933] SyncLoop (PLEG): &quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;, event: &amp;pleg.PodLifecycleEvent&#123;ID:&quot;85ee282f-a843-4f10-a99c-79d447f83f2a&quot;, Type:&quot;ContainerDied&quot;, Data:&quot;c6a587614976beed0cbb6e5fabf70a2d039eec6c160154fce007fe2bb1ba3b4f&quot;&#125;</span><br><span class="line"></span><br><span class="line">I0730 13:27:34.072494   24588 kubelet_pods.go:1090] Killing unwanted pod &quot;testpodrc2-7b749f6c9c-qh68l&quot;</span><br><span class="line"></span><br><span class="line">I0730 13:27:40.084182   24588 kubelet.go:1904] SyncLoop (DELETE, &quot;api&quot;): &quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;</span><br><span class="line">I0730 13:27:40.085735   24588 kubelet.go:1898] SyncLoop (REMOVE, &quot;api&quot;): &quot;testpodrc2-7b749f6c9c-qh68l_testpod(85ee282f-a843-4f10-a99c-79d447f83f2a)&quot;</span><br></pre></td></tr></table></figure>
+
+<p>对比正常和异常场景下的日志可以看出，正常的删除操作下，<code>Killing unwanted pod</code>日志之后会有<code>DELETE</code>和<code>REMOVE</code>的操作，这也就说明问题出在第二次<code>DELETE</code>操作没有触发。查看相关代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">pkg/kubelet/status/status_manager.<span class="keyword">go</span>:<span class="number">470</span></span><br><span class="line"><span class="comment">//kubelet组件有一个statusManager模块，它会for循环调用syncPod()方法</span></span><br><span class="line"><span class="comment">//方法内部有机会调用kube-apiserver的DELETE接口(强制删除，非平滑)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *manager)</span></span> syncPod(uid types.UID, status versionedPodStatus) &#123;</span><br><span class="line">	...</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//当pod带有DeletionTimestamp字段，并且其内容器已被删除、持久卷已被删除等的多条件下，才会进入if语句内部</span></span><br><span class="line">    <span class="keyword">if</span> m.canBeDeleted(pod, status.status) &#123;</span><br><span class="line">        deleteOptions := metav1.NewDeleteOptions(<span class="number">0</span>)</span><br><span class="line">        deleteOptions.Preconditions = metav1.NewUIDPreconditions(<span class="type">string</span>(pod.UID))</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//强制删除pod对象：kubectl delete pod podA --grace-period=0</span></span><br><span class="line">        err = m.kubeClient.CoreV1().Pods(pod.Namespace).Delete(pod.Name, deleteOptions) </span><br><span class="line">	...</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从源码可以看出，第二次<code>DELETE</code>操作是否触发依赖于<code>canBeDeleted</code>方法的校验结果，而这个方法内会检查持久卷是否已经被删除：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">pkg/kubelet/status/status_manager.<span class="keyword">go</span>:<span class="number">538</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *manager)</span></span> canBeDeleted(pod *v1.Pod, status v1.PodStatus) <span class="type">bool</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> pod.DeletionTimestamp == <span class="literal">nil</span> || kubepod.IsMirrorPod(pod) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> m.podDeletionSafety.PodResourcesAreReclaimed(pod, status)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pkg/kubelet/kubelet_pods.<span class="keyword">go</span>:<span class="number">900</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *Kubelet)</span></span> PodResourcesAreReclaimed(pod *v1.Pod, status v1.PodStatus) <span class="type">bool</span> &#123;</span><br><span class="line">	...</span><br><span class="line">    </span><br><span class="line">	<span class="comment">// 这里会判断挂载卷是否已卸载</span></span><br><span class="line">	<span class="keyword">if</span> kl.podVolumesExist(pod.UID) &amp;&amp; !kl.keepTerminatedPodVolumes &#123;</span><br><span class="line">		<span class="comment">// We shouldnt delete pods whose volumes have not been cleaned up if we are not keeping terminated pod volumes</span></span><br><span class="line">		klog.V(<span class="number">3</span>).Infof(<span class="string">&quot;Pod %q is terminated, but some volumes have not been cleaned up&quot;</span>, format.Pod(pod))</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> kl.kubeletConfiguration.CgroupsPerQOS &#123;</span><br><span class="line">		pcm := kl.containerManager.NewPodContainerManager()</span><br><span class="line">		<span class="keyword">if</span> pcm.Exists(pod) &#123;</span><br><span class="line">			klog.V(<span class="number">3</span>).Infof(<span class="string">&quot;Pod %q is terminated, but pod cgroup sandbox has not been cleaned up&quot;</span>, format.Pod(pod))</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结合出问题的日志，基本能确认是<code>Unmount</code>挂载点失败导致的异常。那么，挂载点为啥会<code>Unmount</code>失败？</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// umount失败关键日志</span><br><span class="line">Unmount failed: exit status 32\nUnmounting arguments: /var/lib/kubelet/pods/xxx/volumes/kubernetes.io~glusterfs/cam-pv-50g\nOutput: umount: /var/lib/kubelet/pods/xxx/volumes/kubernetes.io~glusterfs/cam-pv-50g：目标忙。\n        (有些情况下通过 lsof(8) 或 fuser(1) 可以\n         找到有关使用该设备的进程的有用信息。)\n\n&quot;</span><br></pre></td></tr></table></figure>
+
+<p>仔细看卸载失败的日志，可以看到这个挂载点的后端存储是<code>glusterfs</code>，而<code>目标忙</code>一般来说是存储设备侧在使用，所以无法卸载。那就找找看是不是哪个进程使用了这个挂载目录（以下定位由负责<code>glusterfs</code>的同事提供）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# fuser -mv /var/lib/kubelet/pods/xxx/volumes/kubernetes.io~glusterfs/cam-pv-50g</span><br><span class="line">用户  进程号  权限  命令</span><br><span class="line">root  kernel mount /var/lib/kubelet/pods/xxx/volumes/kubernetes.io~glusterfs/cam-dialog-gl.uster-pv-50g</span><br><span class="line">root  94549  f.... glusterfs</span><br></pre></td></tr></table></figure>
+
+<p>除了内核的<code>mount</code>，还有个<code>pid=94549</code>的<code>glusterfs</code>进程在占用挂载点所在目录，看看是什么进程：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# ps -ef| grep 94549</span><br><span class="line">root 94549 1 0 7月26 ? 00:01:13 /usr/sbin/glusterfs --log-level=ERR0R --log-file=/var/lib/kubelet/plugins/kubernetes.io/glusterfs/global-diaglog-pv/web-fddf96444-stxpf-glusterfs.log --fuse-mountopts=auto_unmount --process-name fuse --volfile-server=xxx --volfile-server=xxx --tfolfile-server=xxx --volfile-id=global-diaglog --fuse-mountopts=auto_unmount /var/lib/kubelet/pods/xxx/volumes/kubernetef.io-glusterfs/global-diaglog-pv</span><br></pre></td></tr></table></figure>
+
+<p>发现这个进程维护的是<code>web-xxx</code>的挂载信息，而<code>web-xxx</code>和<code>cam-xxx</code>没有任何关联。由此推断出是<code>glusterfs</code>管理的挂载信息发送错乱导致，具体错乱原因就转给相关负责的同事看了。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>从分析结果看，是共享存储卷未正常卸载导致的删除Pod异常，非K8S问题。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/tree/v1.15.12">Kubernetes v1.15.12源码</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/nangonghen/article/details/109305635">kubernetes删除pod的流程的源码简析</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903842321039368">Kubernetes源码分析之Pod的删除</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/608727">kubernetes grace period 失效问题排查</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/08/07/linux/%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Web%E5%BA%94%E7%94%A8%E9%A1%B5%E9%9D%A2%E6%97%A0%E6%B3%95%E8%AE%BF%E9%97%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +317,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -279,7 +420,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -381,7 +522,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -504,7 +645,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -622,7 +763,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -749,7 +890,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -859,7 +1000,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -994,7 +1135,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1107,7 +1248,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1209,256 +1350,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/04/17/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/17/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/" class="post-title-link" itemprop="url">如何使用fsck命令检查和修复文件系统</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-17 16:15:45" itemprop="dateCreated datePublished" datetime="2021-04-17T16:15:45+00:00">2021-04-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>fsck</strong>（File System Consistency Check）是Linux的实用工具，用于检查文件系统是否存在错误或未解决的问题。该工具可以修复潜在的错误并生成报告。</p>
-<p>默认情况下，Linux发行版附带此工具。使用fsck不需要特定的步骤或安装过程。打开终端后，就可以利用该工具的功能了。</p>
-<p>按照本指南学习<strong>如何使用fsck在Linux上检查和修复文件系统</strong>。本教程将列出有关如何使用该工具以及用例的示例。</p>
-<p><strong>先决条件</strong></p>
-<ul>
-<li>Linux或类UNIX系统</li>
-<li>访问终端或命令行</li>
-<li>具有root权限的用户可以运行该工具</li>
-</ul>
-<h2 id="何时在Linux中使用fsck"><a href="#何时在Linux中使用fsck" class="headerlink" title="何时在Linux中使用fsck"></a>何时在Linux中使用fsck</h2><p>fsck工具可以在多种情况下使用：</p>
-<ul>
-<li>使用fsck作为<strong>预防性维护</strong>或在系统出现问题时运行文件系统检查。</li>
-<li>fsck可以诊断的一个常见问题是<strong>系统</strong>何时<strong>无法启动</strong>。</li>
-<li>另一个是当系统上的文件损坏时出现<strong>输入&#x2F;输出错误</strong>。</li>
-<li>还可以使用fsck实用工具检查<strong>外部驱动器</strong>（例如<strong>SD卡</strong>或<strong>USB闪存驱动器）的运行状况</strong>。</li>
-</ul>
-<h2 id="基本的fsck语法"><a href="#基本的fsck语法" class="headerlink" title="基本的fsck语法"></a>基本的fsck语法</h2><p>fsck实用工具的基本语法遵循以下模式：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fsck &lt;options&gt; &lt;filesystem&gt;</span><br></pre></td></tr></table></figure>
-
-<p>在上面的示例中，<em>filesystem</em> 可以是设备，分区，挂载点等。还可以在命令末尾使用特定于文件系统的选项。</p>
-<h2 id="如何检查和修复文件系统"><a href="#如何检查和修复文件系统" class="headerlink" title="如何检查和修复文件系统"></a>如何检查和修复文件系统</h2><p>在检查和修复文件系统之前，需要执行几个步骤。</p>
-<h3 id="查看已安装的磁盘和分区"><a href="#查看已安装的磁盘和分区" class="headerlink" title="查看已安装的磁盘和分区"></a>查看已安装的磁盘和分区</h3><p>要查看系统上所有已安装的设备并检查磁盘位置，请使用Linux中可用的工具之一。例如，使用<strong>df</strong> 命令列出文件系统磁盘：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df -h</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/df-tool.png" alt="df-tool"></p>
-<p>该工具可以打印系统上文件系统的使用情况。记下要使用<strong>fsck</strong>命令检查的磁盘。</p>
-<p>例如，<strong>要查看</strong>第一个磁盘的<strong>分区</strong>，请使用以下命令：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo parted /dev/sda &#x27;print&#x27;</span><br></pre></td></tr></table></figure>
-
-<p><strong>sda</strong>是Linux指代第一个SCSI磁盘的方式。如果有两个，则第二个为<strong>sdb</strong>，依此类推。</p>
-<p>在我们的示例中，由于该虚拟机上只有一个分区，因此得到了一个结果。如果有更多的分区，我们将获得更多的结果。</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/parted-get-partitions.png" alt="列出Linux分区时的终端输出"></p>
-<p>此处的磁盘名称为**&#x2F;dev&#x2F;sda** ，然后在“<em>Number”</em>列中显示分区的<em>编号</em>。在我们的例子中是：<strong>sda1。</strong></p>
-<h3 id="卸载磁盘"><a href="#卸载磁盘" class="headerlink" title="卸载磁盘"></a>卸载磁盘</h3><p>必须先卸载磁盘或分区，然后才能使用<strong>fsck</strong>进行磁盘检查。如果尝试在已安装的磁盘或分区上运行<strong>fsck</strong>，则会收到警告：<br><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/fsck-clean.png" alt="尝试卸载已安装的磁盘或分区时的警告"></p>
-<p>确保运行<strong>unmount</strong>命令：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo umount /dev/sdb</span><br></pre></td></tr></table></figure>
-
-<p>替换*&#x2F;dev&#x2F;sdb*为要卸载的设备。</p>
-<hr>
-<p><strong>注意：</strong>我们不能卸载根文件系统。因此，现在<strong>fsck</strong>不能在正在运行的计算机上使用。</p>
-<hr>
-<h3 id="运行fsck检查错误"><a href="#运行fsck检查错误" class="headerlink" title="运行fsck检查错误"></a>运行fsck检查错误</h3><p>现在已经卸载了磁盘，就可以运行了<strong>fsck</strong>。要检查第二个磁盘，请输入：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fsck /dev/sdb</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/fsck-exit-codes.png" alt="运行fsck命令以检查第二个磁盘后的输出"></p>
-<p>上面的示例显示了正常磁盘的输出。如果磁盘上有多个问题，则每个错误都会出现一个提示，需要手动确认操作。</p>
-<p>fsck实用工具返回的退出代码如下：</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/fsck-warning.png" alt="fsck命令可能的退出代码。"></p>
-<h3 id="挂载磁盘"><a href="#挂载磁盘" class="headerlink" title="挂载磁盘"></a>挂载磁盘</h3><p>完成检查和修复设备后，请挂载磁盘，以便可以再次使用它。</p>
-<p>在本例中，我们将重新安装<strong>sdb</strong>磁盘：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount /dev/sdb</span><br></pre></td></tr></table></figure>
-
-<h3 id="使用fsck进行试运行"><a href="#使用fsck进行试运行" class="headerlink" title="使用fsck进行试运行"></a>使用fsck进行试运行</h3><p>在执行实时检查之前，可以使用fsck进行测试运行。将**-N** 选项传递给<strong>fsck</strong>命令以执行测试：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fsck -N /dev/sdb</span><br></pre></td></tr></table></figure>
-
-<p>输出显示将发生的情况，但不执行任何操作。</p>
-<h3 id="使用fsck自动修复检测到的错误"><a href="#使用fsck自动修复检测到的错误" class="headerlink" title="使用fsck自动修复检测到的错误"></a>使用fsck自动修复检测到的错误</h3><p>要尝试解决潜在问题而没有任何提示，请将**-y<strong>选项传递给</strong>fsck**。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fsck -y /dev/sdb</span><br></pre></td></tr></table></figure>
-
-<h3 id="跳过修复，但在输出中显示fsck错误"><a href="#跳过修复，但在输出中显示fsck错误" class="headerlink" title="跳过修复，但在输出中显示fsck错误"></a>跳过修复，但在输出中显示fsck错误</h3><p>如果要检查<a target="_blank" rel="noopener" href="https://phoenixnap.com/kb/linux-file-system">文件系统</a>上的潜在错误而不进行修复，请使用**-n**选项。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fsck -n /dev/sdb</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/fsck-n-option-warning.png" alt="使用-n选项可打印错误而不进行修复"></p>
-<h3 id="强制fsck执行文件系统检查"><a href="#强制fsck执行文件系统检查" class="headerlink" title="强制fsck执行文件系统检查"></a>强制fsck执行文件系统检查</h3><p>在正常的设备上执行fsck时，该工具会跳过文件系统检查。如果要强制检查文件系统，请使用该**-f** 选项。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fsck -f /dev/sdb</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/ubuntu-recovery-mode.png" alt="强制fsck工具执行文件系统检查"></p>
-<p>即使认为没有问题，也会执行扫描以搜索损坏。</p>
-<h3 id="一次在所有文件系统上运行fsck"><a href="#一次在所有文件系统上运行fsck" class="headerlink" title="一次在所有文件系统上运行fsck"></a>一次在所有文件系统上运行fsck</h3><p>如果要一次性检查所有使用fsck的文件系统，请传递该**-A<em><em>标志。此选项将遍历</em>&#x2F;etc&#x2F;fstab</em> 中所有的磁盘并执行检查。</p>
-<p>由于无法在正在运行的计算机上卸载根文件系统，因此请添加**-R** 选项以跳过它们：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fsck -AR</span><br></pre></td></tr></table></figure>
-
-<h3 id="在特定文件系统上跳过fsck"><a href="#在特定文件系统上跳过fsck" class="headerlink" title="在特定文件系统上跳过fsck"></a>在特定文件系统上跳过fsck</h3><p>如果要fsck跳过检查文件系统，则需要在文件系统之前添加**-t** 。</p>
-<p>例如，要跳过<em>ext3</em>文件系统，请运行以下命令：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fsck -AR -t noext3 -y</span><br></pre></td></tr></table></figure>
-
-<p>我们添加**-y**了跳过提示。</p>
-<h3 id="在已挂载的文件系统上跳过fsck"><a href="#在已挂载的文件系统上跳过fsck" class="headerlink" title="在已挂载的文件系统上跳过fsck"></a>在已挂载的文件系统上跳过fsck</h3><p>为确保不在已挂载的文件系统上运行fsck，请添加该**-M** 选项。该标志告诉fsck工具跳过任何已挂载的文件系统。</p>
-<p>为了说明挂载前后的区别，我们将在<strong>sdb</strong>挂载时和卸载后分别执行fsck检查。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fsck -M /dev/sdb</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/fsck-force-check.png" alt="fsck工具的输出可跳过任何已挂载的文件系统"></p>
-<p>当<strong>sdb</strong>被挂载时，该工具退出而不运行检查。然后，我们卸载<strong>sdb</strong>并再次运行相同的命令。这次，<strong>fsck</strong>检查磁盘并将其报告为正常磁盘或有错误。</p>
-<hr>
-<p><strong>注意：</strong>如果想要删除第一行标题“<em>fsck from util-linux 2.31.1</em>”，请使用**-T**选项。</p>
-<hr>
-<h3 id="在Linux根分区上运行fsck"><a href="#在Linux根分区上运行fsck" class="headerlink" title="在Linux根分区上运行fsck"></a>在Linux根分区上运行fsck</h3><p>正如我们已经提到的，fsck无法检查正在运行的计算机上的根分区，因为它们已经挂载并正在使用中。但是，如果进入恢复模式并运行<strong>fsck检查</strong>，是可以检查Linux根分区的。</p>
-<p>1.为此，请通过GUI或使用终端打开或重新启动计算机：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo reboot</span><br></pre></td></tr></table></figure>
-
-<p>2.在启动过程中按住<strong>Shift</strong>键。出现GNU GRUB菜单。</p>
-<p>3.选择<strong>Ubuntu的高级选项</strong>。</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/skip-mounted-fsck.png" alt="Linux恢复模式"></p>
-<p>4.然后，选择末尾带有<em>（恢复模式）</em>的条目。让系统加载到“恢复菜单”中。</p>
-<p>5.从菜单中选择<strong>fsck</strong>。</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/recovery-confirm-yes-fsck.png" alt="Linux恢复菜单中选择fsck工具"></p>
-<p>6.通过在提示符下选择**&lt;是&gt;**进行确认。</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/recovery-resume-boot.png" alt="选择fsck时的恢复模式确认消息"></p>
-<p>7.完成后，在恢复菜单中选择“<strong>恢复</strong>”以启动计算机。</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/fsck-recovery-mode.png" alt="完成检查后"></p>
-<h2 id="如果fsck被中断怎么办"><a href="#如果fsck被中断怎么办" class="headerlink" title="如果fsck被中断怎么办"></a>如果fsck被中断怎么办</h2><p>正常来说，<strong>不应该打断</strong>正在进行的fsck检查。但是，如果该过程被中断，fsck将完成正在进行的检查，然后停止。</p>
-<p>如果该实用工具在检查过程中发现错误，则如果中断，它将不会尝试修复任何问题。可以在下次重新运行检查。</p>
-<h2 id="fsck-Linux命令选项列表"><a href="#fsck-Linux命令选项列表" class="headerlink" title="fsck Linux命令选项列表"></a>fsck Linux命令选项列表</h2><p>最后，下面是可与<strong>fsck Linux实用工具</strong>一起使用的选项列表。</p>
-<table>
-<thead>
-<tr>
-<th>选项</th>
-<th align="center">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>-a</td>
-<td align="center">尝试自动修复文件系统错误。不会出现提示，因此请谨慎使用。</td>
-</tr>
-<tr>
-<td>-A</td>
-<td align="center">检查&#x2F;etc&#x2F;fstab中列出的所有文件系统。</td>
-</tr>
-<tr>
-<td>-C</td>
-<td align="center">显示检查ext2和ext3文件系统的进度。</td>
-</tr>
-<tr>
-<td>-F</td>
-<td align="center">强制fsck检查文件系统。该工具甚至在文件系统看起来正常时也进行检查。</td>
-</tr>
-<tr>
-<td>-l</td>
-<td align="center">锁定设备，以防止其他程序在扫描和修复期间使用该分区。</td>
-</tr>
-<tr>
-<td>-M</td>
-<td align="center">不要检查已挂载的文件系统。挂载文件系统时，该工具返回退出代码0。</td>
-</tr>
-<tr>
-<td>-N</td>
-<td align="center">做空试。输出显示fsck在不执行任何操作的情况下将执行的操作。警告或错误消息也将被打印。</td>
-</tr>
-<tr>
-<td>-P</td>
-<td align="center">用于在多个文件系统上并行运行扫描。请谨慎使用。</td>
-</tr>
-<tr>
-<td>-R</td>
-<td align="center">使用-A选项时，告诉fsck工具不要检查根文件系统。</td>
-</tr>
-<tr>
-<td>-r</td>
-<td align="center">打印设备统计信息。</td>
-</tr>
-<tr>
-<td>-t</td>
-<td align="center">指定要使用fsck检查的文件系统类型。请查阅手册页以获取详细信息。</td>
-</tr>
-<tr>
-<td>-T</td>
-<td align="center">工具启动时隐藏标题。</td>
-</tr>
-<tr>
-<td>-y</td>
-<td align="center">尝试在检查期间自动修复文件系统错误。</td>
-</tr>
-<tr>
-<td>-V</td>
-<td align="center">详细输出。</td>
-</tr>
-</tbody></table>
-<p><strong>结论</strong></p>
-<p>现在我们知道了<strong>如何使用fsck Linux命令来检查和修复文件系统</strong>。该指南提供了该工具的功能和示例。</p>
-<p>在运行列出的命令之前，请确保具有root权限。有关所有选项的详细说明，还可以查阅该工具的<strong>手册文件</strong>或访问<a target="_blank" rel="noopener" href="https://linux.die.net/man/8/fsck">fsck Linux手册页</a>。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1528,7 +1419,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

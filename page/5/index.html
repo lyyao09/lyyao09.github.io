@@ -145,6 +145,256 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/04/17/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/17/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/" class="post-title-link" itemprop="url">如何使用fsck命令检查和修复文件系统</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-17 16:15:45" itemprop="dateCreated datePublished" datetime="2021-04-17T16:15:45+00:00">2021-04-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>fsck</strong>（File System Consistency Check）是Linux的实用工具，用于检查文件系统是否存在错误或未解决的问题。该工具可以修复潜在的错误并生成报告。</p>
+<p>默认情况下，Linux发行版附带此工具。使用fsck不需要特定的步骤或安装过程。打开终端后，就可以利用该工具的功能了。</p>
+<p>按照本指南学习<strong>如何使用fsck在Linux上检查和修复文件系统</strong>。本教程将列出有关如何使用该工具以及用例的示例。</p>
+<p><strong>先决条件</strong></p>
+<ul>
+<li>Linux或类UNIX系统</li>
+<li>访问终端或命令行</li>
+<li>具有root权限的用户可以运行该工具</li>
+</ul>
+<h2 id="何时在Linux中使用fsck"><a href="#何时在Linux中使用fsck" class="headerlink" title="何时在Linux中使用fsck"></a>何时在Linux中使用fsck</h2><p>fsck工具可以在多种情况下使用：</p>
+<ul>
+<li>使用fsck作为<strong>预防性维护</strong>或在系统出现问题时运行文件系统检查。</li>
+<li>fsck可以诊断的一个常见问题是<strong>系统</strong>何时<strong>无法启动</strong>。</li>
+<li>另一个是当系统上的文件损坏时出现<strong>输入&#x2F;输出错误</strong>。</li>
+<li>还可以使用fsck实用工具检查<strong>外部驱动器</strong>（例如<strong>SD卡</strong>或<strong>USB闪存驱动器）的运行状况</strong>。</li>
+</ul>
+<h2 id="基本的fsck语法"><a href="#基本的fsck语法" class="headerlink" title="基本的fsck语法"></a>基本的fsck语法</h2><p>fsck实用工具的基本语法遵循以下模式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fsck &lt;options&gt; &lt;filesystem&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的示例中，<em>filesystem</em> 可以是设备，分区，挂载点等。还可以在命令末尾使用特定于文件系统的选项。</p>
+<h2 id="如何检查和修复文件系统"><a href="#如何检查和修复文件系统" class="headerlink" title="如何检查和修复文件系统"></a>如何检查和修复文件系统</h2><p>在检查和修复文件系统之前，需要执行几个步骤。</p>
+<h3 id="查看已安装的磁盘和分区"><a href="#查看已安装的磁盘和分区" class="headerlink" title="查看已安装的磁盘和分区"></a>查看已安装的磁盘和分区</h3><p>要查看系统上所有已安装的设备并检查磁盘位置，请使用Linux中可用的工具之一。例如，使用<strong>df</strong> 命令列出文件系统磁盘：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df -h</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/df-tool.png" alt="df-tool"></p>
+<p>该工具可以打印系统上文件系统的使用情况。记下要使用<strong>fsck</strong>命令检查的磁盘。</p>
+<p>例如，<strong>要查看</strong>第一个磁盘的<strong>分区</strong>，请使用以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo parted /dev/sda &#x27;print&#x27;</span><br></pre></td></tr></table></figure>
+
+<p><strong>sda</strong>是Linux指代第一个SCSI磁盘的方式。如果有两个，则第二个为<strong>sdb</strong>，依此类推。</p>
+<p>在我们的示例中，由于该虚拟机上只有一个分区，因此得到了一个结果。如果有更多的分区，我们将获得更多的结果。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/parted-get-partitions.png" alt="列出Linux分区时的终端输出"></p>
+<p>此处的磁盘名称为**&#x2F;dev&#x2F;sda** ，然后在“<em>Number”</em>列中显示分区的<em>编号</em>。在我们的例子中是：<strong>sda1。</strong></p>
+<h3 id="卸载磁盘"><a href="#卸载磁盘" class="headerlink" title="卸载磁盘"></a>卸载磁盘</h3><p>必须先卸载磁盘或分区，然后才能使用<strong>fsck</strong>进行磁盘检查。如果尝试在已安装的磁盘或分区上运行<strong>fsck</strong>，则会收到警告：<br><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/fsck-clean.png" alt="尝试卸载已安装的磁盘或分区时的警告"></p>
+<p>确保运行<strong>unmount</strong>命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo umount /dev/sdb</span><br></pre></td></tr></table></figure>
+
+<p>替换*&#x2F;dev&#x2F;sdb*为要卸载的设备。</p>
+<hr>
+<p><strong>注意：</strong>我们不能卸载根文件系统。因此，现在<strong>fsck</strong>不能在正在运行的计算机上使用。</p>
+<hr>
+<h3 id="运行fsck检查错误"><a href="#运行fsck检查错误" class="headerlink" title="运行fsck检查错误"></a>运行fsck检查错误</h3><p>现在已经卸载了磁盘，就可以运行了<strong>fsck</strong>。要检查第二个磁盘，请输入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fsck /dev/sdb</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/fsck-exit-codes.png" alt="运行fsck命令以检查第二个磁盘后的输出"></p>
+<p>上面的示例显示了正常磁盘的输出。如果磁盘上有多个问题，则每个错误都会出现一个提示，需要手动确认操作。</p>
+<p>fsck实用工具返回的退出代码如下：</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/fsck-warning.png" alt="fsck命令可能的退出代码。"></p>
+<h3 id="挂载磁盘"><a href="#挂载磁盘" class="headerlink" title="挂载磁盘"></a>挂载磁盘</h3><p>完成检查和修复设备后，请挂载磁盘，以便可以再次使用它。</p>
+<p>在本例中，我们将重新安装<strong>sdb</strong>磁盘：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount /dev/sdb</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用fsck进行试运行"><a href="#使用fsck进行试运行" class="headerlink" title="使用fsck进行试运行"></a>使用fsck进行试运行</h3><p>在执行实时检查之前，可以使用fsck进行测试运行。将**-N** 选项传递给<strong>fsck</strong>命令以执行测试：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fsck -N /dev/sdb</span><br></pre></td></tr></table></figure>
+
+<p>输出显示将发生的情况，但不执行任何操作。</p>
+<h3 id="使用fsck自动修复检测到的错误"><a href="#使用fsck自动修复检测到的错误" class="headerlink" title="使用fsck自动修复检测到的错误"></a>使用fsck自动修复检测到的错误</h3><p>要尝试解决潜在问题而没有任何提示，请将**-y<strong>选项传递给</strong>fsck**。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fsck -y /dev/sdb</span><br></pre></td></tr></table></figure>
+
+<h3 id="跳过修复，但在输出中显示fsck错误"><a href="#跳过修复，但在输出中显示fsck错误" class="headerlink" title="跳过修复，但在输出中显示fsck错误"></a>跳过修复，但在输出中显示fsck错误</h3><p>如果要检查<a target="_blank" rel="noopener" href="https://phoenixnap.com/kb/linux-file-system">文件系统</a>上的潜在错误而不进行修复，请使用**-n**选项。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fsck -n /dev/sdb</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/fsck-n-option-warning.png" alt="使用-n选项可打印错误而不进行修复"></p>
+<h3 id="强制fsck执行文件系统检查"><a href="#强制fsck执行文件系统检查" class="headerlink" title="强制fsck执行文件系统检查"></a>强制fsck执行文件系统检查</h3><p>在正常的设备上执行fsck时，该工具会跳过文件系统检查。如果要强制检查文件系统，请使用该**-f** 选项。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fsck -f /dev/sdb</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/ubuntu-recovery-mode.png" alt="强制fsck工具执行文件系统检查"></p>
+<p>即使认为没有问题，也会执行扫描以搜索损坏。</p>
+<h3 id="一次在所有文件系统上运行fsck"><a href="#一次在所有文件系统上运行fsck" class="headerlink" title="一次在所有文件系统上运行fsck"></a>一次在所有文件系统上运行fsck</h3><p>如果要一次性检查所有使用fsck的文件系统，请传递该**-A<em><em>标志。此选项将遍历</em>&#x2F;etc&#x2F;fstab</em> 中所有的磁盘并执行检查。</p>
+<p>由于无法在正在运行的计算机上卸载根文件系统，因此请添加**-R** 选项以跳过它们：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fsck -AR</span><br></pre></td></tr></table></figure>
+
+<h3 id="在特定文件系统上跳过fsck"><a href="#在特定文件系统上跳过fsck" class="headerlink" title="在特定文件系统上跳过fsck"></a>在特定文件系统上跳过fsck</h3><p>如果要fsck跳过检查文件系统，则需要在文件系统之前添加**-t** 。</p>
+<p>例如，要跳过<em>ext3</em>文件系统，请运行以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fsck -AR -t noext3 -y</span><br></pre></td></tr></table></figure>
+
+<p>我们添加**-y**了跳过提示。</p>
+<h3 id="在已挂载的文件系统上跳过fsck"><a href="#在已挂载的文件系统上跳过fsck" class="headerlink" title="在已挂载的文件系统上跳过fsck"></a>在已挂载的文件系统上跳过fsck</h3><p>为确保不在已挂载的文件系统上运行fsck，请添加该**-M** 选项。该标志告诉fsck工具跳过任何已挂载的文件系统。</p>
+<p>为了说明挂载前后的区别，我们将在<strong>sdb</strong>挂载时和卸载后分别执行fsck检查。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fsck -M /dev/sdb</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/fsck-force-check.png" alt="fsck工具的输出可跳过任何已挂载的文件系统"></p>
+<p>当<strong>sdb</strong>被挂载时，该工具退出而不运行检查。然后，我们卸载<strong>sdb</strong>并再次运行相同的命令。这次，<strong>fsck</strong>检查磁盘并将其报告为正常磁盘或有错误。</p>
+<hr>
+<p><strong>注意：</strong>如果想要删除第一行标题“<em>fsck from util-linux 2.31.1</em>”，请使用**-T**选项。</p>
+<hr>
+<h3 id="在Linux根分区上运行fsck"><a href="#在Linux根分区上运行fsck" class="headerlink" title="在Linux根分区上运行fsck"></a>在Linux根分区上运行fsck</h3><p>正如我们已经提到的，fsck无法检查正在运行的计算机上的根分区，因为它们已经挂载并正在使用中。但是，如果进入恢复模式并运行<strong>fsck检查</strong>，是可以检查Linux根分区的。</p>
+<p>1.为此，请通过GUI或使用终端打开或重新启动计算机：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo reboot</span><br></pre></td></tr></table></figure>
+
+<p>2.在启动过程中按住<strong>Shift</strong>键。出现GNU GRUB菜单。</p>
+<p>3.选择<strong>Ubuntu的高级选项</strong>。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/skip-mounted-fsck.png" alt="Linux恢复模式"></p>
+<p>4.然后，选择末尾带有<em>（恢复模式）</em>的条目。让系统加载到“恢复菜单”中。</p>
+<p>5.从菜单中选择<strong>fsck</strong>。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/recovery-confirm-yes-fsck.png" alt="Linux恢复菜单中选择fsck工具"></p>
+<p>6.通过在提示符下选择**&lt;是&gt;**进行确认。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/recovery-resume-boot.png" alt="选择fsck时的恢复模式确认消息"></p>
+<p>7.完成后，在恢复菜单中选择“<strong>恢复</strong>”以启动计算机。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/fsck-recovery-mode.png" alt="完成检查后"></p>
+<h2 id="如果fsck被中断怎么办"><a href="#如果fsck被中断怎么办" class="headerlink" title="如果fsck被中断怎么办"></a>如果fsck被中断怎么办</h2><p>正常来说，<strong>不应该打断</strong>正在进行的fsck检查。但是，如果该过程被中断，fsck将完成正在进行的检查，然后停止。</p>
+<p>如果该实用工具在检查过程中发现错误，则如果中断，它将不会尝试修复任何问题。可以在下次重新运行检查。</p>
+<h2 id="fsck-Linux命令选项列表"><a href="#fsck-Linux命令选项列表" class="headerlink" title="fsck Linux命令选项列表"></a>fsck Linux命令选项列表</h2><p>最后，下面是可与<strong>fsck Linux实用工具</strong>一起使用的选项列表。</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-a</td>
+<td align="center">尝试自动修复文件系统错误。不会出现提示，因此请谨慎使用。</td>
+</tr>
+<tr>
+<td>-A</td>
+<td align="center">检查&#x2F;etc&#x2F;fstab中列出的所有文件系统。</td>
+</tr>
+<tr>
+<td>-C</td>
+<td align="center">显示检查ext2和ext3文件系统的进度。</td>
+</tr>
+<tr>
+<td>-F</td>
+<td align="center">强制fsck检查文件系统。该工具甚至在文件系统看起来正常时也进行检查。</td>
+</tr>
+<tr>
+<td>-l</td>
+<td align="center">锁定设备，以防止其他程序在扫描和修复期间使用该分区。</td>
+</tr>
+<tr>
+<td>-M</td>
+<td align="center">不要检查已挂载的文件系统。挂载文件系统时，该工具返回退出代码0。</td>
+</tr>
+<tr>
+<td>-N</td>
+<td align="center">做空试。输出显示fsck在不执行任何操作的情况下将执行的操作。警告或错误消息也将被打印。</td>
+</tr>
+<tr>
+<td>-P</td>
+<td align="center">用于在多个文件系统上并行运行扫描。请谨慎使用。</td>
+</tr>
+<tr>
+<td>-R</td>
+<td align="center">使用-A选项时，告诉fsck工具不要检查根文件系统。</td>
+</tr>
+<tr>
+<td>-r</td>
+<td align="center">打印设备统计信息。</td>
+</tr>
+<tr>
+<td>-t</td>
+<td align="center">指定要使用fsck检查的文件系统类型。请查阅手册页以获取详细信息。</td>
+</tr>
+<tr>
+<td>-T</td>
+<td align="center">工具启动时隐藏标题。</td>
+</tr>
+<tr>
+<td>-y</td>
+<td align="center">尝试在检查期间自动修复文件系统错误。</td>
+</tr>
+<tr>
+<td>-V</td>
+<td align="center">详细输出。</td>
+</tr>
+</tbody></table>
+<p><strong>结论</strong></p>
+<p>现在我们知道了<strong>如何使用fsck Linux命令来检查和修复文件系统</strong>。该指南提供了该工具的功能和示例。</p>
+<p>在运行列出的命令之前，请确保具有root权限。有关所有选项的详细说明，还可以查阅该工具的<strong>手册文件</strong>或访问<a target="_blank" rel="noopener" href="https://linux.die.net/man/8/fsck">fsck Linux手册页</a>。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/01/11/k8s/Helm101/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +426,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -543,7 +793,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -657,7 +907,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -759,7 +1009,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -897,7 +1147,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -997,7 +1247,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1128,7 +1378,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1337,7 +1587,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1475,7 +1725,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1937,291 +2187,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/10/21/docker/Create-Tag-Retention-Rules/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/21/docker/Create-Tag-Retention-Rules/" class="post-title-link" itemprop="url">Harbor中如何创建tag保留规则</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-10-21 20:26:07" itemprop="dateCreated datePublished" datetime="2020-10-21T20:26:07+00:00">2020-10-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="创建Tag保留规则"><a href="#创建Tag保留规则" class="headerlink" title="创建Tag保留规则"></a>创建Tag保留规则</h2><p>一个repository可以快速积累大量镜像tag，在给定时间之后或一旦它们被后续镜像构建取代后，可能不需要许多镜像tag。这些多余的tag显然会消耗大量的存储容量。作为Harbor系统管理员，可以定义规则来管理给定repository中要保留多少个tag，或将某些tag保留多长时间。</p>
-<h2 id="Tag保留规则如何工作"><a href="#Tag保留规则如何工作" class="headerlink" title="Tag保留规则如何工作"></a>Tag保留规则如何工作</h2><p>在repositories上而不是projects上定义tag保留规则（<em>repository属于project内的概念</em>）。在定义保留规则时，这可以提供更大的粒度。顾名思义，当我们为repositories定义保留规则时，也即在定义要保留的tag。我们没有定义规则来显式删除tag，而是当设置规则时，repositories中任何未标识为可保留的标记都将被丢弃。</p>
-<p>tag保留规则具有3个按顺序应用的过滤器，如下表所述。</p>
-<table>
-<thead>
-<tr>
-<th align="left">Order</th>
-<th align="left">Filter</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">First</td>
-<td align="left">一个或多个repository</td>
-<td align="left">标识要在其上应用规则的一个或多个repository。可以标识具有特定名称或名称片段的repository，或者不具有该名称或名称片段的repository。允许使用通配符（例如* repo，repo *和**）。首先使用repository filter以标记要对其应用保留规则的repository。根据标签标准，将识别出的repository指定用于进一步匹配。在此阶段，对没有指定的repository不采取任何措施。</td>
-</tr>
-<tr>
-<td align="left">Second</td>
-<td align="left">保留数量</td>
-<td align="left">通过指定最大数量的标签或指定最大保留标签的时间来设置要保留的标签。</td>
-</tr>
-<tr>
-<td align="left">Third</td>
-<td align="left">要保留的标签</td>
-<td align="left">标识要应用规则的一个或多个标签。可以标识具有特定名称或名称片段的标签，或者不具有该名称或名称片段的标签。允许使用通配符（例如* tag，tag *和**）。</td>
-</tr>
-</tbody></table>
-<p>有关如何应用**通配符的信息，请参见<a target="_blank" rel="noopener" href="https://github.com/bmatcuk/doublestar#patterns%E3%80%82">https://github.com/bmatcuk/doublestar#patterns。</a></p>
-<h3 id="Example-1"><a href="#Example-1" class="headerlink" title="Example 1"></a>Example 1</h3><ul>
-<li>在一个project中有5个repositories，repositories A到E。<ul>
-<li>repository A具有100个镜像tag，所有这些镜像tag均已在上周有pull操作。</li>
-<li>repository B到E每个都有6个镜像，上个月都没有pull操作。</li>
-</ul>
-</li>
-<li>将repositories过滤器设置为**，这意味着包括了project中的所有repositories。</li>
-<li>设置保留策略，以在每个repositories中保留最近提取的10个映像。</li>
-<li>将标签过滤器设置为**，这意味着包括repositories中的所有标签。</li>
-</ul>
-<p>在此示例中，规则在repository A中保留了10个最近有pull操作的镜像，并且在repository B至E中的每一个中都保留了所有6个镜像。因此，project中总共保留了34个镜像tag。换句话说，该规则不会将repository A到E中的所有镜像都视为单个池，然后从中选择10个最新镜像。因此，即使repository A中的第11至第100个标签比repository B至E中的任何标签相比都有pull操作，也将保留repository B至E中的所有标签，因为每个repository中的标签少于10个。</p>
-<h3 id="Example-2"><a href="#Example-2" class="headerlink" title="Example 2"></a>Example 2</h3><p>本示例使用与示例1相同的project和repositories，但设置了保留策略以保留每个repository中最近7天内有pull操作的镜像。</p>
-<p>在这种情况下，保留了repository A中的所有镜像，因为它们是最近7天内有pull操作的。repository B到E中的任何镜像都不会保留，因为它们在上周都没有发生pull操作。在此示例中，保留了100个镜像，而示例1中则保留了34个镜像。</p>
-<h2 id="Tag保留规则和原生Docker-Tag删除问题"><a href="#Tag保留规则和原生Docker-Tag删除问题" class="headerlink" title="Tag保留规则和原生Docker Tag删除问题"></a>Tag保留规则和原生Docker Tag删除问题</h2><p><strong>警告</strong>：由于本机Docker tag删除行为，当前的保留策略实施存在问题。如果有多个tag引用相同的SHA摘要，并且如果这些tag的子集被配置的保留策略标记为要删除，则所有其余tag也将被删除。这违反了保留策略，因此在这种情况下，所有tag都将保留。在以后的更新版本中将解决此问题，以便tag保留策略可以删除tag而不删除摘要和其他共享tag。</p>
-<p>例如，我们有以下tag，这些tag根据其推送时间列出，并且它们都引用相同的SHA摘要：</p>
-<ul>
-<li><code>harbor-1.8</code>, pushed 8&#x2F;14&#x2F;2019 12:00am</li>
-<li><code>harbor-release</code>, pushed 8&#x2F;14&#x2F;2019 03:00am</li>
-<li><code>harbor-nightly</code>, pushed 8&#x2F;14&#x2F;2019 06:00am</li>
-<li><code>harbor-latest</code>, pushed 8&#x2F;14&#x2F;2019 09:00am</li>
-</ul>
-<p>如果配置了保留策略，以保留与Harbor- *匹配的两个最新标记，以便删除Harbor-rc和Harbor-latest。但是，由于所有tag都引用相同的SHA摘要，因此此策略还将删除标签Harbor-1.8和Harbor-release，因此将保留所有标签。（时间和删除的tag有点对不上）</p>
-<h2 id="在一个Repository上合并规则"><a href="#在一个Repository上合并规则" class="headerlink" title="在一个Repository上合并规则"></a>在一个Repository上合并规则</h2><p>每个project最多可以定义15条规则。我们可以将多个规则应用于一个repository或一组repositories。在将多个规则应用于repository 时，它们将使用OR逻辑而不是AND逻辑来应用。这样，就不会在给定的repository 上优先应用规则。规则在后台同时运行，每个规则的结果集在运行结束时合并。</p>
-<h3 id="Example-3"><a href="#Example-3" class="headerlink" title="Example 3"></a>Example 3</h3><p>本示例使用与示例1和2相同的project和repositories，但是设置了两个规则：</p>
-<ul>
-<li>规则1：保留每个repository中最近7天内pull操作的所有镜像。</li>
-<li>规则2：每个repository中最多保留10个镜像。</li>
-</ul>
-<p>对于repository A，规则1保留所有镜像，因为它们都是在上周发生pull操作的。规则2保留最近发生pull操作的10个镜像。因此，由于这两个规则是通过OR关系应用的，所有100个镜像都保留在repository A中。</p>
-<p>对于repositories B-E，规则1将保留0个镜像，因为上周未发生pull操作。规则2将保留所有6个镜像，因为6 &lt;10。因此，由于这两个规则以OR关系应用，对于repositories B-E，每个repository将保留所有6个图像。</p>
-<p>在此示例中，所有镜像均被保留。</p>
-<h3 id="Example-4"><a href="#Example-4" class="headerlink" title="Example 4"></a>Example 4</h3><p>本示例使用与先前示例不同的repository。</p>
-<ul>
-<li><p>包含12个tag的repository：</p>
-<table>
-<thead>
-<tr>
-<th align="left">Production</th>
-<th align="left">Release Candidate</th>
-<th align="left">Release</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>2.1-your_repo-prod</code></td>
-<td align="left"><code>2.1-your_repo-rc</code></td>
-<td align="left"><code>2.1-your_repo-release</code></td>
-</tr>
-<tr>
-<td align="left"><code>2.2-your_repo-prod</code></td>
-<td align="left"><code>2.2-your_repo-rc</code></td>
-<td align="left"><code>2.2-your_repo-release</code></td>
-</tr>
-<tr>
-<td align="left"><code>3.1-your_repo-prod</code></td>
-<td align="left"><code>3.1-your_repo-rc</code></td>
-<td align="left"><code>3.1-your_repo-release</code></td>
-</tr>
-<tr>
-<td align="left"><code>4.4-your_repo-prod</code></td>
-<td align="left"><code>4.4-your_repo-rc</code></td>
-<td align="left"><code>4.4-your_repo-release</code></td>
-</tr>
-</tbody></table>
-</li>
-<li><p>在此repository上定义了3个tag保留规则：</p>
-<ul>
-<li><p>保留以2开头的10个最近发生pull操作的镜像tag。</p>
-</li>
-<li><p>保留以-prod结尾的10个最近发生pull操作的镜像tag。</p>
-</li>
-<li><p>保留所有不包含2.1-your_repo-prod的tag。</p>
-</li>
-</ul>
-</li>
-</ul>
-<p>在此示例中，规则将应用于以下7个tag（与预期不符，官方收到反馈后已修改）：</p>
-<ul>
-<li><code>2.1-your_repo-rc</code></li>
-<li><code>2.1-your_repo-release</code></li>
-<li><code>2.2-your_repo-prod</code></li>
-<li><code>2.2-your_repo-rc</code></li>
-<li><code>2.2-your_repo-release</code></li>
-<li><code>3.1-your_repo-prod</code></li>
-<li><code>4.4-your_repo-prod</code></li>
-</ul>
-<h2 id="Tag保留规则如何与项目配额搭配使用"><a href="#Tag保留规则如何与项目配额搭配使用" class="headerlink" title="Tag保留规则如何与项目配额搭配使用"></a>Tag保留规则如何与项目配额搭配使用</h2><p>Harbor系统管理员可以设置一个project可以包含的tag数量及其可以使用的存储量的最大值。有关project配额的信息，请参阅<a target="_blank" rel="noopener" href="https://goharbor.io/docs/1.10/administration/configure-project-quotas/">配置project配额</a>。</p>
-<p>如果在project上设置配额，则不能超过该配额。即使设置的保留规则超过配额，配额也将应用于project。换句话说，不能使用保留规则来绕过配额。</p>
-<h2 id="配置Tag保留规则实例"><a href="#配置Tag保留规则实例" class="headerlink" title="配置Tag保留规则实例"></a>配置Tag保留规则实例</h2><ol>
-<li><p>使用至少具有项目管理员特权的帐户登录到Harbor界面。</p>
-</li>
-<li><p>转到”project”，选择一个project，然后选择tag保留。</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Create-Tag-Retention-Rules/tag-retention1.png" alt="tag-retention"></p>
-</li>
-<li><p>单击”添加规则”以添加规则。</p>
-</li>
-<li><p>在“repositories”下拉菜单中，选择匹配或排除。</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Create-Tag-Retention-Rules/tag-retention3.png" alt="tag-retention"></p>
-</li>
-<li><p>在“repositories”文本框中，标识要在其上应用规则的repository。</p>
-<p>可以通过输入以下信息来定义要在哪些repositories上应用规则：</p>
-</li>
-</ol>
-<ul>
-<li><p>repository名称，例如my_repo_1。</p>
-</li>
-<li><p>以逗号分隔的repository名称列表，例如my_repo_1，my_repo_2，your_repo_3。</p>
-</li>
-<li><p>带通配符的部分repository名称，例如my _ <em>，</em> _ 3或*<em>repo</em>*。</p>
-</li>
-<li><p>**将规则应用于project中的所有repositories。</p>
-<p> 如果选择<strong>匹配</strong>，则规则将应用于标识的repository。如果选择<strong>排除</strong>，则该规则将应用于project中除已标识的repositories之外的所有repositories。</p>
-</li>
-</ul>
-<ol start="6">
-<li><p>在“按镜像或天数计数”下拉菜单中，定义要保留的tag数量或保留的时间。</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Create-Tag-Retention-Rules/tag-retention4.png" alt="tag-retention"></p>
-</li>
-</ol>
-<table>
-<thead>
-<tr>
-<th align="left">Option</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><strong>retain the most recently pushed # images</strong></td>
-<td align="left">输入要保留的最大镜像个数，保留最近发生push操作的镜像。不考虑镜像的时间。</td>
-</tr>
-<tr>
-<td align="left"><strong>retain the most recently pulled # images</strong></td>
-<td align="left">输入要保留的最大镜像个数，保留最近发生pull操作的镜像。不考虑镜像的时间。</td>
-</tr>
-<tr>
-<td align="left"><strong>retain the images pushed within the last # days</strong></td>
-<td align="left">输入保留镜像的天数，仅保留在此期间发生push操作的镜像。不考虑镜像数量。</td>
-</tr>
-<tr>
-<td align="left"><strong>retain the images pulled within the last # days</strong></td>
-<td align="left">输入保留镜像的天数，仅保留在此期间发生pull操作的镜像。不考虑镜像数量。</td>
-</tr>
-<tr>
-<td align="left"><strong>retain always</strong></td>
-<td align="left">始终保留此规则标识的镜像。</td>
-</tr>
-</tbody></table>
-<ol start="7">
-<li><p>在”tag”下拉菜单中，选择匹配或排除。  </p>
-</li>
-<li><p>在“标签”文本框中，标识要在其上应用规则的tag。</p>
-<p>可以通过输入以下信息来定义要在其上应用规则的tag：</p>
-</li>
-</ol>
-<ul>
-<li>tag名称，例如my_tag_1。</li>
-<li>tag名称的逗号分隔列表，例如my_tag_1，my_tag_2，your_tag_3。</li>
-<li>带通配符的部分tag名称，例如my _ <em>，</em> _ 3或* <em>tag</em> *。</li>
-<li>**将规则应用于project中的所有tag。</li>
-</ul>
-<ol start="9">
-<li><p>单击”添加”以保存规则。</p>
-</li>
-<li><p>（可选）单击“添加规则”以添加更多规则，每个project最多15条。</p>
-</li>
-<li><p>（可选）在“计划”下，单击“编辑”，然后选择运行规则的频率。</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Create-Tag-Retention-Rules/tag-retention2.png" alt="tag-retention"></p>
-<p>如果选择“自定义”，请输入cron job命令以配置规则。</p>
-<p>注意：如果定义多个规则，则计划将应用于所有规则。不能配置不同的规则在不同的时间运行。</p>
-</li>
-<li><p>单击“模拟运行”以测试定义的一个或多个规则。</p>
-</li>
-<li><p>单击“立即运行”以立即运行规则。</p>
-</li>
-</ol>
-<p><strong>警告</strong>：运行规则后，将无法还原它。强烈建议先执行模拟运行，然后再运行规则。</p>
-<p>要修改现有规则，请使用规则旁边的操作下拉菜单来禁用，编辑或删除该规则。</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Create-Tag-Retention-Rules/tag-retention5.png" alt="tag-retention"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2291,7 +2256,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

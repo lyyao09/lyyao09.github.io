@@ -145,6 +145,126 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/29/stack/Kubernetes-vs-CloudFoundry/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/07/29/stack/Kubernetes-vs-CloudFoundry/" class="post-title-link" itemprop="url">Kubernetes vs. CloudFoundry</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-29 21:19:55" itemprop="dateCreated datePublished" datetime="2019-07-29T21:19:55+00:00">2019-07-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>CloudFoundry &#x2F; Diego的下一个版本将为Docker容器提供原生支持，这些容器将在多个主机[<a target="_blank" rel="noopener" href="http://thenewstack.io/docker-on-diego-cloud-foundrys-new-elastic-runtime/">链接</a>]之间进行编排。这听起来与Kubernetes非常相似。</p>
+<p>当然，Kubernetes试图解决的问题更为通用，其中CloudFoundry更专注于应用程序开发。然而，对我来说，它听起来都朝着类似的方向发展，而CloudFoundry正在简单的业务流程之上添加更多功能。</p>
+<p>所以，我想知道Kubernetes会比CloudFoundry增加更多有价值的用例吗？</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>作为CloudFoundry（过去）和Kubernetes（现在）的提交者，我可能有资格回答这个问题。</p>
+<h3 id="PaaS平台"><a href="#PaaS平台" class="headerlink" title="PaaS平台"></a>PaaS平台</h3><p>我喜欢将CloudFoundry称为“应用程序PaaS”，将Kubernetes称为“容器PaaS”，但鉴于两个项目都会随着时间的推移而在同一市场中竞争，因此区别相当微妙和流畅。</p>
+<p>两者之间的区别在于CF有一个暂存层，它采用（12-factor）用户应用程序（例如jar或gem）和Heroku风格的buildpack（例如Java + Tomcat或Ruby）并生成一个Droplet（类似于Docker镜像）。CF不会将容器化接口暴露给用户，但Kubernetes会这样做。</p>
+<h3 id="受众人员"><a href="#受众人员" class="headerlink" title="受众人员"></a>受众人员</h3><p>CloudFoundry的主要受众是希望使用Heroku风格的buildpack部署12-factor无状态应用程序的企业应用程序开发人员。</p>
+<p>Kubernetes的受众范围更广，包括无状态应用程序和提供自己容器的有状态服务开发人员。</p>
+<p>这种区别可能在未来发生变化：</p>
+<ul>
+<li>CloudFoundry开始接受docker镜像</li>
+<li>Kubernetes可以添加镜像生成层</li>
+</ul>
+<h3 id="功能比较"><a href="#功能比较" class="headerlink" title="功能比较"></a>功能比较</h3><p>随着两个项目的成熟和竞争，它们的异同将发生变化。因此，请将以下特征进行比较。</p>
+<p>CF和K8都有许多相似的功能，如容器化，命名空间，身份验证。</p>
+<p>Kubernetes的竞争优势：</p>
+<ul>
+<li>对共享网络堆栈的容器进行分组和扩展，而不是仅仅进行独立扩展</li>
+<li>提供自己的容器</li>
+<li>有状态持久层</li>
+<li>更大、更活跃的OSS社区</li>
+<li>具有可替换组件和第三方插件</li>
+<li>免费的web GUI</li>
+</ul>
+<p>CloudFoundry的竞争优势：</p>
+<ul>
+<li>成熟的身份验证，用户分组和多租户支持[x]</li>
+<li>提供自己的APP</li>
+<li>包括负载均衡器</li>
+<li>由BOSH部署，扩展并保持状态[x]</li>
+<li>强大的日志记录和度量聚合[x]</li>
+<li>企业Web GUI [x]</li>
+</ul>
+<p>[x] 这些功能不是Diego的一部分或包含在Lattice中。</p>
+<h3 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h3><p>CloudFoundry的竞争优势之一是它拥有成熟的部署引擎BOSH，可以实现核心CF组件的扩展，恢复和监控等功能。BOSH还支持许多具有可插拔云提供程序抽象的IaaS层。不幸的是，BOSH的学习曲线和部署配置管理是噩梦。（作为BOSH提交者，我想我可以准确地说出来。）</p>
+<p>Kubernetes的部署抽象仍处于起步阶段。核心仓库中提供了多个目标环境，但它们并非全部正在运行，经过良好测试或得到主要开发人员的支持。这主要是成熟的事情。人们可能会期望这会随着时间的推移而改进并且会增加抽象。例如，<a target="_blank" rel="noopener" href="https://docs.mesosphere.com/">DCOS</a>上的Kubernetes允许使用单个命令将Kubernetes部署到现有DCOS群集。</p>
+<h3 id="历史背景"><a href="#历史背景" class="headerlink" title="历史背景"></a>历史背景</h3><p>Diego是CF的Droplet执行代理的重写。它最初是在Kubernetes宣布之前开发的，随着竞争格局的演变，它已经具有更多的功能范围。它的最初目标是生成droplets（用户应用程序 + CF buildpack）并在Warden（在Go中重写时重命名为Garden）容器中运行它们。自成立以来，它也被重新打包为<a target="_blank" rel="noopener" href="http://lattice.cf/">Lattice</a>，它有点像CloudFoundry-lite（虽然这个名字是由现有项目拍摄的）。出于这个原因，Lattice有点像玩具一样，因为它故意减少了用户的观众和范围，显然缺少使其达到“企业就绪”的功能。CF已经提供的功能。这部分是因为Lattice用于测试核心组件，而没有来自更复杂的CF的一些开销，但您也可以在内部高信任环境中使用Lattice，其中安全性和多租户不是那么重要。</p>
+<p>值得一提的是，CloudFoundry和Warden（它的容器引擎）也早于Docker，差不多几年了。</p>
+<p>另一方面，Kubernetes是一个相对较新的项目，由Google根据BORG和Omega多年的容器使用情况开发而成。Kubernetes可以被认为是谷歌的第三代容器编排，就像Diego是Pivotal &#x2F; VMware的第三代容器编排一样（v1在VMware编写; v2在VMware与Pivotal Labs帮助; v3在Pivotal接管项目后）。</p>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/32047563/kubernetes-vs-cloudfoundry">Kubernetes vs. CloudFoundry</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/27/stack/How-to-create-a-local-development-environment-for-Kubernetes/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +296,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -267,7 +387,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -363,7 +483,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -474,7 +594,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -573,7 +693,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -667,7 +787,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -756,7 +876,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -855,7 +975,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -953,7 +1073,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:49:03" itemprop="dateModified" datetime="2024-08-04T11:49:03+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1012,95 +1132,6 @@
 
 <p>Webhook是一个可以在每次转换时调用的URL，使您能够在转换文件时从外部响应。</p>
 <h2 id="命令行支持参数列表"><a href="#命令行支持参数列表" class="headerlink" title="命令行支持参数列表"></a>命令行支持参数列表</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">参数标记不区分大小写。大小写可以混合使用。</span><br><span class="line">  -H  查看各参数使用方法</span><br><span class="line">      --help -?</span><br><span class="line">  -F  输入文件或目录</span><br><span class="line">      --inputfile</span><br><span class="line">  -FX 如果输入为目录，指定源文档的扩展名。默认“.doc”（包括“.docx”）</span><br><span class="line">      --inputextension</span><br><span class="line">  -O  输出文件或目录以存放转换后的文档</span><br><span class="line">      --outputfile</span><br><span class="line">  -OX 如果-F为目录，指定转换后的文档扩展名。请包含&#x27;.&#x27;，如&#x27;.pdf&#x27;</span><br><span class="line">      --outputextension</span><br><span class="line">  -T  格式（类型），可以使用数字或wdSaveFormat常量表示，参考：http://msdn.microsoft.com/en-us/library/microsoft.office.interop.word.wdsaveformat.aspx</span><br><span class="line">      --format</span><br><span class="line">  -TF 强制转换格式</span><br><span class="line">      --forceformat</span><br><span class="line">  -L  日志级别，1 ERRORS, 2 STANDARD, 5 CHATTY, 10 VERBOSE，默认值为2</span><br><span class="line">      --loglevel</span><br><span class="line">  -C  兼容模式整数值，参考：https://msdn.microsoft.com/en-us/library/office/ff192388.aspx</span><br><span class="line">      --compatability</span><br><span class="line">  -M  忽略__MACOSX\目录下的所有文件，默认为True</span><br><span class="line">      --ignoremacos</span><br><span class="line">  -G  写日志文件到指定目录</span><br><span class="line">      --writelogfile</span><br><span class="line">  -GL 日志文件名称，默认为&#x27;DocTo.Log&#x27;</span><br><span class="line">      --logfilename</span><br><span class="line">  -Q  以安静模式输出日志</span><br><span class="line">      --quiet</span><br><span class="line">  -R  转换成功后移除源文件，默认为false</span><br><span class="line">      --deletefiles</span><br><span class="line">  -W  Webhook钩子，通过URL调用响应事件</span><br><span class="line">  -HW Webhook帮助</span><br><span class="line">  -X  暂停COM错误：默认为True。如果您在某些文件未转换时遇到问题，请将此设置为false以忽略错误并继续批处理作业</span><br><span class="line">      --halterror</span><br><span class="line">  -V  版本号</span><br><span class="line"></span><br><span class="line">错误码:</span><br><span class="line">200 : 指定的文件格式无效</span><br><span class="line">201 : 输入参数不足。如输入文件，输出文件和类型为必选参数</span><br><span class="line">202 : 转换错误</span><br><span class="line">203 : 未知的转换命令</span><br><span class="line">220 : Word或COM错误</span><br><span class="line">221 : Word未安装</span><br><span class="line"></span><br><span class="line">兼容模式：</span><br><span class="line">wdCurrent   : 65535 等效于最新版本的Microsoft Word</span><br><span class="line">wdWord2003  : 11    Word 2010将设置为与Word 2003最兼容的模式。在此模式下禁用Word 2010新增功能</span><br><span class="line">wdWord2007  : 12    Word 2010将设置为与Word 2007最兼容的模式。在此模式下禁用Word 2010新增功能</span><br><span class="line">wdWord2010  : 14    Word 2013将设置为与Word 2010最兼容的模式。在此模式下禁用Word 2013新增功能 </span><br><span class="line">wdWord2013  : 15    默认值。支持所有Word 2013功能</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/23/stack/kubectl-apply-vs-kubectl-create/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/07/23/stack/kubectl-apply-vs-kubectl-create/" class="post-title-link" itemprop="url">kubectl apply vs kubectl create</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-07-23 07:35:08" itemprop="dateCreated datePublished" datetime="2019-07-23T07:35:08+00:00">2019-07-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:40:43" itemprop="dateModified" datetime="2024-08-04T11:40:43+00:00">2024-08-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我在文档中理解的是<strong>kubectl apply</strong> &#x3D; <strong>kubectl create + kubectl replace</strong>。<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/user-guide/kubectl-overview/">参考</a></p>
-<p>我的理解是，如果我想在集群中创建新的k8s资源，我应该使用<strong>kubectl create</strong>操作。现在，如果我想更新现场k8s资源中的内容，我应该使用<strong>kubectl replace</strong>操作。</p>
-<p>如果我想做两个操作（创建一个新的k8s资源以及更新实时k8s资源）然后我应该使用<strong>kubectl replace</strong>操作。</p>
-<p><strong>我的问题是</strong>为什么在集群中执行相同任务有三个操作？这些操作的使用场景是什么？他们的区别是什么？</p>
-<p>目前我正在使用<strong>kubectl create</strong>操作在集群中创建新资源。谢谢</p>
-<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>这是两种不同的方法。kubectl create就是我们所说的<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/object-management-kubectl/imperative-object-management-configuration/">Imperative Management</a>（命令式管理）。在这种方法中，您可以告诉Kubernetes API您要创建，替换或删除的内容，而不是您希望K8s群集是什么样的。</p>
-<p>kubectl apply是<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/object-management-kubectl/declarative-object-management-configuration/">Declarative Management</a> （声明式管理）的一部分，即使您对对象应用其他更改，也可以保留应用于活动对象（即通过比例）的更改。</p>
-<p>您可以在<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/">Kubernetes Object Management</a>中阅读有关命令式和声明式管理的更多信息。</p>
-<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/47369351/kubectl-apply-vs-kubectl-create">kubectl apply vs kubectl create?</a></p>
-
       
     </div>
 
@@ -1184,7 +1215,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
