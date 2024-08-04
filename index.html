@@ -145,96 +145,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/08/04/linux/%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%BC%82%E5%B8%B8%E6%94%BB%E5%87%BB%E5%90%8E%E8%8A%82%E7%82%B9SSH%E7%99%BB%E5%BD%95%E5%A4%B1%E8%B4%A5%E6%97%A0%E6%B3%95%E6%81%A2%E5%A4%8D%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/08/04/linux/%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%BC%82%E5%B8%B8%E6%94%BB%E5%87%BB%E5%90%8E%E8%8A%82%E7%82%B9SSH%E7%99%BB%E5%BD%95%E5%A4%B1%E8%B4%A5%E6%97%A0%E6%B3%95%E6%81%A2%E5%A4%8D%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">未命名</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-08-04 11:37:12" itemprop="dateCreated datePublished" datetime="2024-08-04T11:37:12+00:00">2024-08-04</time>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h2><p><code>K8S</code>集群所有节点之间网络异常，无法执行正常的<code>SSH</code>操作。</p>
-<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>基于该现象，首先怀疑是使用的密码错误，先排查使用的密码和实际密码和是否一致，经确认业务存储的密码跟实际密码是一致的，排除密码不一致的问题；</p>
-<p>再排查是不是有异常的<code>ip</code>使用错误密码连接：</p>
-<blockquote>
-<p>这里使用的是<code>ipv6</code>地址，需要注意，默认的<code>netstat</code>命令看到的<code>ipv6</code>地址是不全的，无法方便看出完整的<code>ip</code>地址，需要添加<code>-W</code>命令完整显示：</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># netstat -anp -v|grep -w 22 </span></span><br><span class="line">tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      156183/sshd: /usr/s </span><br><span class="line">tcp6       0      0 :::22                   :::*                    LISTEN      156183/sshd: /usr/s </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:59732 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:44072 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:35666 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:42998 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:59834 2000:8080:5a0a:2f40::22 ESTABLISHED 170769/java         </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:59652 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:39430 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:35648 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:36852 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:43162 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:35002 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:36052 2000:8080:5a0a:2f40::22 ESTABLISHED 170769/java  </span><br></pre></td></tr></table></figure>
-
-<p>  完整<code>ipv6</code>地址的<code>ssh</code>连接如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># netstat -anp -W|grep -w 22 |grep -v ::4</span></span><br><span class="line">tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      156183/sshd: /usr/s </span><br><span class="line">tcp6       0      0 :::22                   :::*                    LISTEN      156183/sshd: /usr/s </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:48950 2000:8080:5a0a:2f40:8002::5:22 ESTABLISHED 170769/java         </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:52506 2000:8080:5a0a:2f40:8002::5:22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:56798 2000:8080:5a0a:2f40:8002::6:22 ESTABLISHED 170769/java         </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:52624 2000:8080:5a0a:2f40:8002::5:22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:56860 2000:8080:5a0a:2f40:8002::6:22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:52396 2000:8080:5a0a:2f40:8002::5:22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:52398 2000:8080:5a0a:2f40:8002::5:22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:22 2000:8080:5a0a:2f40:8002::5:45532 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:52202 2000:8080:5a0a:2f40:8002::5:22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:52348 2000:8080:5a0a:2f40:8002::5:22 ESTABLISHED 170769/java</span><br></pre></td></tr></table></figure>
-
-<p>从上面的记录看，至少当前没有异常<code>ip</code>做<code>ssh</code>连接，再确认一下是不是之前出现过错误密码导致密码被锁的情况；</p>
-<p>查看<code>/var/log/secure</code>日志（日志已发生过轮转，无法确认出问题的初始时间点），查看系统最近没有发生过重启，继续看<code>journal --boot</code>里的登录失败日志，找到了出问题的时间点，并且可以看到源<code>ip</code>地址<code>2000:8080:5a0a:2f47::2</code>一直使用错误密码登录：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> boot.log |grep <span class="string">&quot;Failed password&quot;</span>|less</span><br><span class="line">3月 26 10:42:19 node1 sshd[114043]: Failed password <span class="keyword">for</span> admin from 2000:8080:5a0a:2f47::2 port 34968 ssh2</span><br><span class="line">3月 26 10:42:23 node1 sshd[114043]: Failed password <span class="keyword">for</span> admin from 2000:8080:5a0a:2f47::2 port 34968 ssh2</span><br><span class="line">3月 26 10:42:25 node1 sshd[114043]: Failed password <span class="keyword">for</span> admin from 2000:8080:5a0a:2f47::2 port 34968 ssh2</span><br><span class="line">3月 26 10:42:28 node1 sshd[114043]: Failed password <span class="keyword">for</span> admin from 2000:8080:5a0a:2f47::2 port 34968 ssh2</span><br><span class="line">3月 26 10:42:31 node1 sshd[116187]: Failed password <span class="keyword">for</span> admin from 2000:8080:5a0a:2f47::2 port 35194 ssh2</span><br><span class="line">3月 26 10:42:34 node1 sshd[116187]: Failed password <span class="keyword">for</span> admin from 2000:8080:5a0a:2f47::2 port 35194 ssh2</span><br><span class="line">3月 26 10:42:36 node1 sshd[116187]: Failed password <span class="keyword">for</span> admin from 2000:8080:5a0a:2f47::2 port 35194 ssh2</span><br></pre></td></tr></table></figure>
-
-<p>正常来说，使用错误密码登录失败后，密码被锁到指定时间后会自动解锁。但问题环境当前没有错误密码连接的情况下，使用正确密码依然无法连接。</p>
-<p>临时注释<code>/etc/pam.d/security-auth</code>和<code>/etc/pam.d/password-auth</code>中<code>auth</code>相关的配置，验证<code>ssh</code>异常是否是密码锁配置导致：</p>
-  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># auth required pam_tally2.so onerr=fail deny=5 unlock_time=900 even_deny_root</span></span><br></pre></td></tr></table></figure>
-
-
-<p>修改完观察一段时间，<code>ssh</code>恢复正常，还原回去后，<code>ssh</code>又出现异常，基本确认是配置问题。从系统相关同事了解到，这里使用的密码锁定模块<code>tally</code>是个老模块，因为存在缺陷已经被废弃，其中一个问题就是：<strong>在使用错误密码被锁后，即使密码正确了，也无法解除锁定</strong>。建议使用<code>faillock</code>模块替代，配置方法如下：<br> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># vim /etc/pam.d/system-auth 或者 vi /etc/pam.d/login</span></span><br><span class="line"><span class="comment"># 在文件开头增加如下内容：</span></span><br><span class="line">auth [success=1 default=bad] pam_unix.so</span><br><span class="line">auth [default=die] pam_faillock.so authfail deny=5 even_deny_root unlock_time=900 root_unlock_time=10</span><br><span class="line">auth sufficient pam_faillock.so authsucc deny=5 even_deny_root unlock_time=900 root_unlock_time=10</span><br><span class="line">auth required pam_deny.so</span><br><span class="line"></span><br><span class="line">[root@node1 ~]<span class="comment"># vim /etc/pam.d/password-auth 或者 vi /etc/pam.d/sshd</span></span><br><span class="line">在文件第二行（第一行为 <span class="comment">#%PAM-1.0 ）增加如下内容：</span></span><br><span class="line">auth [success=1 default=bad] pam_unix.so</span><br><span class="line">auth [default=die] pam_faillock.so authfail deny=5 even_deny_root unlock_time=900 root_unlock_time=10</span><br><span class="line">auth sufficient pam_faillock.so authsucc deny=5 even_deny_root unlock_time=900 root_unlock_time=10</span><br><span class="line">auth required pam_deny.so</span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p>说明：<code>faillock</code>模块远程登录、本地登录过程中，用户锁定均不会有任何提示，只会出现锁定期间即使密码输入正确也无法登录系统的现象，解锁后可正常登录。</p>
-</blockquote>
-<p>至于为什么出现这个问题，最后了解到是客户那边的漏扫平台使用弱密码故意扫的，正常只会扫一次，不清楚为什么触发扫了多次。</p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>锁密码的安全加固使用<code>faillock</code>模块替代老版本的<code>tally</code>模块。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/05/12/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E9%87%8D%E5%90%AFDbus%E6%9C%8D%E5%8A%A1%E5%AF%BC%E8%87%B4%E5%AE%B9%E5%99%A8%E5%88%9B%E5%BB%BA%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -266,7 +176,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:37:12" itemprop="dateModified" datetime="2024-08-04T11:37:12+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:38:22" itemprop="dateModified" datetime="2024-08-04T11:38:22+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -333,6 +243,112 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/04/27/linux/%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%BC%82%E5%B8%B8%E6%94%BB%E5%87%BB%E5%90%8E%E8%8A%82%E7%82%B9SSH%E7%99%BB%E5%BD%95%E5%A4%B1%E8%B4%A5%E6%97%A0%E6%B3%95%E6%81%A2%E5%A4%8D%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/04/27/linux/%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%BC%82%E5%B8%B8%E6%94%BB%E5%87%BB%E5%90%8E%E8%8A%82%E7%82%B9SSH%E7%99%BB%E5%BD%95%E5%A4%B1%E8%B4%A5%E6%97%A0%E6%B3%95%E6%81%A2%E5%A4%8D%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">网络问题排查-异常攻击后节点SSH登录失败无法恢复问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-27 21:35:10" itemprop="dateCreated datePublished" datetime="2024-04-27T21:35:10+00:00">2024-04-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-04 11:38:22" itemprop="dateModified" datetime="2024-08-04T11:38:22+00:00">2024-08-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h2><p><code>K8S</code>集群所有节点之间网络异常，无法执行正常的<code>SSH</code>操作。</p>
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>基于该现象，首先怀疑是使用的密码错误，先排查使用的密码和实际密码和是否一致，经确认业务存储的密码跟实际密码是一致的，排除密码不一致的问题；</p>
+<p>再排查是不是有异常的<code>ip</code>使用错误密码连接：</p>
+<blockquote>
+<p>这里使用的是<code>ipv6</code>地址，需要注意，默认的<code>netstat</code>命令看到的<code>ipv6</code>地址是不全的，无法方便看出完整的<code>ip</code>地址，需要添加<code>-W</code>命令完整显示：</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># netstat -anp -v|grep -w 22 </span></span><br><span class="line">tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      156183/sshd: /usr/s </span><br><span class="line">tcp6       0      0 :::22                   :::*                    LISTEN      156183/sshd: /usr/s </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:59732 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:44072 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:35666 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:42998 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:59834 2000:8080:5a0a:2f40::22 ESTABLISHED 170769/java         </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:59652 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:39430 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:35648 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:36852 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:43162 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:35002 2000:8080:5a0a:2f40::22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f:36052 2000:8080:5a0a:2f40::22 ESTABLISHED 170769/java  </span><br></pre></td></tr></table></figure>
+
+<p>  完整<code>ipv6</code>地址的<code>ssh</code>连接如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># netstat -anp -W|grep -w 22 |grep -v ::4</span></span><br><span class="line">tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      156183/sshd: /usr/s </span><br><span class="line">tcp6       0      0 :::22                   :::*                    LISTEN      156183/sshd: /usr/s </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:48950 2000:8080:5a0a:2f40:8002::5:22 ESTABLISHED 170769/java         </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:52506 2000:8080:5a0a:2f40:8002::5:22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:56798 2000:8080:5a0a:2f40:8002::6:22 ESTABLISHED 170769/java         </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:52624 2000:8080:5a0a:2f40:8002::5:22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:56860 2000:8080:5a0a:2f40:8002::6:22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:52396 2000:8080:5a0a:2f40:8002::5:22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:52398 2000:8080:5a0a:2f40:8002::5:22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:22 2000:8080:5a0a:2f40:8002::5:45532 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:52202 2000:8080:5a0a:2f40:8002::5:22 TIME_WAIT   -                   </span><br><span class="line">tcp6       0      0 2000:8080:5a0a:2f40:8002::5:52348 2000:8080:5a0a:2f40:8002::5:22 ESTABLISHED 170769/java</span><br></pre></td></tr></table></figure>
+
+<p>从上面的记录看，至少当前没有异常<code>ip</code>做<code>ssh</code>连接，再确认一下是不是之前出现过错误密码导致密码被锁的情况；</p>
+<p>查看<code>/var/log/secure</code>日志（日志已发生过轮转，无法确认出问题的初始时间点），查看系统最近没有发生过重启，继续看<code>journal --boot</code>里的登录失败日志，找到了出问题的时间点，并且可以看到源<code>ip</code>地址<code>2000:8080:5a0a:2f47::2</code>一直使用错误密码登录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> boot.log |grep <span class="string">&quot;Failed password&quot;</span>|less</span><br><span class="line">3月 26 10:42:19 node1 sshd[114043]: Failed password <span class="keyword">for</span> admin from 2000:8080:5a0a:2f47::2 port 34968 ssh2</span><br><span class="line">3月 26 10:42:23 node1 sshd[114043]: Failed password <span class="keyword">for</span> admin from 2000:8080:5a0a:2f47::2 port 34968 ssh2</span><br><span class="line">3月 26 10:42:25 node1 sshd[114043]: Failed password <span class="keyword">for</span> admin from 2000:8080:5a0a:2f47::2 port 34968 ssh2</span><br><span class="line">3月 26 10:42:28 node1 sshd[114043]: Failed password <span class="keyword">for</span> admin from 2000:8080:5a0a:2f47::2 port 34968 ssh2</span><br><span class="line">3月 26 10:42:31 node1 sshd[116187]: Failed password <span class="keyword">for</span> admin from 2000:8080:5a0a:2f47::2 port 35194 ssh2</span><br><span class="line">3月 26 10:42:34 node1 sshd[116187]: Failed password <span class="keyword">for</span> admin from 2000:8080:5a0a:2f47::2 port 35194 ssh2</span><br><span class="line">3月 26 10:42:36 node1 sshd[116187]: Failed password <span class="keyword">for</span> admin from 2000:8080:5a0a:2f47::2 port 35194 ssh2</span><br></pre></td></tr></table></figure>
+
+<p>正常来说，使用错误密码登录失败后，密码被锁到指定时间后会自动解锁。但问题环境当前没有错误密码连接的情况下，使用正确密码依然无法连接。</p>
+<p>临时注释<code>/etc/pam.d/security-auth</code>和<code>/etc/pam.d/password-auth</code>中<code>auth</code>相关的配置，验证<code>ssh</code>异常是否是密码锁配置导致：</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># auth required pam_tally2.so onerr=fail deny=5 unlock_time=900 even_deny_root</span></span><br></pre></td></tr></table></figure>
+
+
+<p>修改完观察一段时间，<code>ssh</code>恢复正常，还原回去后，<code>ssh</code>又出现异常，基本确认是配置问题。从系统相关同事了解到，这里使用的密码锁定模块<code>tally</code>是个老模块，因为存在缺陷已经被废弃，其中一个问题就是：<strong>在使用错误密码被锁后，即使密码正确了，也无法解除锁定</strong>。建议使用<code>faillock</code>模块替代，配置方法如下：<br> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># vim /etc/pam.d/system-auth 或者 vi /etc/pam.d/login</span></span><br><span class="line"><span class="comment"># 在文件开头增加如下内容：</span></span><br><span class="line">auth [success=1 default=bad] pam_unix.so</span><br><span class="line">auth [default=die] pam_faillock.so authfail deny=5 even_deny_root unlock_time=900 root_unlock_time=10</span><br><span class="line">auth sufficient pam_faillock.so authsucc deny=5 even_deny_root unlock_time=900 root_unlock_time=10</span><br><span class="line">auth required pam_deny.so</span><br><span class="line"></span><br><span class="line">[root@node1 ~]<span class="comment"># vim /etc/pam.d/password-auth 或者 vi /etc/pam.d/sshd</span></span><br><span class="line">在文件第二行（第一行为 <span class="comment">#%PAM-1.0 ）增加如下内容：</span></span><br><span class="line">auth [success=1 default=bad] pam_unix.so</span><br><span class="line">auth [default=die] pam_faillock.so authfail deny=5 even_deny_root unlock_time=900 root_unlock_time=10</span><br><span class="line">auth sufficient pam_faillock.so authsucc deny=5 even_deny_root unlock_time=900 root_unlock_time=10</span><br><span class="line">auth required pam_deny.so</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>说明：<code>faillock</code>模块远程登录、本地登录过程中，用户锁定均不会有任何提示，只会出现锁定期间即使密码输入正确也无法登录系统的现象，解锁后可正常登录。</p>
+</blockquote>
+<p>至于为什么出现这个问题，最后了解到是客户那边的漏扫平台使用弱密码故意扫的，正常只会扫一次，不清楚为什么触发扫了多次。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>锁密码的安全加固使用<code>faillock</code>模块替代老版本的<code>tally</code>模块。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/04/21/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Harbor%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93%E7%A6%81%E7%94%A8UI%E6%96%B9%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -364,7 +380,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:37:12" itemprop="dateModified" datetime="2024-08-04T11:37:12+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:38:22" itemprop="dateModified" datetime="2024-08-04T11:38:22+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -454,7 +470,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:37:12" itemprop="dateModified" datetime="2024-08-04T11:37:12+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:38:22" itemprop="dateModified" datetime="2024-08-04T11:38:22+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -565,7 +581,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:37:12" itemprop="dateModified" datetime="2024-08-04T11:37:12+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:38:22" itemprop="dateModified" datetime="2024-08-04T11:38:22+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -666,7 +682,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:37:12" itemprop="dateModified" datetime="2024-08-04T11:37:12+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:38:22" itemprop="dateModified" datetime="2024-08-04T11:38:22+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -763,7 +779,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:37:12" itemprop="dateModified" datetime="2024-08-04T11:37:12+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:38:22" itemprop="dateModified" datetime="2024-08-04T11:38:22+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -853,7 +869,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:37:12" itemprop="dateModified" datetime="2024-08-04T11:37:12+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:38:22" itemprop="dateModified" datetime="2024-08-04T11:38:22+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -973,7 +989,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:37:12" itemprop="dateModified" datetime="2024-08-04T11:37:12+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:38:22" itemprop="dateModified" datetime="2024-08-04T11:38:22+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1085,7 +1101,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:37:12" itemprop="dateModified" datetime="2024-08-04T11:37:12+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:38:22" itemprop="dateModified" datetime="2024-08-04T11:38:22+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1228,7 +1244,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
