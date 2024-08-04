@@ -145,6 +145,159 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/06/30/k8s/Kubernetes-External-IP-service-type/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/30/k8s/Kubernetes-External-IP-service-type/" class="post-title-link" itemprop="url">Kubernetes External IP服务类型</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-30 22:50:22" itemprop="dateCreated datePublished" datetime="2020-06-30T22:50:22+00:00">2020-06-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在构建裸机Kubernetes集群时，您可能会遇到一个常见问题，就像我在做的那样，除了使用NodePort之外，您真的不知道如何向Internet公开Kubernetes服务。如果使用的是NodePort服务类型，它将分配一个要打开的较大端口号，并且您必须允许防火墙规则连接到这些端口。这对您的基础架构不利，尤其是在将服务器暴露于外部Internet时。好吧，还有另一种简洁的方法可以将您的Kubernetes服务公开出去，并且使用服务的原始端口号。例如，您可以将Kubernetes群集中部署的MySQL服务通过3306而不是32767端口暴露给外界。<strong>答案是使用Kubernetes External IP服务类型</strong>。</p>
+<p>就个人而言，我发现在Kubernetes社区中并未广泛讨论此主题，这可能是因为许多人正在使用云提供商的负载均衡器或将Metal LB用于本地部署。</p>
+<h2 id="什么是External-IP服务"><a href="#什么是External-IP服务" class="headerlink" title="什么是External IP服务"></a>什么是External IP服务</h2><p>从<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types">Kubernetes官方文档</a>中可以看到External IP的描述：</p>
+<blockquote>
+<p><em>如果存在路由到一个或多个集群节点的外部IP，则Kubernetes Services可以在这些<strong>External IP</strong>上公开。在服务端口上使用外部IP（作为目标IP）进入群集的流量将被路由到服务端点之一。<strong>External IP</strong>不受Kubernetes的管理，由集群管理员负责。</em></p>
+</blockquote>
+<p>对于大多数人来说，这种解释是可以理解的。这里最重要的是确保使用哪个IP来访问Kubernetes集群。使用External IP服务类型，我们可以将服务绑定到用于连接集群的IP。</p>
+<p>如果您了解Kubernetes网络的工作方式，那将是很好的。如果您不熟悉它，请查看Mark Betz撰写的<a target="_blank" rel="noopener" href="https://medium.com/google-cloud/understanding-kubernetes-networking-pods-7117dd28727">博客文章</a>，以详细了解它们。这里最重要的是要知道Kubernetes网络与Overlay网络一起工作。这意味着一旦您到达群集中的任何节点（主节点或工作节点），您就可以虚拟访问群集中的所有节点。</p>
+<p>下图就是他们的组网图：</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip.png" alt="kubernetes-external-ip"></p>
+<p>在上图中，节点1和节点2都有1个IP地址。节点1上的IP地址1.2.3.4绑定到实际Pod驻留在节点2中的httpd服务，而IP地址1.2.3.5绑定到实际Pod驻留在节点1中的nginx服务。底层的overlay网络使这成为可能。当我们curl 1.2.3.4时，应该看到来自httpd服务的响应，而curl 1.2.3.5时，则应该看到来自nginx服务的响应。</p>
+<h2 id="为什么不使用Ingress"><a href="#为什么不使用Ingress" class="headerlink" title="为什么不使用Ingress"></a>为什么不使用Ingress</h2><p>即使Ingress也用于将服务公开给外部，但Ingress是为L7路由构建的。这意味着它构建为支持HTTP（端口80）和&#x2F;或HTTPS（端口443）流量，而不支持其他端口。Ingress充当基于主机的路由，或类似于Web Server中的虚拟主机。一些能够为其他端口提供服务的ingress controllers，或者可能为L4路由提供了解决方法，但我从未真正尝试使用它们。</p>
+<h2 id="External-IP的优缺点"><a href="#External-IP的优缺点" class="headerlink" title="External IP的优缺点"></a>External IP的优缺点</h2><p>使用External IP的优点是：</p>
+<ul>
+<li>您可以完全控制所使用的IP。您可以使用属于您的ASN的IP，而不要使用云提供商的ASN。</li>
+</ul>
+<p>外部IP的缺点是：</p>
+<ul>
+<li>我们现在将要进行的简单设置并<strong>不是高可用的</strong>。这意味着，如果节点异常，则该服务将不再可用，您将需要手动修复该问题。</li>
+<li>管理IP需要做一些手工工作。IP不是为您动态配置的，因此需要人工干预。</li>
+</ul>
+<h2 id="如何使用External-IP服务"><a href="#如何使用External-IP服务" class="headerlink" title="如何使用External IP服务"></a>如何使用External IP服务</h2><p>同样，我们将使用与我们的群集设置相同的组网图，不同的是IP地址和主机名不同。这不是一个好例子，但是当我们验证设置时，很容易区分是哪个。在实际示例中，您可能希望在一个外部IP上公开MySQL DB，在另一个外部IP上公开Kafka群集。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Kubernetes-External-IP-service-type/kubernetes-external-ip-demo.png" alt="kubernetes-external-ip-demo"></p>
+<p>我已为本教程配置了2个VM。k3s-external-ip-master将是我们的Kubernetes master节点，其IP为1.2.4.120。k3s-external-ip-worker将是Kubernetes worker节点，其IP为1.2.4.114。</p>
+<p><strong>步骤1：部署Kubernetes集群</strong></p>
+<p>让我们在主节点上安装k3s，然后让另一个节点加入集群。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">k3sup install --ip &lt;master node ip&gt; --user &lt;username&gt;</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">k3sup <span class="built_in">join</span> --server-ip &lt;master node ip&gt; --ip &lt;worker node ip&gt; --user &lt;username&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>您现在应该会看到类似的内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get nodes</span></span><br><span class="line">NAME                                  STATUS   ROLES    AGE     VERSION</span><br><span class="line">k3s-external-ip-master               Ready    master   7m24s   v1.16.3-k3s.2</span><br><span class="line">k3s-external-ip-worker               Ready    &lt;none&gt;   2m21s   v1.16.3-k3s.2</span><br></pre></td></tr></table></figure>
+
+<p><strong>步骤2：创建Kubernetes Deployment资源</strong></p>
+<p>我们将创建nginx和httpd资源。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create deployment nginx --image=nginx</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create deployment httpd --image=httpd</span></span><br></pre></td></tr></table></figure>
+
+<p>你现在应该看到这个:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get pods</span><br><span class="line">NAME                     READY   STATUS    RESTARTS   AGE</span><br><span class="line">nginx-86c57db685-fzxn5   1/1     Running   0          22s</span><br><span class="line">httpd-7bddd4bd85-zk8ks   1/1     Running   0          16s</span><br></pre></td></tr></table></figure>
+
+<p><strong>步骤3：将Deployment公开为External IP类型</strong></p>
+<p>让我们创建Nginx服务的yaml：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">$</span> <span class="string">cat</span> <span class="string">&lt;&lt;</span> <span class="string">EOF</span> <span class="string">&gt;</span> <span class="string">nginx-service.yaml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-service</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">externalIPs:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">1.2</span><span class="number">.4</span><span class="number">.114</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>创建httpd服务的yaml：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF &gt; httpd-service.yaml</span></span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: httpd-service</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    app: httpd</span><br><span class="line">  ports:</span><br><span class="line">    - name: http</span><br><span class="line">      protocol: TCP</span><br><span class="line">      port: 80</span><br><span class="line">      targetPort: 80</span><br><span class="line">  externalIPs:</span><br><span class="line">    - 1.2.4.120</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>使用kubectl命令创建2个服务的yaml：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f nginx-service.yaml</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f httpd-service.yaml</span></span><br></pre></td></tr></table></figure>
+
+<p>现在您的Kubernetes服务应该如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl get svc</span></span><br><span class="line">NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">kubernetes      ClusterIP   10.43.0.1       &lt;none&gt;        443/TCP   18m</span><br><span class="line">httpd-service   ClusterIP   10.43.240.149   1.2.4.120     80/TCP    32s</span><br><span class="line">nginx-service   ClusterIP   10.43.13.149    1.2.4.114     80/TCP    26s</span><br></pre></td></tr></table></figure>
+
+<p>您可能会在此处看到服务类型为ClusterIP。我不确定为什么它不显示“外部IP”。</p>
+<blockquote>
+<p>k8s官网有说明，External IP与type无关</p>
+</blockquote>
+<p><strong>步骤4：瞧！</strong></p>
+<p>让我们curl httpd服务，您应该看到Apache默认页面。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">curl -i 1.2.4.120</span></span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Date: Fri, 20 Dec 2019 03:36:23 GMT</span><br><span class="line">Server: Apache/2.4.41 (Unix) &lt;------</span><br><span class="line">Last-Modified: Mon, 11 Jun 2007 18:53:14 GMT</span><br><span class="line">ETag: &quot;2d-432a5e4a73a80&quot;</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line">Content-Length: 45</span><br><span class="line">Content-Type: text/html</span><br><span class="line">&lt;html&gt;&lt;body&gt;&lt;h1&gt;It works!&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，curl nginx服务，您应该看到nginx默认页面。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">curl -i 1.2.4.114</span></span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: nginx/1.17.6 &lt;------</span><br><span class="line">Date: Fri, 20 Dec 2019 03:36:01 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 612</span><br><span class="line">Last-Modified: Tue, 19 Nov 2019 12:50:08 GMT</span><br><span class="line">Connection: keep-alive</span><br><span class="line">ETag: &quot;5dd3e500-264&quot;</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;title&gt;Welcome to nginx!&lt;/title&gt;</span><br><span class="line">....</span><br></pre></td></tr></table></figure>
+
+<h2 id="下一步是什么"><a href="#下一步是什么" class="headerlink" title="下一步是什么"></a>下一步是什么</h2><h3 id="浮动IP"><a href="#浮动IP" class="headerlink" title="浮动IP"></a>浮动IP</h3><p>如今，大多数云提供商都提供浮动IP服务。浮动IP允许您拥有1个IP，并将该IP动态分配给所需的任何IP。在这种情况下，可以将IP分配给Kubernetes集群中的任何工作节点。</p>
+<p>在DigitalOcean（我相信其他提供商也允许这样做）中，您可以使用API调用将IP重新分配给其他VM。这意味着您可以在其他VM发生故障时迅速将其主动重新分配给其他VM，或者可以定期轮换IP。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Kubernetes-External-IP-service-type/kubernetes-floating-ip.png" alt="kubernetes-floating-ip"></p>
+<p>从图中可以看到，我们有1个浮动IP 1.2.3.6，该IP首先分配给节点1，当节点1不可用时将切换到节点2。IP 1.2.3.6适用于我们的MySQL服务，并将放入我们的应用程序配置中。</p>
+<p>我尚未尝试此设置，因此无法确认它是否有效。我将在以后的博客文章中更新结果。</p>
+<h3 id="任播IP"><a href="#任播IP" class="headerlink" title="任播IP"></a>任播IP</h3><p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Kubernetes-External-IP-service-type/anycast.png" alt="anycast"></p>
+<p>您可以将Anycast IP用作外部IP，以便它们具有高可用性。对于不熟悉Anycast IP的用户，这意味着1个IP可能会路由到2个或更多服务器。你可以在<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Anycast">这里</a>阅读更多。就个人而言，我不确定如何设置此设置。但是，我认为这在技术上是可行的。我认为这是运行外部IP服务的最佳方法。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>您可以通过很多选项为裸机Kubernetes集群获取IP。例如，您可以为此使用Inlets和MetalLB。此设置可能不是您的组织需要的最合适的设置。但是，很高兴知道如何使用此方法。</p>
+<blockquote>
+<p>免责声明：我仅将其用于实验和测试，而本文不适用于生产。如果您打算在生产中使用它，请咨询您的解决方案架构师或CTO。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/06/22/k8s/Advertising-Kubernetes-Service-IPs-with-Calico-and-BGP/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +329,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -326,7 +479,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -588,7 +741,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -864,7 +1017,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -974,7 +1127,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1072,7 +1225,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1152,7 +1305,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1299,7 +1452,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1388,7 +1541,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1458,101 +1611,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/24/stack/How-to-retry-image-pull-in-a-kubernetes-Pods/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/08/24/stack/How-to-retry-image-pull-in-a-kubernetes-Pods/" class="post-title-link" itemprop="url">如何重新拉取kubernetes Pods镜像</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-08-24 10:25:23" itemprop="dateCreated datePublished" datetime="2019-08-24T10:25:23+00:00">2019-08-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我是kubernetes新手。我在创建pod时有一个问题。当我运行命令</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods</span><br><span class="line">NAME                   READY     STATUS             RESTARTS   AGE</span><br><span class="line">mysql-apim-db-1viwg    1/1       Running            1          20h</span><br><span class="line">mysql-govdb-qioee      1/1       Running            1          20h</span><br><span class="line">mysql-userdb-l8q8c     1/1       Running            0          20h</span><br><span class="line">wso2am-default-813fy   0/1       ImagePullBackOff   0          20h</span><br></pre></td></tr></table></figure>
-
-<p>由于“wso2am-default-813fy”节点的问题，我需要重新启动它。有什么建议吗？</p>
-<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>通常在“ImagePullBackOff”的情况下，它会在几秒钟&#x2F;几分钟后重试。如果您想再次手动尝试，可以删除旧pod并重新创建pod。删除并重新创建pod的命令是：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl replace --force -f &lt;yml_file_describing_pod&gt;</span><br></pre></td></tr></table></figure>
-
-<p>如果没有yaml文件：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod PODNAME -n NAMESPACE -o yaml | kubectl replace --force -f -</span><br></pre></td></tr></table></figure>
-
-<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40259178/how-to-retry-image-pull-in-a-kubernetes-pods">How to retry image pull in a kubernetes Pods?</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1618,7 +1680,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-count">91</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1629,7 +1691,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

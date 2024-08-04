@@ -145,6 +145,129 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/07/16/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E4%B8%9A%E5%8A%A1%E9%AB%98%E5%B9%B6%E5%8F%91%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF(%E7%BB%AD)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/07/16/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E4%B8%9A%E5%8A%A1%E9%AB%98%E5%B9%B6%E5%8F%91%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF(%E7%BB%AD)/" class="post-title-link" itemprop="url">K8S问题排查-业务高并发导致Pod反复重启(续)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-16 21:10:40" itemprop="dateCreated datePublished" datetime="2021-07-16T21:10:40+00:00">2021-07-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>接上次的<a href="https://lyyao09.github.io/2021/06/19/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E4%B8%9A%E5%8A%A1%E9%AB%98%E5%B9%B6%E5%8F%91%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF/">问题</a>，一段时间后，环境再次出现<code>harbor</code>和<code>calico</code>因为健康检查不过反复重启的问题，并且使用<code>kubectl</code>命令进入Pod也响应非常慢甚至超时。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# kubectl exec -it -n system node1-59c9475bc6-zkhq5 bash</span><br><span class="line">^</span><br></pre></td></tr></table></figure>
+
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>反复重启的原因上次已定位，这次上环境简单看还是因为健康检查超时的问题，并且现象也一样，<code>TCP</code>的连接卡在了第一次握手的<code>SYN_SENT</code>阶段。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# netstat -anp|grep 23380</span><br><span class="line">tcp        0      0 127.0.0.1:23380         0.0.0.0:*               LISTEN      38914/kubelet</span><br><span class="line">tcp        0      0 127.0.0.1:38983         127.0.0.1:23380         SYN_SENT    -</span><br></pre></td></tr></table></figure>
+
+<p>也就是说，除了<code>TCP</code>连接队列的问题，还存在其他问题会导致该现象。先看看上次的参数还在不在：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# cat /etc/sysctl.conf</span><br><span class="line">net.ipv4.tcp_max_syn_backlog = 32768</span><br><span class="line">net.core.somaxconn = 32768</span><br></pre></td></tr></table></figure>
+
+<p>再看下上次修改的参数是否生效：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# ss -lnt</span><br><span class="line">State      Recv-Q   Send-Q     Local Address:Port      Peer Address:Port              </span><br><span class="line">LISTEN     0        32768      127.0.0.1:23380         *:*</span><br></pre></td></tr></table></figure>
+
+<p>参数的修改也生效了，那为什么还会卡在<code>SYN_SENT</code>阶段呢？从现有情况，看不出还有什么原因会导致该问题，只能摸索看看。</p>
+<ol>
+<li>在问题节点和非问题节点上分别抓包，看报文交互是否存在什么异常；</li>
+<li>根据参考资料[1]，排查是否为相同问题；</li>
+<li>根据参考资料[2]，排查是否相同问题；</li>
+<li>…</li>
+</ol>
+<p>摸索一番，没发现什么异常。回过头来想想，既然是业务下发大量配置导致的，并且影响是全局的（除了业务Pod自身，其他组件也受到了影响），说明大概率原因还是系统层面存在的性能瓶颈。业务量大的影响除了CPU、一般还有内存、磁盘、连接数等等，与开发人员确认他们的连接还是长连接，那么连接数很大的情况下会受到什么内核参数的影响呢？其中一个就是我们熟知的文件句柄数。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# lsof -p 45775 | wc -l</span><br><span class="line">17974</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# lsof -p 45775|grep &quot;sock&quot;| wc -l</span><br><span class="line">12051</span><br></pre></td></tr></table></figure>
+
+<p>嗯，打开了<strong>1w+的文件句柄数并且基本都是<code>sock</code>连接</strong>，而我们使用的操作系统默认情况下每个进程的文件句柄数限制为1024，查看确认一下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# ulimit  -n</span><br><span class="line">1024</span><br></pre></td></tr></table></figure>
+
+<p>超额使用了这么多，业务Pod竟然没有<code>too many open files</code>错误：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# kubectl logs -n system node1-59c9475bc6-zkhq5</span><br><span class="line">start config</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>临时修改一下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# ulimit -n 65535</span><br><span class="line">[root@node01 ~]# ulimit  -n</span><br><span class="line">65535</span><br></pre></td></tr></table></figure>
+
+<p>再次使用<code>kubectl</code>命令进入业务Pod，响应恢复正常，并且查看连接也不再有卡住的<code>SYN_SENT</code>阶段：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# kubectl exec -it -n system node1-59c9475bc6-zkhq5 bash</span><br><span class="line"><span class="meta prompt_">[root@node1-59c9475bc6-zkhq5]# </span><span class="language-bash"><span class="built_in">exit</span></span></span><br><span class="line">[root@node01 ~]# kubectl exec -it -n system node1-59c9475bc6-zkhq5 bash</span><br><span class="line"><span class="meta prompt_">[root@node1-59c9475bc6-zkhq5]# </span><span class="language-bash"><span class="built_in">exit</span></span></span><br><span class="line">[root@node01 ~]# kubectl exec -it -n system node1-59c9475bc6-zkhq5 bash</span><br><span class="line"><span class="meta prompt_">[root@node1-59c9475bc6-zkhq5]# </span><span class="language-bash"><span class="built_in">exit</span></span></span><br><span class="line"></span><br><span class="line">[root@node01 ~]# netstat -anp|grep 23380</span><br><span class="line">tcp        0      0 127.0.0.1:23380         0.0.0.0:*               LISTEN      38914/kubelet</span><br><span class="line">tcp        0      0 127.0.0.1:56369         127.0.0.1:23380         TIME_WAIT   -</span><br><span class="line">tcp        0      0 127.0.0.1:23380         127.0.0.1:57601         TIME_WAIT   -</span><br><span class="line">tcp        0      0 127.0.0.1:23380         127.0.0.1:57479         TIME_WAIT   -</span><br></pre></td></tr></table></figure>
+
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
+<li>业务根据实际情况调整文件句柄数。</li>
+<li>针对业务量大的环境，强烈建议整体做一下操作系统层面的性能优化，否则，不定哪个系统参数就成了性能瓶颈，网上找了个调优案例[3]，感兴趣的可以参考。</li>
+</ol>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/pyxllq/article/details/80351827">https://blog.csdn.net/pyxllq/article/details/80351827</a></li>
+<li><a target="_blank" rel="noopener" href="http://mdba.cn/2015/03/10/tcp-socket%E6%96%87%E4%BB%B6%E5%8F%A5%E6%9F%84%E6%B3%84%E6%BC%8F">http://mdba.cn/2015/03/10/tcp-socket文件句柄泄漏</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.shuzhiduo.com/A/RnJW7NLyJq/">https://www.shuzhiduo.com/A/RnJW7NLyJq/</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/07/10/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Influxdb%E7%9B%91%E6%8E%A7%E6%95%B0%E6%8D%AE%E8%8E%B7%E5%8F%96%E5%BC%82%E5%B8%B8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +299,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -294,7 +417,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -421,7 +544,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -531,7 +654,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -666,7 +789,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -779,7 +902,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -916,7 +1039,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1166,7 +1289,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1533,7 +1656,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
+                <time title="修改时间：2024-08-04 11:13:33" itemprop="dateModified" datetime="2024-08-04T11:13:33+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1612,112 +1735,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/12/30/k8s/Top10-Must-Know-Kubernetes-Design-Patterns/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/30/k8s/Top10-Must-Know-Kubernetes-Design-Patterns/" class="post-title-link" itemprop="url">10个必须知道的Kubernetes设计模式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-30 22:31:22" itemprop="dateCreated datePublished" datetime="2020-12-30T22:31:22+00:00">2020-12-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-14 02:11:35" itemprop="dateModified" datetime="2024-04-14T02:11:35+00:00">2024-04-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>以下是<a target="_blank" rel="noopener" href="https://developers.redhat.com/books/kubernetes-patterns">Kubernetes patterns手册</a>中为初学者总结的必须知道的十大设计模式。熟悉这些模式将有助于理解Kubernetes的基本概念，这反过来又将有助于讨论和设计基于Kubernetes的应用程序。</p>
-<p>Kubernetes中有许多重要的概念，但下面这些是最重要的概念：</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Top10-Must-Know-Kubernetes-Design-Patterns/top_10_kubernetes_patterns-768x394.png" alt="top_10_kubernetes_patterns"></p>
-<p>为了帮助理解，这些模式被组织成以下几个类别，灵感来自Gang of Four’s的设计模式。</p>
-<h2 id="基本模式"><a href="#基本模式" class="headerlink" title="基本模式"></a>基本模式</h2><p>这些模式代表了容器化应用程序必须遵守的原则和最佳实践，以便成为优秀的云公民。不管应用程序的性质如何，我们都应该遵循这些准则。遵循这些原则将有助于确保我们的应用程序适用于Kubernetes上的自动化。</p>
-<h3 id="健康探测模式"><a href="#健康探测模式" class="headerlink" title="健康探测模式"></a>健康探测模式</h3><p>Health Probe要求每个容器都应该实现特定的API，以帮助平台以最健康的方式观察和管理应用程序。为了完全自动化，云本地应用程序必须具有高度的可观察性，允许推断其状态，以便Kubernetes可以检测应用程序是否已启动并准备好为请求提供服务。这些观察结果会影响Pods的生命周期管理以及将流量路由到应用程序的方式。</p>
-<h3 id="可预测需求模式"><a href="#可预测需求模式" class="headerlink" title="可预测需求模式"></a>可预测需求模式</h3><p>可预测的需求解释了为什么每个容器都应该声明它的资源配置文件，并且只限于指定的资源需求。在共享云环境中成功部署应用程序、管理和共存的基础依赖于识别和声明应用程序的资源需求和运行时依赖性。此模式描述应该如何声明应用程序需求，无论它们是硬运行时依赖项还是资源需求。声明的需求对于Kubernetes在集群中的应用程序找到合适的位置至关重要。</p>
-<h3 id="自动放置模式"><a href="#自动放置模式" class="headerlink" title="自动放置模式"></a>自动放置模式</h3><p>自动放置解释了如何影响多节点集群中的工作负载分布。放置是Kubernetes调度器的核心功能，用于为满足容器资源请求的节点分配新的pod，并遵守调度策略。该模式描述了Kubernetes调度算法的原理以及从外部影响布局决策的方式。</p>
-<h2 id="结构模式"><a href="#结构模式" class="headerlink" title="结构模式"></a>结构模式</h2><p>拥有良好的云本地容器是第一步，但还不够。下一步是重用容器并将它们组合成Pod以实现预期的结果。这一类中的模式侧重于结构化和组织Pod中的容器，以满足不同的用例。</p>
-<h3 id="Init-Container模式"><a href="#Init-Container模式" class="headerlink" title="Init Container模式"></a>Init Container模式</h3><p>Init容器为初始化相关的任务和主应用程序容器引入了一个单独的生命周期。Init容器通过为不同于主应用程序容器的初始化相关任务提供单独的生命周期来实现关注点的分离。这个模式引入了一个基本的Kubernetes概念，当需要初始化逻辑时，这个概念在许多其他模式中使用。</p>
-<h3 id="Sidecar模式"><a href="#Sidecar模式" class="headerlink" title="Sidecar模式"></a>Sidecar模式</h3><p>Sidecar描述了如何在不改变容器的情况下扩展和增强已有容器的功能。此模式是基本的容器模式之一，它允许单用途容器紧密地协作。</p>
-<h2 id="行为模式"><a href="#行为模式" class="headerlink" title="行为模式"></a>行为模式</h2><p>这些模式描述了管理平台确保的pod的生命周期保证。根据工作负载的类型，Pod可以作为批处理作业一直运行到完成，也可以计划定期运行。它可以作为守护程序服务或单例运行。选择正确的生命周期管理原语将帮助我们运行具有所需保证的Pod。</p>
-<h3 id="批处理模式"><a href="#批处理模式" class="headerlink" title="批处理模式"></a>批处理模式</h3><p>批处理作业描述如何运行一个独立的原子工作单元直到完成。此模式适用于在分布式环境中管理独立的原子工作单元。</p>
-<h3 id="有状态服务模式"><a href="#有状态服务模式" class="headerlink" title="有状态服务模式"></a>有状态服务模式</h3><p>有状态服务描述如何使用Kubernetes创建和管理分布式有状态应用程序。这类应用程序需要持久身份、网络、存储和普通性等特性。StatefulSet原语为这些构建块提供了强有力的保证，非常适合有状态应用程序的管理。</p>
-<h3 id="服务发现模式"><a href="#服务发现模式" class="headerlink" title="服务发现模式"></a>服务发现模式</h3><p>服务发现解释了客户端如何访问和发现提供应用程序服务的实例。为此，Kubernetes提供了多种机制，这取决于服务使用者和生产者位于集群上还是集群外。</p>
-<h2 id="高级模式"><a href="#高级模式" class="headerlink" title="高级模式"></a>高级模式</h2><p>此类别中的模式更复杂，代表更高级别的应用程序管理模式。这里的一些模式（比如Controller）是永不过时的，Kubernetes本身就是建立在这些模式之上的。</p>
-<h3 id="Controller模式"><a href="#Controller模式" class="headerlink" title="Controller模式"></a>Controller模式</h3><p>控制器是一种模式，它主动监视和维护一组处于所需状态的Kubernetes资源。Kubernetes本身的核心由一组控制器组成，这些控制器定期监视并协调应用程序的当前状态与声明的目标状态。这个模式描述了如何利用这个核心概念为我们自己的应用程序扩展平台。</p>
-<h3 id="Operator模式"><a href="#Operator模式" class="headerlink" title="Operator模式"></a>Operator模式</h3><p>Operator是一个控制器，它使用CustomResourceDefinitions将特定应用程序的操作知识封装为算法和自动化形式。Operator模式允许我们扩展控制器模式以获得更大的灵活性和表现力。Kubernetes的<a target="_blank" rel="noopener" href="http://operatorhub.io/">Operator</a>越来越多，这种模式正成为操作复杂分布式系统的主要形式。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>今天，Kubernetes是最流行的容器编排平台。它由所有主要的软件公司共同开发和支持，并作为一项服务由所有主要的云提供商提供。Kubernetes支持Linux和Windows系统，以及所有主要的编程语言。该平台还可以编排和自动化无状态和有状态的应用程序、批处理作业、周期性任务和无服务器工作负载。这里描述的模式是Kubernetes附带的一组更广泛的模式中最常用的模式，如下所示。</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Top10-Must-Know-Kubernetes-Design-Patterns/KubernetePatternsLevels-SingleColor-Copy-of-Full-768x495.png" alt="KubernetePatternsLevels"></p>
-<p>Kubernetes是新的应用程序可移植层。如果你是一个软件开发人员或架构师，Kubernetes很可能会以这样或那样的形式成为你生活的一部分。学习这里描述的Kubernetes模式将改变我们对这个平台的看法。我相信Kubernetes和由此产生的概念将成为面向对象编程概念的基础。</p>
-<p>这里的模式试图创建类似Gang of Four的设计模式，但是用于容器编排。阅读这篇文章一定不是结束，而是你的Kubernetes之旅的开始。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1783,7 +1804,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-count">91</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1794,7 +1815,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
