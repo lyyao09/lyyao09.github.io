@@ -145,6 +145,108 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/07/24/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Pod%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E9%AB%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/07/24/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Pod%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E9%AB%98/" class="post-title-link" itemprop="url">K8S问题排查-Pod内存占用高</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-24 16:17:21" itemprop="dateCreated datePublished" datetime="2021-07-24T16:17:21+00:00">2021-07-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>如下所示，用户使用<code>kubectl top</code>命令看到其中一个节点上的Harbor占用内存约3.7G（其他业务Pod也存在类似现象），整体上来说，有点偏高。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# kubectl get node -owide</span><br><span class="line">NAME   STATUS   ROLES    AGE   VERSION    INTERNAL-IP   EXTERNAL-IP       </span><br><span class="line">node01   Ready    master   10d   v1.15.12   100.1.0.10    &lt;none&gt;   </span><br><span class="line">node02   Ready    master   12d   v1.15.12   100.1.0.11    &lt;none&gt;  </span><br><span class="line">node03   Ready    master   10d   v1.15.12   100.1.0.12    &lt;none&gt; </span><br><span class="line"></span><br><span class="line">[root@node02 ~]# kubectl top pod -A |grep harbor</span><br><span class="line">kube-system         harbor-master1-sxg2l                          15m          150Mi</span><br><span class="line">kube-system         harbor-master2-ncvb8                          8m           3781Mi</span><br><span class="line">kube-system         harbor-master3-2gdsn                          14m          227Mi</span><br></pre></td></tr></table></figure>
+
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>我们知道，查看容器的内存占用，可以使用<code>kubectl top</code>命令，也可以使用<code>docker stats</code>命令，并且理论上来说，<code>docker stats</code>命令查的结果应该比<code>kubectl top</code>查到的更准确。查看并统计发现，实际上Harbor总内存占用约为140M左右，远没有达到3.7G：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# docker stats |grep harbor</span><br><span class="line">CONTAINER ID        NAME                                      CPU %    MEM USAGE / LIMIT     MEM %</span><br><span class="line">10a230bee3c7        k8s_nginx_harbor-master2-xxx              0.02%    14.15MiB / 94.26GiB   0.01%</span><br><span class="line">6ba14a04fd77        k8s_harbor-portal_harbor-master2-xxx      0.01%    13.73MiB / 94.26GiB   0.01%</span><br><span class="line">324413da20a9        k8s_harbor-jobservice_harbor-master2-xxx  0.11%    21.54MiB / 94.26GiB   0.02%</span><br><span class="line">d880b61cf4cb        k8s_harbor-core_harbor-master2-xxx        0.12%    33.2MiB / 94.26GiB    0.03%</span><br><span class="line">186c064d0930        k8s_harbor-registryctl_harbor-master2-xxx 0.01%    8.34MiB / 94.26GiB    0.01%</span><br><span class="line">52a50204a962        k8s_harbor-registry_harbor-master2-xxx    0.06%    29.99MiB / 94.26GiB   0.03%</span><br><span class="line">86031ddd0314        k8s_harbor-redis_harbor-master2-xxx       0.14%    11.51MiB / 94.26GiB   0.01%</span><br><span class="line">6366207680f2        k8s_harbor-database_harbor-master2-xxx    0.45%    8.859MiB / 94.26GiB   0.01%</span><br></pre></td></tr></table></figure>
+
+<p>这是什么情况？两个命令查到的结果差距也太大了。查看资料[1]可以知道：</p>
+<ol>
+<li><code>kubectl top</code>命令的计算公式：<code>memory.usage_in_bytes - inactive_file</code>；</li>
+<li><code>docker stats</code>命令的计算公式：<code>memory.usage_in_bytes - cache</code>；</li>
+</ol>
+<p>可以看出，两种方式收集机制不一样，如果<code>cache</code>比较大，<code>kubectl top</code>命令看到的结果会偏高。根据上面的计算公式验证看看是否正确：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line">curl -s --unix-socket /var/run/docker.sock http:/v1.24/containers/xxx/stats | jq .&quot;memory_stats&quot;</span><br><span class="line">&quot;memory_stats&quot;: &#123;</span><br><span class="line">    &quot;usage&quot;: 14913536,</span><br><span class="line">    &quot;max_usage&quot;: 15183872,</span><br><span class="line">    &quot;stats&quot;: &#123;</span><br><span class="line">      &quot;active_anon&quot;: 14835712,</span><br><span class="line">      &quot;active_file&quot;: 0,</span><br><span class="line">      &quot;cache&quot;: 77824,</span><br><span class="line">      &quot;dirty&quot;: 0,</span><br><span class="line">      &quot;hierarchical_memory_limit&quot;: 101205622784,</span><br><span class="line">      &quot;hierarchical_memsw_limit&quot;: 9223372036854772000,</span><br><span class="line">      &quot;inactive_anon&quot;: 4096,</span><br><span class="line">      &quot;inactive_file&quot;: 73728,</span><br><span class="line">      ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&quot;memory_stats&quot;: &#123;</span><br><span class="line">    &quot;usage&quot;: 14405632,</span><br><span class="line">    &quot;max_usage&quot;: 14508032,</span><br><span class="line">    &quot;stats&quot;: &#123;</span><br><span class="line">      &quot;active_anon&quot;: 14397440,</span><br><span class="line">      &quot;active_file&quot;: 0,</span><br><span class="line">      &quot;cache&quot;: 8192,</span><br><span class="line">      &quot;dirty&quot;: 0,</span><br><span class="line">      &quot;hierarchical_memory_limit&quot;: 101205622784,</span><br><span class="line">      &quot;hierarchical_memsw_limit&quot;: 9223372036854772000,</span><br><span class="line">      &quot;inactive_anon&quot;: 4096,</span><br><span class="line">      &quot;inactive_file&quot;: 4096,</span><br><span class="line">      ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&quot;memory_stats&quot;: &#123;</span><br><span class="line">    &quot;usage&quot;: 26644480,</span><br><span class="line">    &quot;max_usage&quot;: 31801344,</span><br><span class="line">    &quot;stats&quot;: &#123;</span><br><span class="line">      &quot;active_anon&quot;: 22810624,</span><br><span class="line">      &quot;active_file&quot;: 790528,</span><br><span class="line">      &quot;cache&quot;: 3833856,</span><br><span class="line">      &quot;dirty&quot;: 0,</span><br><span class="line">      &quot;hierarchical_memory_limit&quot;: 101205622784,</span><br><span class="line">      &quot;hierarchical_memsw_limit&quot;: 9223372036854772000,</span><br><span class="line">      &quot;inactive_anon&quot;: 0,</span><br><span class="line">      &quot;inactive_file&quot;: 3043328,</span><br><span class="line">      ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&quot;memory_stats&quot;: &#123;</span><br><span class="line">    &quot;usage&quot;: 40153088,</span><br><span class="line">    &quot;max_usage&quot;: 90615808,</span><br><span class="line">    &quot;stats&quot;: &#123;</span><br><span class="line">      &quot;active_anon&quot;: 35123200,</span><br><span class="line">      &quot;active_file&quot;: 1372160,</span><br><span class="line">      &quot;cache&quot;: 5029888,</span><br><span class="line">      &quot;dirty&quot;: 0,</span><br><span class="line">      &quot;hierarchical_memory_limit&quot;: 101205622784,</span><br><span class="line">      &quot;hierarchical_memsw_limit&quot;: 9223372036854772000,</span><br><span class="line">      &quot;inactive_anon&quot;: 0,</span><br><span class="line">      &quot;inactive_file&quot;: 3657728,</span><br><span class="line">      ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&quot;memory_stats&quot;: &#123;</span><br><span class="line">    &quot;usage&quot;: 10342400,</span><br><span class="line">    &quot;max_usage&quot;: 12390400,</span><br><span class="line">    &quot;stats&quot;: &#123;</span><br><span class="line">    &quot;active_anon&quot;: 8704000,</span><br><span class="line">    &quot;active_file&quot;: 241664,</span><br><span class="line">    &quot;cache&quot;: 1638400,</span><br><span class="line">    &quot;dirty&quot;: 0,</span><br><span class="line">    &quot;hierarchical_memory_limit&quot;: 101205622784,</span><br><span class="line">    &quot;hierarchical_memsw_limit&quot;: 9223372036854772000,</span><br><span class="line">    &quot;inactive_anon&quot;: 0,</span><br><span class="line">    &quot;inactive_file&quot;: 1396736,</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&quot;memory_stats&quot;: &#123;</span><br><span class="line">    &quot;usage&quot;: 5845127168,</span><br><span class="line">    &quot;max_usage&quot;: 22050988032,</span><br><span class="line">    &quot;stats&quot;: &#123;</span><br><span class="line">    &quot;active_anon&quot;: 31576064,</span><br><span class="line">    &quot;active_file&quot;: 3778052096,</span><br><span class="line">    &quot;cache&quot;: 5813551104,</span><br><span class="line">    &quot;dirty&quot;: 0,</span><br><span class="line">    &quot;hierarchical_memory_limit&quot;: 101205622784,</span><br><span class="line">    &quot;hierarchical_memsw_limit&quot;: 9223372036854772000,</span><br><span class="line">    &quot;inactive_anon&quot;: 0,</span><br><span class="line">    &quot;inactive_file&quot;: 2035499008,</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&quot;memory_stats&quot;: &#123;</span><br><span class="line">    &quot;usage&quot;: 13250560,</span><br><span class="line">    &quot;max_usage&quot;: 34791424,</span><br><span class="line">    &quot;stats&quot;: &#123;</span><br><span class="line">    &quot;active_anon&quot;: 12070912,</span><br><span class="line">    &quot;active_file&quot;: 45056,</span><br><span class="line">    &quot;cache&quot;: 1179648,</span><br><span class="line">    &quot;dirty&quot;: 0,</span><br><span class="line">    &quot;hierarchical_memory_limit&quot;: 101205622784,</span><br><span class="line">    &quot;hierarchical_memsw_limit&quot;: 9223372036854772000,</span><br><span class="line">    &quot;inactive_anon&quot;: 0,</span><br><span class="line">    &quot;inactive_file&quot;: 1134592,</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&quot;memory_stats&quot;: &#123;</span><br><span class="line">    &quot;usage&quot;: 50724864,</span><br><span class="line">    &quot;max_usage&quot;: 124682240,</span><br><span class="line">    &quot;stats&quot;: &#123;</span><br><span class="line">    &quot;active_anon&quot;: 23502848,</span><br><span class="line">    &quot;active_file&quot;: 13864960,</span><br><span class="line">    &quot;cache&quot;: 41435136,</span><br><span class="line">    &quot;dirty&quot;: 0,</span><br><span class="line">    &quot;hierarchical_memory_limit&quot;: 101205622784,</span><br><span class="line">    &quot;hierarchical_memsw_limit&quot;: 9223372036854772000,</span><br><span class="line">    &quot;inactive_anon&quot;: 6836224,</span><br><span class="line">    &quot;inactive_file&quot;: 6520832,</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>根据上面提供的计算公式和实际获取的<code>memory_stats</code>数据，验证<code>kubectl top</code>结果和<code>docker stats</code>结果符合预期。那为什么Harbor缓存会占用那么高呢？</p>
+<p>通过实际环境分析看，Harbor中占用缓存较高的组件是<code>registry</code>（如下所示，缓存有5.4G），考虑到<code>registry</code>负责<code>docker</code>镜像的存储，在处理镜像时会有大量的镜像层文件的读写操作，所以正常情况下这些操作确实会比较耗缓存；</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&quot;memory_stats&quot;: &#123;</span><br><span class="line">    &quot;usage&quot;: 5845127168,</span><br><span class="line">    &quot;max_usage&quot;: 22050988032,</span><br><span class="line">    &quot;stats&quot;: &#123;</span><br><span class="line">    &quot;active_anon&quot;: 31576064,</span><br><span class="line">    &quot;active_file&quot;: 3778052096,</span><br><span class="line">    &quot;cache&quot;: 5813551104,</span><br><span class="line">    &quot;dirty&quot;: 0,</span><br><span class="line">    &quot;hierarchical_memory_limit&quot;: 101205622784,</span><br><span class="line">    &quot;hierarchical_memsw_limit&quot;: 9223372036854772000,</span><br><span class="line">    &quot;inactive_anon&quot;: 0,</span><br><span class="line">    &quot;inactive_file&quot;: 2035499008,</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>与用户沟通，说明<code>kubectl top</code>看到的结果包含了容器内使用的<code>cache</code>，结果会偏高，这部分缓存在内存紧张情况下会被系统回收，或者手工操作也可以释放，建议使用<code>docker stats</code>命令查看实际内存使用率。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/xyclianying/article/details/108513122">https://blog.csdn.net/xyclianying/article/details/108513122</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/07/16/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E4%B8%9A%E5%8A%A1%E9%AB%98%E5%B9%B6%E5%8F%91%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF(%E7%BB%AD)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +278,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -299,7 +401,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -417,7 +519,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -544,7 +646,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -654,7 +756,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -789,7 +891,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -902,7 +1004,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1039,7 +1141,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1289,7 +1391,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1621,120 +1723,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/01/05/tools/How-to-debug-tests-in-maven-project/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/05/tools/How-to-debug-tests-in-maven-project/" class="post-title-link" itemprop="url">如何在IntelliJ IDEA中的Maven项目中debug测试</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-05 20:06:12" itemprop="dateCreated datePublished" datetime="2021-01-05T20:06:12+00:00">2021-01-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="什么是Debug"><a href="#什么是Debug" class="headerlink" title="什么是Debug"></a><strong>什么是Debug</strong></h3><p>Debug调试是为了找到并修复代码中的错误。这是朝着编写没有bug的代码的方向迈出的重要一步，而没有bug的代码可以创建可靠的软件。</p>
-<p>因此，我将以简单的步骤说明如何在IntelliJ IDEA中调试Maven项目的Test测试。</p>
-<h3 id="Debug测试"><a href="#Debug测试" class="headerlink" title="Debug测试"></a><strong>Debug测试</strong></h3><p><strong>Step 1 :</strong></p>
-<p>Debug测试例需要使用到Maven surefire plugin插件。以下使用到的命令是在Ubuntu上执行的。</p>
-<p>首先是在需要调试的代码行中<strong>打断点</strong>。为此，只需在代码编辑区域中单击行的左上角，即可在调试期间暂停测试。单击时将出现一个<strong>红点</strong>。</p>
-<p><strong>Step 2 :</strong></p>
-<p>进入包含maven项目的集成测试的目录后，在命令行上键入以下命令。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd &lt;path-to-the-directory-containing-your-maven-project&#x27;s-integrationtests&gt;</span><br><span class="line">mvn clean install -Dmaven.surefire.debug</span><br></pre></td></tr></table></figure>
-
-<p>测试将自动暂停，并在端口5005上等待远程调试器。（端口5005为默认端口）。我们可以在命令行中看到一条语句，通知它正在监听端口5005。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Listening for transport dt_socket at address: 5005</span><br></pre></td></tr></table></figure>
-
-<p>如果需要配置其他端口，则可以将更详细的值传递给上述命令。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn clean install -Dmaven.surefire.debug=&quot;-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000 -Xnoagent -Djava.compiler=NONE&quot;</span><br></pre></td></tr></table></figure>
-
-<p>此命令将会监听端口8000而不是5005。</p>
-<p><strong>Step 3 :</strong></p>
-<p>如果是第一次运行调试器，则必须在IntelliJ IDEA中编辑<code>Debug配置</code>。如果已经完成了配置并将远程调试器端口设置为5005，则无需再次编辑配置。</p>
-<p>Debug配置可以安装如下流程进行编辑：</p>
-<ul>
-<li>在IDE中转到“Run –&gt; Edit Configurations…”</li>
-<li>在出现的对话框中，单击左上角的“ +”号</li>
-<li>在下拉列表中找到“Remote”选项</li>
-<li>在出现的下一个窗口中，在必须指定端口的地方指定端口</li>
-<li>然后“Apply ”，然后单击“Ok”。</li>
-</ul>
-<p><strong>Step 4 :</strong></p>
-<p>然后，可以使用IDE附加到正在运行的测试。</p>
-<ul>
-<li>转到Run –&gt; Debug…</li>
-<li>然后选择之前指定的配置</li>
-</ul>
-<p>现在，测试已附加到远程调试器。上面就是我们需要做的所有事情。</p>
-<p>测试将在我们之前指定的断点处暂停。在运行测试时，进出请求的详细信息可以在IDE中看到。我们也可以单击并逐个删除断点，并在每次暂停后通过IDE恢复程序。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1804,7 +1792,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

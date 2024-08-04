@@ -145,6 +145,102 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/27/stack/Ingress-vs-Load-Balancer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/07/27/stack/Ingress-vs-Load-Balancer/" class="post-title-link" itemprop="url">Ingress vs LoadBalancer</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-27 10:48:45" itemprop="dateCreated datePublished" datetime="2019-07-27T10:48:45+00:00">2019-07-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我很困惑Ingress和Load Balancer在Kubernetes中的角色。</p>
+<p>据我所知，Ingress用于将来自互联网的传入流量映射到群集中运行的服务。</p>
+<p>Load Balancer的作用是将流量转发到主机。在这方面，Ingress与Load Balancer有何不同？与Amazon ELB和ALB相比，kubernetes中的Load Balancer的概念是什么？</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p><strong>Load Balancer</strong>：kubernetes LoadBalancer是指向不在您的kubernetes集群中但存在于其他地方的外部负载均衡器的服务。假设您的pod可以从外部路由，它们可以与您的pod一起使用。Google和AWS本身就提供此功能。就Amazon而言，在AWS中运行时直接映射到ELB，kubernetes可以为部署的每个LoadBalancer服务自动配置和配置ELB实例。</p>
+<p><strong>Ingress</strong>：Ingress实际上只是将一组规则传递给正在监听它们的控制器。您可以部署一组Ingress规则，但除非您有可以处理它们的控制器，否则不会发生任何事情。如果配置为执行此操作，则LoadBalancer服务可以侦听Ingress规则。</p>
+<p>您还可以创建NodePort服务，该服务在群集外部具有可外部路由的IP，但指向群集中存在的Pod。这可能是一个Ingress控制器。</p>
+<p>Ingress Controller只是一个配置为解释入口规则的pod。nginx是kubernetes支持的最受欢迎的Ingress控制器之一。就亚马逊而言，ALB可用作Ingress控制器。</p>
+<p>例如，这个<a target="_blank" rel="noopener" href="https://github.com/kubernetes/ingress/tree/master/controllers/nginx">nginx控制器</a>能够获取你定义的入口规则并将它们转换为一个nginx.conf文件，它在它的pod中加载和启动。比如说你定义了一个Ingress如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">   <span class="attr">ingress.kubernetes.io/rewrite-target:</span> <span class="string">/</span></span><br><span class="line"> <span class="attr">name:</span> <span class="string">web-ingress</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">kubernetes.foo.bar</span></span><br><span class="line">    <span class="attr">http:</span></span><br><span class="line">      <span class="attr">paths:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">backend:</span></span><br><span class="line">          <span class="attr">serviceName:</span> <span class="string">appsvc</span></span><br><span class="line">          <span class="attr">servicePort:</span> <span class="number">80</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/app</span></span><br></pre></td></tr></table></figure>
+
+<p>然后，如果您检查nginx控制器的pod，您将在<code>/etc/nginx.conf</code>中看到定义的以下规则:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    server_name kubernetes.foo.bar;</span><br><span class="line">    listen 80;</span><br><span class="line">    listen [::]:80;</span><br><span class="line">    set $proxy_upstream_name &quot;-&quot;;</span><br><span class="line">    location ~* ^/web2\/?(?&lt;baseuri&gt;.*) &#123;</span><br><span class="line">        set $proxy_upstream_name &quot;apps-web2svc-8080&quot;;</span><br><span class="line">        port_in_redirect off;</span><br><span class="line"></span><br><span class="line">        client_max_body_size                    &quot;1m&quot;;</span><br><span class="line"></span><br><span class="line">        proxy_set_header Host                   $best_http_host;</span><br><span class="line"></span><br><span class="line">        # Pass the extracted client certificate to the backend</span><br><span class="line"></span><br><span class="line">        # Allow websocket connections</span><br><span class="line">        proxy_set_header                        Upgrade           $http_upgrade;</span><br><span class="line">        proxy_set_header                        Connection        $connection_upgrade;</span><br><span class="line"></span><br><span class="line">        proxy_set_header X-Real-IP              $the_real_ip;</span><br><span class="line">        proxy_set_header X-Forwarded-For        $the_x_forwarded_for;</span><br><span class="line">        proxy_set_header X-Forwarded-Host       $best_http_host;</span><br><span class="line">        proxy_set_header X-Forwarded-Port       $pass_port;</span><br><span class="line">        proxy_set_header X-Forwarded-Proto      $pass_access_scheme;</span><br><span class="line">        proxy_set_header X-Original-URI         $request_uri;</span><br><span class="line">        proxy_set_header X-Scheme               $pass_access_scheme;</span><br><span class="line"></span><br><span class="line">        # mitigate HTTPoxy Vulnerability</span><br><span class="line">        # https://www.nginx.com/blog/mitigating-the-httpoxy-vulnerability-with-nginx/</span><br><span class="line">        proxy_set_header Proxy                  &quot;&quot;;</span><br><span class="line"></span><br><span class="line">        # Custom headers</span><br><span class="line"></span><br><span class="line">        proxy_connect_timeout                   5s;</span><br><span class="line">        proxy_send_timeout                      60s;</span><br><span class="line">        proxy_read_timeout                      60s;</span><br><span class="line"></span><br><span class="line">        proxy_redirect                          off;</span><br><span class="line">        proxy_buffering                         off;</span><br><span class="line">        proxy_buffer_size                       &quot;4k&quot;;</span><br><span class="line">        proxy_buffers                           4 &quot;4k&quot;;</span><br><span class="line"></span><br><span class="line">        proxy_http_version                      1.1;</span><br><span class="line"></span><br><span class="line">        proxy_cookie_domain                     off;</span><br><span class="line">        proxy_cookie_path                       off;</span><br><span class="line"></span><br><span class="line">    rewrite /app/(.*) /$1 break;</span><br><span class="line">    rewrite /app / break;</span><br><span class="line">    proxy_pass http://apps-appsvc-8080;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Nginx刚刚创建了一条规则来路由<a target="_blank" rel="noopener" href="http://kubernetes.foo.bar/app%E4%BB%A5%E6%8C%87%E5%90%91%E7%BE%A4%E9%9B%86%E4%B8%AD%E7%9A%84%E6%9C%8D%E5%8A%A1appsvc%E3%80%82">http://kubernetes.foo.bar/app以指向群集中的服务appsvc。</a></p>
+<p><a target="_blank" rel="noopener" href="https://crondev.com/kubernetes-nginx-ingress-controller/">示例</a>介绍了如何在kubernetes集群中使用nginx ingress控制器。希望这可以帮助！</p>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/45079988/ingress-vs-load-balancer">Ingress vs Load Balancer</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/27/stack/Whats-the-difference-between-ClusterIP-NodePort-and-LoadBalancer-service-types-in-Kubernetes/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +272,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -287,7 +383,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -386,7 +482,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -480,7 +576,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -569,7 +665,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -668,7 +764,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -766,7 +862,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -874,7 +970,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -963,7 +1059,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1026,144 +1122,6 @@
 <p>重要说明：您必须在要使用的每个终端上运行eval $（minikube docker-env），因为它只为当前shell会话设置环境变量。</p>
 </blockquote>
 <h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/42564058/how-to-use-local-docker-images-with-minikube">How to use local docker images with Minikube?</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/22/k8s/Renewing-Kubernetes-cluster-certificates/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/07/22/k8s/Renewing-Kubernetes-cluster-certificates/" class="post-title-link" itemprop="url">更新Kubernetes集群证书</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-07-22 20:32:29" itemprop="dateCreated datePublished" datetime="2019-07-22T20:32:29+00:00">2019-07-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Kubernetes集群证书的使用寿命为一年。如果Kubernetes集群证书在Kubernetes master节点上过期，则<strong>kubelet</strong>服务将失败。使用<strong>kubectl</strong>命令，例如kubectel get pod或kubectl exec -it container_name bash，将导致类似的消息：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Unable to connect to the server: x509: certificate has expired or is not yet valid</span><br></pre></td></tr></table></figure>
-
-<p>处理方法：重新生成新证书并更新worker节点。</p>
-<blockquote>
-<p>注意：</p>
-<ol>
-<li>执行以下操作前，请先备份相关文件</li>
-<li><del>请勿替换CA证书，原因可参考<a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/issues/67122">issue</a></del>（个人验证发现，是因为kubelet证书未删除导致，删除后重启kubelet问题解决）</li>
-</ol>
-</blockquote>
-<ol>
-<li><p>在&#x2F;root目录下创建一个配置文件kubeadm.yaml，其中advertiseAddress设置为Kubernetes主节点的IP地址（或集群虚IP）。例如：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeadm.k8s.io/v1alpha1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">MasterConfiguration</span></span><br><span class="line"><span class="attr">api:</span></span><br><span class="line">  <span class="attr">advertiseAddress:</span> <span class="number">10.165</span><span class="number">.80</span><span class="number">.110</span></span><br><span class="line"><span class="attr">kubernetesVersion:</span> <span class="string">v1.10.11</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>删除现有证书和密钥文件：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">rm -rf /etc/kubernetes/pki/apiserver.key</span><br><span class="line">rm -rf /etc/kubernetes/pki/apiserver.crt</span><br><span class="line">rm -rf /etc/kubernetes/pki/apiserver-kubelet-client.crt</span><br><span class="line">rm -rf /etc/kubernetes/pki/apiserver-kubelet-client.key</span><br><span class="line">rm -rf /etc/kubernetes/pki/front-proxy-client.crt</span><br><span class="line">rm -rf /etc/kubernetes/pki/front-proxy-client.key</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>创建新证书：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubeadm --config /root/kubeadm.yaml alpha phase certs apiserver</span><br><span class="line">kubeadm --config /root/kubeadm.yaml alpha phase certs apiserver-kubelet-client</span><br><span class="line">kubeadm --config /root/kubeadm.yaml alpha phase certs front-proxy-client</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>删除旧的配置文件：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rm -rf /etc/kubernetes/admin.conf</span><br><span class="line">rm -rf /etc/kubernetes/kubelet.conf</span><br><span class="line">rm -rf /etc/kubernetes/controller-manager.conf</span><br><span class="line">rm -rf /etc/kubernetes/scheduler.conf </span><br><span class="line">rm -rf /var/lib/kubelet/pki/kubelet*</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>生成新配置文件：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm --config /root/kubeadm.yaml alpha phase kubeconfig all</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>确保你的 kubectl 服务正在使用正确的配置文件（根据实际环境配置该环境变量）：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</span><br><span class="line">export KUBECONFIG=.kube/config</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>重启Kubernetes主节点。</p>
-</li>
-<li><p>服务器重新启动后，检查以确保<strong>kubelet</strong>服务正在运行：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status kubelet</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>要重新加入工作节点，您需要一个集群令牌。</p>
-<p>对于Kubernetes 1.7，预设了集群令牌。对于Kubernetes1.7之后的版本，您必须创建新令牌，因为在安装时生成的令牌具有有限的生命周期：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm token create</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>SSH进入每个worker节点并将它们重新连接到Kubernetes主节点。</p>
-</li>
-<li><p>将工作节点加入Kubernetes集群：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join --token=cluster_token master_ip:6443</span><br></pre></td></tr></table></figure>
-
-<p>其中：</p>
-<ul>
-<li>cluster_token：在步骤9中创建的令牌</li>
-<li>master_ip：Kubernetes主节点的IP地址（或集群虚IP地址）</li>
-</ul>
-<blockquote>
-<p><strong>注意</strong>：<br>某些版本的<strong>kubeadm</strong>使用–print-join-command命令行参数。在这些情况下， <strong>kubeadm</strong>输出重新连接Kubernetes master所需的<strong>kubeadm join</strong>命令。如果发生这种情况，请在每个工作节点上输入此命令（复制和粘贴）。</p>
-</blockquote>
-</li>
-<li><p>确认<strong>kubelet</strong>服务正在运行，并且worker节点和Kubernetes master之间正常通信。</p>
-</li>
-<li><p>等几分钟。然后从Kubernetes主节点运行以下命令以确认worker节点是否可用：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure></li>
-</ol>
 
       
     </div>
@@ -1248,7 +1206,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

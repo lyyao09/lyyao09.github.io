@@ -145,6 +145,111 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/24/stack/Kubernetes-how-to-make-Deployment-to-update-image/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/24/stack/Kubernetes-how-to-make-Deployment-to-update-image/" class="post-title-link" itemprop="url">Kubernetes中如何让Deployment更新镜像</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-24 10:37:00" itemprop="dateCreated datePublished" datetime="2019-08-24T10:37:00+00:00">2019-08-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我的deployment有单个pod，我的自定义docker镜像如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mycontainer</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">myimage:latest</span></span><br></pre></td></tr></table></figure>
+
+<p>在开发过程中，我想推送新的最新版本并更新Deployment。无法明确定义tag&#x2F;version并为每个构建增加它，并且无法找到如何做到这一点：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl set image deployment/my-deployment mycontainer=myimage:1.9.1</span><br></pre></td></tr></table></figure>
+
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>您可以使用grace period（例如30秒或更长时间，根据容器启动时间和镜像大小）配置您的pod，并设置“imagePullPolicy：”Always“。并使用kubectl delete pod pod_name。将创建一个新容器并且最新镜像自动下载，然后旧容器终止。</p>
+<p>例子：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">terminationGracePeriodSeconds:</span> <span class="number">30</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">my_container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">my_image:latest</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">&quot;Always&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>我目前正在使用Jenkins进行自动构建和打镜像标签，它看起来像这样：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl --user=&quot;kube-user&quot; --server=&quot;https://kubemaster.example.com&quot;  --token=$ACCESS_TOKEN set image deployment/my-deployment mycontainer=myimage:&quot;$BUILD_NUMBER-$SHORT_GIT_COMMIT&quot;</span><br></pre></td></tr></table></figure>
+
+<p>另一个技巧是最初运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl set image deployment/my-deployment mycontainer=myimage:latest</span><br></pre></td></tr></table></figure>
+
+<p>然后：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl set image deployment/my-deployment mycontainer=myimage</span><br></pre></td></tr></table></figure>
+
+<p>它实际上会触发滚动更新，但请确保您还有imagePullPolicy：“Always”设置。</p>
+<p>我发现的另一个技巧是，您不必更改镜像名称，更改将触发滚动更新的字段的值，例如terminationGracePeriodSeconds。您可以使用kubectl编辑部署your_deployment或kubectl apply -f your_deployment.yaml或使用如下补丁：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl patch deployment your_deployment -p \</span><br><span class="line">  &#x27;&#123;&quot;spec&quot;:&#123;&quot;template&quot;:&#123;&quot;spec&quot;:&#123;&quot;terminationGracePeriodSeconds&quot;:31&#125;&#125;&#125;&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>只需确保始终更改数值。</p>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40366192/kubernetes-how-to-make-deployment-to-update-image">Kubernetes how to make Deployment to update image</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/24/stack/How-to-retry-image-pull-in-a-kubernetes-Pods/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +281,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -267,7 +372,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -387,7 +492,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -485,7 +590,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -595,7 +700,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -697,7 +802,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -784,7 +889,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -922,7 +1027,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1015,7 +1120,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1061,245 +1166,6 @@
 </ol>
 <p><img src="https://gitee.com/lyyao09/cdn/raw/master/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/1564910021188.png" alt="1564910021188"></p>
 
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-prefix-convert-and-merge/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/08/02/tools/The-usage-of-yq-prefix-convert-and-merge/" class="post-title-link" itemprop="url">YAML处理工具yq之匹配合并和转换</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-08-02 22:02:09" itemprop="dateCreated datePublished" datetime="2019-08-02T22:02:09+00:00">2019-08-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>yq是一个轻量级的便携式命令行YAML处理器。该工具的目标是成为yaml文件处理方面的jq或sed。</p>
-<h2 id="通配符"><a href="#通配符" class="headerlink" title="通配符"></a>通配符</h2><p>路径可以使用’prefix’命令作为前缀。完整的yaml内容将嵌套在新的前缀路径中。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq p &lt;yaml_file&gt; &lt;path&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="写到标准输出"><a href="#写到标准输出" class="headerlink" title="写到标准输出"></a>写到标准输出</h3><p>给出sample.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> [<span class="number">1</span>, <span class="number">2</span>]</span><br></pre></td></tr></table></figure>
-
-<p>然后</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq p data1.yaml c</span><br></pre></td></tr></table></figure>
-
-<p>输出</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">c:</span></span><br><span class="line">  <span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line">  <span class="attr">b:</span> [<span class="number">1</span>, <span class="number">2</span>]</span><br></pre></td></tr></table></figure>
-
-<h3 id="任意深度"><a href="#任意深度" class="headerlink" title="任意深度"></a>任意深度</h3><p>给定data1.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span></span><br><span class="line">  <span class="attr">b:</span> [<span class="number">1</span>, <span class="number">2</span>]</span><br></pre></td></tr></table></figure>
-
-<p>然后</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq p data1.yaml c.d</span><br></pre></td></tr></table></figure>
-
-<p>输出</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">c:</span></span><br><span class="line">  <span class="attr">d:</span></span><br><span class="line">    <span class="attr">a:</span></span><br><span class="line">      <span class="attr">b:</span> [<span class="number">1</span>, <span class="number">2</span>]</span><br></pre></td></tr></table></figure>
-
-<h3 id="更新文件"><a href="#更新文件" class="headerlink" title="更新文件"></a>更新文件</h3><p>给定data1.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> [<span class="number">1</span>, <span class="number">2</span>]</span><br></pre></td></tr></table></figure>
-
-<p>然后</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq p -i data1.yaml c</span><br></pre></td></tr></table></figure>
-
-<p>将更新data1.yaml文件，以便路径’c’作为所有其他路径的前缀。</p>
-<h3 id="多文档-增加前缀到单个文档"><a href="#多文档-增加前缀到单个文档" class="headerlink" title="多文档 - 增加前缀到单个文档"></a>多文档 - 增加前缀到单个文档</h3><p>给定data1.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> <span class="string">cat</span></span><br></pre></td></tr></table></figure>
-
-<p>然后</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq p -d1 data1.yaml c</span><br></pre></td></tr></table></figure>
-
-<p>输出</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">c:</span></span><br><span class="line">  <span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line">  <span class="attr">b:</span> <span class="string">cat</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="多文档-增加前缀到所有文档"><a href="#多文档-增加前缀到所有文档" class="headerlink" title="多文档 - 增加前缀到所有文档"></a>多文档 - 增加前缀到所有文档</h3><p>给定data1.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> <span class="string">cat</span></span><br></pre></td></tr></table></figure>
-
-<p>然后</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq p -d&#x27;*&#x27; data1.yaml c</span><br></pre></td></tr></table></figure>
-
-<p>输出</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">c:</span></span><br><span class="line">  <span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">c:</span></span><br><span class="line">  <span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line">  <span class="attr">b:</span> <span class="string">cat</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h2><p>可以使用’merge’命令合并Yaml文件。与第一个文件合并的每个附加文件将为任何尚未存在的key或没有值的key设置值。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq m &lt;yaml_file&gt; &lt;path&gt;...</span><br></pre></td></tr></table></figure>
-
-<h3 id="写到标准输出-1"><a href="#写到标准输出-1" class="headerlink" title="写到标准输出"></a>写到标准输出</h3><p>给出data1.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> [<span class="number">1</span>, <span class="number">2</span></span><br></pre></td></tr></table></figure>
-
-<p>和data2.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">other</span></span><br><span class="line"><span class="attr">c:</span></span><br><span class="line">  <span class="attr">test:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p>然后</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq m data1.yaml data2.yaml</span><br></pre></td></tr></table></figure>
-
-<p>输出</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> [<span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line"><span class="attr">c:</span></span><br><span class="line">  <span class="attr">test:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="更新文件-1"><a href="#更新文件-1" class="headerlink" title="更新文件"></a>更新文件</h3><p>给出data1.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> [<span class="number">1</span>, <span class="number">2</span>]</span><br></pre></td></tr></table></figure>
-
-<p>和data2.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">other</span></span><br><span class="line"><span class="attr">c:</span></span><br><span class="line">  <span class="attr">test:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p>然后</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq m -i data1.yaml data2.yaml</span><br></pre></td></tr></table></figure>
-
-<p>将更新data1.yaml文件，将’c’的值为’test：1’。</p>
-<h3 id="覆盖值"><a href="#覆盖值" class="headerlink" title="覆盖值"></a>覆盖值</h3><p>给出data1.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> [<span class="number">1</span>, <span class="number">2</span>]</span><br></pre></td></tr></table></figure>
-
-<p>和data2.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">other</span></span><br><span class="line"><span class="attr">c:</span></span><br><span class="line">  <span class="attr">test:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p>然后</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq m -x data1.yaml data2.yaml</span><br></pre></td></tr></table></figure>
-
-<p>输出</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">other</span></span><br><span class="line"><span class="attr">b:</span> [<span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line"><span class="attr">c:</span></span><br><span class="line">  <span class="attr">test:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="覆盖数组值"><a href="#覆盖数组值" class="headerlink" title="覆盖数组值"></a>覆盖数组值</h3><p>给出data1.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> [<span class="number">1</span>, <span class="number">2</span>]</span><br></pre></td></tr></table></figure>
-
-<p>和data3.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span> [<span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="attr">c:</span></span><br><span class="line">  <span class="attr">test:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">other:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">d:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<p>然后</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq m -x data1.yaml data3.yaml</span><br></pre></td></tr></table></figure>
-
-<p>输出</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> [<span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="attr">c:</span></span><br><span class="line">  <span class="attr">test:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">other:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">d:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>请注意，’b’不会导致数组中值的合并</p>
-</blockquote>
-<h3 id="追加数组值"><a href="#追加数组值" class="headerlink" title="追加数组值"></a>追加数组值</h3><p>给出data1.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> [<span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line"><span class="attr">d:</span> <span class="string">hi</span></span><br></pre></td></tr></table></figure>
-
-<p>和data3.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">something</span></span><br><span class="line"><span class="attr">b:</span> [<span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="attr">c:</span></span><br><span class="line">  <span class="attr">test:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">other:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<p>然后</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq m -a data1.yaml data3.yaml	</span><br></pre></td></tr></table></figure>
-
-<p>输出</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="attr">c:</span></span><br><span class="line">  <span class="attr">test:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">other:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">d:</span> <span class="string">hi</span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>请注意，’b’数组已连接第二个数据文件中的值。另请注意，其他map键不会被覆盖（字段a）。</p>
-</blockquote>
-<p>Append不能与overwrite一起使用，如果给出了两个标志，则忽略append。</p>
-<h3 id="多文档-合并单个文档"><a href="#多文档-合并单个文档" class="headerlink" title="多文档 - 合并单个文档"></a>多文档 - 合并单个文档</h3><p>目前，yq仅对要合并的第一个文档提供多文档支持。剩余的yaml文件将选择其第一个文档。</p>
-<p>给出data1.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> <span class="string">cat</span></span><br></pre></td></tr></table></figure>
-
-<p>和data3.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span> <span class="string">dog</span></span><br></pre></td></tr></table></figure>
-
-<p>然后</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq m -x -d1 data1.yaml data3.yaml</span><br></pre></td></tr></table></figure>
-
-<p>输出</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> <span class="string">dog</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="多文档-合并所有文档"><a href="#多文档-合并所有文档" class="headerlink" title="多文档 - 合并所有文档"></a>多文档 - 合并所有文档</h3><p>目前，yq仅对要合并的第一个文档提供多文档支持。剩余的yaml文件将选择其第一个文档。</p>
-<p>给定data1.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> <span class="string">cat</span></span><br></pre></td></tr></table></figure>
-
-<p>和data3.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span> <span class="string">dog</span></span><br></pre></td></tr></table></figure>
-
-<p>然后</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq m -x -d&#x27;*&#x27; data1.yaml data3.yaml</span><br></pre></td></tr></table></figure>
-
-<p>输出</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span> <span class="string">dog</span></span><br><span class="line"><span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">a:</span> <span class="string">simple</span></span><br><span class="line"><span class="attr">b:</span> <span class="string">dog</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="转换"><a href="#转换" class="headerlink" title="转换"></a>转换</h2><h3 id="Yaml到Json"><a href="#Yaml到Json" class="headerlink" title="Yaml到Json"></a>Yaml到Json</h3><p>将输出转换为json，请使用–tojson（或-j）标志。这只能与read命令一起使用。</p>
-<p>给出sample.yaml文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="attr">c:</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
-
-<p>然后</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq r -j sample.yaml b.c</span><br></pre></td></tr></table></figure>
-
-<p>输出</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;b&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;c&quot;</span><span class="punctuation">:</span><span class="number">2</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Json到Yaml"><a href="#Json到Yaml" class="headerlink" title="Json到Yaml"></a>Json到Yaml</h3><p>要读入json，只需传入一个json文件而不是yaml，它就可以工作了:)</p>
-<p>例如给出一个json文件：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;a&quot;</span><span class="punctuation">:</span><span class="string">&quot;Easy! as one two three&quot;</span><span class="punctuation">,</span><span class="attr">&quot;b&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;c&quot;</span><span class="punctuation">:</span><span class="number">2</span><span class="punctuation">,</span><span class="attr">&quot;d&quot;</span><span class="punctuation">:</span><span class="punctuation">[</span><span class="number">3</span><span class="punctuation">,</span><span class="number">4</span><span class="punctuation">]</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>然后</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq r sample.json</span><br></pre></td></tr></table></figure>
-
-<p>输出</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">a:</span> <span class="string">Easy!</span> <span class="string">as</span> <span class="string">one</span> <span class="string">two</span> <span class="string">three</span></span><br><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="attr">c:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">d:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="number">3</span></span><br><span class="line">  <span class="bullet">-</span> <span class="number">4</span></span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -1383,7 +1249,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

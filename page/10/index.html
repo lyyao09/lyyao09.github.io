@@ -145,6 +145,144 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/22/k8s/Renewing-Kubernetes-cluster-certificates/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/07/22/k8s/Renewing-Kubernetes-cluster-certificates/" class="post-title-link" itemprop="url">更新Kubernetes集群证书</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-22 20:32:29" itemprop="dateCreated datePublished" datetime="2019-07-22T20:32:29+00:00">2019-07-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Kubernetes集群证书的使用寿命为一年。如果Kubernetes集群证书在Kubernetes master节点上过期，则<strong>kubelet</strong>服务将失败。使用<strong>kubectl</strong>命令，例如kubectel get pod或kubectl exec -it container_name bash，将导致类似的消息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Unable to connect to the server: x509: certificate has expired or is not yet valid</span><br></pre></td></tr></table></figure>
+
+<p>处理方法：重新生成新证书并更新worker节点。</p>
+<blockquote>
+<p>注意：</p>
+<ol>
+<li>执行以下操作前，请先备份相关文件</li>
+<li><del>请勿替换CA证书，原因可参考<a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/issues/67122">issue</a></del>（个人验证发现，是因为kubelet证书未删除导致，删除后重启kubelet问题解决）</li>
+</ol>
+</blockquote>
+<ol>
+<li><p>在&#x2F;root目录下创建一个配置文件kubeadm.yaml，其中advertiseAddress设置为Kubernetes主节点的IP地址（或集群虚IP）。例如：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeadm.k8s.io/v1alpha1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">MasterConfiguration</span></span><br><span class="line"><span class="attr">api:</span></span><br><span class="line">  <span class="attr">advertiseAddress:</span> <span class="number">10.165</span><span class="number">.80</span><span class="number">.110</span></span><br><span class="line"><span class="attr">kubernetesVersion:</span> <span class="string">v1.10.11</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除现有证书和密钥文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">rm -rf /etc/kubernetes/pki/apiserver.key</span><br><span class="line">rm -rf /etc/kubernetes/pki/apiserver.crt</span><br><span class="line">rm -rf /etc/kubernetes/pki/apiserver-kubelet-client.crt</span><br><span class="line">rm -rf /etc/kubernetes/pki/apiserver-kubelet-client.key</span><br><span class="line">rm -rf /etc/kubernetes/pki/front-proxy-client.crt</span><br><span class="line">rm -rf /etc/kubernetes/pki/front-proxy-client.key</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建新证书：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubeadm --config /root/kubeadm.yaml alpha phase certs apiserver</span><br><span class="line">kubeadm --config /root/kubeadm.yaml alpha phase certs apiserver-kubelet-client</span><br><span class="line">kubeadm --config /root/kubeadm.yaml alpha phase certs front-proxy-client</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除旧的配置文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rm -rf /etc/kubernetes/admin.conf</span><br><span class="line">rm -rf /etc/kubernetes/kubelet.conf</span><br><span class="line">rm -rf /etc/kubernetes/controller-manager.conf</span><br><span class="line">rm -rf /etc/kubernetes/scheduler.conf </span><br><span class="line">rm -rf /var/lib/kubelet/pki/kubelet*</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成新配置文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm --config /root/kubeadm.yaml alpha phase kubeconfig all</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>确保你的 kubectl 服务正在使用正确的配置文件（根据实际环境配置该环境变量）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</span><br><span class="line">export KUBECONFIG=.kube/config</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启Kubernetes主节点。</p>
+</li>
+<li><p>服务器重新启动后，检查以确保<strong>kubelet</strong>服务正在运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status kubelet</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>要重新加入工作节点，您需要一个集群令牌。</p>
+<p>对于Kubernetes 1.7，预设了集群令牌。对于Kubernetes1.7之后的版本，您必须创建新令牌，因为在安装时生成的令牌具有有限的生命周期：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm token create</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>SSH进入每个worker节点并将它们重新连接到Kubernetes主节点。</p>
+</li>
+<li><p>将工作节点加入Kubernetes集群：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join --token=cluster_token master_ip:6443</span><br></pre></td></tr></table></figure>
+
+<p>其中：</p>
+<ul>
+<li>cluster_token：在步骤9中创建的令牌</li>
+<li>master_ip：Kubernetes主节点的IP地址（或集群虚IP地址）</li>
+</ul>
+<blockquote>
+<p><strong>注意</strong>：<br>某些版本的<strong>kubeadm</strong>使用–print-join-command命令行参数。在这些情况下， <strong>kubeadm</strong>输出重新连接Kubernetes master所需的<strong>kubeadm join</strong>命令。如果发生这种情况，请在每个工作节点上输入此命令（复制和粘贴）。</p>
+</blockquote>
+</li>
+<li><p>确认<strong>kubelet</strong>服务正在运行，并且worker节点和Kubernetes master之间正常通信。</p>
+</li>
+<li><p>等几分钟。然后从Kubernetes主节点运行以下命令以确认worker节点是否可用：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/22/k8s/Certificate-Management-with-kubeadm/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +314,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-04 11:26:23" itemprop="dateModified" datetime="2024-08-04T11:26:23+00:00">2024-08-04</time>
+                <time title="修改时间：2024-08-04 11:28:51" itemprop="dateModified" datetime="2024-08-04T11:28:51+00:00">2024-08-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -360,7 +498,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
