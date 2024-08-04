@@ -46,8 +46,6 @@ https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-prefix-convert-and-me
 https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-read-write/
 https://lyyao09.github.io/2020/06/11/linux/An-introduction-to-Linux-virtual-interfaces-Tunnels/
 https://lyyao09.github.io/2020/06/13/linux/An-introduction-to-linux-interfaces-for-virtual-networking/
-https://lyyao09.github.io/2023/04/08/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E6%B2%A1%E6%9C%89Endpoint%E7%9A%84Service%E8%AF%B7%E6%B1%82Reject%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/
-https://lyyao09.github.io/2021/09/25/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E9%99%84%E5%8A%A0%E7%BD%91%E7%BB%9CPod%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8/
 https://lyyao09.github.io/2020/06/30/k8s/Kubernetes-External-IP-service-type/
 https://lyyao09.github.io/2020/12/26/k8s/Kubernetes-InitContainers-Volume-Pre-Population/
 https://lyyao09.github.io/2020/12/28/k8s/Kubernetes-Patterns-The-Init-Container-Pattern/
@@ -76,8 +74,10 @@ https://lyyao09.github.io/2024/04/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5
 https://lyyao09.github.io/2022/07/16/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%A4%96%E7%BD%AE%E5%AD%98%E5%82%A8%E6%8F%92%E4%BB%B6nfs-provisioner%E6%8A%A5%E9%94%99selfLink%20was%20empty/
 https://lyyao09.github.io/2022/06/18/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF/
 https://lyyao09.github.io/2021/12/18/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E6%8C%82%E8%BD%BDSubpath%E7%9A%84%E5%AE%B9%E5%99%A8%E5%9C%A8Configmap%E5%8F%98%E6%9B%B4%E5%90%8E%E9%87%8D%E5%90%AF%E6%97%B6%E6%8C%82%E8%BD%BD%E5%A4%B1%E8%B4%A5/
-https://lyyao09.github.io/2023/12/17/docker/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-%E8%B7%A8%E5%B9%B3%E5%8F%B0%E6%9E%84%E5%BB%BADocker%E9%95%9C%E5%83%8F%E8%AE%B0%E5%BD%95/
+https://lyyao09.github.io/2023/04/08/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E6%B2%A1%E6%9C%89Endpoint%E7%9A%84Service%E8%AF%B7%E6%B1%82Reject%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98/
+https://lyyao09.github.io/2021/09/25/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E9%99%84%E5%8A%A0%E7%BD%91%E7%BB%9CPod%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8/
 https://lyyao09.github.io/2022/02/26/docker/Docker%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%BC%82%E5%B8%B8%E6%96%AD%E7%94%B5%E5%AF%BC%E8%87%B4Docker%E5%90%AF%E5%8A%A8%E5%8D%A1%E4%BD%8F/
+https://lyyao09.github.io/2023/12/17/docker/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-%E8%B7%A8%E5%B9%B3%E5%8F%B0%E6%9E%84%E5%BB%BADocker%E9%95%9C%E5%83%8F%E8%AE%B0%E5%BD%95/
 https://lyyao09.github.io/2022/10/23/java/Karaf%E6%A1%86%E6%9E%B6%E5%8D%87%E7%BA%A7Lg4j%E5%8E%86%E7%A8%8B%20(%E7%BB%AD)/
 https://lyyao09.github.io/2021/12/25/java/Karaf%E6%A1%86%E6%9E%B6%E5%8D%87%E7%BA%A7Lg4j%E5%8E%86%E7%A8%8B/
 https://lyyao09.github.io/2022/08/20/java/karaf%E6%A1%86%E6%9E%B6%E8%A7%A3%E5%86%B3CVE-2015-4000%E6%BC%8F%E6%B4%9E/
