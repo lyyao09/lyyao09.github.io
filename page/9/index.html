@@ -145,6 +145,123 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/30/stack/Marathon-vs-Kubernetes-vs-Docker-Swarm-on-DC-OS-with-Docker-containers/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/07/30/stack/Marathon-vs-Kubernetes-vs-Docker-Swarm-on-DC-OS-with-Docker-containers/" class="post-title-link" itemprop="url">Marathon vs Kubernetes vs Docker Swarm</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-30 20:52:04" itemprop="dateCreated datePublished" datetime="2019-07-30T20:52:04+00:00">2019-07-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我正在寻找在DC &#x2F; OS上运行Docker容器时是否使用Marathon和Chronos，Docker Swarm或Kubernetes的一些优缺点。</p>
+<p>例如，何时使用Marathon &#x2F; Chronos比使用Kubernetes更好，反之亦然？</p>
+<p>现在我主要是进行实验，但希望我们在夏天之后开始在生产中使用这些服务之一。这可能会使Docker Swarm失去资格，因为我不确定它是否会在那时处于生产可用。</p>
+<p>我喜欢Docker Swarm的原因是它本质上只是“Docker命令”，你不需要学习全新的东西。我们已经在使用docker-compose，它将与Docker Swarm一起开箱即用（至少在理论上），这将是一个很大的优势。我对Docker Swarm的主要关注是它是否涵盖了在生产中运行系统所需的所有用例。</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>我将尝试分解Mesos上每个容器编排框架的独特方面。</p>
+<p>使用<a target="_blank" rel="noopener" href="https://github.com/docker/swarm/">Docker Swarm</a>，如果：</p>
+<ul>
+<li>您想使用熟悉的Docker API在Mesos上启动Docker容器</li>
+<li>Swarm最终可能会提供一个API来与Kubernetes（甚至是K8s-Mesos）交互</li>
+<li>请参阅：<a target="_blank" rel="noopener" href="http://www.techrepublic.com/article/docker-and-mesos-like-peanut-butter-and-jelly/">http://www.techrepublic.com/article/docker-and-mesos-like-peanut-butter-and-jelly/</a></li>
+</ul>
+<p>使用<a target="_blank" rel="noopener" href="https://github.com/mesosphere/kubernetes-mesos">Kubernetes-Mesos</a>，如果：</p>
+<ul>
+<li>您想要启动K8s Pods，它们是共同调度的容器组，共享资源</li>
+<li>您希望与父容器旁边的一个或多个sidekick容器（例如，日志归档程序，度量标准监视器）一起启动服务</li>
+<li>您希望使用基于K8s标签的服务发现，负载平衡和副本控制</li>
+<li>请参阅：<a target="_blank" rel="noopener" href="http://kubernetesio.blogspot.com/2015/04/kubernetes-and-mesosphere-dcos.html">http://kubernetesio.blogspot.com/2015/04/kubernetes-and-mesosphere-dcos.html</a></li>
+</ul>
+<p>使用<a target="_blank" rel="noopener" href="https://mesosphere.github.io/marathon/">Marathon</a>，如果：</p>
+<ul>
+<li>您想要启动Docker或非Docker长期运行的应用程序&#x2F;服务</li>
+<li>您希望将Mesos属性用于基于约束的计划</li>
+<li>您希望使用应用程序组和依赖关系来启动，扩展或升级相关服务</li>
+<li>您希望使用运行状况检查来自动重新启动不健康的服务或回滚不健康的部署&#x2F;升级</li>
+<li>您希望集成HAProxy或Consul以进行服务发现</li>
+<li>您希望通过Web UI或REST API启动和监控应用程序</li>
+<li>您想要使用从一开始就构建的框架</li>
+</ul>
+<p>使用<a target="_blank" rel="noopener" href="https://github.com/mesos/chronos">Chronos</a>，如果：</p>
+<ul>
+<li>您希望启动预期退出的Docker或非Docker任务</li>
+<li>您希望将任务计划为在特定时间&#x2F;计划（cron）运行</li>
+<li>您希望安排依赖任务的DAG工作流程</li>
+<li>您希望通过Web UI或REST API启动和监视作业</li>
+<li>您想要使用从一开始就构建的框架</li>
+</ul>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/29198840/marathon-vs-kubernetes-vs-docker-swarm-on-dc-os-with-docker-containers">Marathon vs Kubernetes vs Docker Swarm on DC&#x2F;OS with Docker containers</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/29/stack/Kubernetes-vs-CloudFoundry/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +293,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -296,7 +413,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -387,7 +504,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -483,7 +600,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -594,7 +711,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -693,7 +810,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -787,7 +904,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -876,7 +993,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -975,7 +1092,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1024,114 +1141,6 @@
 </ol>
 <h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/26705201/whats-the-difference-between-apaches-mesos-and-googles-kubernetes">What’s the difference between Apache’s Mesos and Google’s Kubernetes</a></p>
 
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/23/tools/Convert-word-to-pdf-or-txt-tools/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/07/23/tools/Convert-word-to-pdf-or-txt-tools/" class="post-title-link" itemprop="url">免费word格式转换小工具：docto</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-07-23 22:30:46" itemprop="dateCreated datePublished" datetime="2019-07-23T22:30:46+00:00">2019-07-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>用于将Microsoft Word .doc文档转换为任何其他支持格式（如.txt .rtf .pdf）的简单实用程序。</p>
-<p>也可用于将.txt，.rtf转换为.doc或.pdf格式。</p>
-<blockquote>
-<p>注：主机上必须安装Microsoft Word。</p>
-</blockquote>
-<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ol>
-<li>将Doc &#x2F; RTF &#x2F; Text文件转换为任何Word SaveAs类型Doc &#x2F; Text &#x2F; RTF &#x2F; PDF</li>
-<li>单个文件转换</li>
-<li>多个&#x2F;目录文件转换</li>
-<li>转换后删除</li>
-<li>每次转换时可调用Webhook</li>
-</ol>
-<h2 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h2><h3 id="单个文件转换"><a href="#单个文件转换" class="headerlink" title="单个文件转换"></a>单个文件转换</h3><p>将Microsoft Word文档转换为文本</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docto -f C:\Directory\MyFile.doc -O &quot;C:\Output Directory\MyTextFile.txt&quot; -T wdFormatText</span><br></pre></td></tr></table></figure>
-
-<p>将Microsoft Word文档转换为PDF（需要支持此功能的Microsoft Word版本）</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docto -f C:\Directory\MyFile.doc -O &quot;C:\Output Directory\MyTextFile.pdf&quot; -T wdFormatPDF</span><br></pre></td></tr></table></figure>
-
-<h3 id="多文件和文件夹转换"><a href="#多文件和文件夹转换" class="headerlink" title="多文件和文件夹转换"></a>多文件和文件夹转换</h3><p>将目录及其子目录中的所有Microsoft Word文档转换为PDF</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docto -f &quot;C:\Dir with Spaces\FilesToConvert\&quot; -O &quot;C:\DirToOutput&quot; -T wdFormatPDF  -OX .pdf</span><br></pre></td></tr></table></figure>
-
-<p>转换后删除原始文件（-R）</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docto -f &quot;C:\Dir with Spaces\FilesToConvert\&quot; -O &quot;C:\DirToOutput&quot; -T wdFormatPDF  -OX .pdf -R</span><br></pre></td></tr></table></figure>
-
-<h2 id="Webhooks"><a href="#Webhooks" class="headerlink" title="Webhooks"></a>Webhooks</h2><p>添加Webhook以在每次转换时触发（-W）</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docto -f &quot;C:\Dir with Spaces\FilesToConvert\&quot; -O &quot;C:\DirToOutput&quot; -T wdFormatPDF  -OX .pdf  -W http://toflidium.com/webhooks/docto/webhook_test.php</span><br></pre></td></tr></table></figure>
-
-<p>Webhook是一个可以在每次转换时调用的URL，使您能够在转换文件时从外部响应。</p>
-<h2 id="命令行支持参数列表"><a href="#命令行支持参数列表" class="headerlink" title="命令行支持参数列表"></a>命令行支持参数列表</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">参数标记不区分大小写。大小写可以混合使用。</span><br><span class="line">  -H  查看各参数使用方法</span><br><span class="line">      --help -?</span><br><span class="line">  -F  输入文件或目录</span><br><span class="line">      --inputfile</span><br><span class="line">  -FX 如果输入为目录，指定源文档的扩展名。默认“.doc”（包括“.docx”）</span><br><span class="line">      --inputextension</span><br><span class="line">  -O  输出文件或目录以存放转换后的文档</span><br><span class="line">      --outputfile</span><br><span class="line">  -OX 如果-F为目录，指定转换后的文档扩展名。请包含&#x27;.&#x27;，如&#x27;.pdf&#x27;</span><br><span class="line">      --outputextension</span><br><span class="line">  -T  格式（类型），可以使用数字或wdSaveFormat常量表示，参考：http://msdn.microsoft.com/en-us/library/microsoft.office.interop.word.wdsaveformat.aspx</span><br><span class="line">      --format</span><br><span class="line">  -TF 强制转换格式</span><br><span class="line">      --forceformat</span><br><span class="line">  -L  日志级别，1 ERRORS, 2 STANDARD, 5 CHATTY, 10 VERBOSE，默认值为2</span><br><span class="line">      --loglevel</span><br><span class="line">  -C  兼容模式整数值，参考：https://msdn.microsoft.com/en-us/library/office/ff192388.aspx</span><br><span class="line">      --compatability</span><br><span class="line">  -M  忽略__MACOSX\目录下的所有文件，默认为True</span><br><span class="line">      --ignoremacos</span><br><span class="line">  -G  写日志文件到指定目录</span><br><span class="line">      --writelogfile</span><br><span class="line">  -GL 日志文件名称，默认为&#x27;DocTo.Log&#x27;</span><br><span class="line">      --logfilename</span><br><span class="line">  -Q  以安静模式输出日志</span><br><span class="line">      --quiet</span><br><span class="line">  -R  转换成功后移除源文件，默认为false</span><br><span class="line">      --deletefiles</span><br><span class="line">  -W  Webhook钩子，通过URL调用响应事件</span><br><span class="line">  -HW Webhook帮助</span><br><span class="line">  -X  暂停COM错误：默认为True。如果您在某些文件未转换时遇到问题，请将此设置为false以忽略错误并继续批处理作业</span><br><span class="line">      --halterror</span><br><span class="line">  -V  版本号</span><br><span class="line"></span><br><span class="line">错误码:</span><br><span class="line">200 : 指定的文件格式无效</span><br><span class="line">201 : 输入参数不足。如输入文件，输出文件和类型为必选参数</span><br><span class="line">202 : 转换错误</span><br><span class="line">203 : 未知的转换命令</span><br><span class="line">220 : Word或COM错误</span><br><span class="line">221 : Word未安装</span><br><span class="line"></span><br><span class="line">兼容模式：</span><br><span class="line">wdCurrent   : 65535 等效于最新版本的Microsoft Word</span><br><span class="line">wdWord2003  : 11    Word 2010将设置为与Word 2003最兼容的模式。在此模式下禁用Word 2010新增功能</span><br><span class="line">wdWord2007  : 12    Word 2010将设置为与Word 2007最兼容的模式。在此模式下禁用Word 2010新增功能</span><br><span class="line">wdWord2010  : 14    Word 2013将设置为与Word 2010最兼容的模式。在此模式下禁用Word 2013新增功能 </span><br><span class="line">wdWord2013  : 15    默认值。支持所有Word 2013功能</span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -1215,7 +1224,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-count">95</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

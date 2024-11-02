@@ -145,6 +145,126 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/09/25/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E9%99%84%E5%8A%A0%E7%BD%91%E7%BB%9CPod%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/25/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E9%99%84%E5%8A%A0%E7%BD%91%E7%BB%9CPod%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8/" class="post-title-link" itemprop="url">K8S问题排查-附加网络Pod无法启动</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-09-25 19:21:50" itemprop="dateCreated datePublished" datetime="2021-09-25T19:21:50+00:00">2021-09-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>使用附加网络的Pod在服务器重启后启动异常，报错信息如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Events:</span><br><span class="line">Type 		Reason 				  Age 		From 			Message</span><br><span class="line">Normal 		Scheduled 			  53m 		default-scheduler Successfully assigned xxx/xxx1-64784c458b-q67tx to node001</span><br><span class="line">Warning 	FailedCreatePodSandBox 53m 		 kubelet, node001   Failed to create pod sandbox: rpc er or: code = Unknown desc = failed to set up sandbox container &quot;xxx&quot; network for pod &quot;xxxl-64784c458b-q67tx&quot;: NetworkPlugin cni failed to set up pod &quot;xxx1-64784c458b-q67tx_xxx&quot; network: Multus: Err adding pod to network &quot;net-netl-nodeOOl&quot;: Multus: error in invoke Delegate add - &quot;macvlan&quot;: failed to create macvlan: device or resource busy</span><br><span class="line">Warning 	FailedCreatePodSandBox 53m 		 kubelet, node001   Failed to create pod sandbox: rpc er or: code = Unknown desc = failed to set up sandbox container &quot;xxx&quot; network for pod &quot;xxxl-64784c458b-q67tx&quot;: NetworkPlugin cni failed to set up pod &quot;xxx1-64784c458b-q67tx_xxx&quot; network: Multus: Err adding pod to network &quot;net-netl-nodeOOl&quot;: Multus: error in invoke Delegate add - &quot;macvlan&quot;: failed to create macvlan: device or resource busy</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h2 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h2><p>从日志初步看，创建Pod的<code>sandbox</code>异常，具体是Multus无法将Pod添加到<code>net-netl-nodeOOl</code>网络命名空间内，再具体点是Multus无法创建<code>macvlan</code>网络，原因是<code>device or resource busy</code>；</p>
+<p>最后的这个错误信息还是比较常见的，从字面理解，就是设备或资源忙，常见于共享存储的卸载场景。那这里也应该类似，有什么设备或资源处于被占用状态，所以执行<code>macvlan</code>的创建失败，既然是附加网络的问题，那优先查看了下附加网络相关的CRD资源，没什么异常；</p>
+<p>网上根据日志搜索一番，也没有什么比较相关的问题，那就看代码吧，首先找到Multus的源码，根据上述日志找相关处理逻辑，没有找到。再一想，Multus实现<code>macvlan</code>网络使用的是<code>macvlan</code>插件，再下载插件代码，找到了相关处理逻辑：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">plugins/main/macvlan/macvlan.<span class="keyword">go</span>:<span class="number">169</span></span><br><span class="line"><span class="keyword">if</span> err := netlink.LinkAdd(mv); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">&quot;failed to create macvlan: %v&quot;</span>, err)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// LinkAdd adds a new link device. The type and features of the device</span></span><br><span class="line"><span class="comment">// are taken from the parameters in the link object.</span></span><br><span class="line"><span class="comment">// Equivalent to: `ip link add $link`</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LinkAdd</span><span class="params">(link Link)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> pkgHandle.LinkAdd(link)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// LinkAdd adds a new link device. The type and features of the device</span></span><br><span class="line"><span class="comment">// are taken from the parameters in the link object.</span></span><br><span class="line"><span class="comment">// Equivalent to: `ip link add $link`</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *Handle)</span></span> LinkAdd(link Link) <span class="type">error</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> h.linkModify(link, unix.NLM_F_CREATE|unix.NLM_F_EXCL|unix.NLM_F_ACK)</span><br><span class="line">&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>根据上述代码和注释简单的看，是在执行<code>ip link add $link</code>命令时报错，实际验证看看：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node001 ~] ip link add link bond1 name macvlan1 type macvlan mode bridge</span><br><span class="line">RTNETLINK answers: Device or resource busy</span><br></pre></td></tr></table></figure>
+
+<p>确实如此，在<code>bond1</code>接口上无法配置<code>macvlan</code>，那换一个接口试试：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@node001 ~] ip link add link bond0 name macvlan1 type macvlan mode bridge</span><br><span class="line">[root@node001 ~] ip link show</span><br><span class="line">...</span><br><span class="line">110: macvlan1@bond0: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000</span><br><span class="line">    link/ether ea:31:c9:7f:d9:a4 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>配置成功，说明<code>bond1</code>接口有什么问题，看看这俩接口有没有差异：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@node001 ~] ip addr show</span><br><span class="line">...</span><br><span class="line">2: bond0: &lt;BROADCAST,MULTICAST,MASTER,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000</span><br><span class="line">    link/ether 0c:da:41:1d:6f:ca brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet x.x.x.x/16 brd x.x.255.255 scope global bond0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::eda:41ff:fe1d:6fca/64 scope link</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">...</span><br><span class="line">17: bond1: &lt;BROADCAST,MULTICAST,MASTER,SLAVE,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000</span><br><span class="line">    link/ether 0c:da:41:1d:a8:62 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>对比两个接口可以发现两个差异点：</p>
+<ol>
+<li><code>bond0</code>配置了IP地址，而<code>bond1</code>没有配置；</li>
+<li><code>bond0</code>是MASTER角色，<code>bond1</code>既是MASTER，又是SLAVE角色；</li>
+</ol>
+<p>考虑到<code>bond0</code>接口是用来建集群的，<code>bond1</code>接口是给<code>Multus</code>创建<code>macvlan</code>网络用的，所以第一个差异点属于正常现象。第二个是什么情况呢？一般来说，配置<code>bond</code>的目的是把几个物理接口作为SLAVE角色聚合成<code>bond</code>接口，这样既能增加服务器的可靠性，又增加了可用网络宽带，为用户提供不间断的网络服务。配置后，实际的物理接口应该是SLAVE角色，而聚合后的<code>bond</code>接口应该是MASTER角色，所以正常来说，不会同时出现两个角色才对；</p>
+<p>查看两个<code>bond</code>的相关配置，没有发现什么异常，反过来讲，如果配置的有问题，那初次部署就应该报错了，而不是重启节点才发现。所以，<strong>问题的关键是重启导致的</strong>。也就是说，可能是在重启后的启动脚本里加了什么配置影响的；</p>
+<p>搜索相关资料[1]，发现在配置过程中可能有这么一个操作：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">4、在/etc/rc.d/rc.local文件中加入如下语句，使系统启动自动运行</span><br><span class="line">ifenslave  bond0  eth0  eth1</span><br></pre></td></tr></table></figure>
+
+<p>查看问题环境上怎么配置的：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node001 ~] cat /etc/rc.local</span><br><span class="line">...</span><br><span class="line">touch /var/lock/subsys/local</span><br><span class="line">ifenslave bond0 bond1 enp661s0f0 enp661s0f1 ens1f0 ens1f1</span><br></pre></td></tr></table></figure>
+
+<p>发现有类似的配置，但不同的是，问题环境上配置了两个<code>bond</code>，并且配置在了一个命令里。感觉不是太对，个人理解这么配置应该会把<code>bond1</code>也认为是<code>bond0</code>的SLAVE，修改一下试试：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@node001 ~] cat /etc/rc.local</span><br><span class="line">...</span><br><span class="line">touch /var/lock/subsys/local</span><br><span class="line">ifenslave bond0 enp661s0f0 enp661s0f1</span><br><span class="line">ifenslave bond1 ens1f0 ens1f1</span><br><span class="line">[root@node001 ~] systemctl restart network</span><br></pre></td></tr></table></figure>
+
+<p>再观察两个bond接口的角色，发现恢复正常，再看看异常Pod，也都起来了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node001 ~] kubectl get pod -A |grep -v Running</span><br><span class="line">NAMESPACE		NAME		READY		STATUS		RESTARTS		AGE</span><br></pre></td></tr></table></figure>
+
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>将<code>rc.local</code>里的两个<code>bond</code>的命令拆开分别配置即可。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/geaozhang/p/6763876.html">https://www.cnblogs.com/geaozhang/p/6763876.html</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/08/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%88%A0%E9%99%A4Pod%E5%90%8E%E5%A4%84%E4%BA%8ETerminating%E7%8A%B6%E6%80%81/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +296,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -317,7 +437,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -420,7 +540,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -522,7 +642,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -645,7 +765,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -763,7 +883,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -890,7 +1010,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1000,7 +1120,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1135,7 +1255,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1198,143 +1318,6 @@
 <p>从上述报文交互过程可看出，IPv6设备在报文交互时源IP和目标地址不一致，经确认是设备侧强制配置了以VIP为目的地址发送报文的配置，而正常情况下，应该以请求报文的源IP作为响应报文的目的地址。</p>
 <p>通过临时修改验证，把第三次交互的VIP目的地址改为节点IP，验证问题解决。</p>
 <h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>业务层面修改发送报文的配置。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/06/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-UDP%E9%A2%91%E7%B9%81%E5%8F%91%E5%8C%85%E5%AF%BC%E8%87%B4Pod%E9%87%8D%E5%90%AF%E5%90%8E%E6%97%A0%E6%B3%95%E6%8E%A5%E6%94%B6%E6%95%B0%E6%8D%AE/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/06/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-UDP%E9%A2%91%E7%B9%81%E5%8F%91%E5%8C%85%E5%AF%BC%E8%87%B4Pod%E9%87%8D%E5%90%AF%E5%90%8E%E6%97%A0%E6%B3%95%E6%8E%A5%E6%94%B6%E6%95%B0%E6%8D%AE/" class="post-title-link" itemprop="url">K8S问题排查-UDP频繁发包导致Pod重启后无法接收数据</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-14 10:07:47" itemprop="dateCreated datePublished" datetime="2021-06-14T10:07:47+00:00">2021-06-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p> K8S环境下，集群外的设备通过NodePort方式频繁发送UDP请求到集群内的某个Pod，当Pod因为升级或异常重启时，出现流量中断的现象。</p>
-<h2 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h2><p>构造K8s集群：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">[root@node]# </span><span class="language-bash">kubectl get node -owide</span></span><br><span class="line">NAME    STATUS   ROLES   VERSION    INTERNAL-IP             </span><br><span class="line">node    Ready     master   v1.15.12    10.10.212.164</span><br></pre></td></tr></table></figure>
-
-<p>\部署一个通过NodePort暴露的UDP服务：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: dao</span><br><span class="line">spec:</span><br><span class="line">  replicas: 1</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: dao</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: dao</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - image: samwelkey24/dao-2048:1.0</span><br><span class="line">        name: dao</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: dao</span><br><span class="line">  labels:</span><br><span class="line">    app: dao</span><br><span class="line">spec:</span><br><span class="line">  type: NodePort</span><br><span class="line">  ports:</span><br><span class="line">  - port: 80</span><br><span class="line">    targetPort: 80</span><br><span class="line">    name: tcp</span><br><span class="line">  - port: 8080</span><br><span class="line">    targetPort: 8080</span><br><span class="line">    nodePort: 30030</span><br><span class="line">    name: udp</span><br><span class="line">    protocol: UDP</span><br><span class="line">  selector:</span><br><span class="line">    app: dao</span><br></pre></td></tr></table></figure>
-
-<p>使用nc命令模拟客户端频繁向集群外发送udp包：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@node]# while true; do echo &quot;test&quot; | nc -4u  10.10.212.164 30030 -p 9999;done</span><br></pre></td></tr></table></figure>
-
-<p>在Pod网卡和主机网卡上抓包，请求都正常：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@node]# tcpdump -n -i cali1bd5e5bd67b port 8080</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">17:39:50.543529 IP 10.10.212.164.7156 &gt; 177.177.241.159.webcache: UDP, length 5</span><br><span class="line">17:39:50.553849 IP 10.10.212.164.7156  &gt; 177.177.241.159.webcache: UDP, length 5</span><br><span class="line">17:39:50.565139 IP 10.10.212.164.7156 &gt; 177.177.241.159.webcache: UDP, length 5</span><br><span class="line">17:39:50.576749 IP 10.10.212.164.7156 &gt; 177.177.241.159.webcache: UDP, length 5</span><br><span class="line">17:39:50.587671 IP 10.10.212.164.7156 &gt; 177.177.241.159.webcache: UDP, length 5</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@node]# tcpdump -n -i eth0  port 30030</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">17:43:10.470136 IP 10.10.212.167.distinct &gt; 10.10.212.164.30030: UDP, length 5</span><br><span class="line">17:43:10.481007 IP 10.10.212.167.distinct &gt; 10.10.212.164.30030: UDP, length 5</span><br><span class="line">17:43:10.491607 IP 10.10.212.167.distinct &gt; 10.10.212.164.30030: UDP, length 5</span><br><span class="line">17:43:10.502879 IP 10.10.212.167.distinct &gt; 10.10.212.164.30030: UDP, length 5</span><br></pre></td></tr></table></figure>
-
-<p>通过删除Pod构造重启：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node]#  kubectl get pod -n allkinds -owide</span><br><span class="line">NAME                   READY   STATUS    RESTARTS   AGE   IP                NODE       </span><br><span class="line">dao-5f7669bc69-kkfk5   1/1     Running   0          18m   177.177.241.159   node</span><br><span class="line"></span><br><span class="line">[root@node]# kubectl delete pod dao-5f7669bc69-kkfk5</span><br></pre></td></tr></table></figure>
-
-<p>Pod重启后，抓包发现Pod无法再接收UDP包：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node]# tcpdump -n -i cali1bd5e5bd67b port 8080</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">^</span><br></pre></td></tr></table></figure>
-
-<p>在Pod所在节点网卡上可以抓到包，说明请求已到达节点上：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@node]# tcpdump -n -i eth0 port 30030</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">17:55:08.173773 IP 10.10.212.167.distinct &gt; 10.10.212.164.30030: UDP, length 5</span><br><span class="line">17:55:08.187789 IP 10.10.212.167.distinct &gt; 10.10.212.164.30030: UDP, length 5</span><br><span class="line">17:55:08.201551 IP 10.10.212.167.distinct &gt; 10.10.212.164.30030: UDP, length 5</span><br><span class="line">17:55:08.212789 IP 10.10.212.167.distinct &gt; 10.10.212.164.30030: UDP, length 5</span><br></pre></td></tr></table></figure>
-
-<p>继续通过trace iptables跟踪请求的走向，观察到流量没有经过PREROUTING表的nat链，之后也没有按预期的方向走到FORWARD链，而是走到了INPUT链，继续往上层协议栈，从这个现象可以推测是DNAT出了问题；</p>
-<p>根据netfilter原理图可以知道，DNAT跟conntrack表有关：</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-UDP%E9%A2%91%E7%B9%81%E5%8F%91%E5%8C%85%E5%AF%BC%E8%87%B4Pod%E9%87%8D%E5%90%AF%E5%90%8E%E6%97%A0%E6%B3%95%E6%8E%A5%E6%94%B6%E6%95%B0%E6%8D%AE/netfilter.png" alt="netfilter"></p>
-<p>查看指定NodePort端口的conntrack条目，确认是表项问题：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">正常表项：</span><br><span class="line">[root@node]# cat /pro/net/nf_contrack |grep 30030</span><br><span class="line">ipv4     2 udp      17 29 src=10.10.212.167 dst=10.10.212.164 sport=9999 dport=30030 [UNREPLIED] src=177.177.241.159 dst=10.10.212.164 sport=8080 dport=9999 mark=0 zone=0 use=2</span><br><span class="line"></span><br><span class="line">异常表项：</span><br><span class="line">[root@node]# cat /pro/net/nf_contrack |grep 30030</span><br><span class="line">ipv4     2 udp      17 29 src=10.10.212.167 dst=10.10.212.164 sport=9999 dport=30030 [UNREPLIED] src=10.10.212.164 dst=10.10.212.167 sport=8080 dport=9999 mark=0 zone=0 use=2</span><br></pre></td></tr></table></figure>
-
-<p>从conntrack表项可以看出，业务Pod重启时，conntrack表项记录了到节点IP而不是到Pod的IP，因为UDP的conntrack表项默认老化时间为30s，当设备请求频繁时，conntrack表项也就无法老化，后续所有请求都会转给节点IP而不是Pod的IP；</p>
-<p>那么Pod重启场景下，UDP的表项中反向src为什么变成了节点IP呢？怀疑是Pod重启过程中，Podd的IP发送变化，相应的iptables规则也会删除重新添加，这段时间如果设备继续通过NodePort发送请求给该Pod，会存在短暂的时间请求无法发送到Pod内，而是节点IP收到后直接记录到conntrack表项里。</p>
-<p>为了验证这个想法，再次构造nc命令频繁发送UDP请求到节点IP：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@node]# while true; do echo &quot;test&quot; | nc -4u  10.10.212.164 30031 -p 9999;done</span><br></pre></td></tr></table></figure>
-
-<p>查看30031端口的conntrack条目，确认正常情况下发送节点IP的UDP请求的反向src是节点IP，由此推测重启Pod过程中可能会出现这个问题：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node]# cat /pro/net/nf_contrack |grep 30031</span><br><span class="line">ipv4     2 udp      17 29 src=10.10.212.167 dst=10.10.212.164 sport=9999 dport=30031 [UNREPLIED] src=10.10.212.164 dst=10.10.212.167 sport=30031 dport=9999 mark=0 zone=0 use=2</span><br></pre></td></tr></table></figure>
-
-<p>一般来说，一个Pod的重启会经历先Kill再Create的操作，那么conntrack的异常表项的创建是在哪个阶段发生的呢？通过构造Pod的删除，实时记录conntrack的异常表项创建时间，可以分析出老的表项在Pod Kill阶段会被被动删除，而异常的表项是在Create Pod阶段创建的；</p>
-<p>通过查看kube-proxy代码，也可以看出相关iptables规则的清除动作：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">代码位置：https://github.com/kubernetes/kubernetes/blob/v1.15.12/pkg/proxy/iptables/proxier.go</span><br></pre></td></tr></table></figure>
-
-<p>而创建Pod阶段，为什么会偶现这个问题呢？查看<code>proxier.go</code>的实现并验证发现，Pod从删除后到新创建之前，会在<code>KUBE-EXTERNAL-SERVICES</code>链中临时设置如下规则（位于DNAT链之后），用于REJECT请求到异常Pod的流量：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-A KUBE-EXTERNAL-SERVICES -p udp -m comment --comment &quot;allkinds/allkinds-deployment:udp has no endpoints&quot; -m addrtype --dst-type LOCAL -m udp --dport 30030 -j REJECT --reject-with icmp-port-unreachable</span><br></pre></td></tr></table></figure>
-
-<p>上面的规则是在Pod异常时临时设置的，那么在Pod创建阶段，必然有个时机去清除，并且会下发相应的DNAT规则，而这两个操作的顺序就至关重要了。如果先下DNAT规则，请求从被拒绝转为走DNAT，这样conntrack表项的记录应该没有问题；<strong>如果先清理REJECT规则，则请求在DNAT规则下发之前有个临时状态——既没有了REJECT规则，又没有DNAT规则，这种情况下也就会出现我们见到的这个现象</strong>；</p>
-<p>为了验证上面的猜想，继续查看<code>proxier.go</code>的实现，可以发现实际下发规则的动作发生在如下几行代码，并且是先下发filter链，再下发nat链，而上面说的REJECT规则正是在filter链内，DNAT规则在nat链内，基本确认是下发顺序可能导致的异常；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">代码位置：https://github.com/kubernetes/kubernetes/blob/v1.15.12/pkg/proxy/iptables/proxier.go#L667-L1446</span><br><span class="line">  // Sync rules. </span><br><span class="line">  // NOTE: NoFlushTables is used so we don&#x27;t flush non-kubernetes chains in the table </span><br><span class="line">  proxier.iptablesData.Reset()</span><br><span class="line">  proxier.iptablesData.Write(proxier.filterChains.Bytes()) </span><br><span class="line">  proxier.iptablesData.Write(proxier.filterRules.Bytes()) </span><br><span class="line">  proxier.iptablesData.Write(proxier.natChains.Bytes()) </span><br><span class="line">  proxier.iptablesData.Write(proxier.natRules.Bytes())</span><br></pre></td></tr></table></figure>
-
-<p>最后是修改验证，通过调整filter链和nat链下发的顺序，重新制作kube-proxy镜像并替换到环境中，验证问题不再出现；</p>
-<p>但是，这个修改方案只是为了定位出原因而做的临时修改，毕竟改变两个链的下发顺序的影响还是很大的，不能这么轻易调整，所以给社区提了相关issue（<em><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/issues/102618">https://github.com/kubernetes/kubernetes/issues/102618</a></em>），社区很快给出答复，说是<a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/pull/98305%E8%BF%99%E4%B8%AAPR%E5%B7%B2%E7%BB%8F%E8%A7%A3%E5%86%B3%EF%BC%8C%E7%A4%BE%E5%8C%BA%E7%9A%84%E5%81%9A%E6%B3%95%E6%98%AF%E5%B0%86%E6%B8%85%E7%90%86conntrack%E8%A1%A8%E9%A1%B9%E7%9A%84%E6%97%B6%E6%9C%BA%E7%A7%BB%E5%88%B0%E4%BA%86%E4%B8%8B%E5%8F%91filter%E9%93%BE%E5%92%8Cnat%E9%93%BE%E4%B9%8B%E5%90%8E%EF%BC%8C%E9%80%9A%E8%BF%87%E5%88%86%E6%9E%90%E9%AA%8C%E8%AF%81%EF%BC%8C%E8%AF%A5%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%EF%BC%88%E5%94%AF%E4%B8%80%E7%9A%84%E5%B0%8F%E7%91%95%E7%96%B5%E6%98%AF%E8%BF%98%E4%BC%9A%E5%81%B6%E7%8E%B0%E5%87%A0%E6%9D%A1%E5%BC%82%E5%B8%B8conntrack%E8%A1%A8%E9%A1%B9%EF%BC%8C%E7%84%B6%E5%90%8E%E8%A2%AB%E6%B8%85%E9%99%A4%EF%BC%8C%E5%86%8D%E6%81%A2%E5%A4%8D%E6%AD%A3%E5%B8%B8%EF%BC%8C%E4%B8%8D%E8%BF%87%E4%B9%9F%E4%B8%8D%E5%BD%B1%E5%93%8D%E4%BB%80%E4%B9%88%EF%BC%89%EF%BC%9B">https://github.com/kubernetes/kubernetes/pull/98305这个PR已经解决，社区的做法是将清理conntrack表项的时机移到了下发filter链和nat链之后，通过分析验证，该问题解决（唯一的小瑕疵是还会偶现几条异常conntrack表项，然后被清除，再恢复正常，不过也不影响什么）；</a></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ipv4     2 udp      17 29 src=10.10.212.167 dst=10.10.212.164 sport=9999 dport=30030 [UNREPLIED] src=10.10.212.164 dst=10.10.212.167 sport=8080 dport=9999 mark=0 zone=0 use=2</span><br><span class="line">ipv4     2 udp      17 29 src=10.10.212.167 dst=10.10.212.164 sport=9999 dport=30030 [UNREPLIED] src=177.177.241.159dst=10.10.212.164 sport=8080 dport=9999 mark=0 zone=0 use=2</span><br><span class="line">ipv4     2 udp      17 29 src=10.10.212.167 dst=10.10.212.164 sport=9999 dport=30030 [UNREPLIED] src=177.177.241.159dst=10.10.212.164 sport=8080 dport=9999 mark=0 zone=0 use=2</span><br><span class="line">ipv4     2 udp      17 29 src=10.10.212.167 dst=10.10.212.164 sport=9999 dport=30030 [UNREPLIED] src=177.177.241.159dst=10.10.212.164 sport=8080 dport=9999 mark=0 zone=0 use=2</span><br></pre></td></tr></table></figure>
-
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
-<li>升级K8S到v1.21及以上版本；</li>
-<li>在无法升级K8S版本的前提下，将社区修改patch到老版本；</li>
-</ol>
 
       
     </div>
@@ -1419,7 +1402,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-count">95</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

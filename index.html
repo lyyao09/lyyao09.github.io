@@ -145,6 +145,107 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/09/08/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E9%BA%92%E9%BA%9F%E7%B3%BB%E7%BB%9F%E4%B8%8BConntrack%E5%B7%A5%E5%85%B7%E5%88%A0%E9%99%A4%E5%91%BD%E4%BB%A4%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/09/08/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E9%BA%92%E9%BA%9F%E7%B3%BB%E7%BB%9F%E4%B8%8BConntrack%E5%B7%A5%E5%85%B7%E5%88%A0%E9%99%A4%E5%91%BD%E4%BB%A4%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">K8S问题排查-麒麟系统下Conntrack工具删除命令无法使用问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-09-08 21:35:10" itemprop="dateCreated datePublished" datetime="2024-09-08T21:35:10+00:00">2024-09-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h2><p>部署在麒麟<code>V10SP03</code>环境上的<code>K8S</code>集群，<code>kube-proxy</code>组件使用<code>conntrack</code>命令删除表项失败。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># docker run --privileged --net=host --rm  kube-proxy conntrack -D -p icmp -s 192.168.1.2</span></span><br><span class="line">conntrack v1.4.5 (conntrack-tools): Operation failed: Operation not supported</span><br></pre></td></tr></table></figure>
+
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>考虑到问题场景是使用的<code>docker</code>镜像带的<code>conntrack</code>工具，为了排除<code>docker</code>相关影响，在宿主机上安装<code>conntrack</code>工具并执行命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># conntrack -D -p icmp -s 192.168.1.2</span></span><br><span class="line">conntrack v1.4.5 (conntrack-tools): Operation failed: Operation not supported</span><br></pre></td></tr></table></figure>
+
+<p>验证结果报错，再排除<code>conntrack</code>工具层面的影响，直接使用如下<code>c++</code>程序调用<code>libnetfilter_conntrack</code>库构造删除：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;stdlib.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;string.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;errno.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;arpa/inet.h&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#include &lt;libnetfilter_conntrack/libnetfilter_conntrack.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;libnetfilter_conntrack/libnetfilter_conntrack_tcp.h&gt;</span></span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">	int ret;</span><br><span class="line">	struct nfct_handle *h;</span><br><span class="line">	struct nf_conntrack *ct;</span><br><span class="line"></span><br><span class="line">	ct = nfct_new();</span><br><span class="line">	<span class="keyword">if</span> (!ct) &#123;</span><br><span class="line">		perror(<span class="string">&quot;nfct_new&quot;</span>);</span><br><span class="line">		<span class="built_in">return</span> 0;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	nfct_set_attr_u8(ct, ATTR_L3PROTO, AF_INET);</span><br><span class="line">	nfct_set_attr_u32(ct, ATTR_IPV4_SRC, inet_addr(<span class="string">&quot;1.1.1.1&quot;</span>));</span><br><span class="line">	nfct_set_attr_u32(ct, ATTR_IPV4_DST, inet_addr(<span class="string">&quot;2.2.2.2&quot;</span>));</span><br><span class="line">	</span><br><span class="line">	nfct_set_attr_u8(ct, ATTR_L4PROTO, IPPROTO_TCP);</span><br><span class="line">	nfct_set_attr_u16(ct, ATTR_PORT_SRC, htons(20));</span><br><span class="line">	nfct_set_attr_u16(ct, ATTR_PORT_DST, htons(10));</span><br><span class="line"></span><br><span class="line">	h = nfct_open(CONNTRACK, 0);</span><br><span class="line">	<span class="keyword">if</span> (!h) &#123;</span><br><span class="line">		perror(<span class="string">&quot;nfct_open&quot;</span>);</span><br><span class="line">		nfct_destroy(ct);</span><br><span class="line">		<span class="built_in">return</span> -1;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ret = nfct_query(h, NFCT_Q_DESTROY, ct);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;TEST: delete conntrack &quot;</span>);</span><br><span class="line">	<span class="keyword">if</span> (ret == -1)</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;(%d)(%s)\n&quot;</span>, ret, strerror(errno));</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;(OK)\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">	nfct_close(h);</span><br><span class="line"></span><br><span class="line">	nfct_destroy(ct);</span><br><span class="line"></span><br><span class="line">	ret == -1 ? <span class="built_in">exit</span>(EXIT_FAILURE) : <span class="built_in">exit</span>(EXIT_SUCCESS);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>验证结果依然报错：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@single ~]<span class="comment"># ./conntrack_delete</span></span><br><span class="line">TEST: delete conntrack (-1)(Operation not supported) </span><br></pre></td></tr></table></figure>
+
+<p>通过<code>gdb</code>查看，问题出在调用<code>libnetfilter_conntrack.so</code>库，初步判断跟内核有关。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(gdb) b nfct_query</span><br><span class="line">Breakpoint 3 at 0x7ffff7fa6a34</span><br><span class="line">(gdb) s</span><br><span class="line">Breakpoint 3, 0x00007ffff7fa6a34 <span class="keyword">in</span> nfct_query () from /lib64/libnetfilter_conntrack.so.3</span><br></pre></td></tr></table></figure>
+
+<p>之后查看了麒麟官网的内核版本列表，未发现相关<code>bug</code>，通过更新到最新内核<code>4.19.90-52.39</code>测试，问题依然存在。</p>
+<p>回退到麒麟<code>V10SP02</code>的环境（内核版本是<code>4.19.90-24.4</code>），测试没有该问题。</p>
+<p>基本确认，是<code>SP03</code>版本的内核引入的<code>bug</code>，提交<code>issue</code>后，官方计划在<code>4.19.90-52.40</code>内核版本里解决。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>更新内核版本到<code>4.19.90-52.40</code>。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://update.cs2c.com.cn/NS/V10/V10SP3/os/adv/lic/base/x86_64/Packages/">https://update.cs2c.com.cn/NS/V10/V10SP3/os/adv/lic/base/x86_64/Packages/</a></p>
+<p><a target="_blank" rel="noopener" href="https://update.cs2c.com.cn/NS/V10/V10SP3/os/adv/lic/updates/x86_64/Packages/">https://update.cs2c.com.cn/NS/V10/V10SP3/os/adv/lic/updates/x86_64/Packages/</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/05/18/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-%E6%B3%A8%E5%86%8C%E5%85%8D%E8%B4%B9%E7%9A%84Redhat%E8%AE%A2%E9%98%85%E6%9C%8D%E5%8A%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +277,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -270,7 +371,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -368,7 +469,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -474,7 +575,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -564,7 +665,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -675,7 +776,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -776,7 +877,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -873,7 +974,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -963,7 +1064,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1048,118 +1149,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2023/12/17/docker/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-%E8%B7%A8%E5%B9%B3%E5%8F%B0%E6%9E%84%E5%BB%BADocker%E9%95%9C%E5%83%8F%E8%AE%B0%E5%BD%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/12/17/docker/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-%E8%B7%A8%E5%B9%B3%E5%8F%B0%E6%9E%84%E5%BB%BADocker%E9%95%9C%E5%83%8F%E8%AE%B0%E5%BD%95/" class="post-title-link" itemprop="url">总结分享-跨平台构建Docker镜像记录</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-12-17 21:17:14" itemprop="dateCreated datePublished" datetime="2023-12-17T21:17:14+00:00">2023-12-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a>前提条件</h2><ol>
-<li>确保 <code>Docker</code> 版本不低于 <code>19.03</code>，同时还要通过设置环境变量 <code>DOCKER_CLI_EXPERIMENTAL</code> 来启用。可以通过下面的命令来为当前终端启用 <code>buildx</code> 插件，并验证是否开启[1]：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 root]<span class="comment"># export DOCKER_CLI_EXPERIMENTAL=enabled</span></span><br><span class="line"></span><br><span class="line">[root@node1 root]<span class="comment"># docker buildx version</span></span><br><span class="line">github.com/docker/buildx v0.3.1-tp-docker 6db68d029599c6710a32aa7adcba8e5a344795a7</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>确保<code>Linux</code>内核版本升级到 <code>4.8</code> 以上，否则会出现如下异常[2]：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 root]<span class="comment"># docker run --privileged --rm tonistiigi/binfmt --install all</span></span><br><span class="line">Unable to find image <span class="string">&#x27;tonistiigi/binfmt:latest&#x27;</span> locally</span><br><span class="line">latest: Pulling from tonistiigi/binfmt</span><br><span class="line">2a625f6055a5: Pull complete</span><br><span class="line">71d6c64c6702: Pull complete</span><br><span class="line">Digest: sha256:8de6f2decb92e9001d094534bf8a92880c175bd5dfb4a9d8579f26f09821cfa2</span><br><span class="line">Status: Downloaded newer image <span class="keyword">for</span> tonistiigi/binfmt:latest</span><br><span class="line">installing: arm64 cannot register <span class="string">&quot;/usr/bin/qemu-aarch64&quot;</span> to /proc/sys/fs/binfmt_misc/register: write /proc/sys/fs/binfmt_misc/register: invalid argument</span><br><span class="line">installing: s390x cannot register <span class="string">&quot;/usr/bin/qemu-s390x&quot;</span> to /proc/sys/fs/binfmt_misc/register: write /proc/sys/fs/binfmt_misc/register: invalid argument</span><br><span class="line">installing: riscv64 cannot register <span class="string">&quot;/usr/bin/qemu-riscv64&quot;</span> to /proc/sys/fs/binfmt_misc/register: write /proc/sys/fs/binfmt_misc/register: invalid argument</span><br><span class="line">installing: mips64le cannot register <span class="string">&quot;/usr/bin/qemu-mips64el&quot;</span> to /proc/sys/fs/binfmt_misc/register: write /proc/sys/fs/binfmt_misc/register: invalid argument</span><br><span class="line">installing: mips64 cannot register <span class="string">&quot;/usr/bin/qemu-mips64&quot;</span> to /proc/sys/fs/binfmt_misc/register: write /proc/sys/fs/binfmt_misc/register: invalid argument</span><br><span class="line">installing: arm cannot register <span class="string">&quot;/usr/bin/qemu-arm&quot;</span> to /proc/sys/fs/binfmt_misc/register: write /proc/sys/fs/binfmt_misc/register: invalid argument</span><br><span class="line">installing: ppc64le cannot register <span class="string">&quot;/usr/bin/qemu-ppc64le&quot;</span> to /proc/sys/fs/binfmt_misc/register: write /proc/sys/fs/binfmt_misc/register: invalid argument</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;supported&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;linux/amd64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/386&quot;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="string">&quot;emulators&quot;</span>: null</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><ol>
-<li>升级内核版本，以升级到<code>4.9</code>为例，相关<code>rpm</code>包见链接[3]：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 4.9]<span class="comment"># ll</span></span><br><span class="line">total 13400</span><br><span class="line">-rw-r--r-- 1 root root  1114112 Dec 12 20:22 kernel-4.9.241-37.el7.x86_64.rpm</span><br><span class="line">-rw-r--r-- 1 root root 11686072 Dec 12 20:22 kernel-devel-4.9.241-37.el7.x86_64.rpm</span><br><span class="line"></span><br><span class="line">[root@node1 4.9]<span class="comment"># rpm -ivh kernel-*</span></span><br><span class="line">warning: kernel-4.9.241-37.el7.x86_64.rpm: Header V4 RSA/SHA1 Signature, key ID 61e8806c: NOKEY</span><br><span class="line">Preparing...                          <span class="comment">################################# [100%]</span></span><br><span class="line">Updating / installing...</span><br><span class="line">   1:kernel-devel-4.9.241-37.el7      <span class="comment">################################# [ 50%]</span></span><br><span class="line">   2:kernel-4.9.241-37.el7            <span class="comment">################################# [100%]</span></span><br><span class="line"></span><br><span class="line">[root@node1 4.9]<span class="comment"># reboot</span></span><br><span class="line"></span><br><span class="line">[root@node1 4.9]<span class="comment"># uname -a</span></span><br><span class="line">Linux node1 4.9.241-37.el7.x86_64 <span class="comment">#1 SMP Mon Nov 2 13:55:04 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux</span></span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>启用 <code>binfmt_misc</code>，并检查启用结果：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># docker run --privileged --rm tonistiigi/binfmt --install all</span></span><br><span class="line"></span><br><span class="line">installing: arm OK</span><br><span class="line">installing: s390x OK</span><br><span class="line">installing: ppc64le OK</span><br><span class="line">installing: arm64 OK</span><br><span class="line">installing: riscv64 OK</span><br><span class="line">installing: mips64le OK</span><br><span class="line">installing: mips64 OK</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;supported&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;linux/amd64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/arm64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/riscv64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/ppc64le&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/s390x&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/386&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/mips64le&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/mips64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/arm/v7&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/arm/v6&quot;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="string">&quot;emulators&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;qemu-aarch64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;qemu-arm&quot;</span>,</span><br><span class="line">    <span class="string">&quot;qemu-mips64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;qemu-mips64el&quot;</span>,</span><br><span class="line">    <span class="string">&quot;qemu-ppc64le&quot;</span>,</span><br><span class="line">    <span class="string">&quot;qemu-riscv64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;qemu-s390x&quot;</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[root@node1 ~]<span class="comment"># ls -al /proc/sys/fs/binfmt_misc/</span></span><br><span class="line">total 0</span><br><span class="line">drwxr-xr-x 2 root root 0 Dec 13 16:29 .</span><br><span class="line">dr-xr-xr-x 1 root root 0 Dec 13 16:27 ..</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 qemu-aarch64</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 qemu-arm</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 qemu-mips64</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 qemu-mips64el</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 qemu-ppc64le</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 qemu-riscv64</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 qemu-s390x</span><br><span class="line">--w------- 1 root root 0 Dec 13 16:29 register</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 status</span><br></pre></td></tr></table></figure>
-
-<h2 id="构建验证"><a href="#构建验证" class="headerlink" title="构建验证"></a>构建验证</h2><p>创建一个新的构建器，并启动构建器：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># docker buildx create --use --name mybuilder</span></span><br><span class="line">mybuilder</span><br><span class="line"></span><br><span class="line">[root@node1 ~]<span class="comment"># docker buildx inspect mybuilder --bootstrap</span></span><br><span class="line">[+] Building 105.8s (1/1) FINISHED</span><br><span class="line"> =&gt; [internal] booting buildkit            			 105.8s</span><br><span class="line"> =&gt; =&gt; pulling image moby/buildkit:buildx-stable-1   105.3s</span><br><span class="line"> =&gt; =&gt; creating container buildx_buildkit_mybuilder0 0.6s</span><br><span class="line">Name:          mybuilder</span><br><span class="line">Driver:        docker-container</span><br><span class="line">Last Activity: 2023-12-13 08:35:03 +0000 UTC</span><br><span class="line"></span><br><span class="line">Nodes:</span><br><span class="line">Name:     mybuilder0</span><br><span class="line">Endpoint: unix:///var/run/docker.sock</span><br><span class="line">Status:    running</span><br><span class="line">Buildkit:  v0.9.3</span><br><span class="line">Platforms: linux/amd64, linux/arm64, linux/riscv64, linux/ppc64le, linux/s390x, linux/386, linux/mips64le, linux/mips64, linux/arm/v7, linux/arm/v6</span><br></pre></td></tr></table></figure>
-
-<p>以构建<code>xxx</code>镜像为例，并将构建好的镜像保存在本地，将 <code>type</code> 指定为 <code>docker</code>：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 images]<span class="comment"># docker buildx build -t xxx/xxx --platform=linux/arm64 -o type=docker .</span></span><br><span class="line">[+] Building 5.5s (6/6) FINISHED                                                                                                                                                 docker-container:mybuilder</span><br><span class="line"> =&gt; [internal] load build definition from Dockerfile		 0.1s</span><br><span class="line"> =&gt; =&gt; transferring dockerfile: 219B                         0.0s</span><br><span class="line"> =&gt; [internal] load .dockerignore                            0.1s</span><br><span class="line"> =&gt; =&gt; transferring context: 2B                              0.0s</span><br><span class="line"> =&gt; [internal] load build context                            0.9s</span><br><span class="line"> =&gt; =&gt; transferring context: 68.42MB                         0.8s</span><br><span class="line"> =&gt; [1/1] COPY ./xxx /bin/xxx				                 0.1s</span><br><span class="line"> =&gt; exporting to oci image format                            4.3s</span><br><span class="line"> =&gt; =&gt; exporting layers                                      3.0s</span><br><span class="line"> =&gt; =&gt; exporting manifest sha256:33877987488ccd8fb6803f06f6b90b5ff667dd172db23b339e96acee31af354f            0.0s</span><br><span class="line"> =&gt; =&gt; exporting config sha256:f16ad6c6fc37b1cad030e7880c094f75f2cb6959ebbc3712808f25e04b96a395            0.0s</span><br><span class="line"> =&gt; =&gt; sending tarball                                       1.3s</span><br><span class="line"> =&gt; importing to docker                                                                   </span><br></pre></td></tr></table></figure>
-
-<p>查看镜像：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 images]<span class="comment"># docker images|grep xxx</span></span><br><span class="line">xxx/xxx        latest           f16ad6c6fc37   2 minutes ago   68.4MB</span><br></pre></td></tr></table></figure>
-
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1543689">https://cloud.tencent.com/developer/article/1543689</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/frankming/p/16870285.html">https://www.cnblogs.com/frankming/p/16870285.html</a></p>
-<p><a target="_blank" rel="noopener" href="http://ftp.usf.edu/pub/centos/7/virt/x86_64/xen-414/Packages/k/">http://ftp.usf.edu/pub/centos/7/virt/x86_64/xen-414/Packages/k/</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1229,7 +1218,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-count">95</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

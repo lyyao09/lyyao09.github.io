@@ -145,6 +145,118 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2023/12/17/docker/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-%E8%B7%A8%E5%B9%B3%E5%8F%B0%E6%9E%84%E5%BB%BADocker%E9%95%9C%E5%83%8F%E8%AE%B0%E5%BD%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/12/17/docker/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-%E8%B7%A8%E5%B9%B3%E5%8F%B0%E6%9E%84%E5%BB%BADocker%E9%95%9C%E5%83%8F%E8%AE%B0%E5%BD%95/" class="post-title-link" itemprop="url">总结分享-跨平台构建Docker镜像记录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-12-17 21:17:14" itemprop="dateCreated datePublished" datetime="2023-12-17T21:17:14+00:00">2023-12-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a>前提条件</h2><ol>
+<li>确保 <code>Docker</code> 版本不低于 <code>19.03</code>，同时还要通过设置环境变量 <code>DOCKER_CLI_EXPERIMENTAL</code> 来启用。可以通过下面的命令来为当前终端启用 <code>buildx</code> 插件，并验证是否开启[1]：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 root]<span class="comment"># export DOCKER_CLI_EXPERIMENTAL=enabled</span></span><br><span class="line"></span><br><span class="line">[root@node1 root]<span class="comment"># docker buildx version</span></span><br><span class="line">github.com/docker/buildx v0.3.1-tp-docker 6db68d029599c6710a32aa7adcba8e5a344795a7</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>确保<code>Linux</code>内核版本升级到 <code>4.8</code> 以上，否则会出现如下异常[2]：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 root]<span class="comment"># docker run --privileged --rm tonistiigi/binfmt --install all</span></span><br><span class="line">Unable to find image <span class="string">&#x27;tonistiigi/binfmt:latest&#x27;</span> locally</span><br><span class="line">latest: Pulling from tonistiigi/binfmt</span><br><span class="line">2a625f6055a5: Pull complete</span><br><span class="line">71d6c64c6702: Pull complete</span><br><span class="line">Digest: sha256:8de6f2decb92e9001d094534bf8a92880c175bd5dfb4a9d8579f26f09821cfa2</span><br><span class="line">Status: Downloaded newer image <span class="keyword">for</span> tonistiigi/binfmt:latest</span><br><span class="line">installing: arm64 cannot register <span class="string">&quot;/usr/bin/qemu-aarch64&quot;</span> to /proc/sys/fs/binfmt_misc/register: write /proc/sys/fs/binfmt_misc/register: invalid argument</span><br><span class="line">installing: s390x cannot register <span class="string">&quot;/usr/bin/qemu-s390x&quot;</span> to /proc/sys/fs/binfmt_misc/register: write /proc/sys/fs/binfmt_misc/register: invalid argument</span><br><span class="line">installing: riscv64 cannot register <span class="string">&quot;/usr/bin/qemu-riscv64&quot;</span> to /proc/sys/fs/binfmt_misc/register: write /proc/sys/fs/binfmt_misc/register: invalid argument</span><br><span class="line">installing: mips64le cannot register <span class="string">&quot;/usr/bin/qemu-mips64el&quot;</span> to /proc/sys/fs/binfmt_misc/register: write /proc/sys/fs/binfmt_misc/register: invalid argument</span><br><span class="line">installing: mips64 cannot register <span class="string">&quot;/usr/bin/qemu-mips64&quot;</span> to /proc/sys/fs/binfmt_misc/register: write /proc/sys/fs/binfmt_misc/register: invalid argument</span><br><span class="line">installing: arm cannot register <span class="string">&quot;/usr/bin/qemu-arm&quot;</span> to /proc/sys/fs/binfmt_misc/register: write /proc/sys/fs/binfmt_misc/register: invalid argument</span><br><span class="line">installing: ppc64le cannot register <span class="string">&quot;/usr/bin/qemu-ppc64le&quot;</span> to /proc/sys/fs/binfmt_misc/register: write /proc/sys/fs/binfmt_misc/register: invalid argument</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;supported&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;linux/amd64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/386&quot;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="string">&quot;emulators&quot;</span>: null</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><ol>
+<li>升级内核版本，以升级到<code>4.9</code>为例，相关<code>rpm</code>包见链接[3]：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 4.9]<span class="comment"># ll</span></span><br><span class="line">total 13400</span><br><span class="line">-rw-r--r-- 1 root root  1114112 Dec 12 20:22 kernel-4.9.241-37.el7.x86_64.rpm</span><br><span class="line">-rw-r--r-- 1 root root 11686072 Dec 12 20:22 kernel-devel-4.9.241-37.el7.x86_64.rpm</span><br><span class="line"></span><br><span class="line">[root@node1 4.9]<span class="comment"># rpm -ivh kernel-*</span></span><br><span class="line">warning: kernel-4.9.241-37.el7.x86_64.rpm: Header V4 RSA/SHA1 Signature, key ID 61e8806c: NOKEY</span><br><span class="line">Preparing...                          <span class="comment">################################# [100%]</span></span><br><span class="line">Updating / installing...</span><br><span class="line">   1:kernel-devel-4.9.241-37.el7      <span class="comment">################################# [ 50%]</span></span><br><span class="line">   2:kernel-4.9.241-37.el7            <span class="comment">################################# [100%]</span></span><br><span class="line"></span><br><span class="line">[root@node1 4.9]<span class="comment"># reboot</span></span><br><span class="line"></span><br><span class="line">[root@node1 4.9]<span class="comment"># uname -a</span></span><br><span class="line">Linux node1 4.9.241-37.el7.x86_64 <span class="comment">#1 SMP Mon Nov 2 13:55:04 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>启用 <code>binfmt_misc</code>，并检查启用结果：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># docker run --privileged --rm tonistiigi/binfmt --install all</span></span><br><span class="line"></span><br><span class="line">installing: arm OK</span><br><span class="line">installing: s390x OK</span><br><span class="line">installing: ppc64le OK</span><br><span class="line">installing: arm64 OK</span><br><span class="line">installing: riscv64 OK</span><br><span class="line">installing: mips64le OK</span><br><span class="line">installing: mips64 OK</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;supported&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;linux/amd64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/arm64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/riscv64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/ppc64le&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/s390x&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/386&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/mips64le&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/mips64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/arm/v7&quot;</span>,</span><br><span class="line">    <span class="string">&quot;linux/arm/v6&quot;</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="string">&quot;emulators&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;qemu-aarch64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;qemu-arm&quot;</span>,</span><br><span class="line">    <span class="string">&quot;qemu-mips64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;qemu-mips64el&quot;</span>,</span><br><span class="line">    <span class="string">&quot;qemu-ppc64le&quot;</span>,</span><br><span class="line">    <span class="string">&quot;qemu-riscv64&quot;</span>,</span><br><span class="line">    <span class="string">&quot;qemu-s390x&quot;</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[root@node1 ~]<span class="comment"># ls -al /proc/sys/fs/binfmt_misc/</span></span><br><span class="line">total 0</span><br><span class="line">drwxr-xr-x 2 root root 0 Dec 13 16:29 .</span><br><span class="line">dr-xr-xr-x 1 root root 0 Dec 13 16:27 ..</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 qemu-aarch64</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 qemu-arm</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 qemu-mips64</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 qemu-mips64el</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 qemu-ppc64le</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 qemu-riscv64</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 qemu-s390x</span><br><span class="line">--w------- 1 root root 0 Dec 13 16:29 register</span><br><span class="line">-rw-r--r-- 1 root root 0 Dec 13 16:29 status</span><br></pre></td></tr></table></figure>
+
+<h2 id="构建验证"><a href="#构建验证" class="headerlink" title="构建验证"></a>构建验证</h2><p>创建一个新的构建器，并启动构建器：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># docker buildx create --use --name mybuilder</span></span><br><span class="line">mybuilder</span><br><span class="line"></span><br><span class="line">[root@node1 ~]<span class="comment"># docker buildx inspect mybuilder --bootstrap</span></span><br><span class="line">[+] Building 105.8s (1/1) FINISHED</span><br><span class="line"> =&gt; [internal] booting buildkit            			 105.8s</span><br><span class="line"> =&gt; =&gt; pulling image moby/buildkit:buildx-stable-1   105.3s</span><br><span class="line"> =&gt; =&gt; creating container buildx_buildkit_mybuilder0 0.6s</span><br><span class="line">Name:          mybuilder</span><br><span class="line">Driver:        docker-container</span><br><span class="line">Last Activity: 2023-12-13 08:35:03 +0000 UTC</span><br><span class="line"></span><br><span class="line">Nodes:</span><br><span class="line">Name:     mybuilder0</span><br><span class="line">Endpoint: unix:///var/run/docker.sock</span><br><span class="line">Status:    running</span><br><span class="line">Buildkit:  v0.9.3</span><br><span class="line">Platforms: linux/amd64, linux/arm64, linux/riscv64, linux/ppc64le, linux/s390x, linux/386, linux/mips64le, linux/mips64, linux/arm/v7, linux/arm/v6</span><br></pre></td></tr></table></figure>
+
+<p>以构建<code>xxx</code>镜像为例，并将构建好的镜像保存在本地，将 <code>type</code> 指定为 <code>docker</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 images]<span class="comment"># docker buildx build -t xxx/xxx --platform=linux/arm64 -o type=docker .</span></span><br><span class="line">[+] Building 5.5s (6/6) FINISHED                                                                                                                                                 docker-container:mybuilder</span><br><span class="line"> =&gt; [internal] load build definition from Dockerfile		 0.1s</span><br><span class="line"> =&gt; =&gt; transferring dockerfile: 219B                         0.0s</span><br><span class="line"> =&gt; [internal] load .dockerignore                            0.1s</span><br><span class="line"> =&gt; =&gt; transferring context: 2B                              0.0s</span><br><span class="line"> =&gt; [internal] load build context                            0.9s</span><br><span class="line"> =&gt; =&gt; transferring context: 68.42MB                         0.8s</span><br><span class="line"> =&gt; [1/1] COPY ./xxx /bin/xxx				                 0.1s</span><br><span class="line"> =&gt; exporting to oci image format                            4.3s</span><br><span class="line"> =&gt; =&gt; exporting layers                                      3.0s</span><br><span class="line"> =&gt; =&gt; exporting manifest sha256:33877987488ccd8fb6803f06f6b90b5ff667dd172db23b339e96acee31af354f            0.0s</span><br><span class="line"> =&gt; =&gt; exporting config sha256:f16ad6c6fc37b1cad030e7880c094f75f2cb6959ebbc3712808f25e04b96a395            0.0s</span><br><span class="line"> =&gt; =&gt; sending tarball                                       1.3s</span><br><span class="line"> =&gt; importing to docker                                                                   </span><br></pre></td></tr></table></figure>
+
+<p>查看镜像：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 images]<span class="comment"># docker images|grep xxx</span></span><br><span class="line">xxx/xxx        latest           f16ad6c6fc37   2 minutes ago   68.4MB</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1543689">https://cloud.tencent.com/developer/article/1543689</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/frankming/p/16870285.html">https://www.cnblogs.com/frankming/p/16870285.html</a></p>
+<p><a target="_blank" rel="noopener" href="http://ftp.usf.edu/pub/centos/7/virt/x86_64/xen-414/Packages/k/">http://ftp.usf.edu/pub/centos/7/virt/x86_64/xen-414/Packages/k/</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2023/06/18/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-BC-Linux-for-Eular%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E9%80%82%E9%85%8D%E9%97%AE%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +288,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -274,7 +386,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -376,7 +488,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -480,7 +592,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -596,7 +708,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -719,7 +831,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -818,7 +930,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -960,7 +1072,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1111,7 +1223,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
+                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1167,108 +1279,6 @@
 <h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>把新编译的<code>pax-logging-api</code>和<code>pax-logging-log4j</code>替换到依赖仓库中，重新编译交付件，日志功能正常。</p>
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
 <li><a target="_blank" rel="noopener" href="https://github.com/ops4j/org.ops4j.pax.logging/commit/7c007343fe9844a17e9c6eaae3a833e6c19a579a">https://github.com/ops4j/org.ops4j.pax.logging/commit/7c007343fe9844a17e9c6eaae3a833e6c19a579a</a></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2022/08/20/java/karaf%E6%A1%86%E6%9E%B6%E8%A7%A3%E5%86%B3CVE-2015-4000%E6%BC%8F%E6%B4%9E/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/20/java/karaf%E6%A1%86%E6%9E%B6%E8%A7%A3%E5%86%B3CVE-2015-4000%E6%BC%8F%E6%B4%9E/" class="post-title-link" itemprop="url">karaf框架解决CVE-2015-4000漏洞</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-20 09:15:21" itemprop="dateCreated datePublished" datetime="2022-08-20T09:15:21+00:00">2022-08-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 10:21:52" itemprop="dateModified" datetime="2024-08-10T10:21:52+00:00">2024-08-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h2><p>漏洞原理参考资料[1]，简单来说就是，当服务器<code>SSL/TLS</code>的瞬时<code>Diffie-Hellman</code>公共密钥小于等于<code>1024</code>位时，存在可以恢复纯文本信息的风险。</p>
-<p>复现方法很简单，使用<code>nmap -sV -Pn --script ssl-dh-params port ip</code> 命令扫描[2]，存在如下漏洞信息：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">nmap.exe -sV -Pn --script ssl-dh-params 443 192.168.1.10</span><br><span class="line">Starting Nmap 7.92 ( https://nmap.org ) at 2022-07-09 11:14</span><br><span class="line">Nmap scan report for 192.168.1.10</span><br><span class="line">Host is up (0.0033s latency).</span><br><span class="line">Not shown: 996 closed tcp ports (reset)</span><br><span class="line">…</span><br><span class="line">| ssl-dh-params:</span><br><span class="line">|   VULNERABLE:</span><br><span class="line">|   Diffie-Hellman Key Exchange Insufficient Group Strength</span><br><span class="line">|     State: VULNERABLE</span><br><span class="line">|       Transport Layer Security (TLS) services that use Diffie-Hellman groups</span><br><span class="line">|       of insufficient strength, especially those using one of a few commonly</span><br><span class="line">|       shared groups, may be susceptible to passive eavesdropping attacks.</span><br><span class="line">|     Check results:</span><br><span class="line">|       WEAK DH GROUP 1</span><br><span class="line">|             Cipher Suite: TLS_DHE_RSA_WITH_AES_256_CBC_SHA256</span><br><span class="line">|             Modulus Type: Safe prime</span><br><span class="line">|             Modulus Source: RFC2409/Oakley Group 2</span><br><span class="line">|             Modulus Length: 1024</span><br><span class="line">|             Generator Length: 8</span><br><span class="line">|             Public Key Length: 1024</span><br><span class="line">|     References:</span><br><span class="line">|_      https://weakdh.org</span><br></pre></td></tr></table></figure>
-
-<h2 id="修复方案"><a href="#修复方案" class="headerlink" title="修复方案"></a>修复方案</h2><p>参考[3,4]，修改方案如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 etc]# cat org.ops4j.pax.web.cfg</span><br><span class="line">...</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Excluded SSL/TLS Cipher Suites comma-separated list of Regular Expressions</span></span><br><span class="line">org.ops4j.pax.web.ssl.ciphersuites.excluded=.*NULL.*,.*RC4.*,.*MD5.*,.*DES.*,.*DSS.*,TLS_DHE.*,SSL.*,.*anon.*,.*EXPORT.*</span><br></pre></td></tr></table></figure>
-
-<p>修改后，再次使用<code>nmap -sV -Pn --script ssl-dh-params port ip</code>查看扫描结果，漏洞解决：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">nmap.exe -sV -Pn --script ssl-dh-params 443 192.168.1.10（主机IP）</span><br><span class="line">Starting Nmap 7.92 ( https://nmap.org ) at 2022-07-07 11:53</span><br><span class="line">Nmap scan report for 192.168.1.10</span><br><span class="line">Host is up (0.0032s latency).</span><br><span class="line">Not shown: 997 closed tcp ports (reset</span><br><span class="line">PORT     STATE SERVICE  VERSION</span><br><span class="line">22/tcp   open  ssh      OpenSSH 7.4 (protocol 2.0)</span><br><span class="line">111/tcp  open  rpcbind  2-4 (RPC #100000)</span><br><span class="line">...</span><br><span class="line">Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .</span><br><span class="line">Nmap done: 1 IP address (1 host up) scanned in 18.74 seconds </span><br></pre></td></tr></table></figure>
-
-<p>需要注意的是，<strong>添加完上面的参数后，可能会出现一个新的问题</strong>，扫描结果如下：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">nmap.exe -sV --script ssl-enum-ciphers -p 443 192.168.1.10</span><br><span class="line">Starting Nmap 6.40 ( http://nmap.org ) at 2022-08-20 22:26 CST</span><br><span class="line">Nmap scan report <span class="keyword">for</span> matrix-node1 (192.168.1.10)</span><br><span class="line">Host is up (0.000064s latency).</span><br><span class="line">PORT     STATE SERVICE    VERSION</span><br><span class="line">443/tcp open  https-alt</span><br><span class="line">| ssl-enum-ciphers:</span><br><span class="line">|   TLSv1.0:</span><br><span class="line">|     ciphers:</span><br><span class="line">|       TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA - strong</span><br><span class="line">|       ...</span><br><span class="line">|     compressors:</span><br><span class="line">|       NULL</span><br><span class="line">|   TLSv1.1:</span><br><span class="line">|     ciphers:</span><br><span class="line">|       TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA - strong</span><br><span class="line">|       ...</span><br><span class="line">|     compressors:</span><br><span class="line">|       NULL</span><br><span class="line">|   TLSv1.2:</span><br><span class="line">|     ciphers:</span><br><span class="line">|       TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA - strong</span><br><span class="line">|       ...</span><br><span class="line">|     compressors:</span><br><span class="line">|       NULL</span><br><span class="line">|_  least strength: strong</span><br></pre></td></tr></table></figure>
-
-<p>修改配置之前，扫描结果里显示仅开启了<code>TLSv1.2</code>，而修改配置之后，发现<code>TLSv1.0</code>和<code>TLSv1.1</code>都被开启了，这俩协议也是需要关闭：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 etc]<span class="comment"># cat org.ops4j.pax.web.cfg</span></span><br><span class="line">...</span><br><span class="line"><span class="comment"># Excluded SSL/TLS Cipher Suites comma-separated list of Regular Expressions</span></span><br><span class="line">org.ops4j.pax.web.ssl.ciphersuites.excluded=.*NULL.*,.*RC4.*,.*MD5.*,.*DES.*,.*DSS.*,TLS_DHE.*,SSL.*,.*anon.*,.*EXPORT.*</span><br><span class="line">org.ops4j.pax.web.ssl.protocols.excluded=TLSv1,TLSv1.1</span><br></pre></td></tr></table></figure>
-
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
-<li><a target="_blank" rel="noopener" href="https://access.redhat.com/zh_CN/articles/1480493">https://access.redhat.com/zh_CN/articles/1480493</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zcg-cpdd/p/15573841.html">https://www.cnblogs.com/zcg-cpdd/p/15573841.html</a></li>
-<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/30523324/how-to-config-local-jetty-ssl-to-avoid-weak-phermeral-dh-key-error">https://stackoverflow.com/questions/30523324/how-to-config-local-jetty-ssl-to-avoid-weak-phermeral-dh-key-error</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/codice/ddf/blob/master/distribution/ddf-common/src/main/resources/etc/org.ops4j.pax.web.cfg">https://github.com/codice/ddf/blob/master/distribution/ddf-common/src/main/resources/etc/org.ops4j.pax.web.cfg</a></li>
 </ol>
 
       
@@ -1354,7 +1364,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-count">95</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
