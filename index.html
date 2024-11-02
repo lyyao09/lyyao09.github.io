@@ -176,7 +176,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -277,7 +277,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -371,6 +371,118 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/06/09/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-docker%20stats%E5%91%BD%E4%BB%A4%E7%BB%9F%E8%AE%A1%E4%B8%8D%E5%88%B0%E6%95%B0%E6%8D%AE%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/06/09/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-docker%20stats%E5%91%BD%E4%BB%A4%E7%BB%9F%E8%AE%A1%E4%B8%8D%E5%88%B0%E6%95%B0%E6%8D%AE%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">K8S问题排查-docker stats命令统计不到数据问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-06-09 20:05:40" itemprop="dateCreated datePublished" datetime="2024-06-09T20:05:40+00:00">2024-06-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h2><p><code>K8S</code>集群中有一个节点的<code>docker stats</code>命令查看不到资源使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># docker stats</span></span><br><span class="line">CONTAINER ID        NAME                 			 CPU %           MEM USAGE / LIMIT     MEM %       NET I/O           </span><br><span class="line">1c9bec808f61        k8s_busybox_xxx     			 --              --                    --           --           </span><br><span class="line">86f38791af8f        k8s_kube-controller-manager_xxx   --              --             	    --			--</span><br><span class="line">60d98fe39332        k8s_kube-scheduler_xxx            --              --   				    --		   --</span><br><span class="line">a81320ad61e8        k8s_calico-kube-controllers_xxx   --              --              	    --		    --</span><br><span class="line">4cf98fb540ba        k8s_calico-node_xxx               --              --            	    --		    --</span><br><span class="line">9747e7ce0032        k8s_kube-proxy_xxx                --              --  				   --		   --</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>先看<code>docker</code>日志，存在大量如下异常：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">time=<span class="string">&quot;xxx&quot;</span> level=error msg=<span class="string">&quot;collecting stats for xxx：no metrics reveived&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>根据错误信息未找到相关问题，继续看这个命令的结果是从哪里读取的，根据资料[1]可知，该数据是从<code>cgroup fs</code>中计算得到。</p>
+<p>随机找一个容器<code>id</code>，进入<code>cgroup</code>中看看相关指标文件是否正常：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># cat /sys/fs/cgroup/cpu,cpuacct/kubepods.slice/kubepods-burstable.slice/kubepods-burstable-podxxx/docker-xxx.scope/cpuacct.usage</span></span><br><span class="line">32068181</span><br><span class="line"></span><br><span class="line">[root@node1 ~]<span class="comment"># cat /sys/fs/cgroup/memory/kubepods.slice/kubepods-besteffort.slice/kubepods-besteffort-podxxx/docker-xxx.scope/memory.limit_in_bytes</span></span><br><span class="line">9223372036854771712</span><br></pre></td></tr></table></figure>
+
+<p>看起来没啥问题，查<code>docker</code>相关<code>issue</code>，未找到相关问题。</p>
+<p>查<code>containerd</code>服务，发现一直在打印如下异常：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/sys/fs/cgroup/cpuacct/kubepods.slice/besteffort.slice/podxxx/xxx/cpuacct.stat is expected to have 4 fields</span><br></pre></td></tr></table></figure>
+
+<p>根据上面的错误信息，再次查看相关<code>cgroup</code>，看内容不像是<code>4</code>个字段：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># cat /sys/fs/cgroup/cpuacct/kubepods.slice/kubepods-besteffort.slice/podxxx/xxx/cpuacct.stat</span></span><br><span class="line">user 32</span><br><span class="line">system 89</span><br><span class="line">sched_delay 0</span><br></pre></td></tr></table></figure>
+
+<p>找一个正常节点，查看相关<code>cgroup</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># cat /sys/fs/cgroup/cpuacct/kubepods.slice/kubepods-burstable.slice/podxxx/xxx/cpuacct.stat</span></span><br><span class="line">user 1568</span><br><span class="line">system 6436</span><br></pre></td></tr></table></figure>
+
+<p>对比发现，问题环境里多了一个<code>sched_delay</code>字段，该字段表示由于调度延迟而导致的 CPU 时间延迟。查看到相关资料[2]，此问题源自<code>https://github.com/containerd/cgroups</code>。 当尝试从文件<code>/sys/fs/cgroup/cpuacct/cpuacct.stat</code>检索字段时，会报告该错误。这个限制是不合理的，已在<code>containerd/cgroups@5fe29ea</code>中修复。</p>
+<p>查看修改记录，<code>containerd/cgroups</code>的解决版本如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v3.0.3  v3.0.2 v3.0.1 v3.0.0 v1.1.0</span><br></pre></td></tr></table></figure>
+
+<p>对应的<code>containerd</code>版本是从<code>v1.7.0</code>开始升级<code>cgroup</code>版本到<code>v1.0.0</code>，解决了该问题。</p>
+<p>为什么只有一个节点存在该问题？</p>
+<p>根据修复记录的说明，某些系统内核才会触发该问题。查看正常节点和异常节点的内核版本，发现异常节点的内核版本是<code>4.14.0</code>，而正常节点的内核版本是<code>5.x</code>。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>1.升级<code>containerd</code>到<code>v1.7.0</code>及以上版本；</p>
+<p>2.升级操作系统内核版本；</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>1.<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1096453">https://cloud.tencent.com/developer/article/1096453</a></p>
+<p>2.<a target="_blank" rel="noopener" href="https://github.com/milvus-io/milvus/issues/22982">https://github.com/milvus-io/milvus/issues/22982</a></p>
+<p>3.<a target="_blank" rel="noopener" href="https://github.com/containerd/cgroups/pull/231">https://github.com/containerd/cgroups/pull/231</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/05/18/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-%E6%B3%A8%E5%86%8C%E5%85%8D%E8%B4%B9%E7%9A%84Redhat%E8%AE%A2%E9%98%85%E6%9C%8D%E5%8A%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -402,7 +514,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -496,7 +608,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -594,7 +706,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -700,7 +812,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -790,7 +902,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -901,7 +1013,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1002,7 +1114,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1049,96 +1161,6 @@
 <p>2.<a href="https://lyyao09.github.io/2023/04/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8%EF%BC%88%E7%BB%AD%EF%BC%89/">https://lyyao09.github.io/2023/04/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8%EF%BC%88%E7%BB%AD%EF%BC%89/</a></p>
 <p>3.<a target="_blank" rel="noopener" href="https://github.com/kubernetes-sigs/kubespray/issues/8992">https://github.com/kubernetes-sigs/kubespray/issues/8992</a></p>
 <p>4.<a target="_blank" rel="noopener" href="https://github.com/flannel-io/flannel/issues/1279">https://github.com/flannel-io/flannel/issues/1279</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/03/17/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Arthas%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/03/17/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Arthas%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/" class="post-title-link" itemprop="url">总结分享-arthas使用问题记录</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-03-17 18:57:44" itemprop="dateCreated datePublished" datetime="2024-03-17T18:57:44+00:00">2024-03-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/share/" itemprop="url" rel="index"><span itemprop="name">share</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题1：openj9环境使用profiler命令输出内存火焰图为空"><a href="#问题1：openj9环境使用profiler命令输出内存火焰图为空" class="headerlink" title="问题1：openj9环境使用profiler命令输出内存火焰图为空"></a>问题1：openj9环境使用profiler命令输出内存火焰图为空</h2><h3 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h3><p>基于<code>openjdk</code>，使用<code>-d</code>参数控制持续<code>60s</code>后自动停止，使用浏览器打开<code>html</code>报告，内容显示正常：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@<span class="built_in">test</span> arthas]<span class="comment"># /usr/bin/java -jar arthas-boot.jar </span></span><br><span class="line">[arthas@44794]$ profiler start -e alloc -d 60</span><br><span class="line">Profiling started</span><br><span class="line">profiler will silent stop after 60 seconds.</span><br><span class="line">profiler output file will be: /arthas-output/20240326-171613.html </span><br></pre></td></tr></table></figure>
-
-<p>基于<code>openjdk-openj9</code>，同样使用<code>-d</code>参数控制持续<code>60s</code>后自动停止，使用浏览器打开<code>html</code>报告，内容显示空白：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@<span class="built_in">test</span> arthas]<span class="comment"># /usr/lib/openj9/bin/java -jar arthas-boot.jar </span></span><br><span class="line">[arthas@7857]$ profiler start -e alloc -d 60</span><br><span class="line">Profiling started</span><br><span class="line">profiler will silent stop after 60 seconds.</span><br><span class="line">profiler output file will be: /arthas-output/20240326-163013.html </span><br></pre></td></tr></table></figure>
-
-<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><p><code>profiler</code>对<code>openjdk-openj9</code>的支持还不够全面，可以通过不加<code>-d</code>参数，主动<code>stop</code>临时规避：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@<span class="built_in">test</span> arthas]<span class="comment"># /usr/lib/openj9/bin/java -jar arthas-boot.jar </span></span><br><span class="line">[arthas@7857]$ profiler start -e alloc</span><br><span class="line">Profiling started</span><br><span class="line"></span><br><span class="line">[arthas@7857]$ profiler stop</span><br><span class="line">OK</span><br><span class="line">profiler output file : /arthas-output/20240326-163522.html </span><br></pre></td></tr></table></figure>
-
-<p>使用这种方法，可以正常输出基于内存的火焰图。</p>
 
       
     </div>
@@ -1223,7 +1245,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">96</span>
+          <span class="site-state-item-count">97</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

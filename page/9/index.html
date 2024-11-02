@@ -145,6 +145,96 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/31/stack/How-do-I-access-the-Kubernetes-api-from-within-a-pod-container/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/07/31/stack/How-do-I-access-the-Kubernetes-api-from-within-a-pod-container/" class="post-title-link" itemprop="url">如何从Pod容器中访问Kubernetes API服务</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-31 21:19:22" itemprop="dateCreated datePublished" datetime="2019-07-31T21:19:22+00:00">2019-07-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我之前可以使用curl执行如下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1beta3/namespaces/default/</span><br></pre></td></tr></table></figure>
+
+<p>但在kubernetes 0.18.0中它提示“unauthorized”。奇怪的是，如果我使用外部IP地址（<a target="_blank" rel="noopener" href="http://172.17.8.101:8080/api/v1beta3/namespaces/default/%EF%BC%89%E6%98%AF%E5%8F%AF%E4%BB%A5%E8%AE%BF%E9%97%AE%E7%9A%84%E3%80%82">http://172.17.8.101:8080/api/v1beta3/namespaces/default/）是可以访问的。</a></p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>在官方文档中我发现了<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/#accessing-the-api-from-a-pod">这个</a>：</p>
+<p>显然，我没有在之前版本的Kubernetes中使用安全令牌。从那时起，我设计了一个比运行代理或在容器上安装golang更简单的解决方案。请参阅此示例，该示例从api获取当前容器的信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">KUBE_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)</span><br><span class="line">curl -sSk -H &quot;Authorization: Bearer $KUBE_TOKEN&quot; \</span><br><span class="line">https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/default/pods/$HOSTNAME</span><br></pre></td></tr></table></figure>
+
+<p>我还使用包含一个简单的二进制文件<a target="_blank" rel="noopener" href="http://stedolan.github.io/jq/download/">jq</a>来解析json以用于bash脚本。</p>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/30690186/how-do-i-access-the-kubernetes-api-from-within-a-pod-container">How do I access the Kubernetes api from within a pod container?</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/31/stack/How-do-I-force-Kubernetes-to-re-pull-an-image/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +266,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -275,7 +365,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -392,7 +482,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -512,7 +602,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -603,7 +693,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -699,7 +789,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -810,7 +900,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -909,7 +999,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1003,7 +1093,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1042,105 +1132,6 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete pod &lt;PODNAME&gt; --grace-period=0 --force --namespace &lt;NAMESPACE&gt;</span><br></pre></td></tr></table></figure>
 
 <h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/35453792/pods-stuck-in-terminating-status">Pods stuck in Terminating status</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/24/stack/What's-the-difference-between-docker-compose-and-kubernetes/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/07/24/stack/What's-the-difference-between-docker-compose-and-kubernetes/" class="post-title-link" itemprop="url">docker compose和kubernetes之间有什么区别</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-07-24 23:46:08" itemprop="dateCreated datePublished" datetime="2019-07-24T23:46:08+00:00">2019-07-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>虽然分析了Docker，Google Cloud和Kubernetes，但还没有清楚地理解它们，	在我看来这些产品是重叠但不兼容的。</p>
-<p>例如，需要重新编写docker-compose文件，以便可以将应用程序部署到Kubernetes。</p>
-<p>有人可以从较高层次描述Docker，Docker-Compose，Docker Cloud和Kubernetes重叠的位置以及哪一个依赖于另一个吗？</p>
-<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p><strong>Docker :</strong></p>
-<p>Docker是一种容器技术，可以让您对应用程序进行容器化。Docker是使用其他技术的核心。</p>
-<p><strong>Docker Compose:</strong></p>
-<p>允许配置和启动多个docker容器。当你想要启动多个docker容器并且不想使用docker run分别启动每个Docker容器时，可以使用Docker compose启动。</p>
-<p><strong>Docker Swarm:</strong></p>
-<p>Docker swarm用于在多个主机上运行和连接容器。Docker swarm是一个容器集群管理和编排工具。它管理在多个主机上运行的容器，并执行缩放，在崩溃时启动新容器，网络容器……</p>
-<p>Docker swarm是生产环境中的docker。它是嵌入在Docker引擎中的本机docker编排工具。名为stack file的docker swarm文件与docker compose文件非常相似。</p>
-<p><strong>Kubernetes:</strong></p>
-<p>由Google开发的容器编排工具。Kubernetes的目标与Docker swarm的目标非常相似。</p>
-<p><strong>Docker Cloud:</strong></p>
-<p>一种<a target="_blank" rel="noopener" href="https://cloud.docker.com/pricing/">付费</a>的企业级docker服务，允许您在云服务器或本地服务器上构建和运行容器。它提供了一个Web UI和一个中央控制面板来运行和管理容器，同时在用户友好的Web界面中提供所有docker功能。</p>
-<p><strong>Update:</strong></p>
-<p><a target="_blank" rel="noopener" href="https://success.docker.com/article/cloud-migration">Docker Clou“部分”功能停止使用</a></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Docker Cloud上提供应用程序，节点和群集集群管理的服务将于5月21日关闭......自动构建和注册表存储服务将不会受到影响并将继续可用</span><br></pre></td></tr></table></figure>
-
-<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/47536536/whats-the-difference-between-docker-compose-and-kubernetes">What’s the difference between docker compose and kubernetes?</a></p>
 
       
     </div>
@@ -1225,7 +1216,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">96</span>
+          <span class="site-state-item-count">97</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

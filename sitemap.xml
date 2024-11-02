@@ -29,7 +29,196 @@
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2020/06/30/linux/Intro-to-BGP-with-BIRD/</loc>
+    <loc>https://lyyao09.github.io/2019/07/29/stack/Kubernetes-vs-CloudFoundry/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/30/stack/Marathon-vs-Kubernetes-vs-Docker-Swarm-on-DC-OS-with-Docker-containers/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/09/21/stack/Service-located-in-another-namespace/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/25/stack/Pods-stuck-in-Terminating-status/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/24/stack/What's-the-difference-between-Apache's-Mesos-and-Google's-Kubernetes/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/24/stack/What's-the-difference-between-docker-compose-and-kubernetes/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/27/stack/Whats-the-difference-between-ClusterIP-NodePort-and-LoadBalancer-service-types-in-Kubernetes/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/26/stack/What-is-the-difference-between-a-pod-and-a-deployment/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/10/stack/Where-does-the-convention-of-using-healthz-for-application-health-checks-come-from/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/17/stack/helm-list-cannot-list-configmaps-in-the-namespace-kube-system/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/23/stack/kubectl-apply-vs-kubectl-create/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/07/23/tools/Convert-word-to-pdf-or-txt-tools/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2021/01/05/tools/How-to-debug-tests-in-maven-project/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-install/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-create-delete/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-prefix-convert-and-merge/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-read-write/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2023/03/25/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E4%BD%BF%E7%94%A8Kubeasz%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2K8S%E9%9B%86%E7%BE%A4/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2021/06/20/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E4%BD%BF%E7%94%A8%E9%98%BF%E9%87%8C%E5%BC%80%E6%BA%90%E7%9A%84Sealer%E5%BF%AB%E9%80%9F%E9%83%A8%E7%BD%B2%E9%9B%86%E7%BE%A4/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2022/11/27/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E5%86%85%E7%BD%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AEGoland%E7%BD%91%E9%A1%B5%E7%89%88%E6%95%99%E7%A8%8B/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/about/index.html</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2021/04/17/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/</loc>
     
     <lastmod>2024-11-02</lastmod>
     
@@ -39,6 +228,15 @@
   
   <url>
     <loc>https://lyyao09.github.io/2021/09/26/linux/%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-IPv6%E7%8E%AF%E5%A2%83%E4%B8%8BVIP%E5%9C%B0%E5%9D%80%E4%B8%8D%E9%80%9A/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2020/06/30/linux/Intro-to-BGP-with-BIRD/</loc>
     
     <lastmod>2024-11-02</lastmod>
     
@@ -74,15 +272,6 @@
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2023/04/23/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Calico-node%E9%95%9C%E5%83%8F%E7%BC%96%E8%AF%91%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://lyyao09.github.io/2024/04/21/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Harbor%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93%E7%A6%81%E7%94%A8UI%E6%96%B9%E6%B3%95/</loc>
     
     <lastmod>2024-11-02</lastmod>
@@ -92,7 +281,7 @@
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2023/12/31/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-KubeSphere%203.4.0%E7%89%88%E6%9C%AC%E7%A6%BB%E7%BA%BF%E9%83%A8%E7%BD%B2%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/</loc>
+    <loc>https://lyyao09.github.io/2023/04/23/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Calico-node%E9%95%9C%E5%83%8F%E7%BC%96%E8%AF%91%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/</loc>
     
     <lastmod>2024-11-02</lastmod>
     
@@ -102,6 +291,15 @@
   
   <url>
     <loc>https://lyyao09.github.io/2021/10/24/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Wireshark%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2023/12/31/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-KubeSphere%203.4.0%E7%89%88%E6%9C%AC%E7%A6%BB%E7%BA%BF%E9%83%A8%E7%BD%B2%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/</loc>
     
     <lastmod>2024-11-02</lastmod>
     
@@ -128,7 +326,7 @@
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/27/stack/Docker-Swarm-Kubernetes-Mesos-Core-OS-Fleet/</loc>
+    <loc>https://lyyao09.github.io/2019/08/13/stack/How-can-I-keep-a-container-running-on-Kubernetes/</loc>
     
     <lastmod>2024-11-02</lastmod>
     
@@ -137,7 +335,7 @@
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/08/13/stack/How-can-I-keep-a-container-running-on-Kubernetes/</loc>
+    <loc>https://lyyao09.github.io/2019/07/27/stack/Docker-Swarm-Kubernetes-Mesos-Core-OS-Fleet/</loc>
     
     <lastmod>2024-11-02</lastmod>
     
@@ -236,231 +434,6 @@
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/07/29/stack/Kubernetes-vs-CloudFoundry/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/07/30/stack/Marathon-vs-Kubernetes-vs-Docker-Swarm-on-DC-OS-with-Docker-containers/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/07/25/stack/Pods-stuck-in-Terminating-status/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/09/21/stack/Service-located-in-another-namespace/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/07/24/stack/What's-the-difference-between-Apache's-Mesos-and-Google's-Kubernetes/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/07/24/stack/What's-the-difference-between-docker-compose-and-kubernetes/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/07/26/stack/What-is-the-difference-between-a-pod-and-a-deployment/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/07/27/stack/Whats-the-difference-between-ClusterIP-NodePort-and-LoadBalancer-service-types-in-Kubernetes/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/08/10/stack/Where-does-the-convention-of-using-healthz-for-application-health-checks-come-from/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/08/17/stack/helm-list-cannot-list-configmaps-in-the-namespace-kube-system/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/07/23/stack/kubectl-apply-vs-kubectl-create/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/07/23/tools/Convert-word-to-pdf-or-txt-tools/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2021/01/05/tools/How-to-debug-tests-in-maven-project/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-create-delete/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-install/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-prefix-convert-and-merge/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-read-write/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2023/03/25/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E4%BD%BF%E7%94%A8Kubeasz%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2K8S%E9%9B%86%E7%BE%A4/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2021/06/20/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E4%BD%BF%E7%94%A8%E9%98%BF%E9%87%8C%E5%BC%80%E6%BA%90%E7%9A%84Sealer%E5%BF%AB%E9%80%9F%E9%83%A8%E7%BD%B2%E9%9B%86%E7%BE%A4/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2022/11/27/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-%E5%86%85%E7%BD%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AEGoland%E7%BD%91%E9%A1%B5%E7%89%88%E6%95%99%E7%A8%8B/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/about/index.html</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2020/06/13/linux/An-introduction-to-linux-interfaces-for-virtual-networking/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2021/04/17/linux/How-To-Use-Fsck-Command-To-Check-And-Repair-Filesystem/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2020/12/26/k8s/Updating-Kubernetes-Raspberry-Pi-Cluster-To-Containerd/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2020/12/25/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://lyyao09.github.io/2020/06/11/linux/An-introduction-to-Linux-virtual-interfaces-Tunnels/</loc>
     
     <lastmod>2024-11-02</lastmod>
@@ -470,52 +443,7 @@
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2023/04/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8%EF%BC%88%E7%BB%AD%EF%BC%89/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2021/07/16/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E4%B8%9A%E5%8A%A1%E9%AB%98%E5%B9%B6%E5%8F%91%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF(%E7%BB%AD)/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2021/06/19/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E4%B8%9A%E5%8A%A1%E9%AB%98%E5%B9%B6%E5%8F%91%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2021/08/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%88%A0%E9%99%A4Pod%E5%90%8E%E5%A4%84%E4%BA%8ETerminating%E7%8A%B6%E6%80%81/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2023/05/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%8D%87%E7%BA%A7K8S%E5%90%8Eapiserver%E7%9A%84token%E8%B6%85%E6%9C%9F%E9%97%AE%E9%A2%98/</loc>
-    
-    <lastmod>2024-11-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://lyyao09.github.io/2024/04/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%9F%BA%E4%BA%8E%E6%B5%B7%E5%85%89CPU%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2K8S%E9%9B%86%E7%BE%A4%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/</loc>
+    <loc>https://lyyao09.github.io/2020/06/13/linux/An-introduction-to-linux-interfaces-for-virtual-networking/</loc>
     
     <lastmod>2024-11-02</lastmod>
     
@@ -659,7 +587,7 @@
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2020/06/22/k8s/Advertising-Kubernetes-Service-IPs-with-Calico-and-BGP/</loc>
+    <loc>https://lyyao09.github.io/2020/12/25/k8s/Why-Helm-Can-Solve-Kubernetes-Native-Rollback-Problem/</loc>
     
     <lastmod>2024-11-02</lastmod>
     
@@ -668,7 +596,7 @@
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2019/09/12/k8s/Building-Kubernetes-Official-Guidance/</loc>
+    <loc>https://lyyao09.github.io/2020/12/26/k8s/Updating-Kubernetes-Raspberry-Pi-Cluster-To-Containerd/</loc>
     
     <lastmod>2024-11-02</lastmod>
     
@@ -812,7 +740,61 @@
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/2020/04/08/docker/Deploy-free-docker-container-on-okteto/</loc>
+    <loc>https://lyyao09.github.io/2023/04/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8%EF%BC%88%E7%BB%AD%EF%BC%89/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2024/06/09/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-docker%20stats%E5%91%BD%E4%BB%A4%E7%BB%9F%E8%AE%A1%E4%B8%8D%E5%88%B0%E6%95%B0%E6%8D%AE%E9%97%AE%E9%A2%98/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2021/07/16/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E4%B8%9A%E5%8A%A1%E9%AB%98%E5%B9%B6%E5%8F%91%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF(%E7%BB%AD)/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2021/06/19/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E4%B8%9A%E5%8A%A1%E9%AB%98%E5%B9%B6%E5%8F%91%E5%AF%BC%E8%87%B4Pod%E5%8F%8D%E5%A4%8D%E9%87%8D%E5%90%AF/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2021/08/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%88%A0%E9%99%A4Pod%E5%90%8E%E5%A4%84%E4%BA%8ETerminating%E7%8A%B6%E6%80%81/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2023/05/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%8D%87%E7%BA%A7K8S%E5%90%8Eapiserver%E7%9A%84token%E8%B6%85%E6%9C%9F%E9%97%AE%E9%A2%98/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2024/04/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E5%9F%BA%E4%BA%8E%E6%B5%B7%E5%85%89CPU%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2K8S%E9%9B%86%E7%BE%A4%E5%A4%B1%E8%B4%A5%E9%97%AE%E9%A2%98/</loc>
     
     <lastmod>2024-11-02</lastmod>
     
@@ -875,6 +857,24 @@
   </url>
   
   <url>
+    <loc>https://lyyao09.github.io/2020/06/22/k8s/Advertising-Kubernetes-Service-IPs-with-Calico-and-BGP/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2019/09/12/k8s/Building-Kubernetes-Official-Guidance/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://lyyao09.github.io/2019/08/04/blog/How-to-deploy-hexo-blog-to-github-and-coding-simultaneously/</loc>
     
     <lastmod>2024-11-02</lastmod>
@@ -894,6 +894,15 @@
   
   <url>
     <loc>https://lyyao09.github.io/2020/10/21/docker/Create-Tag-Retention-Rules/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://lyyao09.github.io/2020/04/08/docker/Deploy-free-docker-container-on-okteto/</loc>
     
     <lastmod>2024-11-02</lastmod>
     
@@ -1046,14 +1055,14 @@
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/tags/calico/</loc>
+    <loc>https://lyyao09.github.io/tags/Harbor/</loc>
     <lastmod>2024-11-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://lyyao09.github.io/tags/Harbor/</loc>
+    <loc>https://lyyao09.github.io/tags/calico/</loc>
     <lastmod>2024-11-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

@@ -145,6 +145,108 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/13/stack/How-can-I-keep-a-container-running-on-Kubernetes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/13/stack/How-can-I-keep-a-container-running-on-Kubernetes/" class="post-title-link" itemprop="url">在Kubernetes集群上如何保持容器一直运行</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-13 20:52:42" itemprop="dateCreated datePublished" datetime="2019-08-13T20:52:42+00:00">2019-08-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我现在正在尝试在Kubernetes集群上运行一个带shell（&#x2F;bin&#x2F;bash）的简单容器。</p>
+<p>我认为有一种方法可以通过使用伪tty和detach选项（docker run命令上的-td选项）来保持容器在Docker容器上运行。</p>
+<p>例如，</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">sudo docker run -td ubuntu:latest</span></span><br></pre></td></tr></table></figure>
+
+<p>在Kubernetes有这样的选择吗？</p>
+<p>我尝试使用kubectl run-container命令运行容器，如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl run-container test_container ubuntu:latest --replicas=1</span><br></pre></td></tr></table></figure>
+
+<p>但是容器几秒后会退出（就像使用docker run命令启动而没有上面提到的选项）。并且ReplicationController会重复启动它。</p>
+<p>有没有办法让容器在Kubernetes上运行，就像docker run命令中的-td选项一样？</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>当主进程退出时，容器退出。做类似的事情：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd debian</span><br></pre></td></tr></table></figure>
+
+<p>坦率地说，容器打开是一个只能用于快速测试和示例的黑客攻击。如果你只想要一个容器进行几分钟的测试，我会这样做：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d debian sleep 300</span><br></pre></td></tr></table></figure>
+
+<p>其优点是，如果忘记了容器，容器将自动退出。或者，可以在while循环中放置类似的内容以使其永久运行，或者只运行top等应用程序。所有这些在Kubernetes中应该很容易做到。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ubuntu</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ubuntu</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">ubuntu:latest</span></span><br><span class="line">    <span class="comment"># Just spin &amp; wait forever</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;/bin/bash&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;--&quot;</span> ]</span><br><span class="line">    <span class="attr">args:</span> [ <span class="string">&quot;while true; do sleep 30; done;&quot;</span> ]</span><br></pre></td></tr></table></figure>
+
+<p>真正的问题是你为什么要这样做？您的容器应该提供服务，其过程将使容器在后台运行。</p>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/31870222/how-can-i-keep-a-container-running-on-kubernetes">How can I keep a container running on Kubernetes?</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/10/stack/Where-does-the-convention-of-using-healthz-for-application-health-checks-come-from/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +278,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -263,7 +365,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -401,7 +503,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -494,7 +596,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -589,7 +691,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -828,7 +930,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1041,7 +1143,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1339,7 +1441,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1433,7 +1535,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1476,96 +1578,6 @@
 <h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><h3 id="方法一：默认值覆盖法"><a href="#方法一：默认值覆盖法" class="headerlink" title="方法一：默认值覆盖法"></a>方法一：默认值覆盖法</h3><p>通过Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME,properties)方法注入properties参数，该</p>
 <h3 id="方法二：变量替换法"><a href="#方法二：变量替换法" class="headerlink" title="方法二：变量替换法"></a>方法二：变量替换法</h3><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://dzone.com/articles/jpa-with-eclipselink-amp-mysql-using-java-configur">https://dzone.com/articles/jpa-with-eclipselink-amp-mysql-using-java-configur</a></p>
 <p><a target="_blank" rel="noopener" href="https://gist.github.com/baumato/3283f255b00094411110fc889be58aa5">https://gist.github.com/baumato/3283f255b00094411110fc889be58aa5</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/31/stack/How-do-I-access-the-Kubernetes-api-from-within-a-pod-container/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/07/31/stack/How-do-I-access-the-Kubernetes-api-from-within-a-pod-container/" class="post-title-link" itemprop="url">如何从Pod容器中访问Kubernetes API服务</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-07-31 21:19:22" itemprop="dateCreated datePublished" datetime="2019-07-31T21:19:22+00:00">2019-07-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我之前可以使用curl执行如下命令：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1beta3/namespaces/default/</span><br></pre></td></tr></table></figure>
-
-<p>但在kubernetes 0.18.0中它提示“unauthorized”。奇怪的是，如果我使用外部IP地址（<a target="_blank" rel="noopener" href="http://172.17.8.101:8080/api/v1beta3/namespaces/default/%EF%BC%89%E6%98%AF%E5%8F%AF%E4%BB%A5%E8%AE%BF%E9%97%AE%E7%9A%84%E3%80%82">http://172.17.8.101:8080/api/v1beta3/namespaces/default/）是可以访问的。</a></p>
-<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>在官方文档中我发现了<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/#accessing-the-api-from-a-pod">这个</a>：</p>
-<p>显然，我没有在之前版本的Kubernetes中使用安全令牌。从那时起，我设计了一个比运行代理或在容器上安装golang更简单的解决方案。请参阅此示例，该示例从api获取当前容器的信息：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">KUBE_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)</span><br><span class="line">curl -sSk -H &quot;Authorization: Bearer $KUBE_TOKEN&quot; \</span><br><span class="line">https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/api/v1/namespaces/default/pods/$HOSTNAME</span><br></pre></td></tr></table></figure>
-
-<p>我还使用包含一个简单的二进制文件<a target="_blank" rel="noopener" href="http://stedolan.github.io/jq/download/">jq</a>来解析json以用于bash脚本。</p>
-<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/30690186/how-do-i-access-the-kubernetes-api-from-within-a-pod-container">How do I access the Kubernetes api from within a pod container?</a></p>
 
       
     </div>
@@ -1650,7 +1662,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">96</span>
+          <span class="site-state-item-count">97</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

@@ -145,6 +145,116 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/04/08/docker/Deploy-free-docker-container-on-okteto/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/04/08/docker/Deploy-free-docker-container-on-okteto/" class="post-title-link" itemprop="url">在Okteto上免费部署docker容器（1）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-08 20:17:26" itemprop="dateCreated datePublished" datetime="2020-04-08T20:17:26+00:00">2020-04-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="okteto介绍"><a href="#okteto介绍" class="headerlink" title="okteto介绍"></a>okteto介绍</h2><p><a target="_blank" rel="noopener" href="https://okteto.com/">Okteto</a>是一个基于Kubernetes的程序开发平台，通过直接在Kubernetes中开发和测试代码来构建应用程序。截止目前，该平台提供<strong>免费部署docker容器的服务</strong>，免费容量为8G内存，4核CPU和50G磁盘空间。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Deploy-free-docker-container-on-okteto/2020-04-08_202807.png" alt="image"></p>
+<h2 id="申请步骤"><a href="#申请步骤" class="headerlink" title="申请步骤"></a>申请步骤</h2><ol>
+<li><p>进入okteto官网，点击Login。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Deploy-free-docker-container-on-okteto/2020-04-08_203534.png" alt="image"></p>
+</li>
+<li><p>通过github账户登录。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Deploy-free-docker-container-on-okteto/2020-04-08_204619.png" alt="image"></p>
+</li>
+<li><p>登录成功后，可以看到控制台界面。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Deploy-free-docker-container-on-okteto/2020-04-08_210540.png" alt="image"></p>
+</li>
+<li><p>点击Deploy可以选择部署预定义的应用，或者选择部署容器。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Deploy-free-docker-container-on-okteto/2020-04-08_210011.png" alt="image"></p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Deploy-free-docker-container-on-okteto/2020-04-08_210426.png" alt="image"></p>
+</li>
+</ol>
+<h2 id="部署hello-world应用"><a href="#部署hello-world应用" class="headerlink" title="部署hello-world应用"></a>部署hello-world应用</h2><ol>
+<li>打开hello-world应用配置页面，根据默认参数部署即可。</li>
+</ol>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Deploy-free-docker-container-on-okteto/2020-04-08_210950.png" alt="image"></p>
+<ol start="2">
+<li><p>等待一段时间，查看状态为running。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Deploy-free-docker-container-on-okteto/2020-04-08_211201.png" alt="image"></p>
+<ol start="3">
+<li>通过应用提供的rest接口访问，验证部署成功。</li>
+</ol>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/docker/Deploy-free-docker-container-on-okteto/2020-04-08_211317.png" alt="image"></p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/04/01/k8s/Okteto-Push-Your-Code-to-Kubernetes-in-Seconds/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +286,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -274,7 +384,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -354,7 +464,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -501,7 +611,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -590,7 +700,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -695,7 +805,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -786,7 +896,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -906,7 +1016,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1004,7 +1114,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1064,108 +1174,6 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">helm template --name foo --namespace bar --output-dir ./output ./chart-template</span><br><span class="line">kubectl apply --namespace bar --recursive --filename ./output -o yaml</span><br></pre></td></tr></table></figure>
 
 <h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/46672523/helm-list-cannot-list-configmaps-in-the-namespace-kube-system">helm list : cannot list configmaps in the namespace “kube-system”</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/13/stack/How-can-I-keep-a-container-running-on-Kubernetes/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/08/13/stack/How-can-I-keep-a-container-running-on-Kubernetes/" class="post-title-link" itemprop="url">在Kubernetes集群上如何保持容器一直运行</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-08-13 20:52:42" itemprop="dateCreated datePublished" datetime="2019-08-13T20:52:42+00:00">2019-08-13</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我现在正在尝试在Kubernetes集群上运行一个带shell（&#x2F;bin&#x2F;bash）的简单容器。</p>
-<p>我认为有一种方法可以通过使用伪tty和detach选项（docker run命令上的-td选项）来保持容器在Docker容器上运行。</p>
-<p>例如，</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">sudo docker run -td ubuntu:latest</span></span><br></pre></td></tr></table></figure>
-
-<p>在Kubernetes有这样的选择吗？</p>
-<p>我尝试使用kubectl run-container命令运行容器，如：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl run-container test_container ubuntu:latest --replicas=1</span><br></pre></td></tr></table></figure>
-
-<p>但是容器几秒后会退出（就像使用docker run命令启动而没有上面提到的选项）。并且ReplicationController会重复启动它。</p>
-<p>有没有办法让容器在Kubernetes上运行，就像docker run命令中的-td选项一样？</p>
-<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>当主进程退出时，容器退出。做类似的事情：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd debian</span><br></pre></td></tr></table></figure>
-
-<p>坦率地说，容器打开是一个只能用于快速测试和示例的黑客攻击。如果你只想要一个容器进行几分钟的测试，我会这样做：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d debian sleep 300</span><br></pre></td></tr></table></figure>
-
-<p>其优点是，如果忘记了容器，容器将自动退出。或者，可以在while循环中放置类似的内容以使其永久运行，或者只运行top等应用程序。所有这些在Kubernetes中应该很容易做到。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ubuntu</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ubuntu</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">ubuntu:latest</span></span><br><span class="line">    <span class="comment"># Just spin &amp; wait forever</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;/bin/bash&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;--&quot;</span> ]</span><br><span class="line">    <span class="attr">args:</span> [ <span class="string">&quot;while true; do sleep 30; done;&quot;</span> ]</span><br></pre></td></tr></table></figure>
-
-<p>真正的问题是你为什么要这样做？您的容器应该提供服务，其过程将使容器在后台运行。</p>
-<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/31870222/how-can-i-keep-a-container-running-on-kubernetes">How can I keep a container running on Kubernetes?</a></p>
 
       
     </div>
@@ -1250,7 +1258,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">96</span>
+          <span class="site-state-item-count">97</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
