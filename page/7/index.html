@@ -145,6 +145,104 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/04/01/k8s/Okteto-Push-Your-Code-to-Kubernetes-in-Seconds/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/04/01/k8s/Okteto-Push-Your-Code-to-Kubernetes-in-Seconds/" class="post-title-link" itemprop="url">Okteto Push：几秒把你的代码推送到Kubernetes</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-01 22:30:29" itemprop="dateCreated datePublished" datetime="2020-04-01T22:30:29+00:00">2020-04-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>自开始构建Okteto以来，我们一直在与许多开发人员进行交流。每个团队都有非常独特的挑战，但是经常出现的一个挑战是将一行代码从开发人员的IDE移植到Kubernetes需要多长时间。团队要么必须手动进行所有操作（构建，标记，推送，重新部署），要么将其更改推送到CI&#x2F;CD服务，并等待直到更改被处理为止。</p>
+<p>无论哪种方式，部署变更的时间都会打断您的流程，您的生产力因此而下降。这让我们思考：为什么开发人员需要了解整个构建部署基础结构才能验证特定于应用程序的更改？</p>
+<p>我们很高兴宣布推出<a target="_blank" rel="noopener" href="https://okteto.com/docs/reference/cli/index.html#push">Okteto Push</a>工具，这是将代码更改推送到Kubernetes的最快方法。一个直接在Kubernetes中自动构建，推送和更新应用程序的命令。</p>
+<h2 id="推送代码"><a href="#推送代码" class="headerlink" title="推送代码"></a>推送代码</h2><p><code>okteto push</code>的目标是消除开发人员在开发应用程序时需要执行的所有操作。编码，推送并实时查看更改。这样，我们所有人都可以专注于我们的应用程序，而不必担心底层的传递途径。</p>
+<p>为了使用<code>okteto push</code>，我们需要的是包含代码，Dockerfile和最新版本<a target="_blank" rel="noopener" href="https://github.com/okteto/okteto">Okteto CLI</a>的本地文件夹。</p>
+<p>首先，运行<code>okteto login</code>在Okteto Cloud中创建一个免费帐户。这将允许您使用<a target="_blank" rel="noopener" href="https://okteto.com/docs/cloud/build.html">Okteto构建服务</a>直接在云中构建镜像。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ okteto login</span><br></pre></td></tr></table></figure>
+
+<p>运行<code>okteto push</code>命令将代码推送到Kubernetes，将$IMAGE替换为自己的镜像仓库（例如pchico83&#x2F;hello-world）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ okteto push --name hello-world -t $IMAGE</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> i  Running your build in Okteto Cloud...</span><br><span class="line">[+] Building 2.8s (16/16) FINISHED</span><br><span class="line"> =&gt; importing cache manifest from pchico83/hello-world:okteto           1.1s</span><br><span class="line"> ...</span><br><span class="line"> ...</span><br><span class="line"> ...</span><br><span class="line"> ✓  Source code pushed to the development environment &#x27;hello-world&#x27;</span><br></pre></td></tr></table></figure>
+
+<p><code>okteto push</code>将使用<a target="_blank" rel="noopener" href="https://okteto.com/docs/cloud/build.html">Okteto Build Service</a>自动构建开发镜像，生成一个开发标签，将其推送到容器仓库中并将其部署到Kubernetes。如果已经在运行一个应用程序，它将自动找到该deployment 并将镜像替换为新的。如果没有，它甚至可以创建deployment和service。</p>
+<p>一个简单的命令即可在几秒钟内将代码导入任何Kubernetes环境。无需在本地运行docker，选择容器标签或修改yaml文件即可更新应用。</p>
+<h2 id="学习更多"><a href="#学习更多" class="headerlink" title="学习更多"></a>学习更多</h2><p><code>Okteto Push</code>可与任何编程语言，框架或平台一起使用。在我们的<a target="_blank" rel="noopener" href="https://okteto.com/docs/samples/aspnetcore/index.html">ASP.NET</a>，<a target="_blank" rel="noopener" href="https://okteto.com/docs/samples/golang/index.html">Go</a>，<a target="_blank" rel="noopener" href="https://okteto.com/docs/samples/java/index.html">Java</a>，<a target="_blank" rel="noopener" href="https://okteto.com/docs/samples/node/index.html">Node.js</a>，<a target="_blank" rel="noopener" href="https://okteto.com/docs/samples/python/index.html">Python</a>，<a target="_blank" rel="noopener" href="https://okteto.com/docs/samples/php/index.html">PHP</a>或<a target="_blank" rel="noopener" href="https://okteto.com/docs/samples/ruby/index.html">Ruby</a>入门指南中了解更多信息。</p>
+<h2 id="下一步"><a href="#下一步" class="headerlink" title="下一步"></a>下一步</h2><p>在Okteto，我们致力于使每个开发人员都可以访问Kubernetes，并将内部循环开发周期减少到最小。Okteto Push仍然要求开发人员拥有Dockerfile，但是我们正在尝试使用<a target="_blank" rel="noopener" href="https://docs.cloudfoundry.org/buildpacks/">Cloud Buildpacks</a>和类似技术来完全消除这一要求。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>Okteto社区中的一些人在过去几周内一直在内部使用<code>okteto push</code>，到目前为止，反馈非常好。我们已经看到人们将其用作内部流程的一部分，作为提交前的验证机制，以创建预览环境，甚至用于产品部署。真的很令人兴奋！</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/09/21/stack/Service-located-in-another-namespace/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +274,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -256,7 +354,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -403,7 +501,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -492,7 +590,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -597,7 +695,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -688,7 +786,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -808,7 +906,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -906,7 +1004,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1016,7 +1114,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1068,93 +1166,6 @@
 
 <p>真正的问题是你为什么要这样做？您的容器应该提供服务，其过程将使容器在后台运行。</p>
 <h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/31870222/how-can-i-keep-a-container-running-on-kubernetes">How can I keep a container running on Kubernetes?</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/10/stack/Where-does-the-convention-of-using-healthz-for-application-health-checks-come-from/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/08/10/stack/Where-does-the-convention-of-using-healthz-for-application-health-checks-come-from/" class="post-title-link" itemprop="url">使用healthz进行应用健康检查的惯例来自何处</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-08-10 16:11:01" itemprop="dateCreated datePublished" datetime="2019-08-10T16:11:01+00:00">2019-08-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在Kubernetes &#x2F; Docker生态系统中，存在使用&#x2F; healthz作为应用程序的健康检查的约定。</p>
-<p>‘healthz’这个名字来自哪里，是否有与该名称相关的特定语义？</p>
-<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>它历来源于谷歌的内部实践。他们被称为“z-pages”。</p>
-<p>它以z结尾的原因是减少与具有相同名称（如&#x2F;status）的实际应用程序冲突。有关更多信息，请参阅此演讲：<a target="_blank" rel="noopener" href="https://vimeo.com/173610242">https://vimeo.com/173610242</a></p>
-<p>类似的（至少在Google内部）有&#x2F;varz，&#x2F;statusz，&#x2F;rpcz。Google开发的服务会自动获取这些状态以导出其运行状况和指标，并且有一些工具可以从所有已部署的服务中收集公开的指标&#x2F;状态。</p>
-<p>像Prometheus这样的开源工具通过到知名接口来收集应用程序中的指标，实现了这种模式（因为Prometheus的原始作者也是前Google员工）。类似地，<a target="_blank" rel="noopener" href="http://opencensus.io/">OpenCensus</a>允许您从应用程序（最好是在不同的端口上）公开z页面来诊断问题。</p>
-<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/43380939/where-does-the-convention-of-using-healthz-for-application-health-checks-come-f">Where does the convention of using &#x2F;healthz for application health checks come from?</a></p>
 
       
     </div>
@@ -1239,7 +1250,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">95</span>
+          <span class="site-state-item-count">96</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

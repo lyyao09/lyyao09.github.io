@@ -145,6 +145,93 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/10/stack/Where-does-the-convention-of-using-healthz-for-application-health-checks-come-from/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/10/stack/Where-does-the-convention-of-using-healthz-for-application-health-checks-come-from/" class="post-title-link" itemprop="url">使用healthz进行应用健康检查的惯例来自何处</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-10 16:11:01" itemprop="dateCreated datePublished" datetime="2019-08-10T16:11:01+00:00">2019-08-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在Kubernetes &#x2F; Docker生态系统中，存在使用&#x2F; healthz作为应用程序的健康检查的约定。</p>
+<p>‘healthz’这个名字来自哪里，是否有与该名称相关的特定语义？</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>它历来源于谷歌的内部实践。他们被称为“z-pages”。</p>
+<p>它以z结尾的原因是减少与具有相同名称（如&#x2F;status）的实际应用程序冲突。有关更多信息，请参阅此演讲：<a target="_blank" rel="noopener" href="https://vimeo.com/173610242">https://vimeo.com/173610242</a></p>
+<p>类似的（至少在Google内部）有&#x2F;varz，&#x2F;statusz，&#x2F;rpcz。Google开发的服务会自动获取这些状态以导出其运行状况和指标，并且有一些工具可以从所有已部署的服务中收集公开的指标&#x2F;状态。</p>
+<p>像Prometheus这样的开源工具通过到知名接口来收集应用程序中的指标，实现了这种模式（因为Prometheus的原始作者也是前Google员工）。类似地，<a target="_blank" rel="noopener" href="http://opencensus.io/">OpenCensus</a>允许您从应用程序（最好是在不同的端口上）公开z页面来诊断问题。</p>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/43380939/where-does-the-convention-of-using-healthz-for-application-health-checks-come-f">Where does the convention of using &#x2F;healthz for application health checks come from?</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/08/k8s/Harbor-upgrade-and-migration-guide/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +263,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -314,7 +401,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -407,7 +494,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -502,7 +589,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -741,7 +828,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -954,7 +1041,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1252,7 +1339,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1346,7 +1433,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1439,7 +1526,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1479,105 +1566,6 @@
 
 <p>我还使用包含一个简单的二进制文件<a target="_blank" rel="noopener" href="http://stedolan.github.io/jq/download/">jq</a>来解析json以用于bash脚本。</p>
 <h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/30690186/how-do-i-access-the-kubernetes-api-from-within-a-pod-container">How do I access the Kubernetes api from within a pod container?</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/31/stack/How-do-I-force-Kubernetes-to-re-pull-an-image/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/07/31/stack/How-do-I-force-Kubernetes-to-re-pull-an-image/" class="post-title-link" itemprop="url">如何强制Kubernetes预拉取镜像</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-07-31 21:10:39" itemprop="dateCreated datePublished" datetime="2019-07-31T21:10:39+00:00">2019-07-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我在GKE上的Kubernetes中有以下rc控制器：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ReplicationController</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">    <span class="attr">deployment:</span> <span class="string">initial</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">        <span class="attr">deployment:</span> <span class="string">initial</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">myregistry.com/myapp:5c3dda6b</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">imagePullPolicy:</span> <span class="string">Always</span></span><br><span class="line">      <span class="attr">imagePullSecrets:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myregistry.com-registry-key</span></span><br></pre></td></tr></table></figure>
-
-<p>现在，如果我执行以下命令执行滚动更新，但没有重新拉镜像。为什么？</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rolling-update myapp --image=us.gcr.io/project-107012/myapp:5c3dda6b</span><br></pre></td></tr></table></figure>
-
-<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>如果有如下定义，Kubernetes将会在Pod创建时拉取镜像（请参阅<a target="_blank" rel="noopener" href="http://kubernetes.io/docs/user-guide/images/#updating-images">更新镜像文档</a>）：</p>
-<ul>
-<li>镜像的标签为<code>:latest</code></li>
-<li>指定镜像的拉取策略<code>imagePullPolicy: Always</code></li>
-</ul>
-<p>如果你想每次都拉取镜像，这很好。但是，如果您想按需执行该操作：例如，如果您想使用some-public-image：latest，但只想在请求时手动提取新版本。你现在可以：</p>
-<ul>
-<li>将imagePullPolicy设置为IfNotPresent或Never并提前拉取好，在每个群集节点上手动拉取镜像，以便是最新版本，然后执行kubectl rolling-update或类似重启Pods</li>
-<li>暂时更改imagePullPolicy，执行kubectl apply，重新启动pod（例如kubectl rolling-update），还原imagePullPolicy，重新kubectl apply</li>
-<li>将一些some-public-image:latest推送到您的私有存储库并执行kubectl rolling-update</li>
-</ul>
-<p>按需拉动没有好的解决方案。如果有变化，请评论，我会更新这个答案。</p>
-<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/33112789/how-do-i-force-kubernetes-to-re-pull-an-image">How do I force Kubernetes to re-pull an image?</a></p>
 
       
     </div>
@@ -1662,7 +1650,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">95</span>
+          <span class="site-state-item-count">96</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

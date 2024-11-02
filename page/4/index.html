@@ -145,6 +145,111 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/09/26/linux/%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-IPv6%E7%8E%AF%E5%A2%83%E4%B8%8BVIP%E5%9C%B0%E5%9D%80%E4%B8%8D%E9%80%9A/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/26/linux/%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-IPv6%E7%8E%AF%E5%A2%83%E4%B8%8BVIP%E5%9C%B0%E5%9D%80%E4%B8%8D%E9%80%9A/" class="post-title-link" itemprop="url">网络问题排查-IPv6环境下VIP地址不通</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-09-26 09:15:21" itemprop="dateCreated datePublished" datetime="2021-09-26T09:15:21+00:00">2021-09-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>IPv6环境下，在浏览器中通过<code>http://[vip:port]</code>访问<code>web</code>业务，提示无法访问此网站，<code>[vip]</code>的响应时间过长。</p>
+<h2 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h2><p>之前碰到过多次在PC浏览器上无法访问<code>vip</code>的情况，排查方法也很明确：</p>
+<ol>
+<li>在集群的<code>vip</code>所在节点上访问是否正常；</li>
+<li>在集群范围内其他节点上访问是否正常；</li>
+<li>在集群之外的同网段<code>linux</code>环境上访问是否正常；</li>
+<li>在其他环境的PC浏览器上访问是否正常；</li>
+</ol>
+<p>验证发现，直接在<code>vip</code>所在节点上访问竟然不通！登录<code>vip</code>所在节点执行<code>ip addr</code>可以看到该地址确实是正确配置了，但 <code>ping6</code>该地址无回应，对应的<code>ipv4</code>地址 <code>ping</code>有回应。按说<code>ping</code>本机的地址不应该和链路的状态有关系，那会是什么原因呢？在仔细检查地址配置情况后发现该地址有个标记<code>tentative dadfailed </code>；</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">17: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000</span><br><span class="line">    link/ether 0c:da:41:1d:a8:62 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 10.10.10.17/16 scope global eth0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 2000::10:18/128 scope global tentative dadfailed</span><br><span class="line">       valid_lft forever preferred_lft 0sec</span><br><span class="line">    inet6 fe80::eda:41ff:fe1d:a862/64 scope link</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+
+<p><em><a target="_blank" rel="noopener" href="https://manpages.debian.org/ip-address(8)">ip-address(8)</a></em> 查到对该标记的解释如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tentative</span><br><span class="line">   (IPv6 only) only list addresses which have not yet passed duplicate address detection.</span><br></pre></td></tr></table></figure>
+
+<p>显然该地址没有通过地址重复探测（<code>duplicate address detection</code>，简称<code>dad</code>），而且这种检查机制只针对<code>IPv6</code>。<strong>经确认，该环境的<code>IPv6</code>网段只有自己在用，且未手工配置过<code>IPv6</code>地址，但该环境曾经发生过切主</strong>；</p>
+<p>至此问题基本明确了，切主时会把老的主节点上的<code>vip</code>删除，再到新的主节点上把<code>vip</code>添加上去。如果一切正常，按照这个顺序切主没有问题，但也存在某些异常情况（比如老主上的<code>vip</code>没有及时删掉，而新主上已经添加好了），此时就会触发<code>dad</code>机制。经过验证，一旦出现<code>dadfailed</code>，即使地址冲突解决了，该地址依然无法访问；</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>方案1：在<code>sysctl</code>配置中增加如下内核参数：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">net.ipv6.conf.all.accept_dad = 0</span><br><span class="line">net.ipv6.conf.default.accept_dad = 0</span><br><span class="line">net.ipv6.conf.eth0.accept_dad = 0</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">IPv6 Privacy Extensions (RFC 4941)</span></span><br><span class="line">net.ipv6.conf.all.use_tempaddr = 0</span><br><span class="line">net.ipv6.conf.default.use_tempaddr = 0</span><br></pre></td></tr></table></figure>
+
+<p>方案2：在<code>ip addr add</code>命令执行时增加<code>nodad</code>标识：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip addr add 2000::10:18/128 dev eth0 nodad</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.clanzx.net/network/ipv6-dad.html">https://blog.clanzx.net/network/ipv6-dad.html</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/09/25/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-%E9%99%84%E5%8A%A0%E7%BD%91%E7%BB%9CPod%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +281,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -296,7 +401,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -437,7 +542,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -540,7 +645,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -642,7 +747,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -765,7 +870,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -883,7 +988,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1010,7 +1115,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1120,7 +1225,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:05:41" itemprop="dateModified" datetime="2024-11-02T14:05:41+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1220,119 +1325,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/06/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-UDP%E8%AF%B7%E6%B1%82%E4%B8%8D%E9%80%9A%E5%AF%BC%E8%87%B4%E8%AE%BE%E5%A4%87%E5%A4%87%E4%BB%BD%E5%A4%B1%E8%B4%A5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/06/14/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-UDP%E8%AF%B7%E6%B1%82%E4%B8%8D%E9%80%9A%E5%AF%BC%E8%87%B4%E8%AE%BE%E5%A4%87%E5%A4%87%E4%BB%BD%E5%A4%B1%E8%B4%A5/" class="post-title-link" itemprop="url">K8S问题排查-UDP请求不通导致设备备份失败</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-14 20:07:47" itemprop="dateCreated datePublished" datetime="2021-06-14T20:07:47+00:00">2021-06-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 13:59:41" itemprop="dateModified" datetime="2024-11-02T13:59:41+00:00">2024-11-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p> K8S双栈环境下，业务Pod纳管了IPv4和IPv6的设备（Pod需要与设备通过UDP协议通信），对IPv4设备配置做备份时可以成功，对IPv6设备配置做备份时失败。</p>
-<h2 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h2><p>查看K8S集群主节点node3上的IP信息：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@node3 ~]# ip addr show eth0</span><br><span class="line">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000</span><br><span class="line">    link/ether 0c:da:41:1d:d2:9d brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.65.13/16 brd 192.168.255.255 scope global eth0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet 192.168.65.21/32 scope global eth0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 2000::65:21/128 scope global deprecated</span><br><span class="line">       valid_lft forever preferred_lft 0sec</span><br><span class="line">    inet6 2000::65:13/64 scope global</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
-
-<p>其中各IP角色如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">192.168.65.13：IPv4节点IP</span><br><span class="line">192.168.65.21：IPv4虚IP</span><br><span class="line">2000::65:13：IPv6节点IP</span><br><span class="line">2000::65:21：IPv6虚IP</span><br></pre></td></tr></table></figure>
-
-<p>查看主节点上接收UDP报文异常的业务Pod：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]# kubectl get pod -A -owide|grep tftpserver-dm</span><br><span class="line">ss    tftpserver-dm-798nv                      1/1     Running     2          13d     177.177.166.147   node1   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">ss    tftpserver-dm-drrsn                      1/1     Running     4          13d     177.177.104.10    node2   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">ss    tftpserver-dm-vmgtf                      1/1     Running     6          13d     177.177.135.16    node3   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
-
-<p>找到Pod的网卡：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node3 ~]# ip route |grep 177.177.135.16</span><br><span class="line">177.177.135.16 dev cali928cc4cd898 scope link</span><br></pre></td></tr></table></figure>
-
-<p>在业务提供的页面上触发备份IPv4设备配置的操作，抓包看到数据有请求和响应：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@node3 ~]# tcpdump -n -i cali928cc4cd898 -p udp</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on cali928cc4cd898, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">07:29:48.654684 IP 192.168.101.254.58625 &gt; 177.177.135.16.tftp:  64 WRQ &quot;running_3346183882.cfg&quot; octet tsize 7304 blksize 512 timeout 5</span><br><span class="line">07:29:48.686337 IP 177.177.135.16.39873 &gt; 192.168.101.254.58625: UDP, length 35</span><br><span class="line">07:29:48.707187 IP 192.168.101.254.58625 &gt; 177.177.135.16.39873: UDP, length 516</span><br><span class="line">07:29:48.707332 IP 177.177.135.16.39873 &gt; 192.168.101.254.58625: UDP, length 4</span><br><span class="line">07:29:48.708377 IP 192.168.101.254.58625 &gt; 177.177.135.16.39873: UDP, length 516</span><br><span class="line">07:29:48.708622 IP 177.177.135.16.39873 &gt; 192.168.101.254.58625: UDP, length 4</span><br><span class="line">07:29:48.710532 IP 192.168.101.254.58625 &gt; 177.177.135.16.39873: UDP, length 516</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p>在主机网卡上抓包，同样可以看到数据有请求和响应：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">12:00:02.333324 IP 192.168.101.254.58631 &gt; 192.168.65.21.tftp:  64 WRQ &quot;running_3346346022.cfg&quot; octet tsize 7304 blksize 512 timeout 5</span><br><span class="line">12:00:02.349104 ARP, Request who-has 192.168.101.254 tell 192.168.65.13, length 28</span><br><span class="line">12:00:02.350492 ARP, Reply 192.168.101.254 is-at 58:6a:b1:df:e3:d1, length 46</span><br><span class="line">12:00:02.350499 IP 192.168.65.13.56284 &gt; 192.168.101.254.58631: UDP, length 35</span><br><span class="line">12:00:02.373403 IP 192.168.101.254.58631 &gt; 192.168.65.13.56284: UDP, length 516</span><br><span class="line">12:00:02.373603 IP 192.168.65.13.56284 &gt; 192.168.101.254.58631: UDP, length 4</span><br><span class="line">12:00:02.374613 IP 192.168.101.254.58631 &gt; 192.168.65.13.56284: UDP, length 516</span><br><span class="line">12:00:02.374724 IP 192.168.65.13.56284 &gt; 192.168.101.254.58631: UDP, length 4</span><br><span class="line">12:00:02.375775 IP 192.168.101.254.58631 &gt; 192.168.65.13.56284: UDP, length 516</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p>在业务提供的页面上触发备份IPv6设备配置的操作，抓包看到设备侧主动发送一个请求后，后续的数据传输请求就没有应答了：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@node3 ~]# tcpdump -n -i cali928cc4cd898 -p udp</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on cali928cc4cd898, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">08:14:31.913637 IP6 2000::65:119.41217 &gt; fd00:177:177:0:7bf3:bb28:910a:873c.tftp:  64 WRQ &quot;running_3346210712.cfg&quot; octet tsize 8757 blksize 512 timeout 5</span><br><span class="line">08:14:31.925400 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.38680 &gt; 2000::65:119.41217: UDP, length 35</span><br><span class="line">08:14:34.928820 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.38680 &gt; 2000::65:119.41217: UDP, length 35</span><br><span class="line">08:14:37.931610 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.38680 &gt; 2000::65:119.41217: UDP, length 35</span><br><span class="line">08:14:40.933541 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.38680 &gt; 2000::65:119.41217: UDP, length 35</span><br><span class="line">08:19:25.395306 IP6 2000::65:119.41218 &gt; fd00:177:177:0:7bf3:bb28:910a:873c.tftp:  64 WRQ &quot;startup_3346213742.cfg&quot; octet tsize 8757 blksize 512 timeout 5</span><br><span class="line">08:19:25.410374 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.48233 &gt; 2000::65:119.41218: UDP, length 35</span><br><span class="line">08:19:28.413797 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.48233 &gt; 2000::65:119.41218: UDP, length 35</span><br><span class="line">08:19:31.415977 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.48233 &gt; 2000::65:119.41218: UDP, length 35</span><br><span class="line">08:19:34.418414 IP6 fd00:177:177:0:7bf3:bb28:910a:873c.48233 &gt; 2000::65:119.41218: UDP, length 35</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p>主机网卡上抓包，可以看到数据有请求和响应，说明设备的响应到了主机上，但没到Pod网卡上：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">11:55:29.393598 IP6 2000::65:119.41226 &gt; 2000::65:21.tftp:  64 WRQ &quot;startup_3346343382.cfg&quot; octet tsize 8757 blksize 512 timeout 5</span><br><span class="line">11:55:29.401115 IP6 2000::65:13.32991 &gt; 2000::65:119.41226: UDP, length 35</span><br><span class="line">11:55:29.405709 IP6 2000::65:119.41226 &gt; 2000::65:21.32991: UDP, length 516</span><br><span class="line">11:55:29.405745 IP6 2000::65:21 &gt; 2000::65:119: ICMP6, destination unreachable, unreachable port, 2000::65:21 udp port 32991, length 572</span><br><span class="line">11:55:32.404514 IP6 2000::65:13.32991 &gt; 2000::65:119.41226: UDP, length 35</span><br><span class="line">11:55:32.406399 IP6 2000::65:119.41226 &gt; 2000::65:21.32991: UDP, length 516</span><br><span class="line">11:55:32.406432 IP6 2000::65:21 &gt; 2000::65:119: ICMP6, destination unreachable, unreachable port, 2000::65:21 udp port 32991, length 572</span><br><span class="line">11:55:35.407644 IP6 2000::65:13.32991 &gt; 2000::65:119.41226: UDP, length 35</span><br><span class="line">11:55:35.409423 IP6 2000::65:119.41226 &gt; 2000::65:21.32991: UDP, length 516</span><br><span class="line">11:55:35.409463 IP6 2000::65:21 &gt; 2000::65:119: ICMP6, destination unreachable, unreachable port, 2000::65:21 udp port 32991, length 572</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p>那IPv6设备的请求响应和IPV4设备场景下的有什么不同呢？对比IPv4和IPv6两个场景下的主机网卡抓包结果，可以看出：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IPv4设备请求时主机上抓包分析：</span><br><span class="line">1. 第一次交互时，设备侧（192.168.101.254）先发送请求给VIP（192.168.65.21）</span><br><span class="line">2. 第二次交互时，业务Pod请求以节点IP为源（192.168.65.13）发送给设备；</span><br><span class="line">3. 第三次交互时，设备侧请求以节点IP为目标地址（192.168.65.13）发送给业务Pod</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IPv6设备请求时主机上抓包分析：</span><br><span class="line">1. 第一次交互时，设备侧（2000::65:119）先发送请求给VIP（2000::65:21）</span><br><span class="line">2. 第二次交互时，业务Pod请求以节点IP为源（2000::65:13）发送给设备；</span><br><span class="line">3. 第三次交互时，设备侧请求以VIP为目标地址（2000::65:21）发送给业务Pod</span><br></pre></td></tr></table></figure>
-
-<p>从上述报文交互过程可看出，IPv6设备在报文交互时源IP和目标地址不一致，经确认是设备侧强制配置了以VIP为目的地址发送报文的配置，而正常情况下，应该以请求报文的源IP作为响应报文的目的地址。</p>
-<p>通过临时修改验证，把第三次交互的VIP目的地址改为节点IP，验证问题解决。</p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>业务层面修改发送报文的配置。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1402,7 +1394,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">95</span>
+          <span class="site-state-item-count">96</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
