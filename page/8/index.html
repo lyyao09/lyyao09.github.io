@@ -145,6 +145,116 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/17/stack/helm-list-cannot-list-configmaps-in-the-namespace-kube-system/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/17/stack/helm-list-cannot-list-configmaps-in-the-namespace-kube-system/" class="post-title-link" itemprop="url">Helm list命令查看不到kube-system命名空间下的configmaps资源</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-17 10:11:23" itemprop="dateCreated datePublished" datetime="2019-08-17T10:11:23+00:00">2019-08-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我在kubernetes 8集群上安装了helm 2.6.2。helm init运行正常。但是当我运行helm list时它会给出这个错误。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">helm list</span><br><span class="line">Error: configmaps is forbidden: User &quot;system:serviceaccount:kube-system:default&quot; cannot list configmaps in the namespace &quot;kube-system&quot;</span><br></pre></td></tr></table></figure>
+
+<p>如何解决此RABC错误消息？</p>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>运行如下这些命令可以解决：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl create serviceaccount --namespace kube-system tiller</span><br><span class="line">kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller</span><br><span class="line">kubectl patch deploy --namespace kube-system tiller-deploy -p &#x27;&#123;&quot;spec&quot;:&#123;&quot;template&quot;:&#123;&quot;spec&quot;:&#123;&quot;serviceAccount&quot;:&quot;tiller&quot;&#125;&#125;&#125;&#125;&#x27;      </span><br><span class="line">helm init --service-account tiller --upgrade</span><br></pre></td></tr></table></figure>
+
+<h2 id="其他答案"><a href="#其他答案" class="headerlink" title="其他答案"></a>其他答案</h2><h3 id="更安全的做法"><a href="#更安全的做法" class="headerlink" title="更安全的做法"></a><strong>更安全的做法</strong></h3><p>高票答案提供对Helm的完全管理员访问权限，这不是最明智的安全解决方案。通过更多工作，我们可以限制Helm对特定命名空间的访问。更多细节请参考<a target="_blank" rel="noopener" href="https://docs.helm.sh/using_helm/#role-based-access-control">Helm文档</a>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create namespace tiller-world</span></span><br><span class="line">namespace &quot;tiller-world&quot; created</span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create serviceaccount tiller --namespace tiller-world</span></span><br><span class="line">serviceaccount &quot;tiller&quot; created</span><br></pre></td></tr></table></figure>
+
+<p>定义一个角色，允许Tiller管理tiller-world中的所有资源，如role-tiller.yaml：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Role</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller-manager</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">tiller-world</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span> [<span class="string">&quot;&quot;</span>, <span class="string">&quot;batch&quot;</span>, <span class="string">&quot;extensions&quot;</span>, <span class="string">&quot;apps&quot;</span>]</span><br><span class="line">  <span class="attr">resources:</span> [<span class="string">&quot;*&quot;</span>]</span><br><span class="line">  <span class="attr">verbs:</span> [<span class="string">&quot;*&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<p>然后运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f role-tiller.yaml</span></span><br><span class="line">role &quot;tiller-manager&quot; created</span><br></pre></td></tr></table></figure>
+
+<p>在rolebinding-tiller.yaml中，</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">RoleBinding</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller-binding</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">tiller-world</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">tiller-world</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">Role</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tiller-manager</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br></pre></td></tr></table></figure>
+
+<p>然后运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">kubectl create -f rolebinding-tiller.yaml</span></span><br><span class="line">rolebinding &quot;tiller-binding&quot; created</span><br></pre></td></tr></table></figure>
+
+<p>之后，可以运行helm init以在tiller-world命名空间中安装Tiller。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">helm init --service-account tiller --tiller-namespace tiller-world</span></span><br></pre></td></tr></table></figure>
+
+<p>现在使用–tiller-namespace tiller-world为所有命令添加前缀，或者在环境变量中设置TILLER_NAMESPACE &#x3D; tiller-world。</p>
+<h3 id="更远见的做法"><a href="#更远见的做法" class="headerlink" title="更远见的做法"></a>更远见的做法</h3><p>停止使用Tiller。Helm 3彻底消除了对Tiller的需求。如果您使用的是Helm 2，则可以使用helm模板从Helm chart生成yaml，然后运行kubectl apply将对象应用于Kubernetes集群。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">helm template --name foo --namespace bar --output-dir ./output ./chart-template</span><br><span class="line">kubectl apply --namespace bar --recursive --filename ./output -o yaml</span><br></pre></td></tr></table></figure>
+
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/46672523/helm-list-cannot-list-configmaps-in-the-namespace-kube-system">helm list : cannot list configmaps in the namespace “kube-system”</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/13/stack/How-can-I-keep-a-container-running-on-Kubernetes/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +286,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -278,7 +388,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -365,7 +475,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -503,7 +613,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -596,7 +706,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -691,7 +801,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -930,7 +1040,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1143,7 +1253,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1441,7 +1551,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1485,99 +1595,6 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get gopkg.in/mikefarah/yq.v2</span><br></pre></td></tr></table></figure>
 
 <p><a target="_blank" rel="noopener" href="https://github.com/mikefarah/yq">View on GitHub</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/31/db/Set-environment-variable-values-in-persistence-xml-from-Eclipse/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/07/31/db/Set-environment-variable-values-in-persistence-xml-from-Eclipse/" class="post-title-link" itemprop="url">在Eclipse JPA的persistence.xml中设置环境变量</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-07-31 22:21:17" itemprop="dateCreated datePublished" datetime="2019-07-31T22:21:17+00:00">2019-07-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/db/" itemprop="url" rel="index"><span itemprop="name">db</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>我们都知道，在使用EclipseLink JPA操作数据库时，不可或缺的要配置persistence.xml文件，一个最基本的配置示例如下：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">persistence</span> <span class="attr">version</span>=<span class="string">&quot;2.1&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xmlns</span>=<span class="string">&quot;http://xmlns.jcp.org/xml/ns/persistence&quot;</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">persistence-unit</span> <span class="attr">name</span>=<span class="string">&quot;JPAExamples&quot;</span>&gt;</span></span><br><span class="line">	  <span class="tag">&lt;<span class="name">class</span>&gt;</span>com.lyyao.jpa.test.Employee<span class="tag">&lt;/<span class="name">class</span>&gt;</span></span><br><span class="line">	  <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;javax.persistence.jdbc.driver&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;javax.persistence.jdbc.url&quot;</span> <span class="attr">value</span>=<span class="string">&quot;jdbc:mysql://192.168.0.1:3306/employee&quot;</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;javax.persistence.jdbc.user&quot;</span> <span class="attr">value</span>=<span class="string">&quot;root&quot;</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;javax.persistence.jdbc.password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;123456&quot;</span>/&gt;</span></span><br><span class="line">	  <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">persistence-unit</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">persistence</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>那么问题来了，对于数据库的IP地址，端口号，用户名和密码这几个参数：</p>
-<ol>
-<li>在这里定义死合适吗？</li>
-<li>如果需要根据实际环境变化怎么办？</li>
-</ol>
-<p>所以，有没有一种方法，可以在上面的配置文件里定义变量或默认值，然后根据实际环境获取变量的值取覆盖呢？</p>
-<p>答案是有的。从查阅的资料看，我了解到有2种方法可以解决上面的问题。</p>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><h3 id="方法一：默认值覆盖法"><a href="#方法一：默认值覆盖法" class="headerlink" title="方法一：默认值覆盖法"></a>方法一：默认值覆盖法</h3><p>通过Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME,properties)方法注入properties参数，该</p>
-<h3 id="方法二：变量替换法"><a href="#方法二：变量替换法" class="headerlink" title="方法二：变量替换法"></a>方法二：变量替换法</h3><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://dzone.com/articles/jpa-with-eclipselink-amp-mysql-using-java-configur">https://dzone.com/articles/jpa-with-eclipselink-amp-mysql-using-java-configur</a></p>
-<p><a target="_blank" rel="noopener" href="https://gist.github.com/baumato/3283f255b00094411110fc889be58aa5">https://gist.github.com/baumato/3283f255b00094411110fc889be58aa5</a></p>
 
       
     </div>
@@ -1662,7 +1679,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">97</span>
+          <span class="site-state-item-count">98</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1673,7 +1690,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

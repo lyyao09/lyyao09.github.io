@@ -176,7 +176,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -277,7 +277,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -402,7 +402,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -483,6 +483,138 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/06/01/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-Etcd%E8%A7%A3%E7%A0%81%E5%B7%A5%E5%85%B7Auger%E4%BD%BF%E7%94%A8%E4%BB%8B%E7%BB%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/06/01/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-Etcd%E8%A7%A3%E7%A0%81%E5%B7%A5%E5%85%B7Auger%E4%BD%BF%E7%94%A8%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">工具分享-Etcd解码工具Auger使用介绍</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-06-01 19:15:00" itemprop="dateCreated datePublished" datetime="2024-06-01T19:15:00+00:00">2024-06-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>找一个能查看<code>etcd</code>中存储的解码后的<code>k8s</code>数据的方法或工具。查看开源工具[1]，很久没有维护了，看相关<code>issue</code>，该工具已经加入<code>etcd-io</code>。</p>
+<h2 id="编译步骤"><a href="#编译步骤" class="headerlink" title="编译步骤"></a>编译步骤</h2><p>根据官方文档[2]操作，下载源码包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@node1]<span class="comment"># git clone git@github.com:etcd-io/auger.git</span></span><br><span class="line">Cloning into <span class="string">&#x27;auger&#x27;</span>...</span><br><span class="line">remote: Enumerating objects: 712, <span class="keyword">done</span>.</span><br><span class="line">remote: Counting objects: 100% (229/229), <span class="keyword">done</span>.</span><br><span class="line">remote: Compressing objects: 100% (106/106), <span class="keyword">done</span>.</span><br><span class="line">remote: Total 712 (delta 179), reused 150 (delta 123), pack-reused 483</span><br><span class="line">Receiving objects: 100% (712/712), 247.44 KiB | 186.00 KiB/s, <span class="keyword">done</span>.</span><br><span class="line">Resolving deltas: 100% (409/409), <span class="keyword">done</span>.</span><br></pre></td></tr></table></figure>
+
+<p>编译版本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[root@node1]<span class="comment"># cd auger/</span></span><br><span class="line">[root@node1 auger]<span class="comment"># make release</span></span><br><span class="line">Building release <span class="keyword">in</span> temp directory /tmp/tmp.VtO7q4KrPY</span><br><span class="line">docker run \</span><br><span class="line">        -v /tmp/tmp.VtO7q4KrPY/auger:/go/src/github.com/etcd-io/auger \</span><br><span class="line">        -w /go/src/github.com/etcd-io/auger \</span><br><span class="line">        golang:1.21.8 \</span><br><span class="line">        /bin/bash -c <span class="string">&quot;make -f /go/src/github.com/etcd-io/auger/Makefile release-docker-build GOARCH=amd64 GOOS=linux&quot;</span></span><br><span class="line">Unable to find image <span class="string">&#x27;golang:1.21.8&#x27;</span> locally</span><br><span class="line">1.21.8: Pulling from library/golang</span><br><span class="line">71215d55680c: Pull complete</span><br><span class="line">3cb8f9c23302: Pull complete</span><br><span class="line">5f899db30843: Pull complete</span><br><span class="line">c29f45468664: Pull complete</span><br><span class="line">6de33e7b6490: Pull complete</span><br><span class="line">6dbaf8e5f127: Pull complete</span><br><span class="line">4f4fb700ef54: Pull complete</span><br><span class="line">Digest: sha256:856073656d1a517517792e6cdd2f7a5ef080d3ca2dff33e518c8412f140fdd2d</span><br><span class="line">Status: Downloaded newer image <span class="keyword">for</span> golang:1.21.8</span><br><span class="line"><span class="built_in">export</span> GOPATH=/go</span><br><span class="line">GOOS=linux GOARCH=amd64 GO111MODULE=on go build</span><br><span class="line">go: go.mod requires go &gt;= 1.22.0 (running go 1.21.8; GOTOOLCHAIN=<span class="built_in">local</span>)</span><br><span class="line">make: *** [/go/src/github.com/etcd-io/auger/Makefile:66: release-docker-build] Error 1</span><br><span class="line">make: *** [release] Error 2</span><br></pre></td></tr></table></figure>
+
+<p>提示<code>go</code>的版本不匹配，更新版本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 auger]<span class="comment"># vim Makefile</span></span><br><span class="line">NAME ?= auger</span><br><span class="line">PKG ?= github.com/etcd-io/$(NAME)</span><br><span class="line">GO_VERSION ?= 1.22.0</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>继续编译：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 auger]<span class="comment"># make release</span></span><br><span class="line">Building release <span class="keyword">in</span> temp directory /tmp/tmp.s0Ue7zvIop</span><br><span class="line">docker run \</span><br><span class="line">        -v /tmp/tmp.s0Ue7zvIop/auger:/go/src/github.com/etcd-io/auger \</span><br><span class="line">        -w /go/src/github.com/etcd-io/auger \</span><br><span class="line">        golang:1.22.0 \</span><br><span class="line">        /bin/bash -c <span class="string">&quot;make -f /go/src/github.com/etcd-io/auger/Makefile release-docker-build GOARCH=amd64 GOOS=linux&quot;</span></span><br><span class="line">Unable to find image <span class="string">&#x27;golang:1.22.0&#x27;</span> locally</span><br><span class="line">1.22.0: Pulling from library/golang</span><br><span class="line">7bb465c29149: Pull complete</span><br><span class="line">...</span><br><span class="line">Digest: sha256:7b297d9abee021bab9046e492506b3c2da8a3722cbf301653186545ecc1e00bb</span><br><span class="line">Status: Downloaded newer image <span class="keyword">for</span> golang:1.22.0</span><br><span class="line"><span class="built_in">export</span> GOPATH=/go</span><br><span class="line">GOOS=linux GOARCH=amd64 GO111MODULE=on go build</span><br><span class="line">go: downloading github.com/coreos/etcd v3.1.11+incompatible</span><br><span class="line">go: downloading github.com/google/safetext v0.0.0-20220914124124-e18e3fe012bf</span><br><span class="line">go: downloading github.com/spf13/cobra v1.8.0</span><br><span class="line">go: downloading github.com/coreos/bbolt v1.3.1-coreos.3</span><br><span class="line">go: downloading k8s.io/apimachinery v0.30.0</span><br><span class="line">go: downloading proxy.golang.org/xxx io <span class="built_in">timeout</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>proxy.golang.org</code>代理导致很多依赖包下载失败，修改<code>GOPROXY</code>代理</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># docker exec -it 9b41dd00e91a sh</span></span><br><span class="line"><span class="comment"># go env</span></span><br><span class="line">...</span><br><span class="line">GOPROXY=<span class="string">&#x27;https://proxy.golang.org,direct&#x27;</span></span><br><span class="line"></span><br><span class="line">[root@node1 auger]<span class="comment"># vim Makefile</span></span><br><span class="line"><span class="comment"># Build used inside docker by &#x27;release&#x27;</span></span><br><span class="line">release-docker-build:</span><br><span class="line">        <span class="built_in">export</span> GOPATH=/go</span><br><span class="line">        GOOS=$(GOOS) GOARCH=$(GOARCH) GO111MODULE=on GOPROXY=<span class="string">&#x27;https://goproxy.cn,direct&#x27;</span> go build</span><br></pre></td></tr></table></figure>
+
+<p>继续编译：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 auger]<span class="comment"># make release</span></span><br><span class="line">Building release <span class="keyword">in</span> temp directory /tmp/tmp.34OgmWJGLU</span><br><span class="line">docker run \</span><br><span class="line">        -v /tmp/tmp.34OgmWJGLU/auger:/go/src/github.com/etcd-io/auger \</span><br><span class="line">        -w /go/src/github.com/etcd-io/auger \</span><br><span class="line">        golang:1.22.0 \</span><br><span class="line">        /bin/bash -c <span class="string">&quot;make -f /go/src/github.com/etcd-io/auger/Makefile release-docker-build GOARCH=amd64 GOOS=linux&quot;</span></span><br><span class="line"><span class="built_in">export</span> GOPATH=/go</span><br><span class="line">GOOS=linux GOARCH=amd64 GO111MODULE=on GOPROXY=<span class="string">&#x27;https://goproxy.cn,direct&#x27;</span> go build</span><br><span class="line">go: downloading github.com/coreos/etcd v3.1.11+incompatible</span><br><span class="line">...</span><br><span class="line">build/auger built!</span><br></pre></td></tr></table></figure>
+
+<p>编译成功，执行二进制文件测试，提示<code>glibc</code>版本没找到：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 auger]<span class="comment"># ./build/auger -help</span></span><br><span class="line">./build/auger: /lib64/libc.so.6: version `GLIBC_2.34<span class="string">&#x27; not found (required by ./build/auger)</span></span><br><span class="line"><span class="string">./build/auger: /lib64/libc.so.6: version `GLIBC_2.32&#x27;</span> not found (required by ./build/auger)</span><br></pre></td></tr></table></figure>
+
+<p>查看本地的<code>glibc</code>版本，发现版本不匹配：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 l14185]<span class="comment"># rpm -qa|grep glibc</span></span><br><span class="line">glibc-2.17-326.el7_9.x86_64</span><br></pre></td></tr></table></figure>
+
+<p>解决方案有两个：</p>
+<blockquote>
+<ol>
+<li>修改编译使用的镜像，找一个<code>glibc</code>版本跟节点上一致的编译镜像；</li>
+<li>直接在节点上编译；</li>
+</ol>
+</blockquote>
+<p>以直接在节点上编译为例，下载指定版本的<code>go</code>安装包，直接执行<code>go build</code>命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node1]<span class="comment"># GOOS=linux GOARCH=amd64 go build -o build/auger</span></span><br><span class="line">[root@node1 auger]<span class="comment"># ll build/</span></span><br><span class="line">total 39916</span><br><span class="line">-rwxr-xr-x 1 root root 40871798 May 13 19:12 auger</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><p>查看帮助信息：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[root@iZbp1esczkzr2k2fughijkZ auger]<span class="comment"># ./build/auger</span></span><br><span class="line">Inspect and analyze kubernetes objects <span class="keyword">in</span> binary storage</span><br><span class="line">encoding used with etcd 3+ and boltdb.</span><br><span class="line"></span><br><span class="line">Usage:</span><br><span class="line">  auger [<span class="built_in">command</span>]</span><br><span class="line"></span><br><span class="line">Available Commands:</span><br><span class="line">  analyze     Analyze kubernetes data from the boltdb <span class="string">&#x27;.db&#x27;</span> files etcd persists to.</span><br><span class="line">  checksum    Checksum a etcd keyspace.</span><br><span class="line">  completion  Generate the autocompletion script <span class="keyword">for</span> the specified shell</span><br><span class="line">  decode      Decode objects from the kubernetes binary key-value store encoding.</span><br><span class="line">  encode      Encode objects to the kubernetes binary key-value store encoding.</span><br><span class="line">  extract     Extracts kubernetes data from the boltdb <span class="string">&#x27;.db&#x27;</span> files etcd persists to.</span><br><span class="line">  <span class="built_in">help</span>        Help about any <span class="built_in">command</span></span><br><span class="line"></span><br><span class="line">Flags:</span><br><span class="line">  -h, --<span class="built_in">help</span>   <span class="built_in">help</span> <span class="keyword">for</span> auger</span><br><span class="line"></span><br><span class="line">Use <span class="string">&quot;auger [command] --help&quot;</span> <span class="keyword">for</span> more information about a <span class="built_in">command</span>.</span><br></pre></td></tr></table></figure>
+
+<p>查看解码后的<code>etcd</code>数据：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">root@node1</span>]<span class="comment"># ETCDCTL_API=3 etcdctl get /registry/pods/kube-system/coredns-795cc9c45c-j7nl4 | ./auger decode</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">generateName:</span> <span class="string">coredns-795cc9c45c-</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">k8s-app:</span> <span class="string">kube-dns</span></span><br><span class="line">    <span class="attr">pod-template-hash:</span> <span class="string">795cc9c45c</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">coredns-795cc9c45c-j7nl4</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">args:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">-conf</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">/etc/coredns/Corefile</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">coredns</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line"> 	<span class="string">...</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/etc/coredns</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">      <span class="attr">readOnly:</span> <span class="literal">true</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/tmp</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">tmp</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/var/run/secrets/kubernetes.io/serviceaccount</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">coredns-token-9dldj</span></span><br><span class="line">      <span class="attr">readOnly:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">nodeName:</span> <span class="string">node1</span></span><br><span class="line">  <span class="attr">tolerations:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">CriticalAddonsOnly</span></span><br><span class="line">    <span class="attr">operator:</span> <span class="string">Exists</span></span><br><span class="line">	<span class="string">...</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">emptyDir:</span> &#123;&#125;</span><br><span class="line">    <span class="attr">name:</span> <span class="string">tmp</span></span><br><span class="line"> 	<span class="string">...</span></span><br><span class="line"><span class="attr">status:</span></span><br><span class="line">  <span class="attr">conditions:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">lastProbeTime:</span> <span class="literal">null</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">Initialized</span></span><br><span class="line">	<span class="string">...</span></span><br><span class="line">  <span class="attr">containerStatuses:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">containerID:</span> <span class="string">docker://f85d0fd1422a3860d574eb88b5dc23c165d5adb3eccb242a1a847bd0cfc98227</span></span><br><span class="line">  <span class="string">...</span></span><br><span class="line">  <span class="attr">hostIP:</span> <span class="number">192.168</span><span class="number">.10</span><span class="number">.10</span></span><br><span class="line">  <span class="attr">phase:</span> <span class="string">Running</span></span><br><span class="line">  <span class="attr">podIP:</span> <span class="number">10.10</span><span class="number">.166</span><span class="number">.139</span></span><br><span class="line">  <span class="attr">qosClass:</span> <span class="string">Burstable</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><blockquote>
+<p>直接使用<code>auger</code>命令时，需要保证<code>etcd</code>服务未启动，或者把<code>etcd</code>的数据库文件拷贝一份再解析，否则会导致解析卡住。</p>
+</blockquote>
+<p>解析卡住的<code>strace</code>命令现象如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[root@node1]<span class="comment"># strace ./auger checksum -f /var/lib/etcd/default.etcd/member/snap/db</span></span><br><span class="line">execve(<span class="string">&quot;./auger&quot;</span>, [<span class="string">&quot;./auger&quot;</span>, <span class="string">&quot;checksum&quot;</span>, <span class="string">&quot;-f&quot;</span>, <span class="string">&quot;/var/lib/etcd/default.etcd/membe&quot;</span>...], [/* 25 vars */]) = 0</span><br><span class="line">brk(NULL)                               = 0x3e75000</span><br><span class="line">mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f4a242fc000</span><br><span class="line">access(<span class="string">&quot;/etc/ld.so.preload&quot;</span>, R_OK)      = -1 ENOENT (No such file or directory)</span><br><span class="line">open(<span class="string">&quot;/etc/ld.so.cache&quot;</span>, O_RDONLY|O_CLOEXEC) = 3</span><br><span class="line">fstat(3, &#123;st_mode=S_IFREG|0644, st_size=37465, ...&#125;) = 0</span><br><span class="line">mmap(NULL, 37465, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f4a242f2000</span><br><span class="line">close(3)                                = 0</span><br><span class="line">...</span><br><span class="line">mmap(NULL, 262144, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f49da795000</span><br><span class="line">openat(AT_FDCWD, <span class="string">&quot;/var/lib/etcd/default.etcd/member/snap/db&quot;</span>, O_RDWR|O_CREAT|O_CLOEXEC, 0400) = 3</span><br><span class="line">fcntl(3, F_GETFL)                       = 0x8002 (flags O_RDWR|O_LARGEFILE)</span><br><span class="line">fcntl(3, F_SETFL, O_RDWR|O_NONBLOCK|O_LARGEFILE) = 0</span><br><span class="line">epoll_ctl(4, EPOLL_CTL_ADD, 3, &#123;EPOLLIN|EPOLLOUT|EPOLLRDHUP|EPOLLET, &#123;u32=1581252610, u64=9172183252402700290&#125;&#125;) = -1 EPERM (Operation not permitted)</span><br><span class="line">fcntl(3, F_GETFL)                       = 0x8802 (flags O_RDWR|O_NONBLOCK|O_LARGEFILE)</span><br><span class="line">fcntl(3, F_SETFL, O_RDWR|O_LARGEFILE)   = 0</span><br><span class="line">flock(3, LOCK_EX|LOCK_NB)               = -1 EAGAIN (Resource temporarily unavailable)</span><br><span class="line">futex(0xc000100148, FUTEX_WAKE_PRIVATE, 1) = 1</span><br><span class="line">futex(0x1edd920, FUTEX_WAIT_PRIVATE, 0, NULL) = 0</span><br><span class="line">futex(0x1edd920, FUTEX_WAIT_PRIVATE, 0, NULL) = 0</span><br><span class="line">futex(0x1edd920, FUTEX_WAIT_PRIVATE, 0, NULL) = 0</span><br><span class="line">futex(0x1edd920, FUTEX_WAIT_PRIVATE, 0, NULL) = 0</span><br><span class="line">futex(0x1edd920, FUTEX_WAIT_PRIVATE, 0, NULL) = 0</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>拷贝一份数据库文件，对比校验结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@node1]<span class="comment"># cp /var/lib/etcd/default.etcd/member/snap/db /root/etcd.db</span></span><br><span class="line">[root@node1]<span class="comment"># ./auger checksum -f /root/etcd.db</span></span><br><span class="line">checksum: 2125275681</span><br><span class="line">compact-revision: 6609891</span><br><span class="line">revision: 6610932</span><br><span class="line"></span><br><span class="line">[root@node2 ~]<span class="comment"># cp /var/lib/etcd/default.etcd/member/snap/db /root/etcd.db</span></span><br><span class="line">[root@node2 ~]<span class="comment"># ./auger checksum -f /root/etcd.db -r 6610932</span></span><br><span class="line">checksum: 2125275681</span><br><span class="line">compact-revision: 6610743</span><br><span class="line">revision: 6610932</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://github.com/jpbetz/auger">https://github.com/jpbetz/auger</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/etcd-io/auger">https://github.com/etcd-io/auger</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/05/18/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-%E6%B3%A8%E5%86%8C%E5%85%8D%E8%B4%B9%E7%9A%84Redhat%E8%AE%A2%E9%98%85%E6%9C%8D%E5%8A%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -514,7 +646,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -608,7 +740,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -706,7 +838,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -812,7 +944,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -902,7 +1034,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1013,7 +1145,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1064,103 +1196,6 @@
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
 <li><a target="_blank" rel="noopener" href="https://github.com/hierynomus/sshj/issues/701">https://github.com/hierynomus/sshj/issues/701</a></li>
 </ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/03/31/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8%EF%BC%88%E7%BB%AD2%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/03/31/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8%EF%BC%88%E7%BB%AD2%EF%BC%89/" class="post-title-link" itemprop="url">K8S问题排查-VMWare虚拟化环境下Pod跨VXLAN通信异常（续2）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-03-31 20:12:23" itemprop="dateCreated datePublished" datetime="2024-03-31T20:12:23+00:00">2024-03-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:09:30" itemprop="dateModified" datetime="2024-11-02T14:09:30+00:00">2024-11-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>参考资料[1]，问题初始现象是：<code>VMWare</code>虚拟化环境下<code>Pod</code>跨<code>VXLAN</code>通信异常。</p>
-<p>通过资料[2]可知，临时方案有<code>2</code>个：</p>
-<p><strong>方案1：</strong>调整网卡的配置：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ethtool -K vxlan.calico tx-checksum-ip-generic off</span><br></pre></td></tr></table></figure>
-
-<p><strong>方案2：</strong>在创建虚拟机时，把网络适配器的类型改为 <code>E1000</code>或<code>E1000e</code>：</p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>最近在跟踪相关<code>issue</code>[3,4]时发现，还有<code>2</code>个方案可以解决该问题（未实际测试验证）。</p>
-<p>方案1：如果是<code>flanne</code>网络插件，可以使用如下命令临时解决：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -A OUTPUT -p udp -m udp --dport 8472 -j MARK --set-xmark 0x0</span><br></pre></td></tr></table></figure>
-
-<p>方案2：如果是<code>calico</code>网络插件，可以使用如下特性门永久解决：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">featureDetectOverride: <span class="string">&quot;ChecksumOffloadBroken=true&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>1.<a href="https://lyyao09.github.io/2022/06/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8/">https://lyyao09.github.io/2022/06/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8/</a></p>
-<p>2.<a href="https://lyyao09.github.io/2023/04/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8%EF%BC%88%E7%BB%AD%EF%BC%89/">https://lyyao09.github.io/2023/04/05/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-VMWare%E8%99%9A%E6%8B%9F%E5%8C%96%E7%8E%AF%E5%A2%83%E4%B8%8BPod%E8%B7%A8VXLAN%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8%EF%BC%88%E7%BB%AD%EF%BC%89/</a></p>
-<p>3.<a target="_blank" rel="noopener" href="https://github.com/kubernetes-sigs/kubespray/issues/8992">https://github.com/kubernetes-sigs/kubespray/issues/8992</a></p>
-<p>4.<a target="_blank" rel="noopener" href="https://github.com/flannel-io/flannel/issues/1279">https://github.com/flannel-io/flannel/issues/1279</a></p>
 
       
     </div>
@@ -1245,7 +1280,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">97</span>
+          <span class="site-state-item-count">98</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1256,7 +1291,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
