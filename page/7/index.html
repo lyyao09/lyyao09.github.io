@@ -145,6 +145,268 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/06/13/linux/An-introduction-to-linux-interfaces-for-virtual-networking/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/13/linux/An-introduction-to-linux-interfaces-for-virtual-networking/" class="post-title-link" itemprop="url">Linux接口之虚拟网络接口介绍</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-13 20:01:15" itemprop="dateCreated datePublished" datetime="2020-06-13T20:01:15+00:00">2020-06-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><a target="_blank" rel="noopener" href="https://developers.redhat.com/topics/linux/">Linux</a>具有丰富的虚拟网络功能，可用作托管VM和<a target="_blank" rel="noopener" href="https://developers.redhat.com/blog/category/containers/">容器</a>以及云环境的基础。本文将简要介绍所有常用的虚拟网络接口类型。内容没有代码分析，仅简要介绍了接口及其在Linux上的用法。可以使用<code>ip link help</code>命令获取接口列表的帮助。</p>
+<p>内容涵盖了以下常用的接口以及一些易于相互混淆的接口：</p>
+<ul>
+<li>Bridge</li>
+<li>Bonded interface</li>
+<li>Team device</li>
+<li>VLAN (Virtual LAN) </li>
+<li>VXLAN (Virtual eXtensible Local Area Network)</li>
+<li>MACVLAN</li>
+<li>IPVLAN</li>
+<li>MACVTAP&#x2F;IPVTAP</li>
+<li>MACsec (Media Access Control Security)</li>
+<li>VETH (Virtual Ethernet)</li>
+<li>VCAN (Virtual CAN)</li>
+<li>VXCAN (Virtual CAN tunnel)</li>
+<li>IPOIB (IP-over-InfiniBand)</li>
+<li>NLMON (NetLink MONitor)</li>
+<li>Dummy interface</li>
+<li>IFB (Intermediate Functional Block)</li>
+<li>netdevsim</li>
+</ul>
+<p>阅读本文之后，我们将了解这些接口是什么，它们之间的区别，何时使用它们以及如何创建它们。</p>
+<h2 id="Bridge"><a href="#Bridge" class="headerlink" title="Bridge"></a>Bridge</h2><p>Linux网桥的行为类似于网络交换机。它在与其连接的接口之间转发数据包。它通常用于在路由器，网关或虚拟机与主机上的网络命名空间之间转发数据包。它还支持STP，VLAN过滤和多播侦听。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/bridge.png" alt="bridge"></p>
+<p>如果想要在VM，容器和主机之间建立通信通道，请使用网桥。</p>
+<p>以下是创建网桥的方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add br0 <span class="built_in">type</span> bridge</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> <span class="built_in">set</span> eth0 master br0</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> <span class="built_in">set</span> tap1 master br0</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> <span class="built_in">set</span> tap2 master br0</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> <span class="built_in">set</span> veth1 master br0</span></span><br></pre></td></tr></table></figure>
+
+<p>上述命令创建了一个名为<code>br0</code>网桥，并且设置了两个TAP设备（<code>tap1</code>，<code>tap2</code>），一个VETH设备（<code>veth1</code>），和物理设备（<code>eth0</code>）作为它的从设备，如上图所示。</p>
+<h2 id="Bond"><a href="#Bond" class="headerlink" title="Bond"></a>Bond</h2><p>Linux bond驱动提供了一种用于将多个网络接口聚合为单个逻辑“绑定”接口的方法。绑定接口的行为取决于模式。一般来说，提供热备用或负载平衡两种模式。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/net_failover.png" alt="bond"></p>
+<p>如果想提高链接速度或在服务器上进行故障转移时，请使用bond接口。</p>
+<p>以下是创建bond接口的方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ip link add bond1 type bond miimon 100 mode active-backup</span><br><span class="line">ip link set eth0 master bond1</span><br><span class="line">ip link set eth1 master bond1</span><br></pre></td></tr></table></figure>
+
+<p>上述命令创建了一个名称为<code>bond1</code>的<code>active-backup</code>模式的bond接口。对于其他模式，请参阅 <a target="_blank" rel="noopener" href="https://www.kernel.org/doc/Documentation/networking/bonding.txt">内核文档</a>。</p>
+<h2 id="Team-device"><a href="#Team-device" class="headerlink" title="Team device"></a>Team device</h2><p>与bond接口类似，team device的目的是提供一种在L2层将多个NIC（端口）分组为一个逻辑端口（teamdev）的机制。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/bond.png" alt="team"></p>
+<p>需要注意的是，team device不会尝试复制或模仿bond接口。它的作用是使用不同的方法来解决相同的问题。</p>
+<p>但是bond和team device之间也存在一些功能差异。例如，team device支持LACP负载平衡，NS&#x2F;NA（IPV6）链接监视，D-Bus接口等，而这些功能在bond中是不存在的。有关bond和team device之间差异的更多详细信息，请参见 <a target="_blank" rel="noopener" href="https://github.com/jpirko/libteam/wiki/Bonding-vs.-Team-features">bond vs team device</a>。</p>
+<p>综上，如果想使用bond无法提供的某些功能，请使用team device。</p>
+<p>创建team device的方法如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">teamd -o -n -U -d -t team0 -c <span class="string">&#x27;&#123;&quot;runner&quot;: &#123;&quot;name&quot;: &quot;activebackup&quot;&#125;,&quot;link_watch&quot;: &#123;&quot;name&quot;: &quot;ethtool&quot;&#125;&#125;&#x27;</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> <span class="built_in">set</span> eth0 down</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> <span class="built_in">set</span> eth1 down</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">teamdctl team0 port add eth0</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">teamdctl team0 port add eth1</span></span><br></pre></td></tr></table></figure>
+
+<p>上述命令将创建一个<code>team0</code>的team device，且模式为<code>active-backup</code>，并添加<code>eth0</code> 和 <code>eth1</code>作为<code>team0</code>的子接口。</p>
+<p>最近，一个名为<a target="_blank" rel="noopener" href="https://www.kernel.org/doc/html/latest/networking/net_failover.html">net_failover</a>的新驱动已添加到Linux内核。它是用于虚拟化的另一种故障转移网络设备，并管理主（[passthru&#x2F;VF<a target="_blank" rel="noopener" href="https://wiki.libvirt.org/page/Networking#PCI_Passthrough_of_host_network_devices">虚拟功能]</a> 设备）从网络设备和备用（原始超虚拟接口）从网络设备。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/vlan_01.png" alt="net_failover"></p>
+<h2 id="VLAN"><a href="#VLAN" class="headerlink" title="VLAN"></a>VLAN</h2><p>VLAN（也称为虚拟LAN）通过向网络数据包添加标签来分隔广播域。VLAN使网络管理员可以将同一台交换机下或不同交换机之间的主机分组。</p>
+<p>VLAN标头如下所示：</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/vlan.png" alt="vlan_01"></p>
+<p>如果想在VM，命名空间或主机中分隔子网，请使用VLAN。</p>
+<p>以下是创建VLAN的方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add <span class="built_in">link</span> eth0 name eth0.2 <span class="built_in">type</span> vlan <span class="built_in">id</span> 2</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add <span class="built_in">link</span> eth0 name eth0.3 <span class="built_in">type</span> vlan <span class="built_in">id</span> 3</span></span><br></pre></td></tr></table></figure>
+
+<p>上述命令将添加名为<code>eth0.2</code>的<code>VLAN2</code>和名为<code>eth0.3</code>的<code>VLAN 3</code> 。拓扑如下所示：</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/team.png" alt="vlan"></p>
+<p><strong>注意</strong>：在配置VLAN时，需要确保连接到主机的交换机能够处理VLAN标签，例如，通过将交换机端口设置为中继模式。</p>
+<h2 id="VXLAN"><a href="#VXLAN" class="headerlink" title="VXLAN"></a>VXLAN</h2><p>VXLAN（虚拟可扩展局域网）是一种隧道协议，旨在解决IEEE 802.1q中有限的VLAN ID（4,096）的问题。由<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc7348">IETF RFC 7348</a>描述。</p>
+<p>通过24位网段ID（又称为VXLAN网络标识符（VNI）），VXLAN最多允许2 ^ 24（16,777,216）个虚拟LAN，这是VLAN容量的4,096倍。</p>
+<p>VXLAN将带有VXLAN标头的第2层帧封装到UDP-IP数据包中，如下所示：</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/vxlan_01.png" alt="vxlan_01"></p>
+<p>VXLAN通常部署在虚拟主机上的数据中心中，该主机可以分布在多个机架上。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/vxlan.png" alt="vxlan"></p>
+<p>下面是使用VXLAN的方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add vx0 <span class="built_in">type</span> vxlan <span class="built_in">id</span> 100 <span class="built_in">local</span> 1.1.1.1 remote 2.2.2.2 dev eth0 dstport 4789</span></span><br></pre></td></tr></table></figure>
+
+<p>作为参考，可以阅读<a target="_blank" rel="noopener" href="https://www.kernel.org/doc/Documentation/networking/vxlan.txt">VXLAN内核文档</a>或<a target="_blank" rel="noopener" href="https://vincent.bernat.ch/en/blog/2017-vxlan-linux">VXLAN简介</a>。</p>
+<h2 id="MACVLAN"><a href="#MACVLAN" class="headerlink" title="MACVLAN"></a>MACVLAN</h2><p>使用VLAN，我们可以在一个接口上创建多个接口，并根据VLAN标记过滤数据包。使用MACVLAN，我们可以在一个接口上创建具有不同第2层（即以太网MAC）地址的多个接口。</p>
+<p>在使用MACVLAN之前，如果要从VM或命名空间连接到物理网络，则需要创建TAP&#x2F;VETH设备，并将一侧连接到网桥，并同时将物理接口连接到主机上的网桥，如下所示。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/macvlan_01.png" alt="br_ns"></p>
+<p>现在，借助MACVLAN，我们可以将与MACVLAN关联的物理接口直接绑定到命名空间，而无需桥接。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/br_ns.png" alt="macvlan"></p>
+<p>MACVLAN有五种类型：</p>
+<p>1.Private：即使外部交换机支持hairpin模式，也不允许同一物理接口上的MACVLAN实例之间进行通信。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/macvlan_02.png" alt="macvlan_01"></p>
+<ol start="2">
+<li>VEPA：同一物理接口上从一个MACVLAN实例到另一个MACVLAN实例的数据通过该物理接口传输。连接的交换机需要支持hairpin模式，或者必须有TCP&#x2F;IP路由器转发数据包才能进行通信。</li>
+</ol>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/macvlan.png" alt="macvlan_02"></p>
+<ol start="3">
+<li>Bridge：所有端点都通过物理接口通过简单的桥接器直接相互连接。</li>
+</ol>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/macvlan_04.png" alt="macvlan_03"></p>
+<ol start="4">
+<li>Passthru：允许将单个VM直接连接到物理接口。</li>
+</ol>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/ipvlan.png" alt="macvlan_04"></p>
+<ol start="5">
+<li>Source：该模式用于基于允许的源MAC地址列表过滤流量，以创建基于MAC的VLAN关联。请参阅<a target="_blank" rel="noopener" href="https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?id=79cf79abce71">提交消息</a>。</li>
+</ol>
+<p>模式是根据不同的需求选择的。桥接模式是最常用的。如果要从容器直接连接到物理网络时，请使用MACVLAN。</p>
+<p>设置MACVLAN的方法如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add macvlan1 <span class="built_in">link</span> eth0 <span class="built_in">type</span> macvlan mode bridge</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add macvlan2 <span class="built_in">link</span> eth0 <span class="built_in">type</span> macvlan mode bridge</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip netns add net1</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip netns add net2</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> <span class="built_in">set</span> macvlan1 netns net1</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> <span class="built_in">set</span> macvlan2 netns net2</span></span><br></pre></td></tr></table></figure>
+
+<p>上述命令将以桥接模式创建两个新的MACVLAN设备，并将这两个设备分配给两个不同的命名空间。</p>
+<h2 id="IPVLAN"><a href="#IPVLAN" class="headerlink" title="IPVLAN"></a>IPVLAN</h2><p>IPVLAN与MACVLAN相似，区别在于端点具有相同的MAC地址。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/macvlan_03.png" alt="ipvlan"></p>
+<p>IPVLAN支持L2和L3模式。IPVLAN L2模式在桥接模式下的行为类似于MACVLAN。父接口看起来像一个网桥或交换机。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/ipvlan_02.png" alt="ipvlan_01"></p>
+<p>在IPVLAN L3模式下，父接口的行为就像路由器，并且数据包在端点之间路由，从而提供了更好的可伸缩性。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/ipvlan_01.png" alt="ipvlan_02"></p>
+<p>关于何时使用IPVLAN，  <a target="_blank" rel="noopener" href="https://www.kernel.org/doc/Documentation/networking/ipvlan.txt">IPVLAN内核文档</a> 说MACVLAN和IPVLAN在许多方面都非常相似，并且可以依据特定的场景很好地定义选择哪个。如果以下情况之一定义我们需要的场景，则可以选择使用ipvlan：<br>（a）连接到外部交换机&#x2F;路由器的Linux主机已配置了策略，每个端口仅允许一个mac。<br>（b）在主服务器上创建的虚拟设备均未超过mac容量，并且无法将NIC置于混杂模式，因此性能下降是一个问题。<br>（c）如果要将从设备放入敌对&#x2F;不受信任的网络命名空间中，则从设备上的L2可能会被更改&#x2F;滥用。</p>
+<p>设置IPVLAN实例的方法如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip netns add ns0</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add name ipvl0 <span class="built_in">link</span> eth0 <span class="built_in">type</span> ipvlan mode l2</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> <span class="built_in">set</span> dev ipvl0 netns ns0</span></span><br></pre></td></tr></table></figure>
+
+<p>上述命令将创建一个名为<code>ipvl0</code>L2的IPVLAN设备，并分配给<code>ns0</code>命名空间。</p>
+<h2 id="MACVTAP-IPVTAP"><a href="#MACVTAP-IPVTAP" class="headerlink" title="MACVTAP&#x2F;IPVTAP"></a>MACVTAP&#x2F;IPVTAP</h2><p>MACVTAP&#x2F;IPVTAP是一种新的设备驱动，旨在简化虚拟化桥接网络。当在物理接口顶部创建MACVTAP&#x2F;IPVTAP实例时，内核还将创建一个字符设备&#x2F;dev&#x2F;tapX，以与<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/TUN/TAP">TUN&#x2F;TAP</a>设备一样使用，并可以由KVM &#x2F; QEMU直接使用。</p>
+<p>使用MACVTAP&#x2F;IPVTAP，我们可以用单个模块替换TUN&#x2F;TAP和网桥驱动的组合：</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/macvtap.png" alt="macvtap"></p>
+<p>通常，MACVLAN&#x2F;IPVLAN用于使访客和主机都直接显示在主机所连接的交换机上。MACVTAP和IPVTAP之间的差异与MACVLAN&#x2F;IPVLAN相同。</p>
+<p>以下是创建MACVTAP实例的方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add <span class="built_in">link</span> eth0 name macvtap0 <span class="built_in">type</span> macvtap</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="MACsec"><a href="#MACsec" class="headerlink" title="MACsec"></a>MACsec</h2><p>MACsec（媒体访问控制安全）是用于有线以太网LAN中安全性的IEEE标准。与IPsec相似，作为第2层规范，MACsec不仅可以保护IP流量，还可以保护ARP，NS（邻居发现）和DHCP。MACsec标头如下所示：</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/macsec_01.png" alt="macsec_01"></p>
+<p>MACsec的主要用例是保护标准LAN上的所有消息（包括ARP，NS和DHCP消息）的安全。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/veth.png" alt="macsec"></p>
+<p>MACsec配置的方法如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add macsec0 <span class="built_in">link</span> eth1 <span class="built_in">type</span> macsec</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：上述命令仅在e<code>th1</code>设备上添加了名为<code>macsec0</code>的MACsec。有关更详细的配置，请参阅<a target="_blank" rel="noopener" href="https://developers.redhat.com/blog/2016/10/14/macsec-a-different-solution-to-encrypt-network-traffic/">Sabrina Dubroca</a><a target="_blank" rel="noopener" href="https://developers.redhat.com/blog/2016/10/14/macsec-a-different-solution-to-encrypt-network-traffic/">MACsec简介</a>“配置示例”部分 。</p>
+<h2 id="VETH"><a href="#VETH" class="headerlink" title="VETH"></a>VETH</h2><p>VETH（虚拟以太网）设备是本地以太网隧道。设备是成对创建的，如下图所示。在VETH对中的一个设备上传输的数据包将立即在另一设备上接收。当任何一台设备关闭时，该VETH对的链接状态为关闭。</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/linux/An-introduction-to-linux-interfaces-for-virtual-networking/macsec.png" alt="veth"></p>
+<p>当任意命名空间需要与主机命名空间或彼此之间进行通信时，请使用VETH配置。</p>
+<p>以下是设置VETH配置的方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip netns add net1</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip netns add net2</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add veth1 netns net1 <span class="built_in">type</span> veth peer name veth2 netns net2</span></span><br></pre></td></tr></table></figure>
+
+<p>上述命令将创建两个名称空间<code>net1</code>和<code>net2</code>，以及一对VETH设备，并将<code>veth1</code>分配给<code>net1</code>，<code>veth2</code>分配给<code>net2</code>。这两个命名空间与此VETH对相连。分配一对IP地址，这样就可以在两个命名空间之间通信。</p>
+<h2 id="VCAN"><a href="#VCAN" class="headerlink" title="VCAN"></a>VCAN</h2><p>与网络环回设备类似，VCAN（虚拟CAN）驱动提供了虚拟本地CAN（控制器局域网）接口，因此用户可以通过VCAN接口发送&#x2F;接收CAN消息。如今，CAN主要用于汽车领域。</p>
+<p>有关更多CAN协议信息，请参考 <a target="_blank" rel="noopener" href="https://www.kernel.org/doc/Documentation/networking/can.txt">内核CAN文档</a>。</p>
+<p>如果需要在本地主机上测试CAN协议实现时，请使用VCAN。</p>
+<p>创建VCAN的方法如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add dev vcan1 <span class="built_in">type</span> vcan</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="VXCAN"><a href="#VXCAN" class="headerlink" title="VXCAN"></a>VXCAN</h2><p>与VETH驱动类似，VXCAN（虚拟CAN隧道）在两个VCAN网络设备之间实现本地CAN流量隧道。创建VXCAN实例时，两个VXCAN设备将成对创建。当一端接收到数据包时，该数据包出现在设备对上，反之亦然。VXCAN可用于跨命名空间通信。</p>
+<p>如果想跨命名空间发送CAN消息时，请使用VXCAN配置。</p>
+<p>设置VXCAN实例的方法如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip netns add net1</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip netns add net2</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add vxcan1 netns net1 <span class="built_in">type</span> vxcan peer name vxcan2 netns net2</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：Red Hat Enterprise Linux尚不支持VXCAN。</p>
+<h2 id="IPOIB"><a href="#IPOIB" class="headerlink" title="IPOIB"></a>IPOIB</h2><p>IPOIB设备支持IP-over-InfiniBand协议。这将通过InfiniBand（IB）传输IP数据包，因此我们可以将IB设备用作快速NIC。</p>
+<p>IPoIB驱动支持两种操作模式：datagram和connected。在datagram模式下，使用IB UD（不可靠数据包）传输。在connected模式下，使用IB RC（可靠连接）传输。connected模式利用了IB传输的连接特性，并允许MTU最多达到64K的最大IP数据包大小。</p>
+<p>有关更多详细信息，请参见 <a target="_blank" rel="noopener" href="https://www.kernel.org/doc/Documentation/infiniband/ipoib.txt">IPOIB内核文档</a>。</p>
+<p>如果想拥有IB设备并想通过IP与远程主机通信时，请使用IPOIB设备。</p>
+<p>以下是创建IPOIB设备的方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add ib0 name ipoib0 <span class="built_in">type</span> ipoib pkey IB_PKEY mode connected</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="NLMON"><a href="#NLMON" class="headerlink" title="NLMON"></a>NLMON</h2><p>NLMON是Netlink监视设备。</p>
+<p>如果想要监视系统Netlink消息时，请使用NLMON设备。</p>
+<p>以下是创建NLMON设备的方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add nlmon0 <span class="built_in">type</span> nlmon</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> <span class="built_in">set</span> nlmon0 up</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">tcpdump -i nlmon0 -w nlmsg.pcap</span></span><br></pre></td></tr></table></figure>
+
+<p>上述命令将创建一个名称为NLMON的<code>nlmon0</code>设备并进行设置。使用数据包嗅探器（例如，  <code>tcpdump</code>）捕获Netlink消息。Wireshark的最新版本具有对Netlink消息进行解码的功能。</p>
+<h2 id="Dummy-interface"><a href="#Dummy-interface" class="headerlink" title="Dummy interface"></a>Dummy interface</h2><p>虚拟接口完全是虚拟的，例如loopback接口。虚拟接口的目的是提供一种设备，可以在不实际传输数据包的情况下路由数据包。</p>
+<p>使用虚拟接口使无效的SLIP（串行Internet协议）地址看起来像本地程序的真实地址。如今，虚拟接口主要用于测试和调试。</p>
+<p>以下是创建虚拟接口的方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add dummy1 <span class="built_in">type</span> dummy</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip addr add 1.1.1.1/24 dev dummy1</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> <span class="built_in">set</span> dummy1 up</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="IFB"><a href="#IFB" class="headerlink" title="IFB"></a>IFB</h2><p>IFB（中间功能块）驱动提供了一种设备，该设备允许集中来自多个源的流量并调整传入流量，而不是将其丢弃。</p>
+<p>如果想要排队和调整传入流量时，请使用IFB接口。</p>
+<p>以下是创建IFB接口的方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add ifb0 <span class="built_in">type</span> ifb</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> <span class="built_in">set</span> ifb0 up</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">tc qdisc add dev ifb0 root sfq</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">tc qdisc add dev eth0 handle ffff: ingress</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">tc filter add dev eth0 parent ffff: u32 match u32 0 0 action mirred egress redirect dev ifb0</span></span><br></pre></td></tr></table></figure>
+
+<p>上述命令将创建一个名为<code>ifb0</code>的IFB设备，并将根据qdisc调度程序替换为SFQ（随机公平队列），SFQ是无类排队调度程序。然后，在<code>eth0</code>上添加一个qdisc调度程序，并将所有入口流量重定向到<code>ifb0</code>。</p>
+<p>有关更多IFB qdisc用例，请参考 <a target="_blank" rel="noopener" href="https://wiki.linuxfoundation.org/networking/ifb">IFB上的Linux Foundation Wiki</a>。</p>
+<h2 id="netdevsim接口"><a href="#netdevsim接口" class="headerlink" title="netdevsim接口"></a>netdevsim接口</h2><p>netdevsim是一种模拟的联网设备，用于测试各种联网API。目前，它特别专注于测试硬件卸载，tc&#x2F;XDP BPF和SR-IOV。</p>
+<p>如下命令可以创建一个netdevsim设备</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> add dev sim0 <span class="built_in">type</span> netdevsim</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> <span class="built_in">set</span> dev sim0 up</span></span><br></pre></td></tr></table></figure>
+
+<p>要启用tc卸载：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ethtool -K sim0 hw-tc-offload on</span></span><br></pre></td></tr></table></figure>
+
+<p>加载XDP BPF或tc BPF程序：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> <span class="built_in">set</span> dev sim0 xdpoffload obj prog.o</span></span><br></pre></td></tr></table></figure>
+
+<p>要添加用于SR-IOV测试的VF，请执行以下操作：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">echo</span> 3 &gt; /sys/class/net/sim0/device/sriov_numvfs</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ip <span class="built_in">link</span> <span class="built_in">set</span> sim0 vf 0 mac</span> </span><br></pre></td></tr></table></figure>
+
+<p>要更改vf编号，需要先完全禁用它们：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">echo</span> 0 &gt; /sys/class/net/sim0/device/sriov_numvfs</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">echo</span> 5 &gt; /sys/class/net/sim0/device/sriov_numvfs</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong>默认情况下，RHEL中没有编译netdevsim。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/06/11/linux/An-introduction-to-Linux-virtual-interfaces-Tunnels/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +438,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -452,7 +714,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -562,7 +824,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -660,7 +922,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -740,7 +1002,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -887,7 +1149,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -976,7 +1238,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1081,7 +1343,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1172,7 +1434,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1257,104 +1519,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/19/stack/Kubernetes-pod-gets-recreated-when-deleted/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/08/19/stack/Kubernetes-pod-gets-recreated-when-deleted/" class="post-title-link" itemprop="url">Kubernetes删除pod时会自动重新创建</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-08-19 22:13:07" itemprop="dateCreated datePublished" datetime="2019-08-19T22:13:07+00:00">2019-08-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我已经用命令启动了pods：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl run busybox --image=busybox --restart=Never --<span class="built_in">tty</span> -i --generator=run-pod/v1</span></span><br></pre></td></tr></table></figure>
-
-<p>出了点问题，现在我无法删除这个pod，我尝试使用下面的方法，但它不断重建自己：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl delete pods  busybox-na3tm</span></span><br><span class="line">pod &quot;busybox-na3tm&quot; deleted</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl get pods</span></span><br><span class="line">NAME                                     READY     STATUS              RESTARTS   AGE</span><br><span class="line">busybox-vlzh3                            0/1       ContainerCreating   0          14s</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl delete pod busybox-vlzh3 --grace-period=0</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl delete pods --all</span></span><br><span class="line">pod &quot;busybox-131cq&quot; deleted</span><br><span class="line">pod &quot;busybox-136x9&quot; deleted</span><br><span class="line">pod &quot;busybox-13f8a&quot; deleted</span><br><span class="line">pod &quot;busybox-13svg&quot; deleted</span><br><span class="line">pod &quot;busybox-1465m&quot; deleted</span><br><span class="line">pod &quot;busybox-14uz1&quot; deleted</span><br><span class="line">pod &quot;busybox-15raj&quot; deleted</span><br><span class="line">pod &quot;busybox-160to&quot; deleted</span><br><span class="line">pod &quot;busybox-16191&quot; deleted</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl get pods --all-namespaces</span></span><br><span class="line">NAMESPACE   NAME            READY     STATUS              RESTARTS   AGE</span><br><span class="line">default     busybox-c9rnx   0/1       RunContainerError   0          23s</span><br></pre></td></tr></table></figure>
-
-<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>您需要删除deployment，而deployment会自动删除pod和replica sets</p>
-<p>列出所有deployment：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get deployments --all-namespaces</span><br></pre></td></tr></table></figure>
-
-<p>然后删除deployment：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete -n NAMESPACE deployment DEPLOYMENT</span><br></pre></td></tr></table></figure>
-
-<p>NAMESPACE是其所在的命名空间，而DEPLOYMENT是deployment资源的名称。</p>
-<p>在某些情况下，由于job或daemonset也可能正在运行。检查以下内容并运行相应的删除命令。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl get jobs</span><br><span class="line"></span><br><span class="line">kubectl get daemonsets.app --all-namespaces</span><br><span class="line"></span><br><span class="line">kubectl get daemonsets.extensions --all-namespaces</span><br></pre></td></tr></table></figure>
-
-<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40686151/kubernetes-pod-gets-recreated-when-deleted">Kubernetes pod gets recreated when deleted</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1424,7 +1588,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">98</span>
+          <span class="site-state-item-count">99</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1435,7 +1599,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

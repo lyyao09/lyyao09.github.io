@@ -145,6 +145,104 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/19/stack/Kubernetes-pod-gets-recreated-when-deleted/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/19/stack/Kubernetes-pod-gets-recreated-when-deleted/" class="post-title-link" itemprop="url">Kubernetes删除pod时会自动重新创建</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-19 22:13:07" itemprop="dateCreated datePublished" datetime="2019-08-19T22:13:07+00:00">2019-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我已经用命令启动了pods：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl run busybox --image=busybox --restart=Never --<span class="built_in">tty</span> -i --generator=run-pod/v1</span></span><br></pre></td></tr></table></figure>
+
+<p>出了点问题，现在我无法删除这个pod，我尝试使用下面的方法，但它不断重建自己：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl delete pods  busybox-na3tm</span></span><br><span class="line">pod &quot;busybox-na3tm&quot; deleted</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl get pods</span></span><br><span class="line">NAME                                     READY     STATUS              RESTARTS   AGE</span><br><span class="line">busybox-vlzh3                            0/1       ContainerCreating   0          14s</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl delete pod busybox-vlzh3 --grace-period=0</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl delete pods --all</span></span><br><span class="line">pod &quot;busybox-131cq&quot; deleted</span><br><span class="line">pod &quot;busybox-136x9&quot; deleted</span><br><span class="line">pod &quot;busybox-13f8a&quot; deleted</span><br><span class="line">pod &quot;busybox-13svg&quot; deleted</span><br><span class="line">pod &quot;busybox-1465m&quot; deleted</span><br><span class="line">pod &quot;busybox-14uz1&quot; deleted</span><br><span class="line">pod &quot;busybox-15raj&quot; deleted</span><br><span class="line">pod &quot;busybox-160to&quot; deleted</span><br><span class="line">pod &quot;busybox-16191&quot; deleted</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">kubectl get pods --all-namespaces</span></span><br><span class="line">NAMESPACE   NAME            READY     STATUS              RESTARTS   AGE</span><br><span class="line">default     busybox-c9rnx   0/1       RunContainerError   0          23s</span><br></pre></td></tr></table></figure>
+
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>您需要删除deployment，而deployment会自动删除pod和replica sets</p>
+<p>列出所有deployment：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get deployments --all-namespaces</span><br></pre></td></tr></table></figure>
+
+<p>然后删除deployment：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete -n NAMESPACE deployment DEPLOYMENT</span><br></pre></td></tr></table></figure>
+
+<p>NAMESPACE是其所在的命名空间，而DEPLOYMENT是deployment资源的名称。</p>
+<p>在某些情况下，由于job或daemonset也可能正在运行。检查以下内容并运行相应的删除命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl get jobs</span><br><span class="line"></span><br><span class="line">kubectl get daemonsets.app --all-namespaces</span><br><span class="line"></span><br><span class="line">kubectl get daemonsets.extensions --all-namespaces</span><br></pre></td></tr></table></figure>
+
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40686151/kubernetes-pod-gets-recreated-when-deleted">Kubernetes pod gets recreated when deleted</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/17/stack/helm-list-cannot-list-configmaps-in-the-namespace-kube-system/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +274,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -286,7 +384,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -388,7 +486,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -475,7 +573,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -613,7 +711,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -706,7 +804,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -801,7 +899,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1040,7 +1138,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1253,7 +1351,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
+                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1516,100 +1614,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-install/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/08/02/tools/The-usage-of-yq-install/" class="post-title-link" itemprop="url">YAML处理工具yq之安装篇</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-08-02 21:02:09" itemprop="dateCreated datePublished" datetime="2019-08-02T21:02:09+00:00">2019-08-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:11:30" itemprop="dateModified" datetime="2024-11-02T14:11:30+00:00">2024-11-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>yq是一个轻量级的便携式命令行YAML处理器。该工具的目标是成为yaml文件处理方面的jq或sed。</p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>在MacOS上：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install yq</span><br></pre></td></tr></table></figure>
-
-<p>在Ubuntu和支持snap包的其他Linux发行版上：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">snap install yq</span><br></pre></td></tr></table></figure>
-
-<p>在Ubuntu 16.04或更高版本上：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:rmescandon/yq</span><br><span class="line">sudo apt update</span><br><span class="line">sudo apt install yq -y</span><br></pre></td></tr></table></figure>
-
-<p>或者，下载最新的<a target="_blank" rel="noopener" href="https://github.com/mikefarah/yq/releases/latest">二进制文件</a>或者：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get gopkg.in/mikefarah/yq.v2</span><br></pre></td></tr></table></figure>
-
-<p><a target="_blank" rel="noopener" href="https://github.com/mikefarah/yq">View on GitHub</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1679,7 +1683,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">98</span>
+          <span class="site-state-item-count">99</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1690,7 +1694,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
