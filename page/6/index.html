@@ -145,6 +145,144 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/12/28/k8s/Kubernetes-Patterns-The-Init-Container-Pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/28/k8s/Kubernetes-Patterns-The-Init-Container-Pattern/" class="post-title-link" itemprop="url">Kubernetes模式：initContainer使用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-28 21:48:10" itemprop="dateCreated datePublished" datetime="2020-12-28T21:48:10+00:00">2020-12-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Init模式"><a href="#Init模式" class="headerlink" title="Init模式"></a>Init模式</h2><p>初始化逻辑通常在编程语言中很常见。在面向对象编程语言中，我们有构造函数的概念。构造函数是一个函数（或方法），每当对象被实例化时都会被调用。构造器的目的是“准备”对象以完成它应该做的工作。例如，它设置变量的默认值，创建数据库连接对象，确保对象正确运行所需的先决条件的存在。例如，如果创建了一个user对象，那么它至少需要用户的用户名、名和姓，这样它才能正常工作。不同语言之间的构造函数实现是不同的。但是，所有这些都只被调用一次，并且只在对象实例化时调用。</p>
+<p>初始化模式的目的是将对象与其初始化逻辑解耦。因此，如果一个对象需要一些种子数据输入到数据库中，这就属于构造函数逻辑而不是应用程序逻辑。这允许我们更改对象的“启动”方式，而不影响其“工作”方式。</p>
+<p>Kubernetes使用相同的模式。虽然对象是面向对象语言的原子单元，但是Kubernetes有Pods。因此，如果我们有一个应用程序在需要一些初始化逻辑的容器上运行，那么将此工作交给另一个容器是一个很好的做法。Kubernetes有一种用于特定作业的容器类型：init containers。</p>
+<h2 id="Init-Containers"><a href="#Init-Containers" class="headerlink" title="Init Containers"></a>Init Containers</h2><p>在Kubernetes中，init容器是在同一个Pod中的其他容器之前启动和执行的容器。它的目的是<strong>为Pod上托管的主应用程序执行初始化逻辑</strong>。例如，创建必要的用户帐户、执行数据库迁移、创建数据库模式等等。</p>
+<h2 id="Init-Containers设计注意事项"><a href="#Init-Containers设计注意事项" class="headerlink" title="Init Containers设计注意事项"></a>Init Containers设计注意事项</h2><p>在创建init容器时，我们应该考虑一些注意事项：</p>
+<ul>
+<li>它们总是比Pod里的其他容器先执行。因此，它们不应该包含需要很长时间才能完成的复杂逻辑。启动脚本通常很小而且简洁。如果我们发现在init容器中添加了太多的逻辑，那就应该考虑将它的一部分移到应用程序容器本身。</li>
+<li>Init容器按顺序启动和执行。除非成功完成其前置容器，否则不会调用init容器。因此，如果启动任务很长，可以考虑将其分成若干步骤，每个步骤都由init容器处理，以便知道哪些步骤失败。</li>
+<li>如果任何init容器失败，整个Pod将重新启动（除非将restartPolicy设置为Never）。重新启动Pod意味着重新执行所有容器，包括任何init容器。因此，我们可能需要确保启动逻辑能够容忍多次执行而不会导致重复。例如，如果数据库迁移已经完成，那么应该忽略再次执行迁移命令。</li>
+<li>在一个或多个依赖项可用之前，init容器是延迟应用程序初始化的一个很好的候选者。例如，如果我们的应用程序依赖于一个施加了API请求速率限制的API，可能需要等待一段时间才能从该API接收响应。在应用程序容器中实现此逻辑可能很复杂；因为它需要与运行状况和准备状态探测相结合。一种更简单的方法是创建一个init容器，该容器等待API准备好后才能成功退出。只有在init容器成功完成其工作之后，应用程序容器才会启动。</li>
+<li>Init容器不能像应用程序容器那样使用liveness和readiness探针。原因是它们注定要成功启动和退出，就像Jobs和CronJobs的行为一样。</li>
+<li>同一个Pod内的所有容器共享相同的卷和网络。我们可以使用此特性在应用程序及其init容器之间共享数据。</li>
+</ul>
+<h2 id="Init-Containers的“请求”和“限制”行为"><a href="#Init-Containers的“请求”和“限制”行为" class="headerlink" title="Init Containers的“请求”和“限制”行为"></a>Init Containers的“请求”和“限制”行为</h2><p>正如我们刚刚讨论的，init容器总是在同一个Pod上的其他应用程序容器之前启动。因此，调度程序为init容器的资源和限制提供了更高的优先级。这种行为必须被彻底考虑，因为它可能会导致不期望的结果。例如，如果我们有一个init容器和一个应用程序容器，并且将init容器的资源和限制设置为高于应用程序容器的资源和限制，那么只有在存在满足init容器要求的可用节点时，才会调度整个Pod。换句话说，即使有一个未使用的节点可以运行应用程序容器，如果init容器具有该节点可以处理的更高的资源先决条件，那么Pod也不会部署到该节点。因此，在定义init容器的请求和限制时，应该尽可能严格。<strong>作为最佳实践，除非绝对需要，否则不要将这些参数设置为高于应用程序容器的值。</strong></p>
+<h2 id="场景01-初始化数据库"><a href="#场景01-初始化数据库" class="headerlink" title="场景01:初始化数据库"></a>场景01:初始化数据库</h2><p>在这个场景中，我们为MySQL数据库提供服务。此数据库用于测试应用程序。它不一定要包含真实的数据，但是它必须有足够的数据种子，这样我们就可以测试应用程序的查询速度。我们使用init容器来处理下载SQL转储文件并将其还原到数据库中，该数据库托管在另一个容器中。这种情况可以说明如下：</p>
+<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Kubernetes-Patterns-The-Init-Container-Pattern/init.png" alt="init"></p>
+<p>yaml定义文件可能如下所示：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mydb</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">db</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">fetch</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">mwendler/wget</span></span><br><span class="line">      <span class="attr">command:</span> [<span class="string">&quot;wget&quot;</span>,<span class="string">&quot;--no-check-certificate&quot;</span>,<span class="string">&quot;https://sample-videos.com/sql/Sample-SQL-File-1000rows.sql&quot;</span>,<span class="string">&quot;-O&quot;</span>,<span class="string">&quot;/docker-entrypoint-initdb.d/dump.sql&quot;</span>]</span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/docker-entrypoint-initdb.d</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">dump</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">mysql</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MYSQL_ROOT_PASSWORD</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;example&quot;</span></span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/docker-entrypoint-initdb.d</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">dump</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">emptyDir:</span> &#123;&#125;</span><br><span class="line">      <span class="attr">name:</span> <span class="string">dump</span></span><br></pre></td></tr></table></figure>
+
+<p>上面的定义创建了一个Pod，它承载两个容器：init容器和application容器。让我们看看这个定义有趣的方面：</p>
+<ul>
+<li><p>init容器负责下载包含数据库转储的SQL文件。我们使用mwendler&#x2F;wget映像，因为我们只需要wget命令。</p>
+</li>
+<li><p>下载的SQL的目标目录是MySQL镜像用来执行SQL文件的目录（&#x2F;docker-entrypoint-initdb.d）。此行为内置到我们在应用程序容器中使用的MySQL镜像中。</p>
+</li>
+<li><p>init容器将&#x2F;docker-entrypoint-initdb.d挂载到一个emptyDir卷。因为两个容器托管在同一个Pod上，所以它们共享相同的卷。因此，数据库容器可以访问emptyDir卷上的SQL文件。</p>
+</li>
+</ul>
+<p><strong>如果没有Init Containers会发生什么</strong></p>
+<p>在这个例子中，我们使用初始化模式作为最佳实践。如果我们在不使用init模式的情况下实现相同的逻辑，那么我们必须基于mysql基本镜像创建一个新映像，安装wget，然后使用它下载SQL文件。这种方法的缺点是：</p>
+<ul>
+<li><p>如果需要对下载逻辑进行任何更改，则需要创建一个新镜像，将其推送到定义文件中并更改其引用。这增加了维护自定义镜像的负担。</p>
+</li>
+<li><p>它在DB容器及其启动逻辑之间创建了一个紧密耦合的关系，这使得应用程序更难管理，并且增加了引入错误和bug的可能性。</p>
+</li>
+</ul>
+<h2 id="场景02：延迟应用程序启动"><a href="#场景02：延迟应用程序启动" class="headerlink" title="场景02：延迟应用程序启动"></a>场景02：延迟应用程序启动</h2><p>init容器的另一个常见用例是当我们需要应用程序等待另一个服务完全运行（响应请求）时。以下定义演示了这种情况：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-pod</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-myservice</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox:1.28</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup myservice; do echo waiting for myservice; sleep 2; done;&#x27;</span>]</span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox:1.28</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;echo The app is running! &amp;&amp; sleep 3600&#x27;</span>]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>所以，假设在myapp容器上运行的应用程序必须依赖myservice正常后才能正常工作。我们需要延迟myapp直到myservice准备好。我们通过使用一个简单的nslookup命令（第11行）来实现这一点，该命令不断检查“myservice”的成功名称解析。如果nslookup能够解析“myservice”，则服务将启动。使用一个成功的退出代码，init容器终止，让位于应用程序容器开始。否则，容器将在重试之前休眠两秒钟，从而延迟应用程序容器的启动。</p>
+<p>为了完整起见，这是myservice的定义文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myservice</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">9376</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><ul>
+<li>Init模式是设计需要启动逻辑的应用程序时必须遵循的重要实践。</li>
+<li>Kubernetes提供init容器作为将应用程序逻辑与其启动过程分离的一种方法。</li>
+<li>将应用程序初始化逻辑放在init容器中有许多优点：<ul>
+<li>我们将实施关注点分离原则。应用程序可以有自己的工程师团队，而其初始化逻辑由另一个团队编写。</li>
+<li>在授权和访问控制方面，拥有一个独立的团队来处理应用程序的初始化步骤，可以给公司带来更大的灵活性。例如，如果启动应用程序需要使用需要安全许可的资源（例如，修改防火墙规则），则可以由具有适当凭据的人员来完成。应用程序团队不参与操作。</li>
+<li>如果涉及太多的初始化步骤，可以将它们分解为多个init容器，然后依次执行。如果一个步骤失败，init容将报告一个错误，这将使我们更好地了解逻辑的哪一部分不成功。</li>
+</ul>
+</li>
+<li>在使用init容器时，应该考虑以下几点：<ul>
+<li>初始化容器在失败时重新启动。因此，它们的代码必须是幂等的。</li>
+<li>Init容器的请求和限制会先被调度程序用于调度判断。错误的值可能会对调度器决定将整个Pod（包括应用程序容器）放置在哪里产生负面影响。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/12/26/k8s/Kubernetes-InitContainers-Volume-Pre-Population/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +314,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -276,7 +414,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -407,7 +545,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -616,7 +754,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -754,7 +892,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1251,7 +1389,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1536,7 +1674,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1960,7 +2098,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2176,7 +2314,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2294,156 +2432,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/06/22/k8s/Advertising-Kubernetes-Service-IPs-with-Calico-and-BGP/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/22/k8s/Advertising-Kubernetes-Service-IPs-with-Calico-and-BGP/" class="post-title-link" itemprop="url">使用Calico的BGP发布Kubernetes Service IP路由</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-22 21:58:22" itemprop="dateCreated datePublished" datetime="2020-06-22T21:58:22+00:00">2020-06-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>访问Kubernetes集群中托管的服务的两种最常见方法是通过<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/services-networking/ingress/">Ingress</a>或<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer">Load Balancer</a>。对于公有云用户来说，这些是访问服务的简单有效方法。云托管的控制器可以完成分配公共IP，设置负载平衡和管理SSL的繁重工作。</p>
-<p>在本地运行私有托管的Kubernetes集群的运营商将很快意识到，将服务公开提供比在公有云上更为复杂。服务将在公共互联网上还是仅对本地用户公开？应该如何设置Ingress，负载平衡，IP分配和SSL管理？在维护安全性的同时将服务公开发布的最有效方法是什么？</p>
-<p>Calico项目通过其服务IP发布功能为某些问题提供了答案，该功能与现有的机架（ToR）基础架构集成在一起，可以提供Kubernetes服务IP或Kubernetes外部服务IP的路由。在以下情况下，服务IP发布是一个很好的解决方案：</p>
-<ul>
-<li>您的ToR解决方案能够运行边界网关协议（BGP）</li>
-<li>您希望将服务从群集共享到网络基础结构的其余部分</li>
-<li>您想利用网络负载均衡</li>
-</ul>
-<p>为了启用服务IP发布功能，Calico需要与BGP路由器建立对等关系，该路由器在Calico的内部路由器之外，但在网络本地。BGP是网络中使用的最基本的路由协议之一。在较高级别，BGP通过在信任对等方之间共享路由来工作。与ToR对等时，Calico共享Kubernetes服务的路由，这使它们可用于整个网络。</p>
-<p>为了帮助讨论此功能，假定我们安装以下方式配置了网络和群集：</p>
-<ul>
-<li>托管Kubernetes节点的服务器机架通过顶部机架式路由器连接到物理网络</li>
-<li>Calico作为CNI和网络策略插件运行</li>
-<li>Calico和Rack顶部路由器配置为使用BGP对等</li>
-</ul>
-<p>在此设置中，我们具有以下网络配置：</p>
-<ul>
-<li>机架顶部路由器的IP地址是192.168.1.1，服务器的IP地址是从192.168.1.0&#x2F;24分配的</li>
-<li>Kubernetes Pod网络配置了CIDR 10.48.0.0&#x2F;16</li>
-<li>Kubernetes服务集群IP范围配置为10.49.0.0&#x2F;16</li>
-<li>外部服务IP范围配置为192.168.3.0&#x2F;24</li>
-</ul>
-<p>您的ToR BGP路由器的确切配置超出了本文的范围，并且会因您使用的供应商或软件包而异。如果您没有可用的服务器机架，但仍然想尝试该功能，那么在单独的服务器上运行的<a target="_blank" rel="noopener" href="https://bird.network.cz/">Bird Internet Routing Daemon（BIRD）</a>是尝试进行操作的不错选择。</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Advertising-Kubernetes-Service-IPs-with-Calico-and-BGP/Screen-Shot-2020-04-01-at-12.01.48-PM-1024x794.png"></p>
-<p>第一步是启用ToR和Calico网络之间的对等连接。其工作方式将根据您的ToR实现而有所不同，但是要牢记一些关键事项：</p>
-<ul>
-<li>必须将ToR路由器配置为与在每个节点上运行的Calico对等</li>
-<li>ToR需要接受来自外部网络，外部服务网络和Pod服务网络的路由和流量</li>
-<li>如果可以选择，ToR应该启用正常重启，以防止网络服务中断</li>
-</ul>
-<p>将ToR配置为接受路由后，下一步是在Calico端启用对等。首先通过以下清单告诉Calico有关外部BGP路由器的信息：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">calicoctl</span> <span class="string">apply</span> <span class="string">-f</span> <span class="bullet">-</span> <span class="string">&lt;&lt;</span> <span class="string">EOF</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">projectcalico.org/v3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">BGPPeer</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">bgppeer-global-64512</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">peerIP:</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.1</span></span><br><span class="line">  <span class="attr">asNumber:</span> <span class="number">64512</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
-
-<p>启用对等功能后，Calico可以使Pod成为网络中的头等公民，而无需覆盖网络，并使他们可以直接在群集外部访问。</p>
-<p>尽管启用了对等连接，但是Calico仍需要进一步配置以公开Kubernetes服务IP范围。这可以通过创建新的Calico BGPConfiguration资源来完成：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">calicoctl</span> <span class="string">create</span> <span class="string">-f</span> <span class="bullet">-</span> <span class="string">&lt;&lt;EOF</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">projectcalico.org/v3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">BGPConfiguration</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">serviceClusterIPs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">cidr:</span> <span class="number">10.49</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
-
-<p>启用服务群集IP范围的发布后，ToR上的路由表将如下所示：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ip r</span></span><br><span class="line">...</span><br><span class="line">10.49.0.0/16</span><br><span class="line">nexthop via 192.168.1.10 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.1.11 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.1.12 dev eth2 weight 1 </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p>注意到10.49.0.0&#x2F;16网络的路由如何在节点之间实现ECMP负载平衡。您公开的所有服务将由ToR在所有节点上进行负载平衡。为了说明这一点，我们可以创建一个基本的Nginx服务。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">control:~$ kubectl apply -f - &lt;&lt;EOF</span><br><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: nginx</span><br><span class="line">  replicas: 2</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: nginx</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 80</span><br><span class="line">EOF</span><br><span class="line">control:~$ kubectl expose nginx</span><br><span class="line">control:~$ kubectl get services</span><br><span class="line">NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">kubernetes   ClusterIP   10.49.0.1      &lt;none&gt;        443/TCP   19m</span><br><span class="line">nginx        ClusterIP   10.49.62.131   &lt;none&gt;        80/TCP    4m43s</span><br></pre></td></tr></table></figure>
-
-<p>现在，您可以从外部网络通过其内部群集IP地址访问Kubernetes托管服务。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">external:~$ curl 10.49.62.131</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;title&gt;Welcome to nginx!&lt;/title&gt;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p>这里有两个阶段的负载平衡。首先，ToR通过将其路由到节点来对与群集IP的连接进行负载平衡。然后，使用NAT（网络地址转换）在该节点上运行的kube-proxy负载均衡到特定的Pod，以将目标IP从群集IP更改为后备Pod之一的IP地址。后备Pod可能在本地节点上，也可能在其他节点之一上，从而导致了另一个网络跃点。</p>
-<p>如果我们想避免额外的潜在网络跳数，可以通过将服务上的外部流量策略设置为本地来实现。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">control:~$ kubectl patch service nginx \</span><br><span class="line">  -p &#x27;&#123;&quot;spec&quot;:&#123;&quot;type&quot;: &quot;NodePort&quot;, &quot;externalTrafficPolicy&quot;:&quot;Local&quot;&#125;&#125;&#x27;</span><br></pre></td></tr></table></figure>
-
-<p>现在，在ToR上，您将看到路由表的新增内容，包括Nginx服务到正在运行Nginx的特定节点的ECMP负载平衡：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ip r</span></span><br><span class="line">...</span><br><span class="line">10.49.0.0/16 </span><br><span class="line">nexthop via 192.168.2.10 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.2.11 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.2.12 dev eth2 weight 1 </span><br><span class="line">...</span><br><span class="line">10.49.62.131</span><br><span class="line">nexthop via 192.168.2.11 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.2.12 dev eth2 weight 1 </span><br></pre></td></tr></table></figure>
-
-<p>这是公开Kubernetes网络服务的简便方法，但是在操作上，它具有将Kubernetes群集中该IP范围内的每个服务都暴露给网络其余部分的缺点。如果您想更精细地控制提供哪些服务，或者想要分配真正面向公众的IP地址，Calico可以通过发布外部服务IP来解决这个问题。该方法类似，主要区别在于外部IP不由Kubernetes集群管理，必须手动分配给服务。</p>
-<p>下一个示例将说明这一点。首先重新配置BGPConfiguration，以发布外部IP而不是内部IP（值得注意的是，您可以一次公开这两个集合，但是在此示例中，我们要关闭对内部网络的公共访问，同时仍提供对应用程序的访问）。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">control</span> <span class="string">:~$calicoctl</span> <span class="string">create</span> <span class="string">-f</span> <span class="bullet">-</span> <span class="string">&lt;&lt;EOF</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">projectcalico.org/v3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">BGPConfiguration</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">serviceClusterIPs:</span></span><br><span class="line">  <span class="attr">serviceExternalIPs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">cidr:</span> <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span><span class="string">/24</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
-
-<p>检查路由时，请注意已删除到群集IP范围的路由，并已添加到外部服务网络的路由。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ip r</span></span><br><span class="line">...</span><br><span class="line">192.168.3.0/24</span><br><span class="line">nexthop via 192.168.1.10 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.1.11 dev eth2 weight 1 </span><br><span class="line">nexthop via 192.168.1.12 dev eth2 weight 1 </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p>该服务的群集IP不再公开可见。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">external :~$ curl -m 10 10.49.62.131</span><br><span class="line">curl: (28) Connection timed out after 10001 milliseconds</span><br></pre></td></tr></table></figure>
-
-<p>我们现在在发布外部IP范围，但我们还需要为服务分配一个外部IP：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">control:~$ kubectl patch svc nginx \</span><br><span class="line">-p  &#x27;&#123;&quot;spec&quot;: &#123;&quot;externalIPs&quot;: [&quot;192.168.3.180&quot;]&#125;&#125;&#x27;</span><br><span class="line">control:~$ kubectl get services</span><br><span class="line">NAME       TYPE       CLUSTER-IP     EXTERNAL-IP     PORT(S)        AGE</span><br><span class="line">kubernetes ClusterIP  10.49.0.1      &lt;none&gt;          443/TCP        152m</span><br><span class="line">nginx      NodePort   10.49.62.131   192.168.3.180   80:31890/TCP   109m</span><br></pre></td></tr></table></figure>
-
-<p>检查连接性：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">external:~$ curl 192.168.3.180</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;title&gt;Welcome to nginx!&lt;/title&gt;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p>到此为止，我们快速完成了Calico如何在Kuberentes群集之外发布服务和外部服务IP的快速浏览。对于具有启用BGP路由的本地云，这是一种简单的解决方案，无需提供安装和维护自定义Kubernetes负载均衡器或Ingress控制器的额外工作即可访问Kubernetes服务。如果您想了解更多有关此功能的信息，请查阅官方的Calico项目”<a target="_blank" rel="noopener" href="https://docs.projectcalico.org/networking/advertise-service-ips">Advertise Kubernetes Service IPs</a>“。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2513,7 +2501,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">99</span>
+          <span class="site-state-item-count">100</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -2524,7 +2512,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

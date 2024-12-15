@@ -145,6 +145,105 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/27/stack/Docker-Swarm-Kubernetes-Mesos-Core-OS-Fleet/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/07/27/stack/Docker-Swarm-Kubernetes-Mesos-Core-OS-Fleet/" class="post-title-link" itemprop="url">Docker-Swarm，Kubernetes，Mesos和Core-OS Fleet</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-27 07:18:10" itemprop="dateCreated datePublished" datetime="2019-07-27T07:18:10+00:00">2019-07-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>我对所有这些都比较陌生，并且在尝试理解列出的这些技术时遇到了麻烦。</p>
+<p>虽然，所有这些技术都试图解决不同的问题，但也有共同点。我想了解哪些是相同的，哪些是不同的。少数技术的组合很可能非常适合，如果是这样的话，他们是什么？</p>
+<p>我列出了其中的一些以及问题，但如果有人详细列出所有问题并回答问题，那将会很棒。</p>
+<ol>
+<li><p>Kubernetes vs Mesos:</p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/26705201/whats-the-difference-between-">Apache的Mesos和Google的Kubernetes有什么区别</a>提供了很好的洞察力，但我无法理解为什么Kubernetes应该运行在Mesos之上。两个开源解决方案的结合更多的是什么？</p>
+</li>
+<li><p>Kubernetes vs Core-OS Fleet:</p>
+<p>如果我使用kubernetes，是否需要Core-OS Fleet？</p>
+</li>
+<li><p>Docker-Swarm如何适应上述所有内容？</p>
+</li>
+</ol>
+<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>我认为Mesos和Kubernetes主要是为了解决运行集群应用程序的类似问题，他们有不同的历史和解决问题的不同方法。</p>
+<p>Mesos将精力集中在非常通用的调度上，并插入多个不同的调度程序。这意味着它使Hadoop和Marathon等系统能够在同一个调度环境中共存。Mesos不太关注运行时容器。Mesos存在于对容器的广泛关注之前，并且已经重新更新以支持容器。</p>
+<p>相比之下，Kubernetes从一开始就被设计成一个用于从容器构建分布式应用程序的环境。它包括用于复制和服务发现的原语作为核心原语，其中 - 在Mesos中是通过框架添加这些原语。Kubernetes的主要目标是构建，运行和管理分布式系统的系统。</p>
+<p>Fleet是一个较低级别的任务分发者。它对于引导群集系统很有用，例如CoreOS使用它将kubernetes代理和二进制文件分发到群集中的计算机，以便启动kubernetes群集。它并不是真正意图解决相同的分布式应用程序开发问题，更像是集群的systemd &#x2F; init.d &#x2F; upstart。如果您运行kubernetes，则不需要它，您可以使用其他工具（例如Salt，Puppet，Ansible，Chef，…）来完成相同的二进制分发。</p>
+<p>Swarm是Docker努力扩展现有的Docker API，使一组机器看起来像一个Docker API。从根本上说，我们在Google和其他地方的经验表明，节点API不足以支持群集API。你可以在这里看到一堆讨论：<br><a target="_blank" rel="noopener" href="https://github.com/docker/docker/pull/8859%E5%92%8C%E8%BF%99%E9%87%8C%EF%BC%9A">https://github.com/docker/docker/pull/8859和这里：</a><br><a target="_blank" rel="noopener" href="https://github.com/docker/docker/issues/8781">https://github.com/docker/docker/issues/8781</a></p>
+<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/27640633/docker-swarm-kubernetes-mesos-core-os-fleet">Docker-Swarm, Kubernetes, Mesos &amp; Core-OS Fleet</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/26/stack/What-is-the-difference-between-a-pod-and-a-deployment/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +275,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -270,7 +369,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -359,7 +458,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -458,7 +557,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -556,7 +655,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -664,7 +763,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -753,7 +852,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -866,7 +965,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1004,7 +1103,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1188,7 +1287,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">99</span>
+          <span class="site-state-item-count">100</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1199,7 +1298,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

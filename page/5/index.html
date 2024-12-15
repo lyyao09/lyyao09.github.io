@@ -145,6 +145,124 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/07/10/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Influxdb%E7%9B%91%E6%8E%A7%E6%95%B0%E6%8D%AE%E8%8E%B7%E5%8F%96%E5%BC%82%E5%B8%B8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/07/10/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Influxdb%E7%9B%91%E6%8E%A7%E6%95%B0%E6%8D%AE%E8%8E%B7%E5%8F%96%E5%BC%82%E5%B8%B8/" class="post-title-link" itemprop="url">K8S问题排查-Influxdb监控数据获取异常</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-10 11:11:46" itemprop="dateCreated datePublished" datetime="2021-07-10T11:11:46+00:00">2021-07-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>K8S集群内，<code>Influxdb</code>监控数据获取异常，最终CPU、内存和磁盘使用率都无法获取。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">监控项         使用率</span><br><span class="line">CPU(核)        3%</span><br><span class="line">内存(GB)       18%</span><br><span class="line">磁盘空间(GB)    0%</span><br><span class="line"></span><br><span class="line">监控项         使用率</span><br><span class="line">CPU(核)        7%</span><br><span class="line">内存(GB)       18%</span><br><span class="line">磁盘空间(GB)    1%</span><br><span class="line"></span><br><span class="line">监控项         使用率</span><br><span class="line">CPU(核)        0%</span><br><span class="line">内存(GB)       0%</span><br><span class="line">磁盘空间(GB)    0%</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p><code>Influxdb</code>监控架构图参考[1]，其中<code>Load Balancer</code>采用<code>nginx</code>实现：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">        ┌─────────────────┐                 </span><br><span class="line">        │writes &amp; queries │                 </span><br><span class="line">        └─────────────────┘                 </span><br><span class="line">                 │                          </span><br><span class="line">                 ▼                          </span><br><span class="line">         ┌───────────────┐                  </span><br><span class="line">         │               │                  </span><br><span class="line">┌────────│ Load Balancer │─────────┐        </span><br><span class="line">│        │               │         │        </span><br><span class="line">│        └──────┬─┬──────┘         │        </span><br><span class="line">│               │ │                │        </span><br><span class="line">│               │ │                │        </span><br><span class="line">│        ┌──────┘ └────────┐       │        </span><br><span class="line">│        │ ┌─────────────┐ │       │┌──────┐</span><br><span class="line">│        │ │/write or UDP│ │       ││/query│</span><br><span class="line">│        ▼ └─────────────┘ ▼       │└──────┘</span><br><span class="line">│  ┌──────────┐      ┌──────────┐  │        </span><br><span class="line">│  │ InfluxDB │      │ InfluxDB │  │        </span><br><span class="line">│  │ Relay    │      │ Relay    │  │        </span><br><span class="line">│  └──┬────┬──┘      └────┬──┬──┘  │        </span><br><span class="line">│     │    |              |  │     │        </span><br><span class="line">│     |  ┌─┼──────────────┘  |     │        </span><br><span class="line">│     │  │ └──────────────┐  │     │        </span><br><span class="line">│     ▼  ▼                ▼  ▼     │        </span><br><span class="line">│  ┌──────────┐      ┌──────────┐  │        </span><br><span class="line">│  │          │      │          │  │        </span><br><span class="line">└─▶│ InfluxDB │      │ InfluxDB │◀─┘        </span><br><span class="line">   │          │      │          │           </span><br><span class="line">   └──────────┘      └──────────┘</span><br></pre></td></tr></table></figure>
+
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>因为获取的数据来源是<code>influxdb</code>数据库，所以先搞清楚异常的原因是请求路径上的问题，还是<code>influxdb</code>数据库自身没有数据的问题：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">找到influxdb-nginx的service</span></span><br><span class="line">kubectl get svc  -n kube-system -owide</span><br><span class="line">NAME                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE   SELECTOR</span><br><span class="line">grafana-service          ClusterIP   10.96.177.245   &lt;none&gt;        3000/TCP                 21d   app=grafana</span><br><span class="line">heapster                 ClusterIP   10.96.239.225   &lt;none&gt;        80/TCP                   21d   app=heapster</span><br><span class="line">influxdb-nginx-service   ClusterIP   10.96.170.72    &lt;none&gt;        7076/TCP                 21d   app=influxdb-nginx</span><br><span class="line">influxdb-relay-service   ClusterIP   10.96.196.45    &lt;none&gt;        9096/TCP                 21d   app=influxdb-relay</span><br><span class="line">influxdb-service         ClusterIP   10.96.127.45    &lt;none&gt;        8086/TCP                 21d   app=influxdb</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在集群节点上检查访问influxdb-nginx的service是否正常</span></span><br><span class="line">curl -i 10.96.170.72:7076/query</span><br><span class="line">HTTP/1.1 401 Unauthorized</span><br><span class="line">Server: nginx/1.17.2</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，请求发送到<code>influxdb-nginx</code>的<code>service</code>是正常的，也就是请求可以正常发送到后端的<code>influxdb</code>数据库。那就继续确认<code>influxdb</code>数据库自身没有数据的问题：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">找到influxdb数据库的pod</span></span><br><span class="line">kubectl get pod -n kube-system -owide |grep influxdb</span><br><span class="line">influxdb-nginx-4x8pr                       1/1     Running   3          21d   177.177.52.201    node3</span><br><span class="line">influxdb-nginx-tpngh                       1/1     Running   6          21d   177.177.41.214    node1</span><br><span class="line">influxdb-nginx-wh6kc                       1/1     Running   5          21d   177.177.250.180   node2</span><br><span class="line">influxdb-relay-rs-65c94bbf5f-dp7s4         1/1     Running   2          21d   177.177.250.148   node2</span><br><span class="line">influxdb1-6ff9466d46-q6w5r                 1/1     Running   3          21d   177.177.41.230    node1</span><br><span class="line">influxdb2-d6d6697f5-zzcnk                  1/1     Running   3          21d   177.177.250.161   node2</span><br><span class="line">influxdb3-65ddfc7476-hxhr8                 1/1     Running   4          21d   177.177.52.217    node3</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">登录任意一个influxdb容器内并进入交互式命令</span></span><br><span class="line">kubectl exec -it -n kube-systme influxdb-rs3-65ddfc7476-hxhr8 bash</span><br><span class="line">root@influxdb-rs3-65ddfc7476-hxhr8:/# influx</span><br><span class="line">Connected to http://localhost:8086 version 1.7.7</span><br><span class="line">InfluxDB shell version: 1.7.7</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">auth</span></span><br><span class="line">username: admin</span><br><span class="line">password: xxx</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">use xxx;</span></span><br><span class="line">Using database xxx</span><br></pre></td></tr></table></figure>
+
+<p>根据业务层面的查询语句，在<code>influxdb</code>交互式命令下手工查询验证：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span> <span class="built_in">where</span> <span class="string">&quot;type&quot;</span> = <span class="string">&#x27;node&#x27;</span> and <span class="string">&quot;nodename&quot;</span> = <span class="string">&#x27;node1&#x27;</span> and time &gt; now() - 2m</span></span><br><span class="line"><span class="meta prompt_">&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>结果发现确实没有查到数据，既然<code>2min</code>内的数据没有，那把时间线拉长一些看看呢？</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">不限制时间范围的查询</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span>&gt; <span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span>;</span></span><br><span class="line">name: cpu/node_capacity</span><br><span class="line">time sum</span><br><span class="line">---- ---</span><br><span class="line">0    5301432000</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查询72min内的数据</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span> <span class="built_in">where</span> <span class="string">&quot;type&quot;</span> = <span class="string">&#x27;node&#x27;</span> and <span class="string">&quot;nodename&quot;</span> = <span class="string">&#x27;node1&#x27;</span> and time &gt; now() - 72m</span></span><br><span class="line">name: cpu/node_capacity</span><br><span class="line">time                sum</span><br><span class="line">----                ---</span><br><span class="line">1624348319900503945 72000</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">sleep</span> 1min，继续查询72min内的数据</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span> <span class="built_in">where</span> <span class="string">&quot;type&quot;</span> = <span class="string">&#x27;node&#x27;</span> and <span class="string">&quot;nodename&quot;</span> = <span class="string">&#x27;node1&#x27;</span> and time &gt; now() - 72m</span></span><br><span class="line">name: cpu/node_capacity</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"></span><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查询73min内的数据</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">select</span> <span class="built_in">sum</span>(value) from <span class="string">&quot;cpu/node_capacity&quot;</span> <span class="built_in">where</span> <span class="string">&quot;type&quot;</span> = <span class="string">&#x27;node&#x27;</span> and <span class="string">&quot;nodename&quot;</span> = <span class="string">&#x27;node1&#x27;</span> and time &gt; now() - 73m</span></span><br><span class="line">name: cpu/node_capacity</span><br><span class="line">time                sum</span><br><span class="line">----                ---</span><br><span class="line">1624348319900503945 72000</span><br></pre></td></tr></table></figure>
+
+<p>根据查询结果看，不添加时间范围的查询是有记录的，并且通过多次验证看，<strong>数据无法获取的原因是数据在某个时间点不再写入导致的</strong>。查看<code>influxdb</code>的日志看看有没有什么相关日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs -n kube-systme influxdb-rs3-65ddfc7476-hxhr8</span><br><span class="line">ts=2021-06-22T09:56:49.658621Z lvl=warn msg=&quot;max-values-per-tag limit may be exceeded soon&quot; log_id=0UYIcREl000 service=store perc=100% n=100000 max=100000 db_instance=xxx measurement=network/rx tag=pod_name</span><br><span class="line">ts=2021-06-22T09:56:49.658702Z lvl=warn msg=&quot;max-values-per-tag limit may be exceeded soon&quot; log_id=0UYIcREl000 service=store perc=100% n=100000 max=100000 db_instance=xxx measurement=network/rx_errors tag=pod_name</span><br><span class="line">ts=2021-06-22T09:56:49.658815Z lvl=warn msg=&quot;max-values-per-tag limit may be exceeded soon&quot; log_id=0UYIcREl000 service=store perc=100% n=100000 max=100000 db_instance=xxx measurement=network/tx tag=pod_name</span><br><span class="line">ts=2021-06-22T09:56:49.658893Z lvl=warn msg=&quot;max-values-per-tag limit may be exceeded soon&quot; log_id=0UYIcREl000 service=store perc=100% n=100000 max=100000 db_instance=xxx measurement=network/tx_errors tag=pod_name</span><br><span class="line">ts=2021-06-22T09:56:49.659062Z lvl=warn msg=&quot;max-values-per-tag limit may be exceeded soon&quot; log_id=0UYIcREl000 service=store perc=100% n=100003 max=100000 db_instance=xxx measurement=uptime tag=pod_name</span><br></pre></td></tr></table></figure>
+
+<p>果然，有大量<code>warn</code>日志，提示<code>max-values-per-tag limit may be exceeded soon</code>，从日志可以看出，这个参数的默认值为<code>100000</code>。通过搜索，找到了这个参数引入的issue[2]，引入原因大概意思是：</p>
+<blockquote>
+<p>如果不小心加载了大量的cardinality数据，那么当我们删除数据的时候，InfluxDB很容易会发生OOM。</p>
+</blockquote>
+<p>通过临时修改<code>max-values-per-tag</code>参数，验证问题是否解决</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">cat influxdb.conf</span><br><span class="line">[meta]</span><br><span class="line">  dir = &quot;/var/lib/influxdb/meta&quot;</span><br><span class="line">[data]</span><br><span class="line">  dir = &quot;/var/lib/influxdb/data&quot;</span><br><span class="line">  engine = &quot;tsm1&quot;</span><br><span class="line">  wal-dir = &quot;/var/lib/influxdb/wal&quot;</span><br><span class="line">  max-series-per-database = 0</span><br><span class="line">  max-values-per-tag = 0</span><br><span class="line">[http]</span><br><span class="line">  auth-enabled = true</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete pod -n kube-system influxdb-rs1-6ff9466d46-q6w5r</span><br><span class="line">pod &quot;influxdb-rs1-6ff9466d46-q6w5r&quot; deleted</span><br><span class="line"></span><br><span class="line">kubectl delete pod -n kube-system influxdb-rs2-d6d6697f5-zzcnk</span><br><span class="line">pod &quot;influxdb-rs2-d6d6697f5-zzcnk&quot; deleted</span><br><span class="line"></span><br><span class="line">kubectl delete pod -n kube-system influxdb-rs3-65ddfc7476-hxhr8</span><br><span class="line">pod &quot;influxdb-rs3-65ddfc7476-hxhr8&quot; deleted</span><br></pre></td></tr></table></figure>
+
+<p>再次观察业务层面获取的<code>Influxdb</code>监控数据，最终CPU、内存和磁盘使用率正常获取。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">监控项         使用率</span><br><span class="line">CPU(核)        19%</span><br><span class="line">内存(GB)       22%</span><br><span class="line">磁盘空间(GB)    2%</span><br></pre></td></tr></table></figure>
+
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>根据业务情况，将<code>influxdb</code>的<code>max-values-per-tag</code>参数调整到合适值。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/influxdata/influxdb-relay">https://github.com/influxdata/influxdb-relay</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/influxdata/influxdb/issues/7146">https://github.com/influxdata/influxdb/issues/7146</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2021/06/26/k8s/K8S%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5-Pod%E9%97%B4%E9%80%9A%E8%BF%87%E6%9C%8D%E5%8A%A1%E5%90%8D%E8%AE%BF%E9%97%AE%E5%BC%82%E5%B8%B8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +294,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -303,7 +421,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -413,7 +531,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -548,7 +666,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -661,7 +779,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -798,7 +916,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1048,7 +1166,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1415,7 +1533,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1529,7 +1647,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
+                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1581,144 +1699,6 @@
 <p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Top10-Must-Know-Kubernetes-Design-Patterns/KubernetePatternsLevels-SingleColor-Copy-of-Full-768x495.png" alt="KubernetePatternsLevels"></p>
 <p>Kubernetes是新的应用程序可移植层。如果你是一个软件开发人员或架构师，Kubernetes很可能会以这样或那样的形式成为你生活的一部分。学习这里描述的Kubernetes模式将改变我们对这个平台的看法。我相信Kubernetes和由此产生的概念将成为面向对象编程概念的基础。</p>
 <p>这里的模式试图创建类似Gang of Four的设计模式，但是用于容器编排。阅读这篇文章一定不是结束，而是你的Kubernetes之旅的开始。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2020/12/28/k8s/Kubernetes-Patterns-The-Init-Container-Pattern/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/28/k8s/Kubernetes-Patterns-The-Init-Container-Pattern/" class="post-title-link" itemprop="url">Kubernetes模式：initContainer使用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-28 21:48:10" itemprop="dateCreated datePublished" datetime="2020-12-28T21:48:10+00:00">2020-12-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-02 14:14:39" itemprop="dateModified" datetime="2024-11-02T14:14:39+00:00">2024-11-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Init模式"><a href="#Init模式" class="headerlink" title="Init模式"></a>Init模式</h2><p>初始化逻辑通常在编程语言中很常见。在面向对象编程语言中，我们有构造函数的概念。构造函数是一个函数（或方法），每当对象被实例化时都会被调用。构造器的目的是“准备”对象以完成它应该做的工作。例如，它设置变量的默认值，创建数据库连接对象，确保对象正确运行所需的先决条件的存在。例如，如果创建了一个user对象，那么它至少需要用户的用户名、名和姓，这样它才能正常工作。不同语言之间的构造函数实现是不同的。但是，所有这些都只被调用一次，并且只在对象实例化时调用。</p>
-<p>初始化模式的目的是将对象与其初始化逻辑解耦。因此，如果一个对象需要一些种子数据输入到数据库中，这就属于构造函数逻辑而不是应用程序逻辑。这允许我们更改对象的“启动”方式，而不影响其“工作”方式。</p>
-<p>Kubernetes使用相同的模式。虽然对象是面向对象语言的原子单元，但是Kubernetes有Pods。因此，如果我们有一个应用程序在需要一些初始化逻辑的容器上运行，那么将此工作交给另一个容器是一个很好的做法。Kubernetes有一种用于特定作业的容器类型：init containers。</p>
-<h2 id="Init-Containers"><a href="#Init-Containers" class="headerlink" title="Init Containers"></a>Init Containers</h2><p>在Kubernetes中，init容器是在同一个Pod中的其他容器之前启动和执行的容器。它的目的是<strong>为Pod上托管的主应用程序执行初始化逻辑</strong>。例如，创建必要的用户帐户、执行数据库迁移、创建数据库模式等等。</p>
-<h2 id="Init-Containers设计注意事项"><a href="#Init-Containers设计注意事项" class="headerlink" title="Init Containers设计注意事项"></a>Init Containers设计注意事项</h2><p>在创建init容器时，我们应该考虑一些注意事项：</p>
-<ul>
-<li>它们总是比Pod里的其他容器先执行。因此，它们不应该包含需要很长时间才能完成的复杂逻辑。启动脚本通常很小而且简洁。如果我们发现在init容器中添加了太多的逻辑，那就应该考虑将它的一部分移到应用程序容器本身。</li>
-<li>Init容器按顺序启动和执行。除非成功完成其前置容器，否则不会调用init容器。因此，如果启动任务很长，可以考虑将其分成若干步骤，每个步骤都由init容器处理，以便知道哪些步骤失败。</li>
-<li>如果任何init容器失败，整个Pod将重新启动（除非将restartPolicy设置为Never）。重新启动Pod意味着重新执行所有容器，包括任何init容器。因此，我们可能需要确保启动逻辑能够容忍多次执行而不会导致重复。例如，如果数据库迁移已经完成，那么应该忽略再次执行迁移命令。</li>
-<li>在一个或多个依赖项可用之前，init容器是延迟应用程序初始化的一个很好的候选者。例如，如果我们的应用程序依赖于一个施加了API请求速率限制的API，可能需要等待一段时间才能从该API接收响应。在应用程序容器中实现此逻辑可能很复杂；因为它需要与运行状况和准备状态探测相结合。一种更简单的方法是创建一个init容器，该容器等待API准备好后才能成功退出。只有在init容器成功完成其工作之后，应用程序容器才会启动。</li>
-<li>Init容器不能像应用程序容器那样使用liveness和readiness探针。原因是它们注定要成功启动和退出，就像Jobs和CronJobs的行为一样。</li>
-<li>同一个Pod内的所有容器共享相同的卷和网络。我们可以使用此特性在应用程序及其init容器之间共享数据。</li>
-</ul>
-<h2 id="Init-Containers的“请求”和“限制”行为"><a href="#Init-Containers的“请求”和“限制”行为" class="headerlink" title="Init Containers的“请求”和“限制”行为"></a>Init Containers的“请求”和“限制”行为</h2><p>正如我们刚刚讨论的，init容器总是在同一个Pod上的其他应用程序容器之前启动。因此，调度程序为init容器的资源和限制提供了更高的优先级。这种行为必须被彻底考虑，因为它可能会导致不期望的结果。例如，如果我们有一个init容器和一个应用程序容器，并且将init容器的资源和限制设置为高于应用程序容器的资源和限制，那么只有在存在满足init容器要求的可用节点时，才会调度整个Pod。换句话说，即使有一个未使用的节点可以运行应用程序容器，如果init容器具有该节点可以处理的更高的资源先决条件，那么Pod也不会部署到该节点。因此，在定义init容器的请求和限制时，应该尽可能严格。<strong>作为最佳实践，除非绝对需要，否则不要将这些参数设置为高于应用程序容器的值。</strong></p>
-<h2 id="场景01-初始化数据库"><a href="#场景01-初始化数据库" class="headerlink" title="场景01:初始化数据库"></a>场景01:初始化数据库</h2><p>在这个场景中，我们为MySQL数据库提供服务。此数据库用于测试应用程序。它不一定要包含真实的数据，但是它必须有足够的数据种子，这样我们就可以测试应用程序的查询速度。我们使用init容器来处理下载SQL转储文件并将其还原到数据库中，该数据库托管在另一个容器中。这种情况可以说明如下：</p>
-<p><img src="https://gitee.com/lyyao09/cdn/raw/master/k8s/Kubernetes-Patterns-The-Init-Container-Pattern/init.png" alt="init"></p>
-<p>yaml定义文件可能如下所示：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mydb</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">db</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">fetch</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">mwendler/wget</span></span><br><span class="line">      <span class="attr">command:</span> [<span class="string">&quot;wget&quot;</span>,<span class="string">&quot;--no-check-certificate&quot;</span>,<span class="string">&quot;https://sample-videos.com/sql/Sample-SQL-File-1000rows.sql&quot;</span>,<span class="string">&quot;-O&quot;</span>,<span class="string">&quot;/docker-entrypoint-initdb.d/dump.sql&quot;</span>]</span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/docker-entrypoint-initdb.d</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">dump</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mysql</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">mysql</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">MYSQL_ROOT_PASSWORD</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;example&quot;</span></span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/docker-entrypoint-initdb.d</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">dump</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">emptyDir:</span> &#123;&#125;</span><br><span class="line">      <span class="attr">name:</span> <span class="string">dump</span></span><br></pre></td></tr></table></figure>
-
-<p>上面的定义创建了一个Pod，它承载两个容器：init容器和application容器。让我们看看这个定义有趣的方面：</p>
-<ul>
-<li><p>init容器负责下载包含数据库转储的SQL文件。我们使用mwendler&#x2F;wget映像，因为我们只需要wget命令。</p>
-</li>
-<li><p>下载的SQL的目标目录是MySQL镜像用来执行SQL文件的目录（&#x2F;docker-entrypoint-initdb.d）。此行为内置到我们在应用程序容器中使用的MySQL镜像中。</p>
-</li>
-<li><p>init容器将&#x2F;docker-entrypoint-initdb.d挂载到一个emptyDir卷。因为两个容器托管在同一个Pod上，所以它们共享相同的卷。因此，数据库容器可以访问emptyDir卷上的SQL文件。</p>
-</li>
-</ul>
-<p><strong>如果没有Init Containers会发生什么</strong></p>
-<p>在这个例子中，我们使用初始化模式作为最佳实践。如果我们在不使用init模式的情况下实现相同的逻辑，那么我们必须基于mysql基本镜像创建一个新映像，安装wget，然后使用它下载SQL文件。这种方法的缺点是：</p>
-<ul>
-<li><p>如果需要对下载逻辑进行任何更改，则需要创建一个新镜像，将其推送到定义文件中并更改其引用。这增加了维护自定义镜像的负担。</p>
-</li>
-<li><p>它在DB容器及其启动逻辑之间创建了一个紧密耦合的关系，这使得应用程序更难管理，并且增加了引入错误和bug的可能性。</p>
-</li>
-</ul>
-<h2 id="场景02：延迟应用程序启动"><a href="#场景02：延迟应用程序启动" class="headerlink" title="场景02：延迟应用程序启动"></a>场景02：延迟应用程序启动</h2><p>init容器的另一个常见用例是当我们需要应用程序等待另一个服务完全运行（响应请求）时。以下定义演示了这种情况：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-pod</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-myservice</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox:1.28</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;until nslookup myservice; do echo waiting for myservice; sleep 2; done;&#x27;</span>]</span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox:1.28</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>, <span class="string">&#x27;echo The app is running! &amp;&amp; sleep 3600&#x27;</span>]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>所以，假设在myapp容器上运行的应用程序必须依赖myservice正常后才能正常工作。我们需要延迟myapp直到myservice准备好。我们通过使用一个简单的nslookup命令（第11行）来实现这一点，该命令不断检查“myservice”的成功名称解析。如果nslookup能够解析“myservice”，则服务将启动。使用一个成功的退出代码，init容器终止，让位于应用程序容器开始。否则，容器将在重试之前休眠两秒钟，从而延迟应用程序容器的启动。</p>
-<p>为了完整起见，这是myservice的定义文件：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myservice</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">9376</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><ul>
-<li>Init模式是设计需要启动逻辑的应用程序时必须遵循的重要实践。</li>
-<li>Kubernetes提供init容器作为将应用程序逻辑与其启动过程分离的一种方法。</li>
-<li>将应用程序初始化逻辑放在init容器中有许多优点：<ul>
-<li>我们将实施关注点分离原则。应用程序可以有自己的工程师团队，而其初始化逻辑由另一个团队编写。</li>
-<li>在授权和访问控制方面，拥有一个独立的团队来处理应用程序的初始化步骤，可以给公司带来更大的灵活性。例如，如果启动应用程序需要使用需要安全许可的资源（例如，修改防火墙规则），则可以由具有适当凭据的人员来完成。应用程序团队不参与操作。</li>
-<li>如果涉及太多的初始化步骤，可以将它们分解为多个init容器，然后依次执行。如果一个步骤失败，init容将报告一个错误，这将使我们更好地了解逻辑的哪一部分不成功。</li>
-</ul>
-</li>
-<li>在使用init容器时，应该考虑以下几点：<ul>
-<li>初始化容器在失败时重新启动。因此，它们的代码必须是幂等的。</li>
-<li>Init容器的请求和限制会先被调度程序用于调度判断。错误的值可能会对调度器决定将整个Pod（包括应用程序容器）放置在哪里产生负面影响。</li>
-</ul>
-</li>
-</ul>
 
       
     </div>
@@ -1803,7 +1783,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">99</span>
+          <span class="site-state-item-count">100</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1814,7 +1794,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
