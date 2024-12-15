@@ -145,6 +145,219 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-create-delete/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/02/tools/The-usage-of-yq-create-delete/" class="post-title-link" itemprop="url">YAML处理工具yq之创建删除篇</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-02 21:52:09" itemprop="dateCreated datePublished" datetime="2019-08-02T21:52:09+00:00">2019-08-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>yq是一个轻量级的便携式命令行YAML处理器。该工具的目标是成为yaml文件处理方面的jq或sed。</p>
+<h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><p>可以使用“new”命令创建Yaml文件。这与write命令的工作方式相同，但不需要传入已存在的Yaml文件。目前，不支持在单个yaml文件中创建多个文档。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq n &lt;path&gt; &lt;new value&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建简单文件"><a href="#创建简单文件" class="headerlink" title="创建简单文件"></a>创建简单文件</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq n b.c cat</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="attr">c:</span> <span class="string">cat</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用脚本创建文件"><a href="#使用脚本创建文件" class="headerlink" title="使用脚本创建文件"></a>使用脚本创建文件</h3><p>创建脚本遵循与更新脚本相同的格式。</p>
+<p>给定一个脚本create_instructions.yaml：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b.c: 3</span><br><span class="line">b.e[+].name: Howdy Partner</span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">yq</span> <span class="string">n</span> <span class="string">-s</span> <span class="string">create_instructions.yaml</span></span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="attr">c:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">e:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Howdy</span> <span class="string">Partner</span></span><br></pre></td></tr></table></figure>
+
+<p>还可以使用管道方式创建：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat create_instructions.yaml | yq n -s -</span><br></pre></td></tr></table></figure>
+
+<h3 id="带点号的Key"><a href="#带点号的Key" class="headerlink" title="带点号的Key"></a>带点号的Key</h3><p>指定具有点号使用键查找指示符的键时。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="attr">foo.bar:</span> <span class="number">7</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yaml r sample.yaml &#x27;b[foo.bar]&#x27;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yaml w sample.yaml &#x27;b[foo.bar]&#x27; 9</span><br></pre></td></tr></table></figure>
+
+<p>可以将任何有效的yaml key指定为key查找的一部分。</p>
+<blockquote>
+<p>请注意，路径是引号，以避免shell解释方括号。</p>
+</blockquote>
+<h3 id="带有破折号的键（和值）"><a href="#带有破折号的键（和值）" class="headerlink" title="带有破折号的键（和值）"></a>带有破折号的键（和值）</h3><p>如果键或值具有前导破折号，则yq将不知道您传递的是值而不是标志（并且您将收到“错误标志语法”错误）。</p>
+<p>要解决这个问题，你需要告诉它通过在最后一个标志之后添加’ - ‘来停止处理标志，如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq n -t -- --key --value</span><br></pre></td></tr></table></figure>
+
+<p>返回</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">` --key: --value</span><br></pre></td></tr></table></figure>
+
+<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq d &lt;yaml_file&gt; &lt;path_to_delete&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="写到标准输出"><a href="#写到标准输出" class="headerlink" title="写到标准输出"></a>写到标准输出</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="attr">c:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">apples:</span> <span class="string">green</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq d sample.yaml b.c</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="attr">apples:</span> <span class="string">green</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="从标准输入读取"><a href="#从标准输入读取" class="headerlink" title="从标准输入读取"></a>从标准输入读取</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat sample.yaml | yq d - b.c</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除数组元素"><a href="#删除数组元素" class="headerlink" title="删除数组元素"></a>删除数组元素</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="attr">c:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="number">1</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">2</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq d sample.yaml &#x27;b.c[1]&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="attr">c:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="number">1</span></span><br><span class="line">  <span class="bullet">-</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="删除节点"><a href="#删除节点" class="headerlink" title="删除节点"></a>删除节点</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="attr">c:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">apples:</span> <span class="string">green</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq d -i sample.yaml b.c</span><br></pre></td></tr></table></figure>
+
+<p>将更新sample.yaml文件，以便删除“c”节点。</p>
+<h3 id="通配符"><a href="#通配符" class="headerlink" title="通配符"></a>通配符</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">bob:</span></span><br><span class="line">  <span class="attr">item1:</span></span><br><span class="line">    <span class="attr">cats:</span> <span class="string">bananas</span></span><br><span class="line">    <span class="attr">dogs:</span> <span class="string">woof</span></span><br><span class="line">  <span class="attr">item2:</span></span><br><span class="line">    <span class="attr">cats:</span> <span class="string">apples</span></span><br><span class="line">    <span class="attr">dogs:</span> <span class="string">woof2</span></span><br><span class="line">  <span class="attr">thing:</span></span><br><span class="line">    <span class="attr">cats:</span> <span class="string">oranges</span></span><br><span class="line">    <span class="attr">dogs:</span> <span class="string">woof3</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq d sample.yaml bob.*.cats</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">bob:</span></span><br><span class="line">  <span class="attr">item1:</span></span><br><span class="line">    <span class="attr">dogs:</span> <span class="string">woof</span></span><br><span class="line">  <span class="attr">item2:</span></span><br><span class="line">    <span class="attr">dogs:</span> <span class="string">woof2</span></span><br><span class="line">  <span class="attr">thing:</span></span><br><span class="line">    <span class="attr">dogs:</span> <span class="string">woof3</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="前缀匹配"><a href="#前缀匹配" class="headerlink" title="前缀匹配"></a>前缀匹配</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">bob:</span></span><br><span class="line">  <span class="attr">item1:</span></span><br><span class="line">    <span class="attr">cats:</span> <span class="string">bananas</span></span><br><span class="line">    <span class="attr">dogs:</span> <span class="string">woof</span></span><br><span class="line">  <span class="attr">item2:</span></span><br><span class="line">    <span class="attr">cats:</span> <span class="string">apples</span></span><br><span class="line">    <span class="attr">dogs:</span> <span class="string">woof2</span></span><br><span class="line">  <span class="attr">thing:</span></span><br><span class="line">    <span class="attr">cats:</span> <span class="string">oranges</span></span><br><span class="line">    <span class="attr">dogs:</span> <span class="string">woof3</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq d sample.yaml bob.item*.cats</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">bob:</span></span><br><span class="line">  <span class="attr">item1:</span></span><br><span class="line">    <span class="attr">dogs:</span> <span class="string">woof</span></span><br><span class="line">  <span class="attr">item2:</span></span><br><span class="line">    <span class="attr">dogs:</span> <span class="string">woof2</span></span><br><span class="line">  <span class="attr">thing:</span></span><br><span class="line">    <span class="attr">cats:</span> <span class="string">oranges</span></span><br><span class="line">    <span class="attr">dogs:</span> <span class="string">woof3</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="数组匹配"><a href="#数组匹配" class="headerlink" title="数组匹配"></a>数组匹配</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">bob:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">cats:</span> <span class="string">bananas</span></span><br><span class="line">  <span class="attr">dogs:</span> <span class="string">woof</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">cats:</span> <span class="string">apples</span></span><br><span class="line">  <span class="attr">dogs:</span> <span class="string">woof2</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">cats:</span> <span class="string">oranges</span></span><br><span class="line">  <span class="attr">dogs:</span> <span class="string">woof3</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq d sample.yaml bob.[*].cats</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">bob:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">dogs:</span> <span class="string">woof</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">dogs:</span> <span class="string">woof2</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">dogs:</span> <span class="string">woof3</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="多文档-删除单个文档"><a href="#多文档-删除单个文档" class="headerlink" title="多文档 - 删除单个文档"></a>多文档 - 删除单个文档</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="attr">field:</span> <span class="string">leaveMe</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="attr">c:</span> <span class="number">2</span></span><br><span class="line"><span class="attr">field:</span> <span class="string">deleteMe</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq w -d1 sample.yaml field</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="attr">field:</span> <span class="string">leaveMe</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="attr">c:</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="多文档-删除所有文档"><a href="#多文档-删除所有文档" class="headerlink" title="多文档 - 删除所有文档"></a>多文档 - 删除所有文档</h3><p>给出sample.yaml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="attr">field:</span> <span class="string">deleteMe</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="attr">c:</span> <span class="number">2</span></span><br><span class="line"><span class="attr">field:</span> <span class="string">deleteMeToo</span></span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq w -d&#x27;*&#x27; sample.yaml field</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">something:</span> <span class="string">else</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="attr">c:</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>请注意，’*’在引号中以避免被shell解释。</p>
+</blockquote>
+<h3 id="带点号的Key-1"><a href="#带点号的Key-1" class="headerlink" title="带点号的Key"></a>带点号的Key</h3><p>指定具有点号使用键查找指示符的键时。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">b:</span></span><br><span class="line">  <span class="attr">foo.bar:</span> <span class="number">7</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yaml r sample.yaml &#x27;b[foo.bar]&#x27;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yaml w sample.yaml &#x27;b[foo.bar]&#x27; 9</span><br></pre></td></tr></table></figure>
+
+<p>可以将任何有效的yaml key指定为key查找的一部分。</p>
+<blockquote>
+<p>请注意，路径是引号，以避免shell解释方括号。</p>
+</blockquote>
+<h3 id="带有破折号的键（和值）-1"><a href="#带有破折号的键（和值）-1" class="headerlink" title="带有破折号的键（和值）"></a>带有破折号的键（和值）</h3><p>如果键或值具有前导破折号，则yq将不知道您传递的是值而不是标志（并且您将收到“错误标志语法”错误）。</p>
+<p>要解决这个问题，你需要告诉它通过在最后一个标志之后添加’ - ‘来停止处理标志，如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yq n -t -- --key --value</span><br></pre></td></tr></table></figure>
+
+<p>返回</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">` --key: --value</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/08/02/tools/The-usage-of-yq-read-write/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +389,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -474,7 +687,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -568,7 +781,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -661,7 +874,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -751,7 +964,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -850,7 +1063,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -967,7 +1180,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1087,7 +1300,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1178,7 +1391,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1239,121 +1452,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2019/07/27/stack/Whats-the-difference-between-ClusterIP-NodePort-and-LoadBalancer-service-types-in-Kubernetes/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/07/27/stack/Whats-the-difference-between-ClusterIP-NodePort-and-LoadBalancer-service-types-in-Kubernetes/" class="post-title-link" itemprop="url">Kubernetes的各种Service类型（ClusterIP，NodePort和LoadBalancer）有什么区别</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-07-27 10:03:45" itemprop="dateCreated datePublished" datetime="2019-07-27T10:03:45+00:00">2019-07-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/stackoverflow/" itemprop="url" rel="index"><span itemprop="name">stackoverflow</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>1  - 我正在阅读文档，我对措辞有点困惑。它说：</p>
-<blockquote>
-<p><strong>ClusterIP</strong>：在集群内部IP上公开服务。选择此值使服务只能从群集中访问。这是默认的ServiceType</p>
-<p><strong>NodePort</strong>：在每个Node的IP上公开静态端口（NodePort）服务。将自动创建NodePort服务到ClusterIP服务的路由。您可以通过请求<NodeIP>：<NodePort>来从群集外部请求NodePort服务。</p>
-<p><strong>LoadBalancer</strong>：使用云提供商的负载均衡器在外部公开服务。将自动创建外部负载均衡器到NodePort和ClusterIP服务的路由。</p>
-</blockquote>
-<p>NodePort服务类型是否仍然使用ClusterIP，而只是在不同的端口，该端口对外部客户端开放？那么在这种情况下，<NodeIP>：<NodePort>与<ClusterIP>：<NodePort>相同？</p>
-<p>或者，NodeIP是否是运行kubectl get nodes得到的IP，而不是用于ClusterIP的虚拟IP？</p>
-<p>2  - 同样在以下链接的图表中：</p>
-<p><a target="_blank" rel="noopener" href="http://kubernetes.io/images/docs/services-iptables-overview.svg">http://kubernetes.io/images/docs/services-iptables-overview.svg</a></p>
-<p>客户端在节点内是否有任何特殊原因？我认为在ClusterIP服务类型的情况下，它需要在Cluster内。如果为NodePort绘制一个类似的图表，那么把客户端画在Node和Cluster之外是否有效，或者我是否忽略了什么？</p>
-<h2 id="高票回答"><a href="#高票回答" class="headerlink" title="高票回答"></a>高票回答</h2><p>ClusterIP公开以下内容：</p>
-<ul>
-<li><code>spec.clusterIp:spec.ports[*].port</code></li>
-</ul>
-<p>您只能在群集内访问此服务。可以从spec.clusterIp端口访问它。如果设置了spec.ports [*].targetPort，它将从端口路由到targetPort。调用kubectl get services时获得的CLUSTER-IP是内部在集群内分配给此服务的IP。</p>
-<p>NodePort公开以下内容：</p>
-<ul>
-<li><code>&lt;NodeIP&gt;:spec.ports[*].nodePort</code></li>
-<li><code>spec.clusterIp:spec.ports[*].port</code></li>
-</ul>
-<p>如果通过nodePort的方式从节点的外部IP访问此服务，它会将请求路由到spec.clusterIp:spec.ports[*].port，然后将其路由到spec.ports [*].targetPort，如果设置。也可以使用与ClusterIP相同的方式访问此服务。</p>
-<p>您的NodeIP是节点的外部IP地址。您无法从<ClusterIP>:spec.ports [*].nodePort访问您的服务。</p>
-<p>LoadBalancer公开以下内容：</p>
-<ul>
-<li><code>spec.loadBalancerIp:spec.ports[*].port</code></li>
-<li><code>&lt;NodeIP&gt;:spec.ports[*].nodePort</code></li>
-<li><code>spec.clusterIp:spec.ports[*].port</code></li>
-</ul>
-<p>您可以从负载均衡器的IP地址访问此服务，该IP地址将您的请求路由到nodePort，而nodePort又将请求路由到clusterIP端口。您可以像访问NodePort或ClusterIP服务一样访问此服务。</p>
-<h2 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/41509439/whats-the-difference-between-clusterip-nodeport-and-loadbalancer-service-types">What’s the difference between ClusterIP, NodePort and LoadBalancer service types in Kubernetes</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1419,7 +1521,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-count">101</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1430,7 +1532,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">30</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

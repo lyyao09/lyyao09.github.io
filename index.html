@@ -145,6 +145,91 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/12/08/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Karaf%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%AE%9A%E4%B9%89%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD%E7%94%9F%E6%95%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="LeaoYao">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="云原生知识星球">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/12/08/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Karaf%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%AE%9A%E4%B9%89%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD%E7%94%9F%E6%95%88/" class="post-title-link" itemprop="url">总结分享-Karaf框架实现自定义配置文件自动加载生效</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-12-08 18:15:00" itemprop="dateCreated datePublished" datetime="2024-12-08T18:15:00+00:00">2024-12-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/share/" itemprop="url" rel="index"><span itemprop="name">share</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="需求背景"><a href="#需求背景" class="headerlink" title="需求背景"></a>需求背景</h2><p>在业务稳定运行过程中，希望能通过修改临时配置文件控制业务的行为，要求实时生效。</p>
+<h2 id="实现方案"><a href="#实现方案" class="headerlink" title="实现方案"></a>实现方案</h2><p>已知<code>karaf</code>框架下，<code>/etc/xxx.cfg</code>文件的配置都是支持实时修改和生效的，参考这种实现机制自定义一个<code>cfg</code>文件即可：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xxx.xxx;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.osgi.framework.BundleContext;</span><br><span class="line"><span class="keyword">import</span> org.osgi.service.cm.ManagedService;</span><br><span class="line"><span class="keyword">import</span> org.osgi.service.component.annotations.*;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.Logger;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Dictionary;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component(immediate = true, property = &quot;service.pid=xxx&quot;)</span> <span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AutoConfig</span> <span class="keyword">implements</span> <span class="title class_">ManagedService</span> &#123;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Logger</span> <span class="variable">LOG</span> <span class="operator">=</span> LoggerFactory.getLogger(<span class="string">&quot;xxx&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">FLAG</span> <span class="operator">=</span> <span class="string">&quot;xxx.xxx.enabled&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">boolean</span> <span class="variable">flag</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Activate</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">activate</span><span class="params">(BundleContext context)</span> &#123;</span><br><span class="line">        LOG.info(<span class="string">&quot;AutoConfig activated.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Deactivate</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">deactivate</span><span class="params">()</span> &#123;</span><br><span class="line">        LOG.info(<span class="string">&quot;AutoConfig deactivated.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updated</span><span class="params">(Dictionary properties)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="literal">null</span> == properties) &#123;</span><br><span class="line">                LOG.info(<span class="string">&quot;Configuration updated with null properties, use default.&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="type">Object</span> <span class="variable">object</span> <span class="operator">=</span> properties.get(FLAG);</span><br><span class="line">            <span class="keyword">if</span> (<span class="literal">null</span> == object) &#123;</span><br><span class="line">                LOG.info(<span class="string">&quot;Configuration updated with null properties, use default.&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="type">String</span> <span class="variable">valueFromConfigFile</span> <span class="operator">=</span> (String) object;</span><br><span class="line">            <span class="keyword">if</span> (<span class="string">&quot;TRUE&quot;</span>.equalsIgnoreCase(valueFromConfigFile)) &#123;</span><br><span class="line">                flag = <span class="literal">true</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">&quot;FALSE&quot;</span>.equalsIgnoreCase(valueFromConfigFile)) &#123;</span><br><span class="line">                flag = <span class="literal">false</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                LOG.error(<span class="string">&quot;Invalid value &#123;&#125; from config file, use default true.&quot;</span>, valueFromConfigFile);</span><br><span class="line">                flag = <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            LOG.info(<span class="string">&quot;Configuration updated, flag=&#123;&#125;&quot;</span>, flag);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            LOG.error(<span class="string">&quot;Error updating configuration, use default true.&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://github.com/apache/karaf/tree/karaf-4.2.16/examples/karaf-config-example">https://github.com/apache/karaf/tree/karaf-4.2.16/examples/karaf-config-example</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/12/01/tools/%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB-Windows%E4%B8%8B%E5%BF%AB%E9%80%9F%E6%9F%A5%E6%89%BE%E6%96%87%E4%BB%B6%E5%8D%A0%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -176,7 +261,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -269,7 +354,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -370,7 +455,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -495,7 +580,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -607,7 +692,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -739,7 +824,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -861,7 +946,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -955,7 +1040,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1053,7 +1138,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
+                <time title="修改时间：2024-12-15 11:06:01" itemprop="dateModified" datetime="2024-12-15T11:06:01+00:00">2024-12-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1124,100 +1209,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://lyyao09.github.io/2024/04/21/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Harbor%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93%E7%A6%81%E7%94%A8UI%E6%96%B9%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="LeaoYao">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="云原生知识星球">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/04/21/share/%E6%80%BB%E7%BB%93%E5%88%86%E4%BA%AB-Harbor%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93%E7%A6%81%E7%94%A8UI%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">总结分享-Harbor镜像仓库禁用UI方法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-04-21 21:35:10" itemprop="dateCreated datePublished" datetime="2024-04-21T21:35:10+00:00">2024-04-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-15 11:05:05" itemprop="dateModified" datetime="2024-12-15T11:05:05+00:00">2024-12-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/share/" itemprop="url" rel="index"><span itemprop="name">share</span></a>
-                </span>
-            </span>
-
-          
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1.找到<code>harbor</code>的<code>configmap</code>配置文件，以<code>harbor-cm.yaml</code>为例，修改配置文件，<code>vim harbor-cm.yaml</code></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">  ...</span><br><span class="line">  server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_tokens off;</span><br><span class="line">    client_max_body_size 0;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">      proxy_pass http://localhost:80/;  --删除该配置项</span><br><span class="line">      proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">      proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">      proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">      proxy_set_header X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line"></span><br><span class="line">      proxy_buffering off;</span><br><span class="line">      proxy_request_buffering off;</span><br><span class="line">      <span class="built_in">return</span> 403;	--新增该配置项</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
-
-<p>2.执行<code>kubectl apply -f harbor-cm.yaml</code>命令更新配置<br>3.找到<code>harbor</code>的<code>pod</code>所在<code>yaml</code>，以<code>harbor1.yaml</code>为例，<code>vim harbor1.yaml</code>，修改<code>harbor nginx</code>的探针，把默认探测 <code>/</code> 修改为探测<code> /api/systeminfo</code></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">image:</span> <span class="string">goharbor/nginx-photon:v1.6.4</span></span><br><span class="line">  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">livenessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/api/systeminfo</span>        <span class="string">--修改点</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">10</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">readinessProbe:</span></span><br><span class="line">    <span class="attr">httpGet:</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/api/systeminfo</span>        <span class="string">--修改点</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">periodSeconds:</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
-
-<ol start="4">
-<li>执行<code>kubectl apply -f harbor1.yaml</code>重启<code>harbor</code>服务</li>
-<li>重新登录<code>harbor</code>页面，预期返回<code>403 Forbidden</code>，无法登录</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1283,7 +1278,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-count">101</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1294,7 +1289,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">30</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
